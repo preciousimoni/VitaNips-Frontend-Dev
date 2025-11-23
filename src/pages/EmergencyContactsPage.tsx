@@ -83,8 +83,16 @@ const EmergencyContactsPage: React.FC = () => {
         loadInitialContacts();
     }, [loadInitialContacts]);
 
-    const handleAddClick = () => { /* ... */ };
-    const handleFormCancel = () => { /* ... */ };
+    const handleAddClick = () => {
+        setEditingContact(null);
+        setShowFormModal(true);
+    };
+
+    const handleFormCancel = () => {
+        setShowFormModal(false);
+        setEditingContact(null);
+    };
+
     const handleFormSubmit = async (payload: EmergencyContactPayload, id?: number) => {
         setIsSubmitting(true);
         try {
@@ -242,7 +250,10 @@ const EmergencyContactsPage: React.FC = () => {
                                     <EmergencyContactListItem
                                         key={contact.id}
                                         contact={contact}
-                                        onEdit={() => {/* TODO: Implement edit functionality */}}
+                                        onEdit={() => {
+                                            setEditingContact(contact);
+                                            setShowFormModal(true);
+                                        }}
                                         onDelete={handleDelete}
                                     />
                                 ))}

@@ -8,7 +8,7 @@ type ContactListParams = { page?: number; ordering?: string };
 export const getUserEmergencyContacts = async (
     paramsOrUrl: ContactListParams | string | null = null
 ): Promise<PaginatedResponse<EmergencyContact>> => {
-    const endpoint = '/emergency/contacts/';
+    const endpoint = '/users/me/emergency-contacts/';
     try {
         let response;
         if (typeof paramsOrUrl === 'string') {
@@ -27,7 +27,7 @@ export const getUserEmergencyContacts = async (
 
 export const addEmergencyContact = async (payload: EmergencyContactPayload): Promise<EmergencyContact> => {
     try {
-        const response = await axiosInstance.post<EmergencyContact>('/emergency/contacts/', payload);
+        const response = await axiosInstance.post<EmergencyContact>('/users/me/emergency-contacts/', payload);
         return response.data;
     } catch (error) {
         console.error('Failed to add emergency contact:', error);
@@ -37,7 +37,7 @@ export const addEmergencyContact = async (payload: EmergencyContactPayload): Pro
 
 export const updateEmergencyContact = async (id: number, payload: Partial<EmergencyContactPayload>): Promise<EmergencyContact> => {
     try {
-        const response = await axiosInstance.patch<EmergencyContact>(`/emergency/contacts/${id}/`, payload);
+        const response = await axiosInstance.patch<EmergencyContact>(`/users/me/emergency-contacts/${id}/`, payload);
         return response.data;
     } catch (error) {
         console.error(`Failed to update emergency contact ${id}:`, error);
@@ -47,7 +47,7 @@ export const updateEmergencyContact = async (id: number, payload: Partial<Emerge
 
 export const deleteEmergencyContact = async (id: number): Promise<void> => {
     try {
-        await axiosInstance.delete(`/emergency/contacts/${id}/`);
+        await axiosInstance.delete(`/users/me/emergency-contacts/${id}/`);
     } catch (error) {
         console.error(`Failed to delete emergency contact ${id}:`, error);
         throw error;

@@ -31,6 +31,34 @@ export const registerSchema = z
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
 
+// Extended Registration Schema for Wizard
+export const extendedRegisterSchema = z
+  .object({
+    // Step 1
+    first_name: z.string().min(1, 'First name is required'),
+    last_name: z.string().min(1, 'Last name is required'),
+    email: z.string().email('Invalid email address'),
+    username: z.string().min(3, 'Username must be at least 3 characters'),
+    password: z.string().min(8, 'Password must be at least 8 characters long'),
+    confirmPassword: z.string(),
+    
+    // Step 2
+    phone_number: z.string().optional(),
+    date_of_birth: z.string().optional(),
+    gender: z.string().optional(),
+    
+    // Step 3
+    blood_group: z.string().optional(),
+    genotype: z.string().optional(),
+    allergies: z.string().optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+export type ExtendedRegisterFormData = z.infer<typeof extendedRegisterSchema>;
+
 // Password Reset Request Schema
 export const passwordResetRequestSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
