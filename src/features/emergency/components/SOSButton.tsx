@@ -2,8 +2,8 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { toast } from 'react-hot-toast';
-import { triggerSOS } from '../../api/emergency';
-import ConfirmationModal from '../../components/common/ConfirmationModal';
+import { triggerSOS } from '@api/emergency';
+import ConfirmationModal from '@components/common/ConfirmationModal';
 
 const SOSButton = () => {
     const [isPressed, setIsPressed] = useState(false);

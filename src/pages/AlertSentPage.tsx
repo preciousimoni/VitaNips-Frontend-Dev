@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import PageWrapper from '../components/common/PageWrapper';
+import PageWrapper from '@components/common/PageWrapper';
 
 const AlertSentPage = () => {
     return (

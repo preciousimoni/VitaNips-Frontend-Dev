@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { getEmergencyServices, EmergencyService } from '../../../api/emergency';
+import { getEmergencyServices, EmergencyService } from '@api/emergency';
 import { MapPinIcon, PhoneIcon } from '@heroicons/react/24/outline';
 import L from 'leaflet';
-import Spinner from '../../../components/ui/Spinner';
+import Spinner from '@components/ui/Spinner';
 
 // Fix Leaflet icon issue
 import icon from 'leaflet/dist/images/marker-icon.png';

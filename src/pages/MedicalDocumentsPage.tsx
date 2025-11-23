@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { getUserMedicalDocuments } from '../../api/health';
-import DocumentUploader from '../features/health/components/DocumentUploader';
-import DocumentShareDialog from '../features/health/components/DocumentShareDialog';
-import PageWrapper from '../components/common/PageWrapper';
-import Modal from '../components/common/Modal';
-import { MedicalDocument } from '../types/health';
+import { getUserMedicalDocuments } from '@api/health';
+import DocumentUploader from '@features/health/components/DocumentUploader';
+import DocumentShareDialog from '@features/health/components/DocumentShareDialog';
+import PageWrapper from '@components/common/PageWrapper';
+import Modal from '@components/common/Modal';
+import { MedicalDocument } from '@types/health';
 import { format } from 'date-fns';
 import { DocumentIcon, ArrowDownTrayIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 

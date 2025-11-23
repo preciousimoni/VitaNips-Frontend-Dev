@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import AppRouter from './router';
 import { Toaster } from 'react-hot-toast';
-import SOSButton from './features/emergency/components/SOSButton';
 import { useAuth } from './contexts/AuthContext';
 import { initBrandingFromLogo } from './utils/branding';
 
@@ -16,7 +15,6 @@ const AppContent: React.FC = () => {
   return (
       <>
          <AppRouter />
-         {isAuthenticated && <SOSButton />}
           <Toaster position="top-center" reverseOrder={false} />
       </>
   );

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { getPharmacies } from '../../api/pharmacy';
-import { getPrescriptionById } from '../../api/prescriptions';
-import { createOrderFromPrescription } from '../../api/orders';
-import PharmacyLocator from '../features/pharmacy/components/PharmacyLocator';
-import PharmacyCard from '../features/pharmacy/components/PharmacyCard';
-import PageWrapper from '../components/common/PageWrapper';
-import { Pharmacy } from '../types/pharmacy';
+import { getPharmacies } from '@api/pharmacy';
+import { getPrescriptionDetails } from '@api/prescriptions';
+import { createOrderFromPrescription } from '@api/orders';
+import PharmacyLocator from '@features/pharmacy/components/PharmacyLocator';
+import PharmacyCard from '@features/pharmacy/components/PharmacyCard';
+import PageWrapper from '@components/common/PageWrapper';
+import { Pharmacy } from '@types/pharmacy';
 import { toast } from 'react-hot-toast';
-import Spinner from '../components/ui/Spinner';
+import Spinner from '@components/ui/Spinner';
 
 const CreateOrderPage = () => {
     const { id } = useParams<{ id: string }>();
@@ -18,7 +18,7 @@ const CreateOrderPage = () => {
     
     const { data: prescription, isLoading: isLoadingPrescription } = useQuery({
         queryKey: ['prescription', id],
-        queryFn: () => getPrescriptionById(Number(id)),
+        queryFn: () => getPrescriptionDetails(Number(id)),
         enabled: !!id
     });
 

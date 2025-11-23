@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getHealthRecommendations, getHealthTrends } from '../../api/analytics';
-import PageWrapper from '../components/common/PageWrapper';
-import RecommendationsList from '../features/analytics/components/RecommendationsList';
-import TrendPredictionChart from '../features/analytics/components/TrendPredictionChart';
-import Spinner from '../components/ui/Spinner';
+import { getHealthRecommendations, getHealthTrends } from '@api/analytics';
+import PageWrapper from '@components/common/PageWrapper';
+import RecommendationsList from '@features/analytics/components/RecommendationsList';
+import TrendPredictionChart from '@features/analytics/components/TrendPredictionChart';
+import Spinner from '@components/ui/Spinner';
 
 const HealthAnalyticsPage = () => {
     const [selectedMetric, setSelectedMetric] = useState('weight');

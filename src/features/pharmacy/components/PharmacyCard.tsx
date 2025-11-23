@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pharmacy } from '../../types/pharmacy';
+import { Pharmacy } from '@types/pharmacy';
 import { MapPinIcon, PhoneIcon, ClockIcon } from '@heroicons/react/24/outline';
 
 interface PharmacyCardProps {
