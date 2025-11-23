@@ -1,7 +1,7 @@
 // src/components/common/PageWrapper.tsx
 import React from 'react';
-import LoadingSpinner from './LoadingSpinner';
-import ErrorMessage from './ErrorMessage';
+import Spinner from '../ui/Spinner';
+import ErrorMessage from '../ui/ErrorMessage';
 import EmptyState from './EmptyState';
 
 interface PageWrapperProps {
@@ -34,7 +34,10 @@ const PageWrapper: React.FC<PageWrapperProps> = ({
     if (isLoading) {
         return (
             <div className={`flex items-center justify-center min-h-[400px] ${className}`}>
-                <LoadingSpinner size="lg" text={loadingText} />
+                <div className="text-center">
+                    <Spinner size="lg" />
+                    {loadingText && <p className="mt-2 text-gray-600">{loadingText}</p>}
+                </div>
             </div>
         );
     }

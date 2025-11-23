@@ -3,20 +3,21 @@ import React, { useState } from 'react';
 import { ShieldExclamationIcon } from '@heroicons/react/24/solid';
 import { triggerSOS } from '../../../api/emergency';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../../components/common/ConfirmationModal';
 
 interface SOSButtonProps {
 }
 
 const SOSButton: React.FC<SOSButtonProps> = () => {
     const [isSending, setIsSending] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     const handleSOSClick = () => {
-        if (!window.confirm(
-            "ARE YOU SURE?\n\nThis will immediately attempt to notify your emergency contacts with your current location.\n\nUse only in a genuine emergency."
-        )) {
-            return;
-        }
+        setShowConfirmation(true);
+    };
 
+    const handleConfirmSOS = () => {
+        setShowConfirmation(false);
         setIsSending(true);
         toast.loading('Getting location and sending SOS...', { id: 'sos-toast' });
 
@@ -53,7 +54,7 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
                     case geoError.POSITION_UNAVAILABLE:
                         errorMsg = "Location information is unavailable."; break;
                     case geoError.TIMEOUT:
-                         errorMsg = "Location request timed out."; break;
+                        errorMsg = "Location request timed out."; break;
                 }
                 toast.error(`SOS Failed: ${errorMsg}`, { id: 'sos-toast' });
                 setIsSending(false);
@@ -64,20 +65,32 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
 
 
     return (
-        <button
-            onClick={handleSOSClick}
-            disabled={isSending}
-            className={`fixed bottom-5 right-5 z-50 p-4 rounded-full shadow-lg transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-red-300 ${
-                isSending
-                 ? 'bg-yellow-500 cursor-wait'
-                 : 'bg-red-600 hover:bg-red-700 text-white'
-            }`}
-            aria-label="Send SOS Alert"
-            title="Send SOS Alert to Emergency Contacts"
-        >
-            <ShieldExclamationIcon className={`h-8 w-8 ${isSending ? 'animate-pulse text-black': 'text-white'}`} />
-            <span className="ml-2 font-bold hidden sm:inline">SOS</span>
-        </button>
+        <>
+            <button
+                onClick={handleSOSClick}
+                disabled={isSending}
+                className={`fixed bottom-5 right-5 z-50 p-4 rounded-full shadow-lg transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-red-300 ${
+                    isSending
+                     ? 'bg-yellow-500 cursor-wait'
+                     : 'bg-red-600 hover:bg-red-700 text-white'
+                }`}
+                aria-label="Send SOS Alert"
+                title="Send SOS Alert to Emergency Contacts"
+            >
+                <ShieldExclamationIcon className={`h-8 w-8 ${isSending ? 'animate-pulse text-black': 'text-white'}`} />
+                <span className="ml-2 font-bold hidden sm:inline">SOS</span>
+            </button>
+
+            <ConfirmationModal 
+                isOpen={showConfirmation}
+                onClose={() => setShowConfirmation(false)}
+                onConfirm={handleConfirmSOS}
+                title="Send SOS Alert?"
+                message="This will immediately attempt to notify your emergency contacts with your current location. Use only in a genuine emergency."
+                confirmText="SEND SOS"
+                isDangerous={true}
+            />
+        </>
     );
 };
 

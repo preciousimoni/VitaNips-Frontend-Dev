@@ -10,7 +10,7 @@ import { MedicalDocument, MedicalDocumentUploadPayload } from '../types/health';
 import MedicalDocumentListItem from '../features/health/components/MedicalDocumentListItem';
 import MedicalDocumentUploadForm from '../features/health/components/MedicalDocumentUploadForm';
 import Modal from '../components/common/Modal';
-import { SkeletonList } from '../components/common/SkeletonLoader';
+import Skeleton from '../components/ui/Skeleton';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 
 const MedicalDocumentsPage: React.FC = () => {
@@ -169,7 +169,9 @@ const MedicalDocumentsPage: React.FC = () => {
 
             <div>
                 {isLoading ? (
-                    <SkeletonList count={4} />
+                    <div className="space-y-4">
+                        <Skeleton count={4} height="80px" />
+                    </div>
                 ) : error && documents.length === 0 ? (
                     <p className="text-red-600 text-center py-4">{error}</p>
                 ) : (

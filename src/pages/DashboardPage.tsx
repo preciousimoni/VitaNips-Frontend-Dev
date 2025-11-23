@@ -24,7 +24,10 @@ import { getUnreadNotificationCount } from '../api/notifications';
 import { Appointment } from '../types/appointments';
 import { MedicationReminder } from '../types/reminders';
 import { VitalSignLog } from '../types/healthLogs';
-import { LoadingSpinner, ErrorMessage, SkeletonLoader } from '../components/common';
+import ErrorMessage from '../components/ui/ErrorMessage';
+import Spinner from '../components/ui/Spinner';
+import Skeleton from '../components/ui/Skeleton';
+import { formatDate, formatTime } from '../utils/date';
 
 // Reusable Card Header Component
 const DashboardCardHeader: React.FC<{
@@ -43,7 +46,7 @@ const DashboardCardHeader: React.FC<{
             <span>{title}</span>
         </h2>
         <span className={`text-sm font-bold ${badgeColor} px-3 py-1 rounded-full`}>
-            {isLoading ? <LoadingSpinner size="sm" color="primary" /> : count}
+            {isLoading ? <Spinner size="sm" /> : count}
         </span>
     </div>
 );
@@ -253,32 +256,7 @@ const DashboardPage: React.FC = () => {
         },
     ];
 
-    const formatTime = (timeStr: string | null | undefined): string => {
-        if (!timeStr) return '';
-        try {
-            const [hours, minutes] = timeStr.split(':');
-            const date = new Date();
-            date.setHours(parseInt(hours, 10), parseInt(minutes, 10));
-            return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-        } catch { return timeStr; }
-    };
-
-    const formatDate = (dateStr: string | null | undefined) => {
-        if (!dateStr) return 'N/A';
-        try {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const itemDate = new Date(dateStr + 'T00:00:00Z');
-            itemDate.setHours(0, 0, 0, 0);
-
-            if (itemDate.getTime() === today.getTime()) return 'Today';
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-            if (itemDate.getTime() === tomorrow.getTime()) return 'Tomorrow';
-
-            return itemDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        } catch { return 'Invalid Date'; }
-    };
+    
 
     const getAppointmentStatusIcon = (status: string) => {
         switch (status) {
@@ -333,9 +311,9 @@ const DashboardPage: React.FC = () => {
                     
                     {appointmentsLoading ? (
                         <div className="space-y-3">
-                            <SkeletonLoader variant="text" width="75%" height="h-4" />
-                            <SkeletonLoader variant="text" width="50%" height="h-4" />
-                            <SkeletonLoader variant="text" width="65%" height="h-4" />
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                            <Skeleton className="h-4 w-2/3" />
                         </div>
                     ) : appointmentsError ? (
                         <ErrorMessage message={appointmentsError} onRetry={fetchDashboardData} />
@@ -383,9 +361,9 @@ const DashboardPage: React.FC = () => {
                     
                     {remindersLoading ? (
                         <div className="space-y-3">
-                            <SkeletonLoader variant="text" width="75%" height="h-4" />
-                            <SkeletonLoader variant="text" width="50%" height="h-4" />
-                            <SkeletonLoader variant="text" width="65%" height="h-4" />
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                            <Skeleton className="h-4 w-2/3" />
                         </div>
                     ) : remindersError ? (
                         <ErrorMessage message={remindersError} onRetry={fetchDashboardData} />
@@ -430,9 +408,9 @@ const DashboardPage: React.FC = () => {
                     
                     {vitalsLoading ? (
                         <div className="space-y-3">
-                            <SkeletonLoader variant="text" width="75%" height="h-4" />
-                            <SkeletonLoader variant="text" width="50%" height="h-4" />
-                            <SkeletonLoader variant="text" width="65%" height="h-4" />
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                            <Skeleton className="h-4 w-2/3" />
                         </div>
                     ) : vitalsError ? (
                         <ErrorMessage message={vitalsError} onRetry={fetchDashboardData} />
@@ -508,7 +486,7 @@ const DashboardPage: React.FC = () => {
                             <h3 className="text-lg font-bold text-gray-800">Notifications</h3>
                             <p className="text-sm text-gray-600">
                                 {notificationsLoading ? (
-                                    <LoadingSpinner size="sm" color="primary" />
+                                    <Spinner size="sm" />
                                 ) : (
                                     <>
                                         You have <span className="font-bold text-yellow-700">{unreadCount}</span> unread notification{unreadCount !== 1 ? 's' : ''}

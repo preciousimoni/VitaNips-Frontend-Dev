@@ -3,8 +3,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { getUserAppointments, cancelAppointment } from '../api/appointments';
 import { Appointment } from '../types/appointments';
 import AppointmentListItem from '../features/appointments/components/AppointmentListItem';
-import { SkeletonList } from '../components/common/SkeletonLoader';
-import { ConfirmDialog, Button, ErrorMessage, EmptyState } from '../components/common';
+import Skeleton from '../components/ui/Skeleton';
+import { ConfirmDialog, Button, EmptyState } from '../components/common';
+import ErrorMessage from '../components/ui/ErrorMessage';
 import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 
 const AppointmentsPage: React.FC = () => {
@@ -142,7 +143,9 @@ const AppointmentsPage: React.FC = () => {
             />
 
              {isLoading && (
-                <SkeletonList count={5} />
+                <div className="space-y-4">
+                    <Skeleton count={5} height="120px" />
+                </div>
              )}
 
              {!isLoading && error && (

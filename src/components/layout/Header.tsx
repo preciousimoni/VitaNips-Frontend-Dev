@@ -162,36 +162,6 @@ const Header: React.FC = () => {
                           Notification Settings
                         </Link>
 
-                        <Link
-                          to="/medication-reminders"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-primary-light/60 transition-colors duration-200"
-                          role="menuitem"
-                        >
-                          <BellAlertIcon className="h-4 w-4 mr-3" />
-                          Medication Reminders
-                        </Link>
-
-                        <Link
-                          to="/insurance"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-primary-light/60 transition-colors duration-200"
-                          role="menuitem"
-                        >
-                          <ShieldExclamationIcon className="h-4 w-4 mr-3" />
-                          Insurance
-                        </Link>
-
-                        <Link
-                          to="/map-locator"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-primary-light/60 transition-colors duration-200"
-                          role="menuitem"
-                        >
-                          <ShoppingBagIcon className="h-4 w-4 mr-3" />
-                          Find Services
-                        </Link>
-
                         {/* Divider */}
                         <div className="border-t border-gray-100 my-1"></div>
 

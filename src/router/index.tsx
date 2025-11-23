@@ -11,7 +11,7 @@ import RegisterPage from '../features/auth/pages/RegisterPage';
 import DashboardPage from '../pages/DashboardPage';
 import DoctorListPage from '../pages/DoctorListPage';
 import DoctorDetailPage from '../pages/DoctorDetailPage';
-import ProfilePage from '../pages/ProfilePage';
+import ProfilePage from '../features/users/pages/ProfilePage';
 import NotificationSettingsPage from '../pages/NotificationSettingsPage';
 import NotificationsPage from '../pages/NotificationsPage';
 import PharmacyListPage from '../pages/PharmacyListPage';
@@ -40,7 +40,7 @@ import HealthyEatingTipsPage from '../pages/articles/HealthyEatingTipsPage';
 import MentalWellnessResourcesPage from '../pages/MentalWellnessResourcesPage';
 import DoctorDashboardPage from '../pages/doctor/DoctorDashboardPage';
 import DoctorPrescriptionWorkspacePage from '../pages/doctor/DoctorPrescriptionWorkspacePage';
-import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
+import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import AdminDoctorsPage from '../pages/admin/AdminDoctorsPage';
 import AdminPharmaciesPage from '../pages/admin/AdminPharmaciesPage';
@@ -186,7 +186,7 @@ const AppRouter: React.FC = () => {
         </Route>
 
         <Route element={<AdminRoute />}>
-          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsersPage />} />
           <Route path="/admin/doctors" element={<AdminDoctorsPage />} />
           <Route path="/admin/pharmacies" element={<AdminPharmaciesPage />} />

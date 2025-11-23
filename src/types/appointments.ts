@@ -11,6 +11,9 @@ export interface Appointment {
     reason: string;
     notes: string | null;
     followup_required: boolean;
+    patient_name?: string;
+    patient_email?: string;
+    doctor_name?: string;
     created_at: string;
     updated_at: string;
 }

@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarDaysIcon, ChevronRightIcon, UserIcon } from '@heroicons/react/24/outline';
 import { Prescription } from '../../../types/prescriptions';
+import { formatDate } from '../../../utils/date';
 
 interface PrescriptionListItemProps {
     prescription: Prescription;
@@ -10,12 +11,7 @@ interface PrescriptionListItemProps {
     onSelect: (id: number) => void;
 }
 
-const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return 'N/A';
-    try {
-        return new Date(dateStr + 'T00:00:00Z').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    } catch { return 'Invalid Date'; }
-};
+
 
 const PrescriptionListItem: React.FC<PrescriptionListItemProps> = ({ prescription, isSelected, onSelect }) => {
     return (

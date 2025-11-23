@@ -93,8 +93,16 @@ const PharmacySelectionModal: React.FC<PharmacySelectionModalProps> = ({
 
                 {error && <p className="text-red-600 text-sm">{error}</p>}
 
+import Skeleton from '../../../components/ui/Skeleton';
+
+// ... inside component ...
+
                 <div className="max-h-60 overflow-y-auto border rounded p-2 space-y-2">
-                    {isLoading && pharmacies.length === 0 && <p className='text-muted text-sm text-center'>Loading...</p>}
+                    {isLoading && pharmacies.length === 0 && (
+                         <div className="space-y-2">
+                             <Skeleton count={3} height="60px" />
+                         </div>
+                    )}
                     {!isLoading && pharmacies.length === 0 && <p className='text-muted text-sm text-center'>No pharmacies found.</p>}
 
                     {pharmacies.map(pharmacy => (

@@ -88,6 +88,15 @@ export const snakeToTitle = (str: string): string => {
 };
 
 /**
+ * Formats seconds into MM:SS string
+ */
+export const formatDuration = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+};
+
+/**
  * Removes HTML tags from string
  */
 export const stripHtml = (html: string): string => {

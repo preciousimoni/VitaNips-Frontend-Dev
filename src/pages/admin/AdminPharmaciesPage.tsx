@@ -1,7 +1,7 @@
 // src/pages/admin/AdminPharmaciesPage.tsx
 import React, { useState, useEffect } from 'react';
 import { getAdminPharmacies, updateAdminPharmacy, AdminPharmacy } from '../../api/admin';
-import { LoadingSpinner } from '../../components/common';
+import Spinner from '../../components/ui/Spinner';
 import { CheckCircleIcon, XCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -130,7 +130,7 @@ const AdminPharmaciesPage: React.FC = () => {
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
         {loading ? (
-          <div className="flex justify-center py-12"><LoadingSpinner size="lg" /></div>
+          <div className="flex justify-center py-12"><Spinner size="lg" /></div>
         ) : filteredPharmacies.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500">No pharmacies found</p>

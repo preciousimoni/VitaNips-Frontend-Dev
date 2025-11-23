@@ -6,7 +6,7 @@ import { Vaccination, VaccinationPayload } from '../types/health';
 import VaccinationListItem from '../features/health/components/VaccinationListItem';
 import VaccinationForm from '../features/health/components/VaccinationForm';
 import Modal from '../components/common/Modal';
-import { SkeletonList } from '../components/common/SkeletonLoader';
+import Skeleton from '../components/ui/Skeleton';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 
 const VaccinationsPage: React.FC = () => {
@@ -175,7 +175,9 @@ const VaccinationsPage: React.FC = () => {
 
              <div>
                  {isLoading ? (
-                     <SkeletonList count={4} />
+                     <div className="space-y-4">
+                         <Skeleton count={4} height="80px" />
+                     </div>
                  ) : error ? (
                      <p className="text-red-600 text-center py-4 bg-red-50 rounded">{error}</p>
                  ) : (

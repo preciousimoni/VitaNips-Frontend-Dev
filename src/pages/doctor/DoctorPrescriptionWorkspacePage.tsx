@@ -11,8 +11,7 @@ import {
 import { Prescription as UserPrescription } from '../../types/prescriptions';
 import Modal from '../../components/common/Modal';
 import DoctorPrescriptionForm from '../../features/doctor_portal/components/DoctorPrescriptionForm';
-
-const formatDate = (dateStr: string) => new Date(dateStr + "T00:00:00Z").toLocaleDateString('en-CA');
+import { formatDate } from '../../utils/date';
 
 // Simple list item for eligible appointments
 const EligibleAppointmentItem: React.FC<{

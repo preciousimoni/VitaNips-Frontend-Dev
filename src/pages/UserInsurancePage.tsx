@@ -8,7 +8,7 @@ import { UserInsurance, UserInsurancePayload } from '../types/insurance';
 import UserInsuranceCard from '../features/insurance/components/UserInsuranceCard';
 import UserInsuranceForm from '../features/insurance/components/UserInsuranceForm';
 import Modal from '../components/common/Modal';
-import { SkeletonList } from '../components/common/SkeletonLoader';
+import Skeleton from '../components/ui/Skeleton';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 
 const UserInsurancePage: React.FC = () => {
@@ -170,7 +170,9 @@ const UserInsurancePage: React.FC = () => {
 
             <div>
                 {isLoading ? (
-                    <SkeletonList count={3} />
+                    <div className="space-y-4">
+                        <Skeleton count={3} height="150px" />
+                    </div>
                 ) : error ? (
                     <p className="text-red-600 text-center py-4 bg-red-50 rounded">{error}</p>
                 ) : (

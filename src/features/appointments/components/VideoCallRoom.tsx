@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/24/solid';
 import toast from 'react-hot-toast';
 import { generateVideoToken, endVideoSession } from '../../../api/video';
+import { formatDuration } from '../../../utils/formatting';
 
 interface VideoCallRoomProps {
     appointmentId: number;
@@ -31,13 +32,6 @@ const VideoCallRoom: React.FC<VideoCallRoomProps> = ({ appointmentId, onCallEnd 
     const remoteVideoRef = useRef<HTMLDivElement>(null);
     const roomRef = useRef<Room | null>(null);
     const callStartTimeRef = useRef<number>(Date.now());
-
-    // Format duration as MM:SS
-    const formatDuration = (seconds: number): string => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    };
 
     // Update call duration every second
     useEffect(() => {

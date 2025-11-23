@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { getPharmacies } from '../api/pharmacy';
 import { Pharmacy } from '../types/pharmacy';
 import PharmacyCard from '../features/pharmacy/components/PharmacyCard';
-import { SkeletonList } from '../components/common/SkeletonLoader';
+import Skeleton from '../components/ui/Skeleton';
 
 const PharmacyListPage: React.FC = () => {
     const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
@@ -235,7 +235,7 @@ const PharmacyListPage: React.FC = () => {
       <div>
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <SkeletonList count={6} />
+            <Skeleton count={6} height="200px" />
           </div>
         ) : error ? (
            <div className="text-center py-10 bg-red-50 text-red-700 p-4 rounded-md">

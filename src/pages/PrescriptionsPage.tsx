@@ -4,8 +4,9 @@ import { getUserPrescriptions } from '../api/prescriptions';
 import { Prescription } from '../types/prescriptions';
 import PrescriptionListItem from '../features/prescriptions/components/PrescriptionListItem';
 import PrescriptionDetailView from '../features/prescriptions/components/PrescriptionDetailView';
-import { SkeletonList } from '../components/common/SkeletonLoader';
-import { ErrorMessage, EmptyState } from '../components/common';
+import Skeleton from '../components/ui/Skeleton';
+import { EmptyState } from '../components/common';
+import ErrorMessage from '../components/ui/ErrorMessage';
 import { DocumentTextIcon } from '@heroicons/react/24/outline';
 
 const PrescriptionsPage: React.FC = () => {
@@ -58,7 +59,9 @@ const PrescriptionsPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Your Prescriptions</h1>
 
             {isLoading ? (
-                <SkeletonList count={4} />
+                <div className="space-y-4">
+                    <Skeleton count={4} height="100px" />
+                </div>
             ) : error ? (
                 <ErrorMessage message={error} onRetry={loadPrescriptions} />
             ) : (

@@ -1,54 +1,43 @@
 // src/features/auth/pages/RegisterPage.tsx
-import React, { useState, FormEvent } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import axiosInstance from '../../../api/axiosInstance';
 import { toast } from 'react-hot-toast';
+import { registerSchema, RegisterFormData } from '../../../schemas/authSchema';
+import FormInput from '../../../components/forms/FormInput';
+import Spinner from '../../../components/ui/Spinner';
 
 const RegisterPage: React.FC = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    username: '',
-    first_name: '',
-    last_name: '',
-    password: '',
-    password2: '',
-  });
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPassword2, setShowPassword2] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  });
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: RegisterFormData) => {
     setError(null);
-    setSuccess(null);
-
-    if (formData.password !== formData.password2) {
-      setError('Passwords do not match.');
-      return;
-    }
-
     setIsLoading(true);
 
     try {
       await axiosInstance.post('/users/register/', {
-        email: formData.email,
-        username: formData.username || formData.email,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        password: formData.password,
-        password2: formData.password2,
+        email: data.email,
+        username: data.username || data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        password: data.password,
+        password2: data.confirmPassword,
       });
 
-      const msg = 'Registration successful! Redirecting to login...';
-      setSuccess(msg);
       toast.success('Welcome! Your account was created.');
 
       setTimeout(() => {
@@ -58,9 +47,9 @@ const RegisterPage: React.FC = () => {
     } catch (err: unknown) {
       let errorMessage = 'Registration failed. Please try again.';
       const axiosErr = err as { response?: { data?: unknown } } | undefined;
-      const data = axiosErr?.response?.data;
-      if (typeof data === 'object' && data !== null) {
-        const obj = data as Record<string, unknown>;
+      const responseData = axiosErr?.response?.data;
+      if (typeof responseData === 'object' && responseData !== null) {
+        const obj = responseData as Record<string, unknown>;
         if (Array.isArray(obj.email)) errorMessage = `Email: ${(obj.email as unknown[]).join(', ')}`;
         else if (Array.isArray(obj.username)) errorMessage = `Username: ${(obj.username as unknown[]).join(', ')}`;
         else if (Array.isArray(obj.password)) errorMessage = `Password: ${(obj.password as unknown[]).join(', ')}`;
@@ -74,6 +63,7 @@ const RegisterPage: React.FC = () => {
         }
       }
       setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -108,125 +98,91 @@ const RegisterPage: React.FC = () => {
             </div>
 
             {error && <div role="alert" aria-live="assertive" className="mt-5 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
-            {success && <div className="mt-5 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">First name</label>
-                  <input
-                    id="first_name"
-                    name="first_name"
-                    type="text"
-                    required
-                    placeholder="Jane"
-                    value={formData.first_name}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    className="input-field mt-1"
-                    autoComplete="given-name"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">Last name</label>
-                  <input
-                    id="last_name"
-                    name="last_name"
-                    type="text"
-                    required
-                    placeholder="Doe"
-                    value={formData.last_name}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    className="input-field mt-1"
-                    autoComplete="family-name"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="you@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
+                <FormInput
+                  label="First name"
+                  name="first_name"
+                  register={register}
+                  errors={errors}
+                  placeholder="Jane"
+                  autoComplete="given-name"
                   disabled={isLoading}
-                  className="input-field mt-1"
-                  autoComplete="email"
+                />
+                <FormInput
+                  label="Last name"
+                  name="last_name"
+                  register={register}
+                  errors={errors}
+                  placeholder="Doe"
+                  autoComplete="family-name"
+                  disabled={isLoading}
                 />
               </div>
 
-              <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  placeholder="yourname"
-                  value={formData.username}
-                  onChange={handleChange}
+              <FormInput
+                label="Email address"
+                name="email"
+                type="email"
+                register={register}
+                errors={errors}
+                placeholder="you@example.com"
+                autoComplete="email"
+                disabled={isLoading}
+              />
+
+              <FormInput
+                label="Username"
+                name="username"
+                register={register}
+                errors={errors}
+                placeholder="yourname"
+                autoComplete="username"
+                disabled={isLoading}
+              />
+
+              <div className="relative">
+                <FormInput
+                  label="Password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  register={register}
+                  errors={errors}
+                  placeholder="••••••••"
+                  autoComplete="new-password"
                   disabled={isLoading}
-                  className="input-field mt-1"
-                  autoComplete="username"
+                  helpText="Use at least 8 characters."
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="absolute top-[34px] right-2 my-auto h-8 px-2 rounded-md text-sm text-gray-600 hover:bg-gray-100"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
               </div>
 
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                <div className="relative mt-1">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    placeholder="••••••••"
-                    value={formData.password}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    className="input-field pr-10"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    className="absolute inset-y-0 right-2 my-auto h-8 px-2 rounded-md text-sm text-gray-600 hover:bg-gray-100"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? 'Hide' : 'Show'}
-                  </button>
-                </div>
-                <p className="mt-1 text-xs text-gray-500">Use at least 8 characters with a mix of letters and numbers.</p>
-              </div>
-
-              <div>
-                <label htmlFor="password2" className="block text-sm font-medium text-gray-700">Confirm password</label>
-                <div className="relative mt-1">
-                  <input
-                    id="password2"
-                    name="password2"
-                    type={showPassword2 ? 'text' : 'password'}
-                    required
-                    placeholder="••••••••"
-                    value={formData.password2}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    className="input-field pr-10"
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword2((s) => !s)}
-                    className="absolute inset-y-0 right-2 my-auto h-8 px-2 rounded-md text-sm text-gray-600 hover:bg-gray-100"
-                    aria-label={showPassword2 ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword2 ? 'Hide' : 'Show'}
-                  </button>
-                </div>
+              <div className="relative">
+                <FormInput
+                  label="Confirm password"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  register={register}
+                  errors={errors}
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((s) => !s)}
+                  className="absolute top-[34px] right-2 my-auto h-8 px-2 rounded-md text-sm text-gray-600 hover:bg-gray-100"
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirmPassword ? 'Hide' : 'Show'}
+                </button>
               </div>
 
               <button
@@ -234,7 +190,7 @@ const RegisterPage: React.FC = () => {
                 className="btn btn-primary w-full"
                 disabled={isLoading}
               >
-                {isLoading ? 'Registering…' : 'Create account'}
+                {isLoading ? <Spinner size="sm" /> : 'Create account'}
               </button>
             </form>
 

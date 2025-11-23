@@ -1,7 +1,7 @@
 // src/pages/admin/AdminAnalyticsPage.tsx
 import React, { useState, useEffect } from 'react';
 import { getAdminAnalytics, AdminAnalytics } from '../../api/admin';
-import { LoadingSpinner } from '../../components/common';
+import Spinner from '../../components/ui/Spinner';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 const AdminAnalyticsPage: React.FC = () => {
@@ -30,7 +30,7 @@ const AdminAnalyticsPage: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12"><LoadingSpinner size="lg" /></div>
+        <div className="flex justify-center py-12"><Spinner size="lg" /></div>
       ) : (
         <>
           <div className="bg-white rounded-lg shadow p-6">

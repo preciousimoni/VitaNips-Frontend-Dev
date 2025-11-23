@@ -8,7 +8,7 @@ import FoodLogListItem from '../features/health/components/FoodLogListItem';
 import FoodLogForm from '../features/health/components/FoodLogForm';
 import Modal from '../components/common/Modal';
 import toast from 'react-hot-toast';
-import { SkeletonList } from '../components/common/SkeletonLoader';
+import Skeleton from '../components/ui/Skeleton';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 
 const FoodLogPage: React.FC = () => {
@@ -123,7 +123,11 @@ const FoodLogPage: React.FC = () => {
             />
 
             {/* Loading, Error, Empty States similar to VitalsLogPage */}
-             {isLoading && logs.length === 0 && <SkeletonList count={5} />}
+             {isLoading && logs.length === 0 && (
+                <div className="space-y-4">
+                    <Skeleton count={5} height="80px" />
+                </div>
+             )}
             {error && <p className="text-red-600 text-center py-4 bg-red-50 rounded my-4">{error}</p>}
             {!isLoading && !error && logs.length === 0 && (
                  <div className="text-center py-16 bg-gray-50 rounded-lg shadow">

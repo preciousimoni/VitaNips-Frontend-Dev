@@ -11,7 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../contexts/AuthContext';
 import { getAdminStats, AdminStats } from '../../api/admin';
-import { LoadingSpinner } from '../../components/common';
+import Spinner from '../../components/ui/Spinner';
 
 const AdminDashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -131,7 +131,7 @@ const AdminDashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading ? (
           <div className="col-span-full flex justify-center py-12">
-            <LoadingSpinner size="lg" />
+            <Spinner size="lg" />
           </div>
         ) : error ? (
           <div className="col-span-full bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">

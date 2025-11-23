@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { getAdminDoctors, verifyDoctor, AdminDoctor } from '../../api/admin';
-import { LoadingSpinner } from '../../components/common';
+import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 
 const AdminDoctorsPage: React.FC = () => {
@@ -89,7 +89,7 @@ const AdminDoctorsPage: React.FC = () => {
       <div className="bg-white rounded-lg shadow overflow-hidden">
         {loading ? (
           <div className="flex justify-center py-12">
-            <LoadingSpinner size="lg" />
+            <Spinner size="lg" />
           </div>
         ) : doctors.length === 0 ? (
           <div className="text-center py-12 text-gray-500">No doctors found</div>

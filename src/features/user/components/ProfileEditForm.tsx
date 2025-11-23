@@ -1,16 +1,17 @@
-// src/features/user/components/ProfileEditForm.tsx
-import React, { useState, useEffect, useCallback, FormEvent, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useForm, UseFormRegister, FieldErrors } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { User } from '../../../types/user';
 import { UserProfileUpdatePayload, uploadProfilePicture } from '../../../api/user';
-import { isValidPhone } from '../../../utils';
+import { userProfileSchema, UserProfileFormValues } from '../../../schemas/profile';
 import toast from 'react-hot-toast';
+import FieldErrorMessage from '../../../components/ui/FieldErrorMessage';
 import { 
     UserIcon, 
     PhoneIcon, 
     CalendarDaysIcon, 
     MapPinIcon, 
     HeartIcon, 
-    ExclamationTriangleIcon,
     InformationCircleIcon,
     CheckCircleIcon,
     CameraIcon,
@@ -27,15 +28,10 @@ interface ProfileEditFormProps {
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const genotype = ['AA', 'AS', 'SS', 'AB'];
 
-// Define stricter types for form inputs
-type FormFieldValue = string | number | boolean | null;
-type FormErrors = Partial<Record<keyof UserProfileUpdatePayload, string>>;
-
 // Component for rendering notification preferences
 const NotificationPreferences: React.FC<{
-  formData: UserProfileUpdatePayload;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}> = ({ formData, handleChange }) => (
+  register: UseFormRegister<UserProfileFormValues>;
+}> = ({ register }) => (
   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
     <h4 className="text-md font-semibold text-gray-700 mb-3 flex items-center">
       <InformationCircleIcon className="h-5 w-5 mr-2 text-blue-600" />
@@ -52,11 +48,8 @@ const NotificationPreferences: React.FC<{
           <input
             type="checkbox"
             id={id}
-            name={id}
-            checked={!!formData[id as keyof UserProfileUpdatePayload]}
-            onChange={handleChange}
+            {...register(id as keyof UserProfileFormValues)}
             className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary mt-1"
-            aria-checked={!!formData[id as keyof UserProfileUpdatePayload]}
           />
           <div className="flex-1">
             <label htmlFor={id} className="block text-sm font-medium text-gray-900">
@@ -76,39 +69,33 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   onCancel,
   isSubmitting,
 }) => {
-  const [formData, setFormData] = useState<UserProfileUpdatePayload>({});
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [globalError, setGlobalError] = useState<string | null>(null);
-  
   // Profile picture states
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploadingPicture, setIsUploadingPicture] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize form data
-  useEffect(() => {
-    const defaultData: UserProfileUpdatePayload = {
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<UserProfileFormValues>({
+    resolver: zodResolver(userProfileSchema),
+    defaultValues: {
       first_name: '',
       last_name: '',
-      phone_number: null,
-      date_of_birth: null,
-      address: null,
-      genotype: null,
-      blood_group: null,
-      allergies: null,
-      chronic_conditions: null,
+      phone_number: '',
+      date_of_birth: '',
+      address: '',
       weight: null,
       height: null,
       notify_appointment_reminder_email: true,
       notify_appointment_reminder_sms: false,
       notify_refill_reminder_email: true,
       notify_appointment_reminder_push: true,
-    };
+    }
+  });
 
+  // Initialize form data
+  useEffect(() => {
     if (initialData) {
-      setFormData({
-        ...defaultData,
+      reset({
         first_name: initialData.first_name || '',
         last_name: initialData.last_name || '',
         phone_number: initialData.phone_number || null,
@@ -126,148 +113,21 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
         notify_appointment_reminder_push: initialData.notify_appointment_reminder_push ?? true,
       });
       
-      // Set initial profile picture
       if (initialData.profile_picture) {
         setProfilePicture(initialData.profile_picture);
         setPreviewUrl(initialData.profile_picture);
       }
-    } else {
-      setFormData(defaultData);
     }
-  }, [initialData]);
+  }, [initialData, reset]);
 
-  // Validate individual field
-  const validateField = useCallback(
-    (name: string, value: FormFieldValue): string | null => {
-      if (['first_name', 'last_name'].includes(name)) {
-        if (!value || (typeof value === 'string' && value.trim().length === 0)) {
-          return `${name.replace('_', ' ')} is required`;
-        }
-        if (typeof value === 'string' && value.trim().length < 2) {
-          return `${name.replace('_', ' ')} must be at least 2 characters`;
-        }
-        if (typeof value === 'string' && value.trim().length > 50) {
-          return `${name.replace('_', ' ')} must be less than 50 characters`;
-        }
-      }
-      
-      if (name === 'phone_number' && value) {
-        const phoneStr = value as string;
-        if (!isValidPhone(phoneStr)) {
-          return 'Please enter a valid phone number (e.g., +1234567890)';
-        }
-      }
-      
-      if (name === 'weight' && value !== null) {
-        const numericValue = typeof value === 'string' ? parseFloat(value) : value;
-        if (typeof numericValue !== 'number' || isNaN(numericValue)) {
-          return 'Weight must be a valid number';
-        }
-        if (numericValue < 0 || numericValue > 500) {
-          return 'Weight must be between 0 and 500 kg';
-        }
-      }
-      
-      if (name === 'height' && value !== null) {
-        const numericValue = typeof value === 'string' ? parseFloat(value) : value;
-        if (typeof numericValue !== 'number' || isNaN(numericValue)) {
-          return 'Height must be a valid number';
-        }
-        if (numericValue < 0 || numericValue > 300) {
-          return 'Height must be between 0 and 300 cm';
-        }
-      }
-      
-      return null;
-    },
-    []
-  );
-
-  // Handle input changes
-  const handleChange = useCallback(
-    (
-      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-    ) => {
-      const { name, value, type } = e.target;
-      let processedValue: FormFieldValue = value;
-
-      if (type === 'checkbox') {
-        processedValue = (e.target as HTMLInputElement).checked;
-      } else if (
-        value === '' &&
-        ['phone_number', 'date_of_birth', 'address', 'blood_group', 'genotype', 'allergies', 'chronic_conditions'].includes(
-          name
-        )
-      ) {
-        processedValue = null;
-      } else if (['weight', 'height'].includes(name)) {
-        processedValue = value ? parseFloat(value) : null;
-        if (isNaN(processedValue as number)) processedValue = null;
-      }
-
-      setFormData((prev) => ({ ...prev, [name]: processedValue }));
-      
-      // Clear error when user starts typing
-      if (errors[name as keyof UserProfileUpdatePayload]) {
-        setErrors((prev) => ({
-          ...prev,
-          [name]: validateField(name, processedValue),
-        }));
-      }
-    },
-    [validateField, errors]
-  );
-
-  // Handle form submission
-  const handleSubmit = useCallback(
-    async (e: FormEvent) => {
-      e.preventDefault();
-      setGlobalError(null);
-      setErrors({});
-
-      // Validate all fields
-      const newErrors: FormErrors = {};
-      Object.entries(formData).forEach(([key, value]) => {
-        const error = validateField(key, value);
-        if (error) newErrors[key as keyof UserProfileUpdatePayload] = error;
-      });
-
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        setGlobalError('Please correct the errors in the form.');
-        return;
-      }
-
-      const payload: UserProfileUpdatePayload = {
-        ...formData,
-        weight: formData.weight ? Number(formData.weight) : null,
-        height: formData.height ? Number(formData.height) : null,
-      };
-
-      try {
-        await onSubmit(payload);
-      } catch (err: unknown) {
-        console.error('Profile update error:', err);
-        const errorData = (err as { response?: { data?: unknown } }).response?.data;
-        let errorMessage = 'Failed to update profile.';
-        
-        if (errorData && typeof errorData === 'object') {
-          const messages = Object.entries(errorData)
-            .map(([key, val]) => `${key === 'detail' ? '' : key + ': '}${Array.isArray(val) ? val.join(', ') : val}`)
-            .join('; ');
-          errorMessage = messages || errorMessage;
-        } else if (typeof errorData === 'string') {
-          errorMessage = errorData;
-        } else if (err instanceof Error) {
-          errorMessage = err.message;
-        }
-        
-        setGlobalError(errorMessage);
-        throw err;
-      }
-    },
-    [formData, validateField, onSubmit]
-  );
+  const onFormSubmit = async (data: UserProfileFormValues) => {
+    try {
+      await onSubmit(data as UserProfileUpdatePayload);
+    } catch (err) {
+      console.error('Profile update error:', err);
+      toast.error('Failed to update profile.');
+    }
+  };
 
   const uploadPicture = useCallback(async (file: File) => {
     setIsUploadingPicture(true);
@@ -278,7 +138,6 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     } catch (error) {
       console.error('Failed to upload profile picture:', error);
       toast.error('Failed to upload profile picture. Please try again.');
-      // Reset preview on error
       setPreviewUrl(profilePicture);
     } finally {
       setIsUploadingPicture(false);
@@ -324,7 +183,6 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-    // Note: You might want to call an API endpoint to remove the picture from the backend
     toast.success('Profile picture removed');
   }, []);
 
@@ -353,9 +211,8 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     }
   };
 
-  const renderField = (name: keyof UserProfileUpdatePayload, label: string, type: string = 'text', options?: string[]) => {
+  const renderField = (name: keyof UserProfileFormValues, label: string, type: string = 'text', options?: string[]) => {
     const Icon = getFieldIcon(name);
-    const value = formData[name];
     const error = errors[name];
     const isRequired = ['first_name', 'last_name'].includes(name);
 
@@ -368,9 +225,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
           {type === 'select' ? (
             <select
               id={name}
-              name={name}
-              value={value as string || ''}
-              onChange={handleChange}
+              {...register(name)}
               className={`input-field ${error ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
             >
               <option value="">Select {label}</option>
@@ -381,9 +236,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
           ) : type === 'textarea' ? (
             <textarea
               id={name}
-              name={name}
-              value={value as string || ''}
-              onChange={handleChange}
+              {...register(name)}
               rows={3}
               className={`input-field ${error ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
               placeholder={`Enter your ${label.toLowerCase()}`}
@@ -392,40 +245,20 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
             <input
               type={type}
               id={name}
-              name={name}
-              value={value as string || ''}
-              onChange={handleChange}
+              {...register(name)}
               className={`input-field ${error ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
               placeholder={`Enter your ${label.toLowerCase()}`}
             />
           )}
           <Icon className="h-5 w-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
         </div>
-        {error && (
-          <p className="text-red-600 text-sm flex items-center">
-            <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
-            {error}
-          </p>
-        )}
+        <FieldErrorMessage message={error?.message} />
       </div>
     );
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Error Display */}
-      {globalError && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <ExclamationTriangleIcon className="h-5 w-5 text-red-400 mr-2" />
-            <div className="text-sm text-red-700">
-              <p className="font-medium">Update Error</p>
-              <p className="mt-1">{globalError}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
+    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
       {/* Profile Picture Upload */}
       <div className="bg-white p-6 rounded-lg border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
@@ -529,7 +362,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
       </div>
 
       {/* Notification Preferences */}
-      <NotificationPreferences formData={formData} handleChange={handleChange} />
+      <NotificationPreferences register={register} />
 
       {/* Action Buttons */}
       <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">

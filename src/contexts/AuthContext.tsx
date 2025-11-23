@@ -12,7 +12,7 @@ interface AuthContextType {
     accessToken: string | null;
     login: (access: string, refresh: string) => Promise<void>;
     logout: () => void;
-    isLoading: boolean;
+    loading: boolean;
     fetchUserProfile: (token: string) => Promise<void>;
 }
 
@@ -23,7 +23,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [, setRefreshToken] = useState<string | null>(localStorage.getItem('refreshToken'));
     const [user, setUser] = useState<User | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const logout = useCallback(() => {
         localStorage.removeItem('accessToken');
@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }, []);
 
     const fetchUserProfile = useCallback(async (token: string, skipAuthReset = false) => {
-        if (!token) { setIsLoading(false); return; }
+        if (!token) { setLoading(false); return; }
 
         setUser(null);
         if (!skipAuthReset) {
@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             if (decoded.exp * 1000 < Date.now()) {
                 console.log("Token expired on fetchUserProfile");
                 logout();
-                setIsLoading(false);
+                setLoading(false);
                 return;
             }
 
@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 logout();
             }
         } finally {
-            setIsLoading(false);
+            setLoading(false);
         }
     }, [logout]);
 
@@ -99,7 +99,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } else {
             setIsAuthenticated(false);
             setUser(null);
-            setIsLoading(false);
+            setLoading(false);
         }
     }, [fetchUserProfile]); // Remove accessToken from dependencies to prevent infinite loops
 
@@ -133,7 +133,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 accessToken,
                 login,
                 logout,
-                isLoading,
+                loading,
                 fetchUserProfile
             }}
         >

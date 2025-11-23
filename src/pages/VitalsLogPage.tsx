@@ -8,7 +8,7 @@ import VitalSignLogListItem from '../features/health/components/VitalSignLogList
 import VitalSignForm from '../features/health/components/VitalSignForm';
 import Modal from '../components/common/Modal';
 import toast from 'react-hot-toast';
-import { SkeletonList } from '../components/common/SkeletonLoader';
+import Skeleton from '../components/ui/Skeleton';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 
 const VitalsLogPage: React.FC = () => {
@@ -141,7 +141,9 @@ const VitalsLogPage: React.FC = () => {
             />
 
             {isLoading && logs.length === 0 && (
-                <SkeletonList count={5} />
+                <div className="space-y-4">
+                    <Skeleton count={5} height="80px" />
+                </div>
             )}
 
             {error && (

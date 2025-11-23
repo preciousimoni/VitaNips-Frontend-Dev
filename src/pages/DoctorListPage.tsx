@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { getDoctors } from '../api/doctors';
 import { Doctor } from '../types/doctors';
 import DoctorCard from '../features/doctors/components/DoctorCard';
-import { SkeletonList } from '../components/common/SkeletonLoader';
+import Skeleton from '../components/ui/Skeleton';
 
 const DoctorListPage: React.FC = () => {
     const [doctors, setDoctors] = useState<Doctor[]>([]);
@@ -111,7 +111,7 @@ const DoctorListPage: React.FC = () => {
             <div>
                 {isLoading ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        <SkeletonList count={8} />
+                        <Skeleton count={8} height="300px" />
                     </div>
                 ) : error ? (
                     <div className="text-center py-10 bg-red-50 text-red-700 p-4 rounded-md">

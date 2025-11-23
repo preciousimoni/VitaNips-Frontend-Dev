@@ -10,15 +10,7 @@ interface MedicationInfoDisplayProps {
     onClose?: () => void; // If used in a modal
 }
 
-const LoadingSpinner: React.FC = () => (
-    <div className="flex justify-center items-center py-8">
-        <svg className="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <p className="ml-2 text-gray-600">Loading medication details...</p>
-    </div>
-);
+import Spinner from '../../../components/ui/Spinner';
 
 const DetailItem: React.FC<{ label: string; value: string | number | boolean | null | undefined }> = ({ label, value }) => {
     if (value === null || value === undefined || String(value).trim() === '') return null;
@@ -59,7 +51,12 @@ const MedicationInfoDisplay: React.FC<MedicationInfoDisplayProps> = ({ medicatio
     }, [medicationId, medicationObject]);
 
     if (isLoading) {
-        return <LoadingSpinner />;
+        return (
+            <div className="flex justify-center items-center py-8">
+                <Spinner size="lg" />
+                <p className="ml-2 text-gray-600">Loading medication details...</p>
+            </div>
+        );
     }
 
     if (error) {

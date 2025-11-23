@@ -15,9 +15,10 @@ import AppointmentBookingForm from '../features/appointments/components/Appointm
 import Modal from '../components/common/Modal';
 import SmartImage from '../components/common/SmartImage';
 import { useAuth } from '../contexts/AuthContext';
+import { formatTime } from '../utils/date';
 
-const LoadingSpinner: React.FC = () => <div className="text-center py-4"><p className="text-muted">Loading...</p></div>;
-const ErrorMessage: React.FC<{ message: string }> = ({ message }) => <p className="text-red-600 bg-red-50 p-3 rounded-md text-sm">{message}</p>;
+import Spinner from '../components/ui/Spinner';
+import ErrorMessage from '../components/ui/ErrorMessage';
 
 interface ReviewFormProps {
   doctorId: number;
@@ -247,17 +248,9 @@ useEffect(() => {
     navigate(`/appointments/${newAppointment.id}`);
   };
 
-  const formatTime = (timeStr: string): string => {
-    if (!timeStr) return '';
-    try {
-      const [hours, minutes] = timeStr.split(':');
-      const date = new Date();
-      date.setHours(parseInt(hours, 10), parseInt(minutes, 10));
-      return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    } catch { return timeStr; }
-  };
+  
 
-  if (isLoading && !doctor) return <LoadingSpinner />;
+  if (isLoading && !doctor) return <div className="flex justify-center py-4"><Spinner size="lg" /></div>;
   if (error && !doctor) return <div className="text-center py-10"><ErrorMessage message={error} /><Link to="/doctors" className="mt-4 btn-primary">Back to Doctors</Link></div>;
   if (!doctor) return <div className="text-center py-10"><p className="text-muted">Doctor not found.</p><Link to="/doctors" className="mt-4 btn-primary">Back to Doctors</Link></div>;
 
@@ -352,7 +345,7 @@ useEffect(() => {
 
           <section>
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Patient Reviews ({reviewsTotalCount})</h3>
-            {isLoadingReviews && !reviews.length && <LoadingSpinner />}
+            {isLoadingReviews && !reviews.length && <div className="flex justify-center py-4"><Spinner size="md" /></div>}
             {!isLoadingReviews && errorReviews && <ErrorMessage message={errorReviews} />}
             {!isLoadingReviews && !errorReviews && reviews.length === 0 && (
               <p className="text-muted text-sm">No reviews yet for this doctor. Be the first to share your experience!</p>

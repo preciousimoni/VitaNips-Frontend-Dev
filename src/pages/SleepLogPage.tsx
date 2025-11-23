@@ -8,7 +8,7 @@ import SleepLogListItem from '../features/health/components/SleepLogListItem';
 import SleepLogForm from '../features/health/components/SleepLogForm';
 import Modal from '../components/common/Modal';
 import toast from 'react-hot-toast';
-import { SkeletonList } from '../components/common/SkeletonLoader';
+import Skeleton from '../components/ui/Skeleton';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 
 const SleepLogPage: React.FC = () => {
@@ -123,7 +123,11 @@ const SleepLogPage: React.FC = () => {
             />
 
             {/* Loading, Error, Empty States, List, Pagination */}
-            {isLoading && logs.length === 0 && <SkeletonList count={5} />}
+            {isLoading && logs.length === 0 && (
+                <div className="space-y-4">
+                    <Skeleton count={5} height="80px" />
+                </div>
+            )}
             {error && <p className="text-red-600 text-center py-4 bg-red-50 rounded my-4">{error}</p>}
             {!isLoading && !error && logs.length === 0 && ( /* Empty state */ <div className="text-center py-16 bg-gray-50 rounded-lg shadow"> <PageIcon className="mx-auto h-12 w-12 text-gray-400" /> <h3 className="mt-2 text-lg font-medium text-gray-900">No Sleep Logged</h3> <p className="mt-1 text-sm text-gray-500">Track your sleep patterns for better health insights.</p> <div className="mt-6"> <button onClick={handleAddClick} type="button" className="btn-primary inline-flex items-center"> <PlusIcon className="h-5 w-5 mr-2" /> Log Your First Night </button> </div> </div> )}
             {logs.length > 0 && ( <div className="space-y-3"> {logs.map(log => <SleepLogListItem key={log.id} log={log} onEdit={handleEditClick} onDelete={handleDelete} />)} </div> )}

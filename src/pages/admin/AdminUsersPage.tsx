@@ -8,7 +8,7 @@ import {
   ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 import { getAdminUsers, updateAdminUser, AdminUser } from '../../api/admin';
-import { LoadingSpinner } from '../../components/common';
+import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 
 const AdminUsersPage: React.FC = () => {
@@ -149,7 +149,7 @@ const AdminUsersPage: React.FC = () => {
       <div className="bg-white rounded-lg shadow overflow-hidden">
         {loading ? (
           <div className="flex justify-center py-12">
-            <LoadingSpinner size="lg" />
+            <Spinner size="lg" />
           </div>
         ) : users.length === 0 ? (
           <div className="text-center py-12 text-gray-500">

@@ -7,7 +7,7 @@ import { InsuranceClaim, InsuranceClaimPayload } from '../types/insuranceClaims'
 import ClaimListItem from '../features/insurance/components/ClaimListItem';
 import ClaimSubmissionForm from '../features/insurance/components/ClaimSubmissionForm';
 import Modal from '../components/common/Modal';
-import { SkeletonList } from '../components/common/SkeletonLoader';
+import Skeleton from '../components/ui/Skeleton';
 
 const UserClaimsPage: React.FC = () => {
     const [claims, setClaims] = useState<InsuranceClaim[]>([]);
@@ -70,7 +70,11 @@ const UserClaimsPage: React.FC = () => {
                 <ClaimSubmissionForm onSubmit={handleFormSubmit} onCancel={handleFormCancel} isSubmitting={isSubmittingForm} />
             </Modal>
 
-            {isLoading && claims.length === 0 && <SkeletonList count={5} />}
+            {isLoading && claims.length === 0 && (
+                <div className="space-y-4">
+                    <Skeleton count={5} height="100px" />
+                </div>
+            )}
             {error && <p className="text-red-600 text-center py-4 bg-red-50 rounded my-4">{error}</p>}
             {!isLoading && !error && claims.length === 0 && (
                  <div className="text-center py-16 bg-gray-50 rounded-lg shadow">
