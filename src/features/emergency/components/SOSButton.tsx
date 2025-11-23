@@ -1,93 +1,112 @@
-// src/features/emergency/components/SOSButton.tsx
-import React, { useState } from 'react';
-import { ShieldExclamationIcon } from '@heroicons/react/24/solid';
-import { triggerSOS } from '../../../api/emergency';
-import toast from 'react-hot-toast';
-import ConfirmationModal from '../../../components/common/ConfirmationModal';
+import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
+import { toast } from 'react-hot-toast';
+import { triggerSOS } from '../../api/emergency';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 
-interface SOSButtonProps {
-}
+const SOSButton = () => {
+    const [isPressed, setIsPressed] = useState(false);
+    const [countdown, setCountdown] = useState(3);
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+    const pressTimer = useRef<NodeJS.Timeout | null>(null);
+    const navigate = useNavigate();
 
-const SOSButton: React.FC<SOSButtonProps> = () => {
-    const [isSending, setIsSending] = useState(false);
-    const [showConfirmation, setShowConfirmation] = useState(false);
+    const handlePressStart = () => {
+        setIsPressed(true);
+        setCountdown(3);
 
-    const handleSOSClick = () => {
-        setShowConfirmation(true);
+        pressTimer.current = setInterval(() => {
+            setCountdown(prev => {
+                if (prev <= 1) {
+                    clearInterval(pressTimer.current!);
+                    handleSOSTrigger();
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
     };
 
-    const handleConfirmSOS = () => {
-        setShowConfirmation(false);
-        setIsSending(true);
-        toast.loading('Getting location and sending SOS...', { id: 'sos-toast' });
-
-        if (!navigator.geolocation) {
-             toast.error('Geolocation is not supported by your browser.', { id: 'sos-toast' });
-             setIsSending(false);
-             return;
-         }
-
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                const { latitude, longitude } = position.coords;
-                console.log("SOS Location:", latitude, longitude);
-
-                try {
-                    const response = await triggerSOS({
-                        latitude,
-                        longitude,
-                    });
-                    toast.success(response.status || 'SOS Alert Sent!', { id: 'sos-toast', duration: 5000 });
-                } catch (error: any) {
-                     console.error("SOS API Error:", error);
-                     toast.error(`SOS Failed: ${error.message || 'Could not contact server.'}`, { id: 'sos-toast' });
-                } finally {
-                    setIsSending(false);
-                }
-            },
-            (geoError) => {
-                console.error("SOS Geolocation Error:", geoError);
-                let errorMsg = 'Could not get location.';
-                switch(geoError.code) {
-                    case geoError.PERMISSION_DENIED:
-                        errorMsg = "Location permission denied."; break;
-                    case geoError.POSITION_UNAVAILABLE:
-                        errorMsg = "Location information is unavailable."; break;
-                    case geoError.TIMEOUT:
-                        errorMsg = "Location request timed out."; break;
-                }
-                toast.error(`SOS Failed: ${errorMsg}`, { id: 'sos-toast' });
-                setIsSending(false);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-        );
+    const handlePressEnd = () => {
+        if (pressTimer.current) {
+            clearInterval(pressTimer.current);
+        }
+        setIsPressed(false);
+        setCountdown(3);
     };
 
+    const handleSOSTrigger = async () => {
+        setIsPressed(false);
+        try {
+            const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                    enableHighAccuracy: true,
+                    timeout: 5000
+                });
+            });
+
+            setLocation({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+            });
+            setShowConfirm(true);
+        } catch (error) {
+            toast.error('Unable to get location. Ensure location services are enabled.');
+        }
+    };
+
+    const confirmSOS = async () => {
+        if (!location) return;
+        try {
+            await triggerSOS({
+                latitude: location.latitude,
+                longitude: location.longitude
+            });
+            toast.success('Emergency alert sent!');
+            setShowConfirm(false);
+            navigate('/emergency/alert-sent');
+        } catch (error) {
+            toast.error('Failed to send alert. Call emergency services immediately.');
+        }
+    };
 
     return (
         <>
             <button
-                onClick={handleSOSClick}
-                disabled={isSending}
-                className={`fixed bottom-5 right-5 z-50 p-4 rounded-full shadow-lg transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-red-300 ${
-                    isSending
-                     ? 'bg-yellow-500 cursor-wait'
-                     : 'bg-red-600 hover:bg-red-700 text-white'
+                className={`relative w-48 h-48 rounded-full flex flex-col items-center justify-center border-4 shadow-2xl transition-transform active:scale-95 select-none ${
+                    isPressed 
+                        ? 'bg-red-700 border-red-300 scale-95' 
+                        : 'bg-gradient-to-br from-red-500 to-red-700 border-white'
                 }`}
-                aria-label="Send SOS Alert"
-                title="Send SOS Alert to Emergency Contacts"
+                onMouseDown={handlePressStart}
+                onMouseUp={handlePressEnd}
+                onMouseLeave={handlePressEnd}
+                onTouchStart={handlePressStart}
+                onTouchEnd={handlePressEnd}
             >
-                <ShieldExclamationIcon className={`h-8 w-8 ${isSending ? 'animate-pulse text-black': 'text-white'}`} />
-                <span className="ml-2 font-bold hidden sm:inline">SOS</span>
+                {isPressed ? (
+                    <div className="animate-pulse text-white text-center">
+                        <span className="block text-5xl font-bold mb-2">{countdown}</span>
+                        <span className="text-sm font-medium">Release to cancel</span>
+                    </div>
+                ) : (
+                    <div className="text-white text-center">
+                        <ExclamationTriangleIcon className="h-16 w-16 mx-auto mb-2" />
+                        <span className="block text-xl font-bold tracking-wider">HOLD FOR SOS</span>
+                    </div>
+                )}
             </button>
 
-            <ConfirmationModal 
-                isOpen={showConfirmation}
-                onClose={() => setShowConfirmation(false)}
-                onConfirm={handleConfirmSOS}
-                title="Send SOS Alert?"
-                message="This will immediately attempt to notify your emergency contacts with your current location. Use only in a genuine emergency."
-                confirmText="SEND SOS"
+            <ConfirmationModal
+                isOpen={showConfirm}
+                onClose={() => setShowConfirm(false)}
+                onConfirm={confirmSOS}
+                title="Send Emergency Alert?"
+                message="This will send your location to all your emergency contacts immediately."
+                confirmText="SEND ALERT"
+                cancelText="Cancel"
                 isDangerous={true}
             />
         </>
