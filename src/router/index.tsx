@@ -45,6 +45,11 @@ import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import AdminDoctorsPage from '../pages/admin/AdminDoctorsPage';
 import AdminPharmaciesPage from '../pages/admin/AdminPharmaciesPage';
 import AdminAnalyticsPage from '../pages/admin/AdminAnalyticsPage';
+import EmergencyPage from '../pages/EmergencyPage';
+import AlertSentPage from '../pages/AlertSentPage';
+import CreateOrderPage from '../pages/CreateOrderPage';
+import HealthDashboardPage from '../pages/HealthDashboardPage';
+import HealthAnalyticsPage from '../pages/HealthAnalyticsPage';
 import toast from 'react-hot-toast';
 
 const LoadingScreen: React.FC = () => (
@@ -214,6 +219,18 @@ const AppRouter: React.FC = () => {
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
           <Route path="/medical-documents" element={<MedicalDocumentsPage />} />
+          
+          {/* Emergency */}
+          <Route path="/emergency" element={<EmergencyPage />} />
+          <Route path="/emergency/alert-sent" element={<AlertSentPage />} />
+
+          {/* Pharmacy & Orders */}
+          <Route path="/prescriptions/:id/order" element={<CreateOrderPage />} />
+
+          {/* Health & Analytics */}
+          <Route path="/health/dashboard" element={<HealthDashboardPage />} />
+          <Route path="/health/analytics" element={<HealthAnalyticsPage />} />
+          
           <Route path="/health/vitals" element={<VitalsLogPage />} />
           <Route path="/health/symptoms" element={<SymptomLogPage />} />
           <Route path="/health/food" element={<FoodLogPage />} />
