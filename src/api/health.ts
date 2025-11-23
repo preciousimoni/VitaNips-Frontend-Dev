@@ -1,10 +1,6 @@
-// src/api/health.ts
 import axiosInstance from './axiosInstance';
 import { PaginatedResponse } from '../types/common';
-import {
-    MedicalDocument,
-    MedicalDocumentUploadPayload,
-} from '../types/health';
+import { MedicalDocument, MedicalDocumentUploadPayload } from '../types/health';
 
 type DocumentListParams = { page?: number; ordering?: string };
 
@@ -30,7 +26,8 @@ export const getUserMedicalDocuments = async (
 
 export const uploadMedicalDocument = async (
     payload: MedicalDocumentUploadPayload,
-    file: File
+    file: File,
+    onProgress?: (progress: number) => void
 ): Promise<MedicalDocument> => {
     const formData = new FormData();
     formData.append('file', file);
@@ -52,6 +49,12 @@ export const uploadMedicalDocument = async (
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.total) {
+                        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        onProgress?.(progress);
+                    }
+                },
             }
         );
         return response.data;
@@ -66,6 +69,30 @@ export const deleteMedicalDocument = async (id: number): Promise<void> => {
         await axiosInstance.delete(`/health/documents/${id}/`);
     } catch (error) {
         console.error(`Failed to delete medical document ${id}:`, error);
+        throw error;
+    }
+};
+
+export const getSharedDocuments = async (): Promise<any[]> => {
+    try {
+        const response = await axiosInstance.get('/health/documents/shared-with-me/');
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch shared documents:', error);
+        throw error;
+    }
+};
+
+export const shareDocument = async (documentId: number, userId: number, permission: 'view' | 'download'): Promise<any> => {
+    try {
+        const response = await axiosInstance.post('/health/documents/share/', {
+            document: documentId,
+            shared_with: userId,
+            permission
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Failed to share document:', error);
         throw error;
     }
 };

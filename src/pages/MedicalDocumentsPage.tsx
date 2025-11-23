@@ -1,219 +1,117 @@
-// src/pages/MedicalDocumentsPage.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import {
-    getUserMedicalDocuments,
-    uploadMedicalDocument,
-    deleteMedicalDocument
-} from '../api/health';
-import { MedicalDocument, MedicalDocumentUploadPayload } from '../types/health';
-import MedicalDocumentListItem from '../features/health/components/MedicalDocumentListItem';
-import MedicalDocumentUploadForm from '../features/health/components/MedicalDocumentUploadForm';
+import { getUserMedicalDocuments } from '../../api/health';
+import DocumentUploader from '../features/health/components/DocumentUploader';
+import DocumentShareDialog from '../features/health/components/DocumentShareDialog';
+import PageWrapper from '../components/common/PageWrapper';
 import Modal from '../components/common/Modal';
-import Skeleton from '../components/ui/Skeleton';
-import ConfirmDialog from '../components/common/ConfirmDialog';
+import { MedicalDocument } from '../types/health';
+import { format } from 'date-fns';
+import { DocumentIcon, ArrowDownTrayIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 
-const MedicalDocumentsPage: React.FC = () => {
-    const [documents, setDocuments] = useState<MedicalDocument[]>([]);
-    const [nextPageUrl, setNextPageUrl] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+const MedicalDocumentsPage = () => {
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+    const [shareModalOpen, setShareModalOpen] = useState(false);
+    const [selectedDocForShare, setSelectedDocForShare] = useState<MedicalDocument | null>(null);
 
-    const [showUploadModal, setShowUploadModal] = useState<boolean>(false);
-    const [isUploading, setIsUploading] = useState<boolean>(false);
+    const { data: documentsResponse, isLoading, error } = useQuery({
+        queryKey: ['medicalDocuments'],
+        queryFn: () => getUserMedicalDocuments()
+    });
 
-    const [deletingId, setDeletingId] = useState<number | null>(null);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
-    const [documentToDelete, setDocumentToDelete] = useState<number | null>(null);
+    const documents = documentsResponse?.results || [];
 
-    const loadInitialDocuments = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-        setDocuments([]);
-        setNextPageUrl(null);
-        try {
-            const response = await getUserMedicalDocuments();
-
-            if (response && Array.isArray(response.results)) {
-                 response.results.sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime());
-                setDocuments(response.results);
-                setNextPageUrl(response.next);
-            } else {
-                console.warn("Received unexpected documents response structure:", response);
-                setError("Received invalid data from server.");
-                setDocuments([]);
-            }
-        } catch (err) {
-            const error = err as Error;
-            setError(error.message || "Failed to load medical documents.");
-            console.error(err);
-            setDocuments([]);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
-
-    const loadMoreDocuments = async () => {
-        if (!nextPageUrl || isLoadingMore) return;
-        setIsLoadingMore(true);
-        setError(null);
-        try {
-            const response = await getUserMedicalDocuments(nextPageUrl);
-
-            if (response && Array.isArray(response.results)) {
-                setDocuments(prev =>
-                    [...prev, ...response.results].sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime())
-                );
-                setNextPageUrl(response.next);
-            } else {
-                 console.warn("Received unexpected more documents response structure:", response);
-                 setError("Received invalid data while loading more.");
-                 setNextPageUrl(null);
-            }
-        } catch (err) {
-            const error = err as Error;
-            setError(error.message || "Failed to load more documents.");
-            console.error(err);
-        } finally {
-            setIsLoadingMore(false);
-        }
-    };
-
-    useEffect(() => {
-        loadInitialDocuments();
-    }, [loadInitialDocuments]);
-
-    const handleOpenUploadModal = () => {
-        setShowUploadModal(true);
-    };
-    const handleCloseUploadModal = () => {
-        setShowUploadModal(false);
-    };
-    const handleUploadSubmit = async (payload: MedicalDocumentUploadPayload, file: File) => {
-        setIsUploading(true);
-        try {
-            await uploadMedicalDocument(payload, file);
-            setShowUploadModal(false);
-            await loadInitialDocuments();
-        } catch (err) {
-             console.error("Upload failed:", err);
-             throw err;
-        } finally {
-             setIsUploading(false);
-        }
-    };
-
-    const handleDeleteClick = (id: number) => {
-        setDocumentToDelete(id);
-        setShowDeleteConfirm(true);
-    };
-
-    const handleDeleteConfirm = async () => {
-        if (!documentToDelete) return;
-        
-        setDeletingId(documentToDelete);
-        setError(null);
-        try {
-            await deleteMedicalDocument(documentToDelete);
-            await loadInitialDocuments();
-            setShowDeleteConfirm(false);
-            setDocumentToDelete(null);
-        } catch (err) {
-            const error = err as Error;
-            setError(error.message || "Failed to delete document.");
-            console.error(err);
-        } finally {
-            setDeletingId(null);
-        }
-    };
-
-    const handleCancelDelete = () => {
-        if (!deletingId) {
-            setShowDeleteConfirm(false);
-            setDocumentToDelete(null);
-        }
+    const handleShareClick = (doc: MedicalDocument) => {
+        setSelectedDocForShare(doc);
+        setShareModalOpen(true);
     };
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <PageWrapper title="Medical Documents" isLoading={isLoading} error={error ? "Failed to load documents" : null}>
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold text-gray-800">Medical Documents</h1>
+                <p className="text-gray-600">Manage your medical records, lab results, and prescriptions.</p>
                 <button
-                    onClick={handleOpenUploadModal}
-                    className="btn-primary inline-flex items-center px-4 py-2"
+                    onClick={() => setIsUploadModalOpen(true)}
+                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                 >
-                    <PlusIcon className="h-5 w-5 mr-2" />
+                    <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
                     Upload Document
                 </button>
             </div>
 
-            <Modal isOpen={showUploadModal} onClose={handleCloseUploadModal} title="">
-                <MedicalDocumentUploadForm
-                    onSubmit={handleUploadSubmit}
-                    onCancel={handleCloseUploadModal}
-                    isSubmitting={isUploading}
-                />
+            {documents.length === 0 ? (
+                <div className="text-center py-12 bg-white rounded-lg shadow">
+                    <DocumentIcon className="mx-auto h-12 w-12 text-gray-400" />
+                    <h3 className="mt-2 text-sm font-medium text-gray-900">No documents</h3>
+                    <p className="mt-1 text-sm text-gray-500">Get started by uploading a new document.</p>
+                </div>
+            ) : (
+                <div className="bg-white shadow overflow-hidden sm:rounded-md">
+                    <ul role="list" className="divide-y divide-gray-200">
+                        {documents.map((doc: MedicalDocument) => (
+                            <li key={doc.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50 transition duration-150 ease-in-out">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center min-w-0">
+                                        <div className="flex-shrink-0">
+                                            {doc.file_url?.endsWith('.pdf') ? (
+                                                <DocumentIcon className="h-10 w-10 text-red-500" />
+                                            ) : (
+                                                <DocumentIcon className="h-10 w-10 text-blue-500" />
+                                            )}
+                                        </div>
+                                        <div className="ml-4">
+                                            <h4 className="text-sm font-medium text-gray-900 truncate">{doc.description || doc.filename || 'Untitled Document'}</h4>
+                                            <p className="text-xs text-gray-500">
+                                                {doc.document_type} • {format(new Date(doc.uploaded_at), 'MMM d, yyyy')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex space-x-2">
+                                        <a 
+                                            href={doc.file_url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+                                            title="Download"
+                                        >
+                                            <ArrowDownTrayIcon className="h-5 w-5" />
+                                        </a>
+                                        <button 
+                                            onClick={() => handleShareClick(doc)}
+                                            className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+                                            title="Share"
+                                        >
+                                            <ShareIcon className="h-5 w-5" />
+                                        </button>
+                                        <button 
+                                            className="p-2 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50"
+                                            title="Delete"
+                                        >
+                                            <TrashIcon className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            <Modal isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} title="Upload Document">
+                <DocumentUploader onClose={() => setIsUploadModalOpen(false)} />
             </Modal>
 
-            <ConfirmDialog
-                isOpen={showDeleteConfirm}
-                onClose={handleCancelDelete}
-                onConfirm={handleDeleteConfirm}
-                title="Delete Document"
-                message="Are you sure you want to delete this document? This action cannot be undone and the document will be permanently removed."
-                confirmText="Delete"
-                cancelText="Cancel"
-                isLoading={!!deletingId}
-            />
-
-            <div>
-                {isLoading ? (
-                    <div className="space-y-4">
-                        <Skeleton count={4} height="80px" />
-                    </div>
-                ) : error && documents.length === 0 ? (
-                    <p className="text-red-600 text-center py-4">{error}</p>
-                ) : (
-                    <>
-                        {error && documents.length > 0 && <p className="text-red-600 text-center py-2">{error}</p>}
-                        {documents.length > 0 ? (
-                            <ul className="space-y-0">
-                                {documents.map(doc => (
-                                    <MedicalDocumentListItem
-                                        key={doc.id}
-                                        document={doc}
-                                        onDelete={handleDeleteClick}
-                                        isDeleting={deletingId === doc.id}
-                                    />
-                                ))}
-                            </ul>
-                        ) : (
-                            !isLoading && !error && (
-                                <div className="text-center py-10 bg-gray-50 rounded-md">
-                                    <p className="text-gray-600">You haven't uploaded any medical documents yet.</p>
-                                    <button onClick={handleOpenUploadModal} className="mt-4 btn-primary inline-flex items-center">
-                                        <PlusIcon className="h-5 w-5 mr-2" /> Upload Your First Document
-                                    </button>
-                                </div>
-                            )
-                        )}
-
-                        {nextPageUrl && (
-                            <div className="mt-8 text-center">
-                                <button
-                                    onClick={loadMoreDocuments}
-                                    disabled={isLoadingMore}
-                                    className="btn-primary px-6 py-2 disabled:opacity-50"
-                                >
-                                    {isLoadingMore ? 'Loading...' : 'Load More Documents'}
-                                </button>
-                            </div>
-                        )}
-                    </>
+            <Modal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} title="Share Document">
+                {selectedDocForShare && (
+                    <DocumentShareDialog 
+                        documentId={selectedDocForShare.id} 
+                        documentTitle={selectedDocForShare.description || selectedDocForShare.filename || 'Document'}
+                        onClose={() => setShareModalOpen(false)} 
+                    />
                 )}
-            </div>
-        </div>
+            </Modal>
+        </PageWrapper>
     );
 };
 
