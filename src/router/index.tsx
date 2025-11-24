@@ -51,6 +51,7 @@ import CreateOrderPage from '../pages/CreateOrderPage';
 import HealthDashboardPage from '../pages/HealthDashboardPage';
 import HealthAnalyticsPage from '../pages/HealthAnalyticsPage';
 import AboutPage from '../pages/AboutPage';
+import HelpCenterPage from '../pages/HelpCenterPage';
 import toast from 'react-hot-toast';
 
 const LoadingScreen: React.FC = () => (
@@ -181,6 +182,7 @@ const AppRouter: React.FC = () => {
         {/* Landing page with authentication check */}
         <Route path="/" element={<LandingPageRoute />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/help" element={<HelpCenterPage />} />
 
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<LoginPage />} />

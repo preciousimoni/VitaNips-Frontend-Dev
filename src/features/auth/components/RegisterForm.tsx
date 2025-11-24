@@ -62,6 +62,11 @@ const RegisterForm: React.FC = () => {
         ...data,
         password2: data.confirmPassword,
       };
+      
+      // Remove fields not present in backend model or serializer
+      delete payload.gender;
+      delete payload.confirmPassword;
+
       // Clean up optional empty strings
       Object.keys(payload).forEach(key => {
         if (payload[key] === '') payload[key] = null;
@@ -71,8 +76,25 @@ const RegisterForm: React.FC = () => {
       toast.success('Account created successfully!');
       navigate('/login');
     } catch (error: any) {
-      const msg = error.response?.data?.detail || 'Registration failed. Please try again.';
-      toast.error(msg);
+      console.error("Registration Error:", error);
+      if (error.response && error.response.data) {
+          const data = error.response.data;
+          if (typeof data === 'object') {
+              // Iterate over field errors
+              Object.keys(data).forEach(field => {
+                  const messages = data[field];
+                  if (Array.isArray(messages)) {
+                      messages.forEach(msg => toast.error(`${field}: ${msg}`));
+                  } else {
+                      toast.error(`${field}: ${messages}`);
+                  }
+              });
+          } else {
+              toast.error("Registration failed. Please check your input.");
+          }
+      } else {
+          toast.error("Registration failed. Network or server error.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -209,7 +231,7 @@ const RegisterForm: React.FC = () => {
                     name="phone_number"
                     register={register}
                     errors={errors}
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+1234567890"
                      className="rounded-lg"
                     />
                     <FormInput
@@ -300,7 +322,7 @@ const RegisterForm: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex items-center px-8 py-2.5 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-transform transform hover:scale-[1.02]"
+              className="flex items-center px-8 py-2.5 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-transform transform hover:scale-[1.02]"
             >
               {isLoading ? <Spinner size="sm" color="white" /> : 'Create Account'}
             </button>

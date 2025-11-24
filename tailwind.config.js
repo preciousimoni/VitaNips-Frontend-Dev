@@ -2,7 +2,7 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}", // Scan all relevant files in src
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -17,25 +17,37 @@ export default {
         },
       },
       colors: {
-        // Define colors based on your logo (#32a852)
         primary: {
-          light: '#5bc475',   // Lighter shade
-          DEFAULT: '#32a852', // VitaNips brand green
-          dark: '#267a3e',    // Darker shade
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#32a852', // Base brand color
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
+          950: '#052e16',
+          light: '#5bc475',
+          DEFAULT: '#32a852',
+          dark: '#267a3e',
         },
-        secondary: '#333333', // Dark gray / Almost black for text
-        accent: '#ffc107',   // Example accent color (Amber) - choose one if needed
-        background: '#ffffff', // White background
-        surface: '#f7fafc',    // Slightly off-white for cards/surfaces
-        muted: '#6b7280',     // Gray for secondary text
-        error: '#dc2626',     // Red for errors
+        secondary: '#333333',
+        accent: '#ffc107',
+        background: '#ffffff',
+        surface: '#f7fafc',
+        muted: '#6b7280',
+        error: '#dc2626',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'], // Example: Using Inter font
+        sans: ['Inter', 'sans-serif'],
+        display: ['Ojuju', 'sans-serif'], // Added Ojuju for headings as requested previously
       },
       borderRadius: {
         xl: '1rem',
         '2xl': '1.25rem',
+        '3xl': '1.5rem',
       },
       boxShadow: {
         card: '0 10px 30px -12px rgba(0,0,0,0.2)',
