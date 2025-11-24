@@ -1,10 +1,13 @@
-// src/pages/PharmacyListPage.tsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { MagnifyingGlassIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, MapPinIcon, FunnelIcon } from '@heroicons/react/24/outline';
+import { ShoppingBagIcon } from '@heroicons/react/24/solid';
 import { getPharmacies } from '../api/pharmacy';
 import { Pharmacy } from '../types/pharmacy';
 import PharmacyCard from '../features/pharmacy/components/PharmacyCard';
 import Skeleton from '../components/ui/Skeleton';
+import HealthHeader from '../features/health/components/HealthHeader';
+import EmptyState from '../components/common/EmptyState';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const PharmacyListPage: React.FC = () => {
     const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
@@ -52,14 +55,10 @@ const PharmacyListPage: React.FC = () => {
                  setNextPageUrl(response.next);
                  setTotalCount(response.count);
             } else {
-                console.warn("Received unexpected pharmacy response:", response);
-                 setError("Failed to process pharmacy data.");
                  setPharmacies([]);
             }
         } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : 'Failed to load pharmacies. Please try again later.';
-            setError(errorMessage);
-            console.error(err);
+            setError('Failed to load pharmacies. Please try again later.');
             setPharmacies([]);
         } finally {
             setIsLoading(false);
@@ -68,7 +67,7 @@ const PharmacyListPage: React.FC = () => {
 
     const getUserLocation = useCallback(() => {
         if (!navigator.geolocation) {
-            setLocationError("Geolocation is not supported by your browser.");
+            setLocationError("Geolocation is not supported.");
             setIsNearMeSearch(false);
             return;
         }
@@ -87,14 +86,12 @@ const PharmacyListPage: React.FC = () => {
                 }
             },
             (geoError) => {
-                console.error("Geolocation Error:", geoError);
-                setLocationError(`Location Error: ${geoError.message}. Showing results based on search term only.`);
+                setLocationError(`Location access denied. Showing results for default/search.`);
                 setUserLocation(null);
                 setIsNearMeSearch(false);
                 setIsGettingLocation(false);
                 initialLocationAttempted.current = true;
                 fetchInitialPharmacies(searchTerm, false, null, searchRadiusKm);
-
             },
             { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
         );
@@ -103,21 +100,14 @@ const PharmacyListPage: React.FC = () => {
     const loadMorePharmacies = async () => {
         if (!nextPageUrl || isLoadingMore) return;
         setIsLoadingMore(true);
-        setError(null);
         try {
             const response = await getPharmacies(nextPageUrl);
             if (response && Array.isArray(response.results)) {
                   setPharmacies(prev => [...prev, ...response.results]);
                   setNextPageUrl(response.next);
-            } else {
-                console.warn("Received unexpected pharmacy response on load more:", response);
-                  setError("Failed to process additional pharmacy data.");
-                  setNextPageUrl(null);
             }
         } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : 'Failed to load more pharmacies.';
-            setError(errorMessage);
-            console.error(err);
+            // Silent fail on load more or show toast
         } finally {
             setIsLoadingMore(false);
         }
@@ -126,7 +116,7 @@ const PharmacyListPage: React.FC = () => {
     useEffect(() => {
         fetchInitialPharmacies(searchTerm, false, null, searchRadiusKm);
         initialLocationAttempted.current = false;
-    }, [fetchInitialPharmacies, searchTerm, searchRadiusKm]);
+    }, []);
 
      const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
          setSearchTerm(event.target.value);
@@ -141,12 +131,12 @@ const PharmacyListPage: React.FC = () => {
          }
      };
 
-     const handleNearMeToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const checked = event.target.checked;
-        setIsNearMeSearch(checked);
+     const handleNearMeToggle = () => {
+        const newStatus = !isNearMeSearch;
+        setIsNearMeSearch(newStatus);
         setLocationError(null);
 
-        if (checked) {
+        if (newStatus) {
             if (!userLocation) {
                 getUserLocation();
             } else {
@@ -166,116 +156,161 @@ const PharmacyListPage: React.FC = () => {
     }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Find a Pharmacy</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20">
+        <HealthHeader
+            title="Find Pharmacies"
+            subtitle="Locate trusted pharmacies nearby or search by name."
+            icon={ShoppingBagIcon}
+            gradientFrom="from-emerald-500"
+            gradientTo="to-teal-600"
+            shadowColor="shadow-emerald-500/30"
+        />
 
-      <div className="mb-8 bg-white p-4 rounded-lg shadow space-y-4">
-         <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-4 items-start md:items-end">
-            <div className="flex-grow w-full">
-                <label htmlFor="search" className="block text-sm font-medium text-gray-700">Search by Name/Address</label>
-                <div className="relative mt-1">
-                    <input
-                        type="text"
-                        id="search"
-                        placeholder="e.g., Vita Pharmacy, Ring Road..."
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        className="input-field pl-10 w-full"
-                    />
-                    <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-                </div>
-            </div>
+        <div className="mb-10 bg-white rounded-3xl shadow-xl shadow-emerald-100/50 p-6 border border-emerald-50 relative overflow-hidden">
+            {/* Decoration */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 pointer-events-none"></div>
 
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end w-full md:w-auto">
-                 <div className="flex items-center pt-5">
-                     <input
-                         type="checkbox"
-                         id="nearMe"
-                         checked={isNearMeSearch}
-                         onChange={handleNearMeToggle}
-                         disabled={isGettingLocation}
-                         className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
-                     />
-                     <label htmlFor="nearMe" className="ml-2 block text-sm text-gray-900 whitespace-nowrap">
-                         Search near me
-                     </label>
-                      {isGettingLocation && <MapPinIcon className="h-4 w-4 text-primary animate-pulse ml-2" />}
-                 </div>
-
-                 {isNearMeSearch && (
-                    <div className='flex-shrink-0'>
-                        <label htmlFor="radius" className="block text-sm font-medium text-gray-700">Radius (km)</label>
+            <form onSubmit={handleSearchSubmit} className="relative z-10 flex flex-col gap-6">
+                <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-grow relative group">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
+                        </div>
                         <input
-                            type="number"
-                            id="radius"
-                            min="1"
-                            max="50"
-                            value={searchRadiusKm}
-                            onChange={handleRadiusChange}
-                            className="input-field mt-1 py-1 w-24"
-                            disabled={!isNearMeSearch || isGettingLocation || isLoading}
+                            type="text"
+                            id="search"
+                            placeholder="Search pharmacy name or address..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            className="block w-full pl-11 pr-4 py-4 bg-gray-50 border-transparent focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 rounded-2xl transition-all text-gray-900 placeholder-gray-400 font-medium"
                         />
                     </div>
-                 )}
-            </div>
+                    <button
+                        type="submit"
+                        disabled={isLoading || isGettingLocation}
+                        className="btn bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-emerald-600/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-70 disabled:scale-100"
+                    >
+                        {isLoading && !isLoadingMore ? 'Searching...' : 'Search'}
+                    </button>
+                </div>
 
-            <button
-                type="submit"
-                className="btn-primary w-full md:w-auto px-6 self-start md:self-end mt-5 md:mt-0"
-                disabled={isLoading || isGettingLocation}
-            >
-                {isLoading && !isLoadingMore ? 'Searching...' : 'Search'}
-            </button>
-         </form>
-          {locationError && (
-              <p className="text-sm text-orange-600 mt-2">{locationError}</p>
-           )}
-      </div>
+                <div className="flex flex-wrap items-center gap-6 pt-2">
+                    <button
+                        type="button"
+                        onClick={handleNearMeToggle}
+                        disabled={isGettingLocation}
+                        className={`flex items-center px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
+                            isNearMeSearch 
+                                ? 'bg-emerald-100 text-emerald-700 border-emerald-200 ring-2 ring-emerald-500/20' 
+                                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        }`}
+                    >
+                        <MapPinIcon className={`h-5 w-5 mr-2 ${isGettingLocation ? 'animate-pulse' : ''}`} />
+                        {isGettingLocation ? 'Locating...' : 'Near Me'}
+                    </button>
 
-      <div>
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Skeleton count={6} height="200px" />
-          </div>
-        ) : error ? (
-           <div className="text-center py-10 bg-red-50 text-red-700 p-4 rounded-md">
-             <p>{error}</p>
-           </div>
-        ) : (
-           <>
-             {totalCount > 0 ? (
-                <p className="text-sm text-muted mb-4">Showing {pharmacies.length} of {totalCount} pharmacies.</p>
-             ) : null}
+                    {isNearMeSearch && (
+                        <div className="flex items-center bg-gray-50 px-4 py-2 rounded-xl border border-gray-200">
+                            <label htmlFor="radius" className="text-sm font-medium text-gray-500 mr-3">Within</label>
+                            <input
+                                type="number"
+                                id="radius"
+                                min="1"
+                                max="50"
+                                value={searchRadiusKm}
+                                onChange={handleRadiusChange}
+                                className="w-16 bg-white border border-gray-300 rounded-lg px-2 py-1 text-center text-sm font-bold text-gray-900 focus:ring-emerald-500 focus:border-emerald-500"
+                            />
+                            <span className="text-sm font-medium text-gray-500 ml-2">km</span>
+                        </div>
+                    )}
+                    
+                    {totalCount > 0 && (
+                        <span className="ml-auto text-sm font-medium text-gray-400 bg-gray-50 px-3 py-1 rounded-lg">
+                            {totalCount} Pharmacies Found
+                        </span>
+                    )}
+                </div>
+                
+                {locationError && (
+                    <p className="text-sm text-red-500 bg-red-50 px-4 py-2 rounded-xl inline-block">
+                        {locationError}
+                    </p>
+                )}
+            </form>
+        </div>
 
-             {pharmacies.length > 0 ? (
-               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                 {pharmacies.map((pharmacy) => (
-                   <PharmacyCard key={pharmacy.id} pharmacy={pharmacy} />
-                 ))}
-               </div>
-             ) : (
-                 <div className="text-center py-10">
-                     <p className="text-muted">No pharmacies found matching your criteria.</p>
-                 </div>
-             )}
+        <div className="min-h-[300px]">
+            {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <Skeleton key={i} className="h-48 rounded-3xl" />
+                    ))}
+                </div>
+            ) : error ? (
+                <div className="text-center py-12">
+                    <div className="bg-red-50 text-red-600 px-6 py-4 rounded-2xl inline-block font-medium">
+                        {error}
+                    </div>
+                </div>
+            ) : pharmacies.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <AnimatePresence>
+                        {pharmacies.map((pharmacy, index) => (
+                            <motion.div
+                                key={pharmacy.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05 }}
+                            >
+                                <PharmacyCard pharmacy={pharmacy} />
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </div>
+            ) : (
+                <EmptyState 
+                    icon={FunnelIcon}
+                    title="No pharmacies found"
+                    description="Try adjusting your search terms or increasing the search radius."
+                    actionLabel="Clear Filters"
+                    onAction={() => {
+                        setSearchTerm('');
+                        setIsNearMeSearch(false);
+                        fetchInitialPharmacies('', false, null, 5);
+                    }}
+                />
+            )}
 
-             {nextPageUrl && (
-                 <div className="mt-8 text-center">
-                     <button
-                         onClick={loadMorePharmacies}
-                         disabled={isLoadingMore}
-                         className="btn-primary px-6 py-2 disabled:opacity-50"
-                     >
-                         {isLoadingMore ? 'Loading...' : 'Load More Pharmacies'}
-                     </button>
-                 </div>
-             )}
-             {isLoadingMore && <p className="text-center text-muted mt-4">Loading more...</p>}
-           </>
-        )}
-      </div>
+            {nextPageUrl && (
+                <div className="mt-12 text-center">
+                    <button
+                        onClick={loadMorePharmacies}
+                        disabled={isLoadingMore}
+                        className="btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-emerald-200 hover:text-emerald-600 shadow-sm px-8 py-3 rounded-xl font-bold transition-all disabled:opacity-50"
+                    >
+                        {isLoadingMore ? (
+                            <span className="flex items-center">
+                                <Spinner size="sm" className="mr-2" /> Loading...
+                            </span>
+                        ) : 'Load More Pharmacies'}
+                    </button>
+                </div>
+            )}
+        </div>
     </div>
   );
+};
+
+// Helper spinner component if not available in global scope yet
+const Spinner = ({ size = 'md', className = '' }: { size?: 'sm'|'md'|'lg', className?: string }) => {
+    const sizeClasses = { sm: 'h-4 w-4', md: 'h-6 w-6', lg: 'h-8 w-8' };
+    return (
+        <svg className={`animate-spin ${sizeClasses[size]} ${className}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+    );
 };
 
 export default PharmacyListPage;
