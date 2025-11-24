@@ -53,7 +53,7 @@ const Header: React.FC = () => {
     { name: 'Doctors', href: '/doctors', icon: UserIcon },
     { name: 'Pharmacies', href: '/pharmacies', icon: ShoppingBagIcon },
     { name: 'Health Tracking', href: '/health/vitals', icon: HeartIcon },
-    { name: 'Emergency', href: '/emergency-contacts', icon: ShieldExclamationIcon },
+    { name: 'Emergency', href: '/emergency', icon: ShieldExclamationIcon },
   ];
 
   return (

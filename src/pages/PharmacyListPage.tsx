@@ -221,25 +221,77 @@ const PharmacyListPage: React.FC = () => {
             onAllow={handleAllowLocation}
         />
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20">
-            <HealthHeader
-            title="Find Pharmacies"
-            subtitle="Locate trusted pharmacies nearby or search by name."
-            icon={ShoppingBagIcon}
-            gradientFrom="from-emerald-500"
-            gradientTo="to-teal-600"
-            shadowColor="shadow-emerald-500/30"
-        />
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50/30 pb-12">
+            {/* Hero Header Section */}
+            <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative bg-gradient-to-br from-emerald-500 via-teal-600 to-green-700 overflow-hidden mb-8"
+            >
+                {/* Animated Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob"></div>
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-2000"></div>
+                    <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-4000"></div>
+                </div>
 
-        <div className="mb-10 bg-white rounded-3xl shadow-xl shadow-emerald-100/50 p-6 border border-emerald-50 relative overflow-hidden">
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="flex items-center gap-5"
+                    >
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl"></div>
+                            <div className="relative p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
+                                <ShoppingBagIcon className="h-12 w-12 text-white" />
+                            </div>
+                        </div>
+                        <div className="text-white">
+                            <h1 className="text-3xl md:text-4xl font-bold mb-2">Find Pharmacies</h1>
+                            <p className="text-white/90 text-base md:text-lg">
+                                Locate trusted pharmacies nearby or search by name
+                            </p>
+                            {totalCount > 0 && (
+                                <motion.div 
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="flex items-center gap-2 mt-3 text-sm text-white/80"
+                                >
+                                    <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
+                                    {totalCount} {totalCount === 1 ? 'Pharmacy' : 'Pharmacies'} Available
+                                </motion.div>
+                            )}
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* Bottom Wave */}
+                <div className="absolute bottom-0 left-0 right-0">
+                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
+                    </svg>
+                </div>
+            </motion.div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mb-10 bg-white rounded-3xl shadow-2xl p-8 border-2 border-emerald-100 relative overflow-hidden"
+        >
             {/* Decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full blur-3xl -mr-16 -mt-16 opacity-60 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-green-100 to-emerald-100 rounded-full blur-3xl -ml-12 -mb-12 opacity-40 pointer-events-none"></div>
 
             <form onSubmit={handleSearchSubmit} className="relative z-10 flex flex-col gap-6">
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="flex-grow relative group">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
+                        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                            <MagnifyingGlassIcon className="h-6 w-6 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
                         </div>
                         <input
                             type="text"
@@ -247,33 +299,45 @@ const PharmacyListPage: React.FC = () => {
                             placeholder="Search pharmacy name or address..."
                             value={searchTerm}
                             onChange={handleSearchChange}
-                            className="block w-full pl-11 pr-4 py-4 bg-gray-50 border-transparent focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 rounded-2xl transition-all text-gray-900 placeholder-gray-400 font-medium"
+                            className="block w-full pl-14 pr-4 py-4 bg-gray-50 border-2 border-transparent focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 rounded-2xl transition-all text-gray-900 placeholder-gray-400 font-medium text-lg shadow-sm hover:shadow-md"
                         />
                     </div>
-                    <button
+                    <motion.button
                         type="submit"
                         disabled={isLoading || isGettingLocation}
-                        className="btn bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-emerald-600/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-70 disabled:scale-100"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="btn bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-10 py-4 rounded-2xl font-bold shadow-xl shadow-emerald-600/30 transition-all disabled:opacity-70 disabled:scale-100"
                     >
-                        {isLoading && !isLoadingMore ? 'Searching...' : 'Search'}
-                    </button>
+                        {isLoading && !isLoadingMore ? (
+                            <span className="flex items-center gap-2">
+                                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Searching...
+                            </span>
+                        ) : 'Search'}
+                    </motion.button>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3 pt-2">
                     <div className="flex items-center gap-2">
-                        <button
+                        <motion.button
                             type="button"
                             onClick={handleNearMeToggle}
                             disabled={isGettingLocation}
-                            className={`flex items-center px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`flex items-center px-5 py-2.5 rounded-xl text-sm font-bold transition-all border-2 shadow-md ${
                                 isNearMeSearch 
-                                    ? 'bg-emerald-100 text-emerald-700 border-emerald-200 ring-2 ring-emerald-500/20' 
-                                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                    ? 'bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 border-emerald-300 ring-2 ring-emerald-500/20 shadow-emerald-200' 
+                                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-emerald-200'
                             }`}
                         >
                             <MapPinIcon className={`h-5 w-5 mr-2 ${isGettingLocation ? 'animate-pulse' : ''}`} />
                             {isGettingLocation ? 'Locating...' : 'Near Me'}
-                        </button>
+                        </motion.button>
                         {!isNearMeSearch && (
                             <div className="relative group">
                                 <InformationCircleIcon className="h-5 w-5 text-gray-400 cursor-help" />
@@ -332,29 +396,47 @@ const PharmacyListPage: React.FC = () => {
                     )}
 
                     {/* View Mode Toggle */}
-                    <div className="ml-auto flex items-center bg-white border border-gray-200 rounded-xl overflow-hidden">
-                        <button
+                    <div className="ml-auto relative flex items-center bg-white border-2 border-gray-200 rounded-xl overflow-hidden p-1 shadow-md">
+                        <motion.button
                             onClick={() => setViewMode('list')}
-                            className={`flex items-center px-3 py-2 text-sm font-medium transition-colors ${
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={`relative flex items-center px-4 py-2 text-sm font-bold transition-all rounded-lg ${
                                 viewMode === 'list'
-                                    ? 'bg-emerald-100 text-emerald-700'
+                                    ? 'text-white'
                                     : 'text-gray-600 hover:bg-gray-50'
                             }`}
                         >
-                            <ListBulletIcon className="h-4 w-4 mr-1.5" />
-                            List
-                        </button>
-                        <button
+                            {viewMode === 'list' && (
+                                <motion.div
+                                    layoutId="viewModeIndicator"
+                                    className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
+                            <ListBulletIcon className="h-5 w-5 mr-2 relative z-10" />
+                            <span className="relative z-10">List</span>
+                        </motion.button>
+                        <motion.button
                             onClick={() => setViewMode('map')}
-                            className={`flex items-center px-3 py-2 text-sm font-medium transition-colors ${
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={`relative flex items-center px-4 py-2 text-sm font-bold transition-all rounded-lg ${
                                 viewMode === 'map'
-                                    ? 'bg-emerald-100 text-emerald-700'
+                                    ? 'text-white'
                                     : 'text-gray-600 hover:bg-gray-50'
                             }`}
                         >
-                            <MapIcon className="h-4 w-4 mr-1.5" />
-                            Map
-                        </button>
+                            {viewMode === 'map' && (
+                                <motion.div
+                                    layoutId="viewModeIndicator"
+                                    className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
+                            <MapIcon className="h-5 w-5 mr-2 relative z-10" />
+                            <span className="relative z-10">Map</span>
+                        </motion.button>
                     </div>
                 </div>
                 
@@ -518,32 +600,48 @@ const PharmacyListPage: React.FC = () => {
                     </motion.div>
                 )}
             </form>
-        </div>
+        </motion.div>
 
-        <div className="min-h-[300px]">
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="min-h-[300px]"
+        >
             {isLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <Skeleton key={i} className="h-48 rounded-3xl" />
+                        <Skeleton key={i} className="h-64 rounded-3xl" />
                     ))}
                 </div>
             ) : error ? (
-                <div className="text-center py-12">
-                    <div className="bg-red-50 text-red-600 px-6 py-4 rounded-2xl inline-block font-medium">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center py-12"
+                >
+                    <div className="bg-gradient-to-r from-red-50 to-pink-50 text-red-600 px-8 py-6 rounded-3xl inline-block font-bold shadow-lg border-2 border-red-200">
                         {error}
                     </div>
-                </div>
+                </motion.div>
             ) : pharmacies.length > 0 ? (
                 <>
                     {viewMode === 'list' ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <AnimatePresence>
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                        >
+                            <AnimatePresence mode="popLayout">
                                 {pharmacies.map((pharmacy, index) => (
                                     <motion.div
                                         key={pharmacy.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
+                                        layout
+                                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.95 }}
                                         transition={{ delay: index * 0.05 }}
+                                        whileHover={{ y: -8 }}
                                     >
                                         <PharmacyCard 
                                             pharmacy={pharmacy}
@@ -553,7 +651,7 @@ const PharmacyListPage: React.FC = () => {
                                     </motion.div>
                                 ))}
                             </AnimatePresence>
-                        </div>
+                        </motion.div>
                     ) : (
                         <div className="space-y-4">
                             <motion.div
@@ -606,20 +704,27 @@ const PharmacyListPage: React.FC = () => {
             )}
 
             {nextPageUrl && (
-                <div className="mt-12 text-center">
-                    <button
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-12 text-center"
+                >
+                    <motion.button
                         onClick={loadMorePharmacies}
                         disabled={isLoadingMore}
-                        className="btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-emerald-200 hover:text-emerald-600 shadow-sm px-8 py-3 rounded-xl font-bold transition-all disabled:opacity-50"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="btn bg-white border-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 shadow-lg hover:shadow-xl px-10 py-4 rounded-2xl font-bold transition-all disabled:opacity-50"
                     >
                         {isLoadingMore ? (
-                            <span className="flex items-center">
-                                <Spinner size="sm" className="mr-2" /> Loading...
+                            <span className="flex items-center gap-2">
+                                <Spinner size="sm" className="mr-2" /> Loading More...
                             </span>
                         ) : 'Load More Pharmacies'}
-                    </button>
-                </div>
+                    </motion.button>
+                </motion.div>
             )}
+        </motion.div>
         </div>
         </div>
     </>

@@ -17,9 +17,12 @@ import {
     EnvelopeIcon,
     PhoneIcon,
     MapPinIcon,
-    CalendarIcon
+    CalendarIcon,
+    LifebuoyIcon,
+    PlusIcon
 } from '@heroicons/react/24/outline';
 import { Tab } from '@headlessui/react';
+import { Link } from 'react-router-dom';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -83,10 +86,10 @@ const ProfilePage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
                 <Skeleton className="h-64 w-full rounded-xl" />
-            </div>
+          </div>
             <div className="md:col-span-2">
                 <Skeleton className="h-96 w-full rounded-xl" />
-            </div>
+          </div>
         </div>
       </div>
     );
@@ -170,6 +173,64 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </div>
 
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-bold text-gray-900 flex items-center">
+                            <LifebuoyIcon className="h-5 w-5 text-orange-500 mr-2" />
+                            Emergency Contacts
+                        </h3>
+                        <Link 
+                            to="/emergency-contacts"
+                            className="text-xs text-primary hover:text-primary-dark font-medium"
+                        >
+                            Manage
+                        </Link>
+                    </div>
+                    {user?.emergency_contacts && user.emergency_contacts.length > 0 ? (
+                        <div className="space-y-3">
+                            {user.emergency_contacts.slice(0, 2).map((contact) => (
+                                <div key={contact.id} className="p-3 bg-orange-50 border border-orange-100 rounded-lg">
+                                    <div className="flex items-start justify-between">
+                                        <div className="flex-1">
+                                            <p className="font-semibold text-gray-900 text-sm">{contact.name}</p>
+                                            <p className="text-xs text-gray-500">{contact.relationship}</p>
+                                            <p className="text-xs text-gray-600 mt-1 flex items-center">
+                                                <PhoneIcon className="h-3 w-3 mr-1" />
+                                                {contact.phone_number}
+                                            </p>
+                                        </div>
+                                        {contact.is_primary && (
+                                            <span className="px-2 py-0.5 bg-orange-500 text-white text-xs rounded-full font-medium">
+                                                Primary
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                            {user.emergency_contacts.length > 2 && (
+                                <Link 
+                                    to="/emergency-contacts"
+                                    className="block text-center text-xs text-primary hover:text-primary-dark font-medium pt-2"
+                                >
+                                    +{user.emergency_contacts.length - 2} more contacts
+                                </Link>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="text-center py-6">
+                            <LifebuoyIcon className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                            <p className="text-sm text-gray-500 mb-3">No emergency contacts yet</p>
+                            <Link 
+                                to="/emergency-contacts"
+                                className="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+                            >
+                                <PlusIcon className="h-4 w-4 mr-2" />
+                                Add Contact
+                            </Link>
+                        </div>
+                    )}
+                </div>
+
                 <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl shadow-lg p-6 text-white">
                     <h3 className="font-bold text-lg mb-2 flex items-center">
                         <ShieldCheckIcon className="h-5 w-5 mr-2" />
@@ -188,7 +249,7 @@ const ProfilePage: React.FC = () => {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <Tab.Group>
                         <Tab.List className="flex border-b border-gray-200 bg-gray-50/50">
-                            {['Personal Information', 'Medical Details', 'Account'].map((category) => (
+                            {['Personal Information', 'Medical Details', 'Emergency Contacts', 'Account'].map((category) => (
                                 <Tab
                                     key={category}
                                     className={({ selected }) =>
@@ -209,45 +270,45 @@ const ProfilePage: React.FC = () => {
                                 {/* Personal Info Panel */}
                                 <Tab.Panel className="space-y-6 focus:outline-none">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <FormInput
-                                            name="first_name"
-                                            label="First Name"
-                                            register={register}
-                                            errors={errors}
+          <FormInput
+            name="first_name"
+            label="First Name"
+            register={register}
+            errors={errors}
                                             disabled={!isEditing || isSubmitting}
                                             icon={<UserCircleIcon className="h-5 w-5 text-gray-400" />}
-                                        />
-                                        <FormInput
-                                            name="last_name"
-                                            label="Last Name"
-                                            register={register}
-                                            errors={errors}
+          />
+          <FormInput
+            name="last_name"
+            label="Last Name"
+            register={register}
+            errors={errors}
                                             disabled={!isEditing || isSubmitting}
                                             icon={<UserCircleIcon className="h-5 w-5 text-gray-400" />}
-                                        />
-                                        <FormInput
-                                            name="phone_number"
-                                            label="Phone Number"
-                                            register={register}
-                                            errors={errors}
+          />
+          <FormInput
+            name="phone_number"
+            label="Phone Number"
+            register={register}
+            errors={errors}
                                             disabled={!isEditing || isSubmitting}
                                             icon={<PhoneIcon className="h-5 w-5 text-gray-400" />}
-                                        />
-                                        <FormInput
-                                            name="date_of_birth"
-                                            label="Date of Birth"
-                                            type="date"
-                                            register={register}
-                                            errors={errors}
+          />
+          <FormInput
+            name="date_of_birth"
+            label="Date of Birth"
+            type="date"
+            register={register}
+            errors={errors}
                                             disabled={!isEditing || isSubmitting}
                                             icon={<CalendarIcon className="h-5 w-5 text-gray-400" />}
-                                        />
+          />
                                         <div className="md:col-span-2">
-                                            <FormInput
-                                                name="address"
-                                                label="Address"
-                                                register={register}
-                                                errors={errors}
+        <FormInput
+          name="address"
+          label="Address"
+          register={register}
+          errors={errors}
                                                 disabled={!isEditing || isSubmitting}
                                                 icon={<MapPinIcon className="h-5 w-5 text-gray-400" />}
                                             />
@@ -258,36 +319,36 @@ const ProfilePage: React.FC = () => {
                                 {/* Medical Details Panel */}
                                 <Tab.Panel className="space-y-6 focus:outline-none">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <FormInput
-                                            name="blood_group"
-                                            label="Blood Group"
-                                            register={register}
-                                            errors={errors}
+          <FormInput
+            name="blood_group"
+            label="Blood Group"
+            register={register}
+            errors={errors}
                                             disabled={!isEditing || isSubmitting}
                                             placeholder="e.g. O+"
-                                        />
-                                        <FormInput
-                                            name="genotype"
-                                            label="Genotype"
-                                            register={register}
-                                            errors={errors}
+          />
+          <FormInput
+            name="genotype"
+            label="Genotype"
+            register={register}
+            errors={errors}
                                             disabled={!isEditing || isSubmitting}
                                             placeholder="e.g. AA"
-                                        />
-                                        <FormInput
-                                            name="weight"
-                                            label="Weight (kg)"
-                                            type="number"
-                                            register={register}
-                                            errors={errors}
+          />
+          <FormInput
+            name="weight"
+            label="Weight (kg)"
+            type="number"
+            register={register}
+            errors={errors}
                                             disabled={!isEditing || isSubmitting}
-                                        />
-                                        <FormInput
-                                            name="height"
-                                            label="Height (cm)"
-                                            type="number"
-                                            register={register}
-                                            errors={errors}
+          />
+          <FormInput
+            name="height"
+            label="Height (cm)"
+            type="number"
+            register={register}
+            errors={errors}
                                             disabled={!isEditing || isSubmitting}
                                         />
                                         <div className="md:col-span-2">
@@ -298,8 +359,8 @@ const ProfilePage: React.FC = () => {
                                                 className="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary disabled:bg-gray-50 disabled:text-gray-500"
                                                 rows={3}
                                                 placeholder="List any known allergies..."
-                                            />
-                                        </div>
+          />
+        </div>
                                         <div className="md:col-span-2">
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Chronic Conditions</label>
                                             <textarea 
@@ -319,6 +380,101 @@ const ProfilePage: React.FC = () => {
                                                 rows={4}
                                                 placeholder="Brief summary of medical history..."
                                             />
+                                        </div>
+                                    </div>
+                                </Tab.Panel>
+
+                                {/* Emergency Contacts Panel */}
+                                <Tab.Panel className="space-y-6 focus:outline-none">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div>
+                                            <h3 className="text-lg font-bold text-gray-900">Emergency Contacts</h3>
+                                            <p className="text-sm text-gray-500 mt-1">Manage your emergency contact information</p>
+                                        </div>
+                                        <Link 
+                                            to="/emergency-contacts"
+                                            className="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+                                        >
+                                            <PlusIcon className="h-4 w-4 mr-2" />
+                                            Add New Contact
+                                        </Link>
+                                    </div>
+
+                                    {user?.emergency_contacts && user.emergency_contacts.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {user.emergency_contacts.map((contact) => (
+                                                <div 
+                                                    key={contact.id} 
+                                                    className="p-5 bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200 rounded-xl hover:shadow-md transition-shadow"
+                                                >
+                                                    <div className="flex items-start justify-between mb-3">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="h-12 w-12 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-lg">
+                                                                {contact.name.charAt(0).toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <h4 className="font-bold text-gray-900">{contact.name}</h4>
+                                                                <p className="text-sm text-gray-600">{contact.relationship}</p>
+                                                            </div>
+                                                        </div>
+                                                        {contact.is_primary && (
+                                                            <span className="px-3 py-1 bg-orange-500 text-white text-xs rounded-full font-medium shadow-sm">
+                                                                Primary
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="space-y-2 mt-4">
+                                                        <div className="flex items-center text-sm text-gray-700">
+                                                            <PhoneIcon className="h-4 w-4 mr-2 text-orange-600" />
+                                                            <a href={`tel:${contact.phone_number}`} className="hover:text-orange-600 font-medium">
+                                                                {contact.phone_number}
+                                                            </a>
+                                                        </div>
+                                                        {contact.email && (
+                                                            <div className="flex items-center text-sm text-gray-700">
+                                                                <EnvelopeIcon className="h-4 w-4 mr-2 text-orange-600" />
+                                                                <a href={`mailto:${contact.email}`} className="hover:text-orange-600">
+                                                                    {contact.email}
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                        {contact.address && (
+                                                            <div className="flex items-start text-sm text-gray-700">
+                                                                <MapPinIcon className="h-4 w-4 mr-2 text-orange-600 mt-0.5 flex-shrink-0" />
+                                                                <span>{contact.address}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                                            <LifebuoyIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                                            <h4 className="text-lg font-semibold text-gray-900 mb-2">No Emergency Contacts Yet</h4>
+                                            <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
+                                                Add emergency contacts so we can reach them quickly in case of an emergency.
+                                            </p>
+                                            <Link 
+                                                to="/emergency-contacts"
+                                                className="inline-flex items-center px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg transition-colors shadow-sm"
+                                            >
+                                                <PlusIcon className="h-5 w-5 mr-2" />
+                                                Add Your First Contact
+                                            </Link>
+                                        </div>
+                                    )}
+
+                                    <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                                        <div className="flex items-start gap-3">
+                                            <LifebuoyIcon className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                                            <div className="text-sm text-blue-800">
+                                                <p className="font-semibold mb-1">Why add emergency contacts?</p>
+                                                <p className="text-blue-700">
+                                                    In case of a medical emergency, we'll notify your emergency contacts with your location and status. 
+                                                    Mark one as "Primary" for priority notifications.
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </Tab.Panel>
@@ -346,7 +502,7 @@ const ProfilePage: React.FC = () => {
                                         </button>
                                         <button 
                                             type="submit"
-                                            disabled={isSubmitting}
+          disabled={isSubmitting}
                                             className="px-6 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary-dark shadow-sm disabled:opacity-50 flex items-center gap-2"
                                         >
                                             {isSubmitting ? (
@@ -357,10 +513,10 @@ const ProfilePage: React.FC = () => {
                                             ) : (
                                                 'Save Changes'
                                             )}
-                                        </button>
+        </button>
                                     </div>
                                 )}
-                            </form>
+      </form>
                         </Tab.Panels>
                     </Tab.Group>
                 </div>

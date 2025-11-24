@@ -1,15 +1,12 @@
 import React, { ReactNode } from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import SOSButton from '../../features/emergency/components/SOSButton';
-import { useAuth } from '../../contexts/AuthContext';
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-    const { isAuthenticated } = useAuth();
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
@@ -17,11 +14,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         {children}
       </main>
       <Footer />
-      {isAuthenticated && (
-          <div className="fixed bottom-8 right-8 z-50">
-              <SOSButton />
-          </div>
-      )}
     </div>
   );
 };

@@ -278,7 +278,7 @@ const DashboardPage: React.FC = () => {
         {
             icon: ShieldExclamationIcon,
             label: 'Emergency',
-            href: '/emergency-contacts',
+            href: '/emergency',
             color: 'from-rose-500 to-red-600',
             description: 'Contacts & SOS features'
         },
@@ -303,58 +303,125 @@ const DashboardPage: React.FC = () => {
     };
 
     return (
-        <motion.div 
-            className="space-y-10 pb-12"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-        >
-            {/* Welcome Header */}
-            <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-gray-900 to-gray-800 shadow-2xl text-white">
-                <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-primary-500 rounded-full opacity-20 blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-blue-500 rounded-full opacity-20 blur-3xl"></div>
-                
-                <div className="relative z-10 px-8 py-10 sm:px-12 sm:py-14">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                        <div>
-                            <div className="flex items-center space-x-2 mb-4">
-                                <span className="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-wider text-primary-300">
-                                    Overview
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 pb-12">
+            {/* Hero Header Section */}
+            <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative bg-gradient-to-br from-primary via-emerald-600 to-teal-600 overflow-hidden mb-8"
+            >
+                {/* Animated Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob"></div>
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-2000"></div>
+                    <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-4000"></div>
+                </div>
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <motion.div 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="flex-1"
+                        >
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.3 }}
+                                className="flex items-center gap-3 mb-4"
+                            >
+                                <span className="px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-xs font-bold uppercase tracking-wider text-white">
+                                    <SparklesIcon className="h-4 w-4 inline mr-2" />
+                                    Dashboard Overview
                                 </span>
-                                <span className="text-sm text-gray-400">{formatDate(new Date().toISOString())}</span>
-                            </div>
-                            <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 font-display tracking-tight">
-                                Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-blue-400">{user?.first_name || 'User'}</span>
+                                <span className="text-sm text-white/80 font-medium">{formatDate(new Date().toISOString())}</span>
+                            </motion.div>
+                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 text-white tracking-tight">
+                                Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'},{' '}
+                                <span className="relative inline-block">
+                                    <span className="relative z-10">{user?.first_name || 'User'}</span>
+                                    <motion.span 
+                                        initial={{ scaleX: 0 }}
+                                        animate={{ scaleX: 1 }}
+                                        transition={{ delay: 0.5, duration: 0.6 }}
+                                        className="absolute bottom-2 left-0 right-0 h-3 bg-yellow-400/30 -z-0"
+                                    ></motion.span>
+                                </span>
                             </h1>
-                            <p className="text-lg text-gray-300 max-w-2xl">
-                                {t('welcomeMessage', "Your health dashboard is updated. You have")} <span className="font-bold text-white">{upcomingAppointments.length} upcoming appointments</span> {t('and')} <span className="font-bold text-white">{activeReminders.length} active reminders</span>.
+                            <p className="text-base md:text-lg text-white/90 max-w-2xl leading-relaxed">
+                                {t('welcomeMessage', "Your health dashboard is updated. You have")}{' '}
+                                <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded">{upcomingAppointments.length} upcoming appointments</span>{' '}
+                                {t('and')}{' '}
+                                <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded">{activeReminders.length} active reminders</span>.
                             </p>
-                        </div>
+                        </motion.div>
                         
                         {/* Notification Badge */}
-                        <Link to="/notifications" className="mt-6 sm:mt-0 relative group">
-                            <div className="p-3 bg-white/10 rounded-2xl border border-white/10 hover:bg-white/20 transition-colors">
-                                <BellAlertIcon className="h-8 w-8 text-white" />
-                                {unreadCount > 0 && (
-                                    <span className="absolute top-2 right-2 block h-3 w-3 rounded-full bg-red-500 ring-2 ring-gray-900 animate-pulse"></span>
-                                )}
-                            </div>
-                        </Link>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            <Link to="/notifications" className="relative group">
+                                <motion.div 
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="p-4 bg-white/20 backdrop-blur-sm rounded-2xl border-2 border-white/30 hover:bg-white/30 transition-all shadow-lg"
+                                >
+                                    <BellAlertIcon className="h-8 w-8 text-white" />
+                                    {unreadCount > 0 && (
+                                        <motion.span 
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            className="absolute -top-1 -right-1 flex items-center justify-center h-6 w-6 rounded-full bg-red-500 text-white text-xs font-bold ring-4 ring-primary animate-pulse"
+                                        >
+                                            {unreadCount > 9 ? '9+' : unreadCount}
+                                        </motion.span>
+                                    )}
+                                </motion.div>
+                            </Link>
+                        </motion.div>
                     </div>
+                </div>
+
+                {/* Bottom Wave */}
+                <div className="absolute bottom-0 left-0 right-0">
+                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
+                    </svg>
                 </div>
             </motion.div>
 
+            {/* Main Content */}
+            <motion.div 
+                className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+            >
+
             {/* Quick Actions */}
             <motion.div variants={itemVariants}>
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900 flex items-center font-display">
-                        <SparklesIcon className="h-6 w-6 text-primary mr-2" />
-                        Quick Actions
-                    </h2>
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="p-3 bg-gradient-to-br from-primary to-teal-600 rounded-2xl shadow-lg">
+                        <SparklesIcon className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-bold text-gray-900 font-display">Quick Actions</h2>
+                        <p className="text-gray-600 text-sm">Access key features instantly</p>
+                    </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {quickActions.map((action) => (
-                        <QuickActionButton key={action.label} {...action} />
+                    {quickActions.map((action, index) => (
+                        <motion.div
+                            key={action.label}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 + index * 0.1 }}
+                        >
+                            <QuickActionButton {...action} />
+                        </motion.div>
                     ))}
                 </div>
             </motion.div>
@@ -576,7 +643,8 @@ const DashboardPage: React.FC = () => {
                     </div>
                 </motion.div>
             </div>
-        </motion.div>
+            </motion.div>
+        </div>
     );
 };
 

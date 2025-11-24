@@ -55,7 +55,7 @@ const EmergencyContactForm: React.FC<EmergencyContactFormProps> = ({
         setError(null);
     }, [initialData]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
 
@@ -110,7 +110,25 @@ const EmergencyContactForm: React.FC<EmergencyContactFormProps> = ({
                 </div>
                 <div>
                     <label htmlFor="relationship" className="block text-sm font-medium text-gray-700">Relationship *</label>
-                    <input type="text" name="relationship" id="relationship" required value={formData.relationship} onChange={handleChange} className="input-field mt-1" />
+                    <select 
+                        name="relationship" 
+                        id="relationship" 
+                        required 
+                        value={formData.relationship} 
+                        onChange={handleChange} 
+                        className="input-field mt-1"
+                    >
+                        <option value="">Select relationship...</option>
+                        <option value="spouse">Spouse</option>
+                        <option value="parent">Parent</option>
+                        <option value="child">Child</option>
+                        <option value="sibling">Sibling</option>
+                        <option value="relative">Other Relative</option>
+                        <option value="friend">Friend</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="caregiver">Caregiver</option>
+                        <option value="other">Other</option>
+                    </select>
                 </div>
                 <div>
                     <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700">Primary Phone *</label>
