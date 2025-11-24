@@ -159,11 +159,17 @@ const AdminRoute: React.FC = () => {
 };
 
 const LandingPageRoute: React.FC = () => {
-  const { isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) return <LoadingScreen />;
 
-  // Allow both authenticated and non-authenticated users to view landing page
+  // If authenticated, redirect to the appropriate dashboard
+  if (isAuthenticated) {
+    const dashboardRoute = getDashboardRoute(user);
+    return <Navigate to={dashboardRoute} replace />;
+  }
+
+  // Otherwise show the landing page
   return <LandingPage />;
 };
 

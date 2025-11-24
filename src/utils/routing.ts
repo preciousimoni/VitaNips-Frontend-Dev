@@ -16,7 +16,8 @@ export const getDashboardRoute = (user: User | null): string => {
   }
 
   // Doctors get doctor dashboard
-  if (user.doctor_id) {
+  // Check for is_doctor flag or doctor profile existence
+  if (user.is_doctor || user.doctor_id) {
     return '/doctor/dashboard';
   }
 
