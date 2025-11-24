@@ -1,8 +1,8 @@
-// src/pages/DashboardPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { motion } from 'framer-motion';
 import {
     HeartIcon,
     ShieldExclamationIcon,
@@ -15,6 +15,8 @@ import {
     PlusIcon,
     ClockIcon,
     CheckCircleIcon,
+    UserIcon,
+    SparklesIcon
 } from '@heroicons/react/24/outline';
 
 import { getUserAppointments } from '../api/appointments';
@@ -29,6 +31,25 @@ import Spinner from '../components/ui/Spinner';
 import Skeleton from '../components/ui/Skeleton';
 import { formatDate, formatTime } from '../utils/date';
 
+// Animation variants
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1
+    }
+};
+
 // Reusable Card Header Component
 const DashboardCardHeader: React.FC<{
     icon: React.ElementType;
@@ -37,17 +58,25 @@ const DashboardCardHeader: React.FC<{
     isLoading: boolean;
     gradient: string;
     badgeColor: string;
-}> = ({ icon: Icon, title, count, isLoading, gradient, badgeColor }) => (
-    <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-800 flex items-center">
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mr-3 shadow-md`}>
+    actionLink?: string;
+}> = ({ icon: Icon, title, count, isLoading, gradient, badgeColor, actionLink }) => (
+    <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold text-gray-900 flex items-center font-display">
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mr-3 shadow-lg shadow-primary/10`}>
                 <Icon className="h-5 w-5 text-white" />
             </div>
             <span>{title}</span>
         </h2>
-        <span className={`text-sm font-bold ${badgeColor} px-3 py-1 rounded-full`}>
-            {isLoading ? <Spinner size="sm" /> : count}
-        </span>
+        <div className="flex items-center space-x-3">
+            <span className={`text-xs font-bold ${badgeColor} px-3 py-1 rounded-full border border-opacity-20`}>
+                {isLoading ? <Spinner size="sm" /> : `${count} Active`}
+            </span>
+            {actionLink && (
+                <Link to={actionLink} className="text-gray-400 hover:text-primary transition-colors">
+                    <ArrowRightIcon className="h-5 w-5" />
+                </Link>
+            )}
+        </div>
     </div>
 );
 
@@ -58,12 +87,15 @@ const EmptyState: React.FC<{
     actionLabel: string;
     actionLink: string;
 }> = ({ icon: Icon, message, actionLabel, actionLink }) => (
-    <div className="text-center py-6">
-        <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-            <Icon className="h-8 w-8 text-gray-400" />
+    <div className="text-center py-8 px-4 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+        <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center mx-auto mb-3 shadow-sm border border-gray-100">
+            <Icon className="h-6 w-6 text-gray-400" />
         </div>
-        <p className="text-gray-500 text-sm mb-2">{message}</p>
-        <Link to={actionLink} className="btn btn-outline text-sm py-2 px-4">
+        <p className="text-gray-500 text-sm mb-4 font-medium">{message}</p>
+        <Link 
+            to={actionLink} 
+            className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-primary-700 bg-primary-50 hover:bg-primary-100 transition-colors"
+        >
             {actionLabel}
         </Link>
     </div>
@@ -79,13 +111,16 @@ const QuickActionButton: React.FC<{
 }> = ({ icon: Icon, label, href, color, description }) => (
     <Link
         to={href}
-        className="card group cursor-pointer p-5 hover:scale-[1.02] transition-all duration-200"
+        className="group relative overflow-hidden bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
     >
-        <div className={`inline-flex items-center justify-center w-11 h-11 rounded-xl mb-3 bg-gradient-to-br ${color} shadow-md`}>
-            <Icon className="h-5 w-5 text-white" />
+        <div className={`absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br ${color} opacity-10 rounded-full group-hover:opacity-20 transition-opacity`}></div>
+        
+        <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 bg-gradient-to-br ${color} shadow-md group-hover:scale-110 transition-transform duration-300`}>
+            <Icon className="h-6 w-6 text-white" />
         </div>
-        <h3 className="font-semibold text-gray-800 mb-1 group-hover:text-primary transition-colors">{label}</h3>
-        <p className="text-sm text-gray-600">{description}</p>
+        
+        <h3 className="font-bold text-gray-900 mb-1 text-lg group-hover:text-primary transition-colors">{label}</h3>
+        <p className="text-sm text-gray-500 relative z-10">{description}</p>
     </Link>
 );
 
@@ -192,36 +227,36 @@ const DashboardPage: React.FC = () => {
             name: t('healthSections.vitals.name', 'Log Vitals'), 
             path: '/health/vitals', 
             icon: HeartIcon, 
-            description: t('healthSections.vitals.description', "Track your BP, heart rate, etc."),
-            gradient: 'from-blue-500 to-blue-600'
+            description: t('healthSections.vitals.description', "Track your BP & heart rate."),
+            gradient: 'from-rose-500 to-red-600'
         },
         { 
-            name: t('healthSections.symptoms.name', 'Log Symptoms'), 
+            name: t('healthSections.symptoms.name', 'Symptoms'), 
             path: '/health/symptoms', 
             icon: ShieldExclamationIcon, 
             description: t('healthSections.symptoms.description', "Record how you're feeling."),
-            gradient: 'from-orange-500 to-orange-600'
+            gradient: 'from-orange-500 to-amber-600'
         },
         { 
-            name: t('healthSections.food.name', 'Food Journal'), 
+            name: t('healthSections.food.name', 'Nutrition'), 
             path: '/health/food', 
             icon: ShoppingBagIcon, 
             description: t('healthSections.food.description', "Keep a journal of your meals."),
-            gradient: 'from-green-500 to-green-600'
+            gradient: 'from-emerald-500 to-green-600'
         },
         { 
-            name: t('healthSections.exercise.name', 'Exercise Log'), 
+            name: t('healthSections.exercise.name', 'Exercise'), 
             path: '/health/exercise', 
             icon: FireIcon, 
-            description: t('healthSections.exercise.description', "Monitor your physical activity."),
-            gradient: 'from-red-500 to-red-600'
+            description: t('healthSections.exercise.description', "Monitor physical activity."),
+            gradient: 'from-blue-500 to-indigo-600'
         },
         { 
-            name: t('healthSections.sleep.name', 'Sleep Log'), 
+            name: t('healthSections.sleep.name', 'Sleep'), 
             path: '/health/sleep', 
             icon: MoonIcon, 
-            description: t('healthSections.sleep.description', "Track your sleep patterns."),
-            gradient: 'from-purple-500 to-purple-600'
+            description: t('healthSections.sleep.description', "Track your sleep quality."),
+            gradient: 'from-violet-500 to-purple-600'
         },
     ];
 
@@ -230,304 +265,318 @@ const DashboardPage: React.FC = () => {
             icon: PlusIcon,
             label: 'Book Appointment',
             href: '/doctors',
-            color: 'from-blue-500 to-blue-600',
-            description: 'Schedule with a doctor'
+            color: 'from-blue-500 to-cyan-500',
+            description: 'Find and schedule with a doctor'
         },
         {
             icon: ShoppingBagIcon,
-            label: 'Find Pharmacy',
+            label: 'Pharmacy',
             href: '/pharmacies',
-            color: 'from-green-500 to-green-600',
-            description: 'Locate nearby pharmacies'
+            color: 'from-emerald-500 to-teal-500',
+            description: 'Order refills & find locations'
         },
         {
             icon: ShieldExclamationIcon,
-            label: 'Emergency Contacts',
+            label: 'Emergency',
             href: '/emergency-contacts',
-            color: 'from-red-500 to-red-600',
-            description: 'Manage emergency contacts'
+            color: 'from-rose-500 to-red-600',
+            description: 'Contacts & SOS features'
         },
         {
             icon: BellAlertIcon,
-            label: 'Set Reminders',
+            label: 'Reminders',
             href: '/medication-reminders',
-            color: 'from-yellow-500 to-yellow-600',
-            description: 'Create medication reminders'
+            color: 'from-amber-500 to-orange-500',
+            description: 'Manage your daily schedule'
         },
     ];
-
-    
 
     const getAppointmentStatusIcon = (status: string) => {
         switch (status) {
             case 'confirmed':
-                return <CheckCircleIcon className="h-4 w-4 text-green-500" />;
+                return <CheckCircleIcon className="h-5 w-5 text-emerald-500" />;
             case 'scheduled':
-                return <ClockIcon className="h-4 w-4 text-blue-500" />;
+                return <ClockIcon className="h-5 w-5 text-blue-500" />;
             default:
-                return <ClockIcon className="h-4 w-4 text-gray-500" />;
+                return <ClockIcon className="h-5 w-5 text-gray-400" />;
         }
     };
 
     return (
-        <div className="space-y-8 pb-8">
-            {/* Welcome Header with hero gradient */}
-            <div className="hero-gradient text-white p-8 rounded-3xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.3)] relative overflow-hidden">
-                <div className="absolute inset-0 bg-white/5" />
-                <div className="relative z-10">
-                    <h1 className="text-3xl sm:text-4xl font-extrabold mb-2">
-                        {t('dashboardTitle', 'Welcome back')}, {user?.first_name || user?.username || 'User'}!
-                    </h1>
-                    <p className="text-lg text-white/90">
-                        {t('welcomeMessage', 'Here\'s what\'s happening with your health today.')}
-                    </p>
+        <motion.div 
+            className="space-y-10 pb-12"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
+            {/* Welcome Header */}
+            <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-gray-900 to-gray-800 shadow-2xl text-white">
+                <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-primary-500 rounded-full opacity-20 blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-blue-500 rounded-full opacity-20 blur-3xl"></div>
+                
+                <div className="relative z-10 px-8 py-10 sm:px-12 sm:py-14">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <div>
+                            <div className="flex items-center space-x-2 mb-4">
+                                <span className="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-wider text-primary-300">
+                                    Overview
+                                </span>
+                                <span className="text-sm text-gray-400">{formatDate(new Date().toISOString())}</span>
+                            </div>
+                            <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 font-display tracking-tight">
+                                Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-blue-400">{user?.first_name || 'User'}</span>
+                            </h1>
+                            <p className="text-lg text-gray-300 max-w-2xl">
+                                {t('welcomeMessage', "Your health dashboard is updated. You have")} <span className="font-bold text-white">{upcomingAppointments.length} upcoming appointments</span> {t('and')} <span className="font-bold text-white">{activeReminders.length} active reminders</span>.
+                            </p>
+                        </div>
+                        
+                        {/* Notification Badge */}
+                        <Link to="/notifications" className="mt-6 sm:mt-0 relative group">
+                            <div className="p-3 bg-white/10 rounded-2xl border border-white/10 hover:bg-white/20 transition-colors">
+                                <BellAlertIcon className="h-8 w-8 text-white" />
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-2 right-2 block h-3 w-3 rounded-full bg-red-500 ring-2 ring-gray-900 animate-pulse"></span>
+                                )}
+                            </div>
+                        </Link>
+                    </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Quick Actions */}
-            <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                    <span className="gradient-text">Quick Actions</span>
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <motion.div variants={itemVariants}>
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 flex items-center font-display">
+                        <SparklesIcon className="h-6 w-6 text-primary mr-2" />
+                        Quick Actions
+                    </h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {quickActions.map((action) => (
                         <QuickActionButton key={action.label} {...action} />
                     ))}
                 </div>
-            </div>
+            </motion.div>
 
-            {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Upcoming Appointments Card */}
-                <div className="card p-6">
-                    <DashboardCardHeader
-                        icon={CalendarDaysIcon}
-                        title="Appointments"
-                        count={upcomingAppointments.length}
-                        isLoading={appointmentsLoading}
-                        gradient="from-blue-500 to-blue-600"
-                        badgeColor="bg-blue-50 text-blue-700"
-                    />
-                    
-                    {appointmentsLoading ? (
-                        <div className="space-y-3">
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-4 w-1/2" />
-                            <Skeleton className="h-4 w-2/3" />
-                        </div>
-                    ) : appointmentsError ? (
-                        <ErrorMessage message={appointmentsError} onRetry={fetchDashboardData} />
-                    ) : upcomingAppointments.length > 0 && nextAppointment ? (
-                        <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                                <p className="text-gray-700 font-medium">
-                                    Next: <span className="text-primary font-semibold">Dr. {nextAppointment.doctor}</span>
-                                </p>
-                                {getAppointmentStatusIcon(nextAppointment.status)}
-                            </div>
-                            <p className="text-sm text-gray-600 flex items-center">
-                                <ClockIcon className="h-4 w-4 mr-1" />
-                                {formatDate(nextAppointment.date)} at {formatTime(nextAppointment.start_time)}
-                            </p>
-                            <p className="text-xs text-gray-500 truncate">
-                                Reason: {nextAppointment.reason}
-                            </p>
-                        </div>
-                    ) : (
-                        <EmptyState
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left Column - Appointments & Vitals */}
+                <motion.div variants={itemVariants} className="lg:col-span-2 space-y-8">
+                    {/* Upcoming Appointments */}
+                    <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100">
+                        <DashboardCardHeader
                             icon={CalendarDaysIcon}
-                            message="No upcoming appointments"
-                            actionLabel="Book an appointment"
-                            actionLink="/doctors"
+                            title="Appointments"
+                            count={upcomingAppointments.length}
+                            isLoading={appointmentsLoading}
+                            gradient="from-blue-500 to-cyan-500"
+                            badgeColor="text-blue-600 bg-blue-50 border-blue-100"
+                            actionLink="/appointments"
                         />
-                    )}
-                    
-                    <Link to="/appointments" className="mt-5 inline-flex items-center text-sm text-primary hover:text-primary-dark font-medium group">
-                        View All Appointments
-                        <ArrowRightIcon className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                </div>
-
-                {/* Medication Reminders Card */}
-                <div className="card p-6">
-                    <DashboardCardHeader
-                        icon={BellAlertIcon}
-                        title="Reminders"
-                        count={activeReminders.length}
-                        isLoading={remindersLoading}
-                        gradient="from-green-500 to-green-600"
-                        badgeColor="bg-green-50 text-green-700"
-                    />
-                    
-                    {remindersLoading ? (
-                        <div className="space-y-3">
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-4 w-1/2" />
-                            <Skeleton className="h-4 w-2/3" />
-                        </div>
-                    ) : remindersError ? (
-                        <ErrorMessage message={remindersError} onRetry={fetchDashboardData} />
-                    ) : activeReminders.length > 0 && nextReminder ? (
-                        <div className="space-y-3">
-                            <p className="text-gray-700 font-medium">
-                                Next: <span className="text-green-600 font-semibold">{nextReminder.medication_display.name}</span>
-                            </p>
-                            <p className="text-sm text-gray-600 flex items-center">
-                                <ClockIcon className="h-4 w-4 mr-1" />
-                                {formatTime(nextReminder.time_of_day)}, {nextReminder.frequency}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                                Dosage: {nextReminder.dosage}
-                            </p>
-                        </div>
-                    ) : (
-                        <EmptyState
-                            icon={BellAlertIcon}
-                            message="No active medication reminders"
-                            actionLabel="Set up reminders"
-                            actionLink="/medication-reminders"
-                        />
-                    )}
-                    
-                    <Link to="/medication-reminders" className="mt-5 inline-flex items-center text-sm text-green-600 hover:text-green-700 font-medium group">
-                        Manage Reminders
-                        <ArrowRightIcon className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                </div>
-
-                {/* Recent Vital Signs Card */}
-                <div className="card p-6">
-                    <DashboardCardHeader
-                        icon={HeartIcon}
-                        title="Vital Signs"
-                        count={recentVitals.length}
-                        isLoading={vitalsLoading}
-                        gradient="from-red-500 to-red-600"
-                        badgeColor="bg-red-50 text-red-700"
-                    />
-                    
-                    {vitalsLoading ? (
-                        <div className="space-y-3">
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-4 w-1/2" />
-                            <Skeleton className="h-4 w-2/3" />
-                        </div>
-                    ) : vitalsError ? (
-                        <ErrorMessage message={vitalsError} onRetry={fetchDashboardData} />
-                    ) : recentVitals.length > 0 ? (
-                        <div className="space-y-3">
-                            {recentVitals.map((vital, index) => (
-                                <div key={vital.id} className={`${index > 0 ? 'border-t border-gray-100 pt-3' : ''}`}>
-                                    <p className="text-sm text-gray-600 flex items-center mb-1">
-                                        <ClockIcon className="h-3 w-3 mr-1" />
-                                        {formatDate(vital.date_recorded.split('T')[0])}
-                                    </p>
-                                    <div className="grid grid-cols-2 gap-2 text-xs">
-                                        {vital.systolic_pressure && vital.diastolic_pressure && (
+                        
+                        {appointmentsLoading ? (
+                            <div className="space-y-4">
+                                <Skeleton className="h-24 w-full rounded-2xl" />
+                                <Skeleton className="h-24 w-full rounded-2xl" />
+                            </div>
+                        ) : appointmentsError ? (
+                            <ErrorMessage message={appointmentsError} onRetry={fetchDashboardData} />
+                        ) : upcomingAppointments.length > 0 && nextAppointment ? (
+                            <div className="space-y-4">
+                                <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-full -mr-10 -mt-10 opacity-50 blur-2xl"></div>
+                                    
+                                    <div className="relative z-10">
+                                        <div className="flex justify-between items-start mb-4">
                                             <div>
-                                                <span className="text-gray-500">BP:</span>
-                                                <span className="ml-1 font-semibold text-red-600">
-                                                    {vital.systolic_pressure}/{vital.diastolic_pressure}
-                                                </span>
+                                                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Up Next</span>
+                                                <h3 className="text-xl font-bold text-gray-900 mt-1">Dr. {nextAppointment.doctor}</h3>
+                                                <p className="text-blue-600/80 text-sm font-medium">{nextAppointment.specialty || 'General Practice'}</p>
                                             </div>
-                                        )}
-                                        {vital.heart_rate && (
-                                            <div>
-                                                <span className="text-gray-500">HR:</span>
-                                                <span className="ml-1 font-semibold text-red-600">
-                                                    {vital.heart_rate} bpm
-                                                </span>
+                                            <div className="bg-white p-2 rounded-lg shadow-sm">
+                                                {getAppointmentStatusIcon(nextAppointment.status)}
                                             </div>
-                                        )}
-                                        {vital.temperature && (
-                                            <div>
-                                                <span className="text-gray-500">Temp:</span>
-                                                <span className="ml-1 font-semibold text-red-600">
-                                                    {vital.temperature}°C
-                                                </span>
+                                        </div>
+                                        
+                                        <div className="flex items-center space-x-6 text-sm text-gray-600 mb-4">
+                                            <div className="flex items-center">
+                                                <CalendarDaysIcon className="h-5 w-5 mr-2 text-blue-500" />
+                                                {formatDate(nextAppointment.date)}
                                             </div>
-                                        )}
-                                        {vital.weight && (
-                                            <div>
-                                                <span className="text-gray-500">Weight:</span>
-                                                <span className="ml-1 font-semibold text-red-600">
-                                                    {vital.weight} kg
-                                                </span>
+                                            <div className="flex items-center">
+                                                <ClockIcon className="h-5 w-5 mr-2 text-blue-500" />
+                                                {formatTime(nextAppointment.start_time)}
+                                            </div>
+                                        </div>
+                                        
+                                        {nextAppointment.appointment_type === 'virtual' && (
+                                            <div className="inline-flex items-center px-3 py-1 rounded-md bg-purple-100 text-purple-700 text-xs font-bold">
+                                                Virtual Consultation
                                             </div>
                                         )}
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <EmptyState
+                                
+                                {upcomingAppointments.length > 1 && (
+                                    <div className="pl-4 border-l-2 border-gray-100 space-y-4 mt-4">
+                                        {upcomingAppointments.slice(1, 3).map(apt => (
+                                            <div key={apt.id} className="flex justify-between items-center group cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                                                <div>
+                                                    <p className="font-bold text-gray-800 text-sm">Dr. {apt.doctor}</p>
+                                                    <p className="text-xs text-gray-500">{formatDate(apt.date)}</p>
+                                                </div>
+                                                <ArrowRightIcon className="h-4 w-4 text-gray-300 group-hover:text-primary transition-colors" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <EmptyState
+                                icon={CalendarDaysIcon}
+                                message="No upcoming appointments scheduled."
+                                actionLabel="Book Appointment"
+                                actionLink="/doctors"
+                            />
+                        )}
+                    </div>
+
+                    {/* Vital Signs */}
+                    <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100">
+                        <DashboardCardHeader
                             icon={HeartIcon}
-                            message="No vital signs recorded yet"
-                            actionLabel="Log vitals"
+                            title="Recent Vitals"
+                            count={recentVitals.length}
+                            isLoading={vitalsLoading}
+                            gradient="from-rose-500 to-red-600"
+                            badgeColor="text-rose-600 bg-rose-50 border-rose-100"
                             actionLink="/health/vitals"
                         />
-                    )}
-                    
-                    <Link to="/health/vitals" className="mt-5 inline-flex items-center text-sm text-red-600 hover:text-red-700 font-medium group">
-                        View All Vitals
-                        <ArrowRightIcon className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                </div>
-            </div>
+                        
+                        {vitalsLoading ? (
+                            <div className="grid grid-cols-3 gap-4">
+                                <Skeleton className="h-24 rounded-2xl" />
+                                <Skeleton className="h-24 rounded-2xl" />
+                                <Skeleton className="h-24 rounded-2xl" />
+                            </div>
+                        ) : vitalsError ? (
+                            <ErrorMessage message={vitalsError} onRetry={fetchDashboardData} />
+                        ) : recentVitals.length > 0 ? (
+                            <div className="space-y-4">
+                                {recentVitals.map((vital, index) => (
+                                    <div key={vital.id} className={`flex items-center justify-between p-4 rounded-2xl ${index === 0 ? 'bg-rose-50/50 border border-rose-100' : 'bg-gray-50 border border-gray-100'}`}>
+                                        <div className="flex items-center">
+                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${index === 0 ? 'bg-rose-100 text-rose-600' : 'bg-white text-gray-400'}`}>
+                                                <HeartIcon className="h-5 w-5" />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{formatDate(vital.date_recorded.split('T')[0])}</p>
+                                                <div className="flex items-center space-x-3 mt-1">
+                                                    {vital.systolic_pressure && (
+                                                        <span className="font-bold text-gray-900">{vital.systolic_pressure}/{vital.diastolic_pressure} <span className="text-xs font-normal text-gray-500">mmHg</span></span>
+                                                    )}
+                                                    {vital.heart_rate && (
+                                                        <span className="font-bold text-gray-900">{vital.heart_rate} <span className="text-xs font-normal text-gray-500">bpm</span></span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {index === 0 && (
+                                            <span className="text-xs font-bold text-rose-600 bg-white px-2 py-1 rounded-md shadow-sm">Latest</span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <EmptyState
+                                icon={HeartIcon}
+                                message="Start tracking your health today."
+                                actionLabel="Log First Entry"
+                                actionLink="/health/vitals"
+                            />
+                        )}
+                    </div>
+                </motion.div>
 
-            {/* Notifications Overview Card */}
-            <div className="card bg-gradient-to-br from-yellow-50 to-orange-50 p-6 border-l-4 border-yellow-500">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white w-12 h-12 rounded-xl flex items-center justify-center mr-4 shadow-md">
-                            <BellAlertIcon className="h-6 w-6" />
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-bold text-gray-800">Notifications</h3>
-                            <p className="text-sm text-gray-600">
-                                {notificationsLoading ? (
-                                    <Spinner size="sm" />
-                                ) : (
-                                    <>
-                                        You have <span className="font-bold text-yellow-700">{unreadCount}</span> unread notification{unreadCount !== 1 ? 's' : ''}
-                                    </>
-                                )}
-                            </p>
+                {/* Right Column - Reminders & Health Log Links */}
+                <motion.div variants={itemVariants} className="space-y-8">
+                    {/* Medication Reminders */}
+                    <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100">
+                        <DashboardCardHeader
+                            icon={BellAlertIcon}
+                            title="Medications"
+                            count={activeReminders.length}
+                            isLoading={remindersLoading}
+                            gradient="from-amber-500 to-orange-500"
+                            badgeColor="text-amber-600 bg-amber-50 border-amber-100"
+                            actionLink="/medication-reminders"
+                        />
+                        
+                        {remindersLoading ? (
+                            <div className="space-y-4">
+                                <Skeleton className="h-20 w-full rounded-2xl" />
+                                <Skeleton className="h-20 w-full rounded-2xl" />
+                            </div>
+                        ) : remindersError ? (
+                            <ErrorMessage message={remindersError} onRetry={fetchDashboardData} />
+                        ) : activeReminders.length > 0 && nextReminder ? (
+                            <div className="relative bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-100 overflow-hidden">
+                                <div className="relative z-10">
+                                    <p className="text-amber-800 text-xs font-bold uppercase mb-2">Next Dose</p>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-1">{nextReminder.medication_display.name}</h3>
+                                    <div className="flex items-center text-amber-700 font-medium mt-2">
+                                        <ClockIcon className="h-5 w-5 mr-2" />
+                                        {formatTime(nextReminder.time_of_day)}
+                                    </div>
+                                    <p className="text-sm text-gray-500 mt-3 pt-3 border-t border-amber-200/50">
+                                        {nextReminder.dosage} • {nextReminder.frequency}
+                                    </p>
+                                </div>
+                                <div className="absolute right-0 bottom-0 opacity-10">
+                                    <ShoppingBagIcon className="h-32 w-32 -mr-8 -mb-8 text-amber-600" />
+                                </div>
+                            </div>
+                        ) : (
+                            <EmptyState
+                                icon={BellAlertIcon}
+                                message="No active reminders."
+                                actionLabel="Add Medication"
+                                actionLink="/medication-reminders"
+                            />
+                        )}
+                    </div>
+
+                    {/* Health Log Shortcuts */}
+                    <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100">
+                        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center font-display">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mr-3 shadow-lg shadow-primary/10">
+                                <PlusIcon className="h-5 w-5 text-white" />
+                            </div>
+                            Log Health Data
+                        </h2>
+                        <div className="space-y-3">
+                            {healthSections.map((section) => (
+                                <Link
+                                    key={section.path}
+                                    to={section.path}
+                                    className="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-colors group"
+                                >
+                                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${section.gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
+                                        <section.icon className="h-5 w-5 text-white" />
+                                    </div>
+                                    <div className="ml-4 flex-1">
+                                        <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">{section.name}</h4>
+                                        <p className="text-xs text-gray-500 truncate">{section.description}</p>
+                                    </div>
+                                    <ArrowRightIcon className="h-4 w-4 text-gray-300 group-hover:text-primary transition-colors" />
+                                </Link>
+                            ))}
                         </div>
                     </div>
-                    <Link 
-                        to="/settings/notifications" 
-                        className="btn btn-primary text-sm py-2 px-4 whitespace-nowrap"
-                    >
-                        View All
-                    </Link>
-                </div>
+                </motion.div>
             </div>
-
-            {/* Health Tracking Section */}
-            <div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-5 flex items-center">
-                    <span className="gradient-text">Health Tracking & Logs</span>
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {healthSections.map((section) => (
-                        <Link
-                            key={section.path}
-                            to={section.path}
-                            className="card p-6 group hover:scale-[1.02] transition-all duration-200"
-                        >
-                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${section.gradient} flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform`}>
-                                <section.icon className="h-6 w-6 text-white" />
-                            </div>
-                            <h3 className="text-lg font-bold text-gray-800 mb-1 group-hover:text-primary transition-colors">
-                                {section.name}
-                            </h3>
-                            <p className="text-sm text-gray-600">{section.description}</p>
-                        </Link>
-                    ))}
-                </div>
-            </div>
-        </div>
+        </motion.div>
     );
 };
 

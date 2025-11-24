@@ -1,7 +1,6 @@
-// src/features/health/components/ExerciseLogListItem.tsx
 import React from 'react';
 import { ExerciseLog } from '../../../types/healthLogs';
-import { PencilSquareIcon, TrashIcon, ClockIcon, FireIcon, MapIcon } from '@heroicons/react/24/outline'; // Fire for calories, Map for distance
+import { PencilSquareIcon, TrashIcon, ClockIcon, FireIcon, MapIcon, BoltIcon } from '@heroicons/react/24/outline';
 
 interface ExerciseLogListItemProps {
     log: ExerciseLog;
@@ -9,44 +8,86 @@ interface ExerciseLogListItemProps {
     onDelete: (id: number) => void;
 }
 
-const formatDateTimeDisplay = (isoString: string | null | undefined) => {
-    if (!isoString) return 'N/A';
-    try {
-        return new Date(isoString).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-    } catch { return isoString; }
+const formatTime = (isoString: string) => {
+    try { return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch { return ''; }
+};
+
+const formatDay = (isoString: string) => {
+    try { return new Date(isoString).toLocaleDateString('en-US', { day: 'numeric' }); } catch { return ''; }
+};
+
+const formatMonth = (isoString: string) => {
+    try { return new Date(isoString).toLocaleDateString('en-US', { month: 'short' }); } catch { return ''; }
 };
 
 const ExerciseLogListItem: React.FC<ExerciseLogListItemProps> = ({ log, onEdit, onDelete }) => {
     return (
-        <div className="bg-white p-4 rounded-lg shadow hover:shadow-lg transition-all duration-200 ease-in-out mb-3 border-l-4 border-red-500">
-            <div className="flex justify-between items-start">
-                <div className="flex-grow">
-                     <div className="flex items-center mb-1">
-                        <FireIcon className="h-5 w-5 mr-2 flex-shrink-0 text-red-600" />
-                        <h3 className="font-semibold text-gray-800 text-md">{log.activity_type}</h3>
-                    </div>
-                    <p className="text-xs text-gray-600 ml-7 mt-1 flex items-center">
-                        <ClockIcon className="h-3 w-3 mr-1"/> On: {formatDateTimeDisplay(log.datetime)}
-                    </p>
-                    <p className="text-sm text-gray-700 ml-7">
-                        Duration: <span className="font-medium">{log.duration} minutes</span>
-                    </p>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 ml-7 mt-1 text-xs text-gray-500">
-                        {log.calories_burned && <span><FireIcon className="h-3 w-3 inline mr-0.5 text-orange-500"/> {log.calories_burned} kcal</span>}
-                        {log.distance && <span><MapIcon className="h-3 w-3 inline mr-0.5 text-blue-500"/> {log.distance} km</span>}
-                    </div>
-                    {log.notes && (
-                        <p className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200 ml-7">
-                            Notes: {log.notes}
-                        </p>
+        <div className="flex items-start group">
+            {/* Date */}
+            <div className="flex-shrink-0 w-16 flex flex-col items-center justify-center mr-6 pt-1">
+                <span className="text-xs font-bold text-blue-500 uppercase tracking-wider">{formatMonth(log.datetime)}</span>
+                <span className="text-2xl font-bold text-gray-900">{formatDay(log.datetime)}</span>
+                <span className="text-xs text-gray-400 mt-1">{formatTime(log.datetime)}</span>
+            </div>
+
+            {/* Content */}
+            <div className="flex-grow">
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-bold text-gray-900">{log.activity_type}</h3>
+                    {log.intensity && (
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            log.intensity === 'high' ? 'bg-red-100 text-red-800' :
+                            log.intensity === 'medium' ? 'bg-orange-100 text-orange-800' :
+                            'bg-green-100 text-green-800'
+                        }`}>
+                            {log.intensity} Intensity
+                        </span>
                     )}
                 </div>
-                <div className="flex flex-col space-y-1 flex-shrink-0 ml-2">
-                    <button onClick={() => onEdit(log)} className="p-1.5 rounded-full text-blue-600 hover:text-blue-800 hover:bg-blue-100" title="Edit Log"><PencilSquareIcon className="h-5 w-5" /></button>
-                    <button onClick={() => onDelete(log.id)} className="p-1.5 rounded-full text-red-500 hover:text-red-700 hover:bg-red-100" title="Delete Log"><TrashIcon className="h-5 w-5" /></button>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-3">
+                    <div className="flex items-center text-sm text-gray-700">
+                        <ClockIcon className="h-5 w-5 mr-2 text-blue-400" />
+                        <span className="font-bold">{log.duration}</span> <span className="text-gray-500 ml-1">min</span>
+                    </div>
+                    {log.calories_burned && (
+                        <div className="flex items-center text-sm text-gray-700">
+                            <FireIcon className="h-5 w-5 mr-2 text-orange-400" />
+                            <span className="font-bold">{log.calories_burned}</span> <span className="text-gray-500 ml-1">kcal</span>
+                        </div>
+                    )}
+                    {log.distance && (
+                        <div className="flex items-center text-sm text-gray-700">
+                            <MapIcon className="h-5 w-5 mr-2 text-green-400" />
+                            <span className="font-bold">{log.distance}</span> <span className="text-gray-500 ml-1">km</span>
+                        </div>
+                    )}
+                    {log.heart_rate_avg && (
+                        <div className="flex items-center text-sm text-gray-700">
+                            <BoltIcon className="h-5 w-5 mr-2 text-rose-400" />
+                            <span className="font-bold">{log.heart_rate_avg}</span> <span className="text-gray-500 ml-1">bpm</span>
+                        </div>
+                    )}
                 </div>
+
+                {log.notes && (
+                    <p className="text-sm text-gray-500 italic bg-gray-50 p-2 rounded-lg border border-gray-100">
+                        "{log.notes}"
+                    </p>
+                )}
+            </div>
+
+             {/* Actions */}
+             <div className="flex flex-col space-y-2 ml-4 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                <button onClick={(e) => { e.stopPropagation(); onEdit(log); }} className="p-2 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Edit">
+                    <PencilSquareIcon className="h-5 w-5" />
+                </button>
+                <button onClick={(e) => { e.stopPropagation(); onDelete(log.id); }} className="p-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete">
+                    <TrashIcon className="h-5 w-5" />
+                </button>
             </div>
         </div>
     );
 };
+
 export default ExerciseLogListItem;

@@ -1,0 +1,60 @@
+import React from 'react';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+
+interface HealthHeaderProps {
+    title: string;
+    subtitle: string;
+    icon: React.ElementType;
+    gradientFrom: string;
+    gradientTo: string;
+    shadowColor: string;
+    actionButton?: React.ReactNode;
+}
+
+const HealthHeader: React.FC<HealthHeaderProps> = ({
+    title,
+    subtitle,
+    icon: Icon,
+    gradientFrom,
+    gradientTo,
+    shadowColor,
+    actionButton,
+}) => {
+    return (
+        <div className="mb-8">
+            <Link to="/dashboard" className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors hover:-translate-x-1 duration-200">
+                <ArrowLeftIcon className="h-4 w-4 mr-1" /> Back to Dashboard
+            </Link>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <motion.div 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex items-center"
+                >
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gradientFrom} ${gradientTo} flex items-center justify-center shadow-lg ${shadowColor} mr-5 transform hover:scale-105 transition-transform duration-300`}>
+                        <Icon className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900 font-display tracking-tight">{title}</h1>
+                        <p className="text-base text-gray-500 mt-1 font-medium">{subtitle}</p>
+                    </div>
+                </motion.div>
+                {actionButton && (
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                        {actionButton}
+                    </motion.div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default HealthHeader;
+

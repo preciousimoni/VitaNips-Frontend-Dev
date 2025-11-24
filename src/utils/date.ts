@@ -1,24 +1,66 @@
-// src/utils/date.ts
+import { format, parseISO, isValid, parse } from 'date-fns';
 
-export const formatTime = (timeStr: string | null | undefined): string => {
-    if (!timeStr) return 'N/A';
-    const [hours, minutes] = timeStr.split(':');
-    const date = new Date();
-    date.setHours(parseInt(hours, 10));
-    date.setMinutes(parseInt(minutes, 10));
-    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+/**
+ * Formats a date string or Date object into a readable string.
+ * Defaults to 'MMMM d, yyyy' (e.g., October 27, 2023).
+ */
+export const formatDate = (date: string | Date | null | undefined, formatStr: string = 'MMMM d, yyyy'): string => {
+    if (!date) return 'N/A';
+    
+    let parsedDate: Date;
+    if (typeof date === 'string') {
+        // Handle YYYY-MM-DD manually if needed to prevent timezone shifts for pure dates
+        if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+             // Treat YYYY-MM-DD as local date for display purposes to avoid "previous day" issues
+             // or append T00:00:00 to ensure it parses
+             parsedDate = parseISO(date); 
+        } else {
+            parsedDate = parseISO(date);
+        }
+        
+        if (!isValid(parsedDate)) {
+             parsedDate = new Date(date);
+        }
+    } else {
+        parsedDate = date;
+    }
+
+    if (!isValid(parsedDate)) return 'Invalid Date';
+    return format(parsedDate, formatStr);
 };
 
-export const formatDate = (dateStr: string | null | undefined) => {
-    if (!dateStr) {
-        return 'N/A';
+/**
+ * Formats a time string (HH:mm, HH:mm:ss) or Date object into 'h:mm a' (e.g., 10:30 AM).
+ */
+export const formatTime = (time: string | Date | null | undefined): string => {
+    if (!time) return 'N/A';
+
+    let parsedDate: Date;
+    
+    if (typeof time === 'string') {
+        if (time.includes('T')) {
+             // It's likely a full ISO string
+             parsedDate = parseISO(time);
+        } else if (time.includes(':')) {
+            // Handle HH:mm or HH:mm:ss strings
+            // We use a reference date (today) to parse the time component
+            const now = new Date();
+            const timeParts = time.split(':');
+            if (timeParts.length >= 2) {
+                now.setHours(parseInt(timeParts[0], 10));
+                now.setMinutes(parseInt(timeParts[1], 10));
+                now.setSeconds(timeParts[2] ? parseInt(timeParts[2], 10) : 0);
+                parsedDate = now;
+            } else {
+                return time; // Return original if parsing fails logic
+            }
+        } else {
+            return time;
+        }
+    } else {
+        parsedDate = time;
     }
-    // Assuming dateStr is in 'YYYY-MM-DD' format
-    const date = new Date(dateStr + 'T00:00:00Z'); // Use T00:00:00Z to ensure it's parsed as UTC
-    return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        timeZone: 'UTC', // Specify UTC timezone
-    });
+
+    if (!isValid(parsedDate)) return 'Invalid Time';
+    return format(parsedDate, 'h:mm a');
 };

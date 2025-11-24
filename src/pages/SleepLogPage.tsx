@@ -1,7 +1,7 @@
-// src/pages/SleepLogPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { MoonIcon as PageIcon } from '@heroicons/react/24/outline';
+import { MoonIcon, StarIcon } from '@heroicons/react/24/outline';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getSleepLogs, createSleepLog, updateSleepLog, deleteSleepLog } from '../api/healthLogs';
 import { SleepLog, SleepPayload } from '../types/healthLogs';
 import SleepLogListItem from '../features/health/components/SleepLogListItem';
@@ -10,10 +10,13 @@ import Modal from '../components/common/Modal';
 import toast from 'react-hot-toast';
 import Skeleton from '../components/ui/Skeleton';
 import ConfirmDialog from '../components/common/ConfirmDialog';
+import EmptyState from '../components/common/EmptyState';
+import Spinner from '../components/ui/Spinner';
+import HealthHeader from '../features/health/components/HealthHeader';
+import HealthStatCard from '../features/health/components/HealthStatCard';
 
 const SleepLogPage: React.FC = () => {
     const [logs, setLogs] = useState<SleepLog[]>([]);
-    // ... (isLoading, error, nextPageUrl, isLoadingMore, totalCount states) ...
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [nextPageUrl, setNextPageUrl] = useState<string | null>(null);
@@ -28,20 +31,37 @@ const SleepLogPage: React.FC = () => {
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
+    // Stats
+    const [avgDuration, setAvgDuration] = useState<string>('0');
+
     const sortLogs = (data: SleepLog[]): SleepLog[] => {
-        // Sort by wake_time descending, or sleep_time if wake_time is same
         return [...data].sort((a, b) => new Date(b.wake_time).getTime() - new Date(a.wake_time).getTime());
     };
 
+    const calculateStats = (data: SleepLog[]) => {
+        if (data.length === 0) return;
+        // Simple average of duration for visible logs
+        const totalHrs = data.reduce((acc, log) => {
+            if (log.duration) return acc + log.duration;
+            // Fallback calculation if needed
+             const diff = new Date(log.wake_time).getTime() - new Date(log.sleep_time).getTime();
+             const hrs = diff / (1000 * 60 * 60);
+             return acc + (hrs > 0 ? hrs : 0);
+        }, 0);
+        const avg = totalHrs / data.length;
+        setAvgDuration(avg.toFixed(1));
+    };
+
     const fetchLogs = useCallback(async (url: string | null = null, reset: boolean = true) => {
-        // ... (fetch logic using getSleepLogs) ...
         if (url) setIsLoadingMore(true);
         else if (reset) { setIsLoading(true); setLogs([]); setNextPageUrl(null); setTotalCount(0); }
         setError(null);
         try {
             const response = await getSleepLogs(url);
             const newLogs = response.results;
-            setLogs(prev => sortLogs(url ? [...prev, ...newLogs] : newLogs));
+            const sorted = sortLogs(url ? [...prev, ...newLogs] : newLogs);
+            setLogs(sorted);
+            if (reset) calculateStats(sorted);
             setNextPageUrl(response.next);
             if (reset || !url) setTotalCount(response.count);
         } catch (err) {
@@ -50,7 +70,6 @@ const SleepLogPage: React.FC = () => {
         } finally { setIsLoading(false); setIsLoadingMore(false); }
     }, []);
 
-
     useEffect(() => { fetchLogs(null, true); }, [fetchLogs]);
 
     const handleAddClick = () => { setEditingLog(null); setShowFormModal(true); };
@@ -58,56 +77,52 @@ const SleepLogPage: React.FC = () => {
     const handleFormCancel = () => { setShowFormModal(false); setEditingLog(null); };
 
     const handleFormSubmit = async (payload: SleepPayload, id?: number) => {
-        // ... (submit logic using createSleepLog/updateSleepLog) ...
         setIsSubmittingForm(true);
         try {
             if (id) await updateSleepLog(id, payload);
             else await createSleepLog(payload);
             setShowFormModal(false); setEditingLog(null);
             await fetchLogs(null, true);
+            toast.success(id ? "Sleep log updated" : "Sleep logged");
+        } catch (err) {
+            toast.error("Failed to save sleep log");
         } finally { setIsSubmittingForm(false); }
     };
 
-    const handleDelete = (id: number) => {
-        setDeleteId(id);
-        setShowConfirmDialog(true);
-    };
-
+    const handleDelete = (id: number) => { setDeleteId(id); setShowConfirmDialog(true); };
     const handleConfirmDelete = async () => {
         if (!deleteId) return;
         setIsDeleting(true);
         const toastId = toast.loading("Deleting entry...");
         try {
             await deleteSleepLog(deleteId);
-            toast.success("Sleep log entry deleted.", { id: toastId });
-            setShowConfirmDialog(false);
-            setDeleteId(null);
-            await fetchLogs(null, true);
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "Failed to delete entry.";
-            toast.error(errorMessage, { id: toastId });
-        } finally {
-            setIsDeleting(false);
-        }
+            toast.success("Entry deleted.", { id: toastId });
+            setShowConfirmDialog(false); setDeleteId(null); await fetchLogs(null, true);
+        } catch (err) { toast.error("Failed to delete.", { id: toastId }); } finally { setIsDeleting(false); }
     };
-
-    const handleCancelDelete = () => {
-        setShowConfirmDialog(false);
-        setDeleteId(null);
-    };
-
+    const handleCancelDelete = () => { setShowConfirmDialog(false); setDeleteId(null); };
 
     return (
-        <div className="max-w-3xl mx-auto">
-            <div className="flex justify-between items-center mb-6 pb-3 border-b">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center">
-                    <PageIcon className="h-7 w-7 mr-2 text-indigo-600" /> Sleep Log
-                </h1>
-                <button onClick={handleAddClick} className="btn-primary inline-flex items-center px-3 py-2 sm:px-4 text-sm">
-                    <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2" /> Log Sleep
-                </button>
-            </div>
-             <Modal isOpen={showFormModal} onClose={handleFormCancel} title={editingLog ? 'Edit Sleep Log' : 'Log New Sleep Entry'}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20">
+            <HealthHeader
+                title="Sleep Tracker"
+                subtitle="Understand your rest patterns for better recovery."
+                icon={MoonIcon}
+                gradientFrom="from-violet-500"
+                gradientTo="to-purple-600"
+                shadowColor="shadow-violet-500/30"
+                actionButton={
+                    <button 
+                        onClick={handleAddClick} 
+                        className="btn bg-gray-900 hover:bg-gray-800 text-white shadow-lg shadow-gray-900/20 border-none rounded-xl px-5 py-3 flex items-center transition-all hover:scale-105 active:scale-95"
+                    >
+                        <PlusIcon className="h-5 w-5 mr-2" />
+                        Log Sleep
+                    </button>
+                }
+            />
+
+            <Modal isOpen={showFormModal} onClose={handleFormCancel} title={editingLog ? 'Edit Sleep Entry' : 'Log New Sleep Entry'}>
                 <SleepLogForm initialData={editingLog} onSubmit={handleFormSubmit} onCancel={handleFormCancel} isSubmitting={isSubmittingForm} />
             </Modal>
 
@@ -115,25 +130,95 @@ const SleepLogPage: React.FC = () => {
                 isOpen={showConfirmDialog}
                 onClose={handleCancelDelete}
                 onConfirm={handleConfirmDelete}
-                title="Delete Sleep Log Entry"
-                message="Are you sure you want to delete this sleep log entry? This action cannot be undone."
+                title="Delete Entry?"
+                message="Are you sure you want to delete this sleep record?"
                 confirmText="Delete"
                 cancelText="Cancel"
                 isLoading={isDeleting}
+                isDangerous={true}
             />
 
-            {/* Loading, Error, Empty States, List, Pagination */}
-            {isLoading && logs.length === 0 && (
-                <div className="space-y-4">
-                    <Skeleton count={5} height="80px" />
+             {/* Stats */}
+             {!isLoading && logs.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <HealthStatCard 
+                        label="Avg Duration (Recent)" 
+                        value={avgDuration} 
+                        unit="hrs" 
+                        icon={MoonIcon} 
+                        color="violet" 
+                        delay={0.1}
+                    />
+                     <HealthStatCard 
+                        label="Total Nights Logged" 
+                        value={totalCount} 
+                        unit="nights" 
+                        icon={StarIcon} 
+                        color="purple" 
+                        delay={0.2}
+                    />
                 </div>
             )}
-            {error && <p className="text-red-600 text-center py-4 bg-red-50 rounded my-4">{error}</p>}
-            {!isLoading && !error && logs.length === 0 && ( /* Empty state */ <div className="text-center py-16 bg-gray-50 rounded-lg shadow"> <PageIcon className="mx-auto h-12 w-12 text-gray-400" /> <h3 className="mt-2 text-lg font-medium text-gray-900">No Sleep Logged</h3> <p className="mt-1 text-sm text-gray-500">Track your sleep patterns for better health insights.</p> <div className="mt-6"> <button onClick={handleAddClick} type="button" className="btn-primary inline-flex items-center"> <PlusIcon className="h-5 w-5 mr-2" /> Log Your First Night </button> </div> </div> )}
-            {logs.length > 0 && ( <div className="space-y-3"> {logs.map(log => <SleepLogListItem key={log.id} log={log} onEdit={handleEditClick} onDelete={handleDelete} />)} </div> )}
-            {nextPageUrl && !isLoadingMore && ( <div className="mt-8 text-center"> <button onClick={() => fetchLogs(nextPageUrl, false)} className="btn-primary px-6 py-2 text-sm"> Load More </button> </div> )}
-            {isLoadingMore && <p className="text-muted text-center py-4 text-sm">Loading more...</p>}
-            {!isLoading && !nextPageUrl && totalCount > 0 && logs.length === totalCount && ( <p className="text-center text-muted text-sm mt-6">All {totalCount} entries loaded.</p> )}
+
+            <div className="bg-white rounded-3xl shadow-xl shadow-gray-100/50 border border-gray-100 overflow-hidden min-h-[400px] relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-violet-50 rounded-full blur-3xl opacity-50 pointer-events-none -mr-16 -mt-16"></div>
+
+                {isLoading && logs.length === 0 && (
+                     <div className="p-6 space-y-6">
+                        <Skeleton className="h-24 rounded-2xl" />
+                        <Skeleton className="h-24 rounded-2xl" />
+                    </div>
+                )}
+                
+                {error && <div className="p-12 text-center"><div className="bg-red-50 text-red-600 px-6 py-4 rounded-2xl inline-block font-medium">{error}</div></div>}
+
+                {!isLoading && !error && logs.length === 0 && (
+                    <EmptyState 
+                        icon={MoonIcon}
+                        title="No sleep records"
+                        description="Log your sleep start and wake times to track quality."
+                        actionLabel="Log First Night"
+                        onAction={handleAddClick}
+                    />
+                )}
+
+                {logs.length > 0 && (
+                    <div className="relative z-10">
+                        <div className="px-6 py-5 border-b border-gray-50 flex justify-between items-center bg-white/80 backdrop-blur-sm sticky top-0 z-20">
+                            <h3 className="font-bold text-gray-900">Sleep History</h3>
+                            <span className="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded-md">{totalCount} Records</span>
+                        </div>
+                        <div className="divide-y divide-gray-50">
+                            <AnimatePresence>
+                                {logs.map((log, index) => (
+                                    <motion.div
+                                        key={log.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                        className="hover:bg-gray-50/80 transition-colors"
+                                    >
+                                        <div className="p-5">
+                                            <SleepLogListItem log={log} onEdit={handleEditClick} onDelete={handleDelete} />
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                )}
+
+                {nextPageUrl && !isLoadingMore && (
+                     <div className="p-8 border-t border-gray-50 text-center bg-gray-50/30">
+                         <button onClick={() => fetchLogs(nextPageUrl, false)} className="btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-6 py-2.5 rounded-xl text-sm font-medium shadow-sm">Load Older Records</button>
+                    </div>
+                )}
+                
+                {isLoadingMore && <div className="p-8 text-center text-gray-500 text-sm"><Spinner size="sm" className="inline-block mr-2" /> Loading more entries...</div>}
+            </div>
+             {!isLoading && !nextPageUrl && totalCount > 0 && logs.length === totalCount && (
+                <p className="text-center text-gray-300 text-xs mt-8 font-medium uppercase tracking-widest">End of History</p>
+            )}
         </div>
     );
 };
