@@ -1,13 +1,27 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { MagnifyingGlassIcon, MapPinIcon, FunnelIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, MapPinIcon, FunnelIcon, ExclamationTriangleIcon, InformationCircleIcon, XMarkIcon, MapIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { ShoppingBagIcon } from '@heroicons/react/24/solid';
 import { getPharmacies } from '../api/pharmacy';
 import { Pharmacy } from '../types/pharmacy';
 import PharmacyCard from '../features/pharmacy/components/PharmacyCard';
+import PharmacyLocator from '../features/pharmacy/components/PharmacyLocator';
 import Skeleton from '../components/ui/Skeleton';
 import HealthHeader from '../features/health/components/HealthHeader';
 import EmptyState from '../components/common/EmptyState';
+import LocationPermissionModal from '../components/common/LocationPermissionModal';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Popular Nigerian city coordinates for quick selection
+const POPULAR_CITIES = [
+    { name: 'Lagos', lat: 6.5244, lon: 3.3792, country: '🇳🇬' },
+    { name: 'Abuja', lat: 9.0765, lon: 7.3986, country: '🇳🇬' },
+    { name: 'Port Harcourt', lat: 4.8156, lon: 7.0498, country: '🇳🇬' },
+    { name: 'Kano', lat: 12.0022, lon: 8.5920, country: '🇳🇬' },
+    { name: 'Ibadan', lat: 7.3775, lon: 3.9470, country: '🇳🇬' },
+    { name: 'Benin City', lat: 6.3350, lon: 5.6037, country: '🇳🇬' },
+    { name: 'Kaduna', lat: 10.5105, lon: 7.4165, country: '🇳🇬' },
+    { name: 'Enugu', lat: 6.5244, lon: 7.5105, country: '🇳🇬' },
+];
 
 const PharmacyListPage: React.FC = () => {
     const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
@@ -23,6 +37,13 @@ const PharmacyListPage: React.FC = () => {
     const [isNearMeSearch, setIsNearMeSearch] = useState<boolean>(false);
     const [isGettingLocation, setIsGettingLocation] = useState<boolean>(false);
     const [locationError, setLocationError] = useState<string | null>(null);
+    const [showLocationHelp, setShowLocationHelp] = useState<boolean>(false);
+    const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
+    const [showManualLocation, setShowManualLocation] = useState<boolean>(false);
+    const [manualLat, setManualLat] = useState<string>('');
+    const [manualLon, setManualLon] = useState<string>('');
+    const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+    const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(null);
 
     const initialLocationAttempted = useRef(false);
 
@@ -86,7 +107,16 @@ const PharmacyListPage: React.FC = () => {
                 }
             },
             (geoError) => {
-                setLocationError(`Location access denied. Showing results for default/search.`);
+                let errorMessage = 'Unable to access your location.';
+                if (geoError.code === geoError.PERMISSION_DENIED) {
+                    errorMessage = 'Location access denied. Please enable location permissions in your browser settings.';
+                    setShowLocationHelp(true);
+                } else if (geoError.code === geoError.POSITION_UNAVAILABLE) {
+                    errorMessage = 'Location information is unavailable. Please try again.';
+                } else if (geoError.code === geoError.TIMEOUT) {
+                    errorMessage = 'Location request timed out. Please try again.';
+                }
+                setLocationError(errorMessage);
                 setUserLocation(null);
                 setIsNearMeSearch(false);
                 setIsGettingLocation(false);
@@ -137,7 +167,11 @@ const PharmacyListPage: React.FC = () => {
         setLocationError(null);
 
         if (newStatus) {
-            if (!userLocation) {
+            if (!userLocation && !initialLocationAttempted.current) {
+                // Show modal on first attempt
+                setShowLocationModal(true);
+            } else if (!userLocation) {
+                // Subsequent attempts, just try to get location
                 getUserLocation();
             } else {
                  fetchInitialPharmacies(searchTerm, true, userLocation, searchRadiusKm);
@@ -145,6 +179,27 @@ const PharmacyListPage: React.FC = () => {
         } else {
             fetchInitialPharmacies(searchTerm, false, null, searchRadiusKm);
         }
+    };
+
+    const handleAllowLocation = () => {
+        setShowLocationModal(false);
+        getUserLocation();
+    };
+
+    const handleManualLocationSubmit = () => {
+        const lat = parseFloat(manualLat);
+        const lon = parseFloat(manualLon);
+        
+        if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+            setLocationError('Please enter valid coordinates (Latitude: -90 to 90, Longitude: -180 to 180)');
+            return;
+        }
+        
+        setUserLocation({ lat, lon });
+        setLocationError(null);
+        setShowManualLocation(false);
+        setIsNearMeSearch(true);
+        fetchInitialPharmacies(searchTerm, true, { lat, lon }, searchRadiusKm);
     };
 
     const handleRadiusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,8 +211,18 @@ const PharmacyListPage: React.FC = () => {
     }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20">
-        <HealthHeader
+    <>
+        <LocationPermissionModal
+            isOpen={showLocationModal}
+            onClose={() => {
+                setShowLocationModal(false);
+                setIsNearMeSearch(false);
+            }}
+            onAllow={handleAllowLocation}
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20">
+            <HealthHeader
             title="Find Pharmacies"
             subtitle="Locate trusted pharmacies nearby or search by name."
             icon={ShoppingBagIcon}
@@ -194,48 +259,263 @@ const PharmacyListPage: React.FC = () => {
                     </button>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-6 pt-2">
-                    <button
-                        type="button"
-                        onClick={handleNearMeToggle}
-                        disabled={isGettingLocation}
-                        className={`flex items-center px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
-                            isNearMeSearch 
-                                ? 'bg-emerald-100 text-emerald-700 border-emerald-200 ring-2 ring-emerald-500/20' 
-                                : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                        }`}
-                    >
-                        <MapPinIcon className={`h-5 w-5 mr-2 ${isGettingLocation ? 'animate-pulse' : ''}`} />
-                        {isGettingLocation ? 'Locating...' : 'Near Me'}
-                    </button>
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={handleNearMeToggle}
+                            disabled={isGettingLocation}
+                            className={`flex items-center px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
+                                isNearMeSearch 
+                                    ? 'bg-emerald-100 text-emerald-700 border-emerald-200 ring-2 ring-emerald-500/20' 
+                                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                            }`}
+                        >
+                            <MapPinIcon className={`h-5 w-5 mr-2 ${isGettingLocation ? 'animate-pulse' : ''}`} />
+                            {isGettingLocation ? 'Locating...' : 'Near Me'}
+                        </button>
+                        {!isNearMeSearch && (
+                            <div className="relative group">
+                                <InformationCircleIcon className="h-5 w-5 text-gray-400 cursor-help" />
+                                <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 bg-gray-900 text-white text-xs rounded-lg p-3 shadow-xl z-10">
+                                    <p className="font-semibold mb-1">Find pharmacies near you</p>
+                                    <p className="text-gray-300">Click "Near Me" to find pharmacies within your specified radius. We'll need your location permission to show the closest options.</p>
+                                    <div className="absolute left-4 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {!isNearMeSearch && !userLocation && (
+                        <button
+                            type="button"
+                            onClick={() => setShowManualLocation(true)}
+                            className="flex items-center px-3 py-2 rounded-xl text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 hover:border-gray-300 transition-all"
+                        >
+                            <MapPinIcon className="h-4 w-4 mr-1.5" />
+                            Set Location Manually
+                        </button>
+                    )}
 
                     {isNearMeSearch && (
-                        <div className="flex items-center bg-gray-50 px-4 py-2 rounded-xl border border-gray-200">
-                            <label htmlFor="radius" className="text-sm font-medium text-gray-500 mr-3">Within</label>
-                            <input
-                                type="number"
-                                id="radius"
-                                min="1"
-                                max="50"
-                                value={searchRadiusKm}
-                                onChange={handleRadiusChange}
-                                className="w-16 bg-white border border-gray-300 rounded-lg px-2 py-1 text-center text-sm font-bold text-gray-900 focus:ring-emerald-500 focus:border-emerald-500"
-                            />
-                            <span className="text-sm font-medium text-gray-500 ml-2">km</span>
-                        </div>
+                        <>
+                            <div className="flex items-center bg-gray-50 px-4 py-2 rounded-xl border border-gray-200">
+                                <label htmlFor="radius" className="text-sm font-medium text-gray-500 mr-3">Within</label>
+                                <input
+                                    type="number"
+                                    id="radius"
+                                    min="1"
+                                    max="50"
+                                    value={searchRadiusKm}
+                                    onChange={handleRadiusChange}
+                                    className="w-16 bg-white border border-gray-300 rounded-lg px-2 py-1 text-center text-sm font-bold text-gray-900 focus:ring-emerald-500 focus:border-emerald-500"
+                                />
+                                <span className="text-sm font-medium text-gray-500 ml-2">km</span>
+                            </div>
+                            {userLocation && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="flex items-center bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-medium border border-emerald-200"
+                                >
+                                    <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></div>
+                                    Location detected
+                                </motion.div>
+                            )}
+                        </>
                     )}
                     
                     {totalCount > 0 && (
-                        <span className="ml-auto text-sm font-medium text-gray-400 bg-gray-50 px-3 py-1 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 bg-gray-50 px-3 py-1 rounded-lg">
                             {totalCount} Pharmacies Found
                         </span>
                     )}
+
+                    {/* View Mode Toggle */}
+                    <div className="ml-auto flex items-center bg-white border border-gray-200 rounded-xl overflow-hidden">
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`flex items-center px-3 py-2 text-sm font-medium transition-colors ${
+                                viewMode === 'list'
+                                    ? 'bg-emerald-100 text-emerald-700'
+                                    : 'text-gray-600 hover:bg-gray-50'
+                            }`}
+                        >
+                            <ListBulletIcon className="h-4 w-4 mr-1.5" />
+                            List
+                        </button>
+                        <button
+                            onClick={() => setViewMode('map')}
+                            className={`flex items-center px-3 py-2 text-sm font-medium transition-colors ${
+                                viewMode === 'map'
+                                    ? 'bg-emerald-100 text-emerald-700'
+                                    : 'text-gray-600 hover:bg-gray-50'
+                            }`}
+                        >
+                            <MapIcon className="h-4 w-4 mr-1.5" />
+                            Map
+                        </button>
+                    </div>
                 </div>
                 
+                {showManualLocation && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-blue-50 border border-blue-200 rounded-2xl p-4"
+                    >
+                        <div className="flex items-start">
+                            <InformationCircleIcon className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-blue-900 mb-3">Enter Your Location Manually</p>
+                                <div className="bg-white/50 rounded-lg p-3 border border-blue-100 space-y-3">
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">Latitude</label>
+                                            <input
+                                                type="number"
+                                                step="any"
+                                                placeholder="e.g., 40.7128"
+                                                value={manualLat}
+                                                onChange={(e) => setManualLat(e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">Longitude</label>
+                                            <input
+                                                type="number"
+                                                step="any"
+                                                placeholder="e.g., -74.0060"
+                                                value={manualLon}
+                                                onChange={(e) => setManualLon(e.target.value)}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mb-3">
+                                        <p className="text-xs font-medium text-gray-700 mb-2">Or select a city:</p>
+                                        <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                                            {POPULAR_CITIES.map((city) => (
+                                                <button
+                                                    key={city.name}
+                                                    onClick={() => {
+                                                        setManualLat(city.lat.toString());
+                                                        setManualLon(city.lon.toString());
+                                                    }}
+                                                    className="text-xs bg-white hover:bg-blue-50 text-gray-700 hover:text-blue-700 border border-gray-200 hover:border-blue-300 px-2 py-1.5 rounded-lg transition-colors text-left flex items-center"
+                                                >
+                                                    <span className="mr-1">{city.country}</span>
+                                                    <span className="truncate">{city.name}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                                        💡 Tip: You can find your exact coordinates by searching "my coordinates" on Google or using Google Maps.
+                                    </p>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={handleManualLocationSubmit}
+                                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors"
+                                        >
+                                            Search with These Coordinates
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setShowManualLocation(false);
+                                                setManualLat('');
+                                                setManualLon('');
+                                            }}
+                                            className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm font-medium transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    setShowManualLocation(false);
+                                    setManualLat('');
+                                    setManualLon('');
+                                }}
+                                className="text-blue-400 hover:text-blue-600 transition-colors ml-2"
+                            >
+                                <XMarkIcon className="h-5 w-5" />
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+
                 {locationError && (
-                    <p className="text-sm text-red-500 bg-red-50 px-4 py-2 rounded-xl inline-block">
-                        {locationError}
-                    </p>
+                    <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-amber-50 border border-amber-200 rounded-2xl p-4"
+                    >
+                        <div className="flex items-start">
+                            <ExclamationTriangleIcon className="h-5 w-5 text-amber-600 mr-3 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-amber-900 mb-2">{locationError}</p>
+                                {!showLocationHelp && (
+                                    <button
+                                        onClick={() => {
+                                            setLocationError(null);
+                                            setShowManualLocation(true);
+                                        }}
+                                        className="text-xs text-amber-700 hover:text-amber-900 underline font-medium"
+                                    >
+                                        Enter location manually instead
+                                    </button>
+                                )}
+                                {showLocationHelp && (
+                                    <div className="text-xs text-amber-700 space-y-2 mt-3 bg-white/50 rounded-lg p-3 border border-amber-100">
+                                        <p className="font-semibold flex items-center">
+                                            <InformationCircleIcon className="h-4 w-4 mr-1" />
+                                            How to enable location access:
+                                        </p>
+                                        <ul className="list-disc list-inside space-y-1 ml-1">
+                                            <li><strong>Chrome/Edge:</strong> Click the lock icon in the address bar → Site settings → Location → Allow</li>
+                                            <li><strong>Firefox:</strong> Click the shield/lock icon → Permissions → Location → Allow</li>
+                                            <li><strong>Safari:</strong> Safari menu → Settings → Websites → Location → Allow for this site</li>
+                                        </ul>
+                                        <div className="flex gap-2 mt-3">
+                                            <button
+                                                onClick={() => {
+                                                    setLocationError(null);
+                                                    setShowLocationHelp(false);
+                                                    getUserLocation();
+                                                }}
+                                                className="flex-1 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors"
+                                            >
+                                                Try Again
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setLocationError(null);
+                                                    setShowLocationHelp(false);
+                                                    setShowManualLocation(true);
+                                                }}
+                                                className="flex-1 bg-white hover:bg-gray-50 text-amber-600 border border-amber-600 px-4 py-2 rounded-lg text-sm font-bold transition-colors"
+                                            >
+                                                Enter Manually
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            <button
+                                onClick={() => {
+                                    setLocationError(null);
+                                    setShowLocationHelp(false);
+                                }}
+                                className="text-amber-400 hover:text-amber-600 transition-colors ml-2"
+                            >
+                                <XMarkIcon className="h-5 w-5" />
+                            </button>
+                        </div>
+                    </motion.div>
                 )}
             </form>
         </div>
@@ -254,20 +534,63 @@ const PharmacyListPage: React.FC = () => {
                     </div>
                 </div>
             ) : pharmacies.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <AnimatePresence>
-                        {pharmacies.map((pharmacy, index) => (
+                <>
+                    {viewMode === 'list' ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <AnimatePresence>
+                                {pharmacies.map((pharmacy, index) => (
+                                    <motion.div
+                                        key={pharmacy.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                    >
+                                        <PharmacyCard 
+                                            pharmacy={pharmacy}
+                                            isSelected={selectedPharmacy?.id === pharmacy.id}
+                                            onSelect={() => setSelectedPharmacy(pharmacy)}
+                                        />
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
                             <motion.div
-                                key={pharmacy.id}
-                                initial={{ opacity: 0, y: 20 }}
+                                initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.05 }}
+                                className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center"
                             >
-                                <PharmacyCard pharmacy={pharmacy} />
+                                <InformationCircleIcon className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+                                <p className="text-sm text-blue-900">
+                                    <strong>Tip:</strong> Click on any pharmacy marker to view details and select it. Zoom and pan to explore the area.
+                                </p>
                             </motion.div>
-                        ))}
-                    </AnimatePresence>
-                </div>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="h-[600px] rounded-3xl overflow-hidden shadow-xl border border-gray-200 relative"
+                            >
+                                <PharmacyLocator 
+                                    pharmacies={pharmacies}
+                                    userLocation={userLocation}
+                                    onSelectPharmacy={(pharmacy) => {
+                                        setSelectedPharmacy(pharmacy);
+                                        setViewMode('list');
+                                        // Scroll to top to see the selected pharmacy
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                />
+                                {/* Pharmacy count badge on map */}
+                                <div className="absolute top-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg border border-gray-200">
+                                    <p className="text-sm font-bold text-gray-900">
+                                        {pharmacies.length} {pharmacies.length === 1 ? 'Pharmacy' : 'Pharmacies'} on map
+                                    </p>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </>
             ) : (
                 <EmptyState 
                     icon={FunnelIcon}
@@ -298,7 +621,8 @@ const PharmacyListPage: React.FC = () => {
                 </div>
             )}
         </div>
-    </div>
+        </div>
+    </>
   );
 };
 
