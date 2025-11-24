@@ -1,4 +1,3 @@
-// src/features/auth/pages/LoginPage.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -11,6 +10,8 @@ import { getDashboardRoute } from '../../../utils/routing';
 import { loginSchema, LoginFormData } from '../../../schemas/authSchema';
 import FormInput from '../../../components/forms/FormInput';
 import Spinner from '../../../components/ui/Spinner';
+import { motion } from 'framer-motion';
+import { ArrowLeftIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
@@ -55,47 +56,111 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-white">
+    <div className="min-h-screen grid lg:grid-cols-2 bg-gray-50">
       {/* Left hero panel */}
-      <div className="hidden lg:flex items-center justify-center p-12">
-        <div className="hero-gradient w-full h-[80vh] rounded-3xl relative overflow-hidden flex items-center justify-center shadow-[0_30px_80px_-20px_rgba(0,0,0,0.25)]">
-          <div className="absolute inset-0 bg-white/10" />
-          <div className="relative z-10 text-center text-white px-10">
-            <img src="/logo.png" alt="VitaNips" className="mx-auto h-20 drop-shadow-md" />
-            <h1 className="mt-6 text-4xl font-extrabold tracking-tight">
-              Welcome to <span className="whitespace-nowrap">VitaNips</span>
-            </h1>
-            <p className="mt-3 text-white/90 max-w-md mx-auto text-balance">
-              Your personal health hub — appointments, medications, documents, and telehealth in one secure place.
-            </p>
-            <div className="mt-6 flex items-center justify-center gap-3 text-sm text-white/80">
-              <span className="px-3 py-1 rounded-full bg-white/10 border border-white/20">Secure</span>
-              <span className="px-3 py-1 rounded-full bg-white/10 border border-white/20">Fast</span>
-              <span className="px-3 py-1 rounded-full bg-white/10 border border-white/20">Reliable</span>
-            </div>
-          </div>
+      <div className="hidden lg:flex relative overflow-hidden bg-gray-900 items-center justify-center">
+         {/* Decorative background elements */}
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center opacity-20 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/90 via-gray-900/95 to-black/90" />
+        
+        {/* Animated shapes */}
+        <motion.div 
+            animate={{ 
+                scale: [1, 1.2, 1],
+                rotate: [0, 90, 0],
+                opacity: [0.3, 0.5, 0.3]
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-24 -left-24 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl"
+        />
+        <motion.div 
+            animate={{ 
+                scale: [1, 1.3, 1],
+                rotate: [0, -60, 0],
+                opacity: [0.2, 0.4, 0.2]
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute -bottom-32 -right-32 w-[30rem] h-[30rem] bg-teal-500/10 rounded-full blur-3xl"
+        />
+
+        <div className="relative z-10 text-center px-12 max-w-2xl">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+            >
+                <img src="/logo.png" alt="VitaNips" className="mx-auto h-24 drop-shadow-2xl mb-8" />
+                <h1 className="text-5xl font-bold text-white tracking-tight mb-6 font-display">
+                    Welcome Back
+                </h1>
+                <p className="text-xl text-gray-300 leading-relaxed">
+                    Access your comprehensive health dashboard. Manage appointments, prescriptions, and consultations securely.
+                </p>
+                
+                <div className="mt-12 grid grid-cols-3 gap-6 text-center">
+                    <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+                        <h3 className="text-2xl font-bold text-primary-400 mb-1">24/7</h3>
+                        <p className="text-sm text-gray-400">Access</p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+                        <h3 className="text-2xl font-bold text-primary-400 mb-1">100%</h3>
+                        <p className="text-sm text-gray-400">Secure</p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+                        <h3 className="text-2xl font-bold text-primary-400 mb-1">Fast</h3>
+                        <p className="text-sm text-gray-400">Response</p>
+                    </div>
+                </div>
+            </motion.div>
         </div>
       </div>
 
       {/* Right form panel */}
-      <div className="flex items-center justify-center p-6 lg:p-12 bg-surface">
-        <div className="w-full max-w-md">
-          <div className="card p-8 sm:p-10">
-            <div className="text-center">
-              <img className="mx-auto h-14" src="/logo.png" alt="VitaNips Logo" />
-              <h2 className="mt-4 text-2xl sm:text-3xl font-bold">
-                Sign in to <span className="gradient-text">VitaNips</span>
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">Welcome back! Please enter your details.</p>
-            </div>
+      <div className="flex flex-col items-center justify-center p-6 lg:p-12 relative">
+        <Link to="/" className="absolute top-8 left-8 text-gray-500 hover:text-gray-900 flex items-center transition-colors">
+            <ArrowLeftIcon className="h-4 w-4 mr-2" />
+            Back to Home
+        </Link>
 
+        <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-md"
+        >
+          <div className="text-center mb-10">
+             <Link to="/" className="inline-block lg:hidden mb-6">
+                 <img className="h-12 w-auto" src="/logo.png" alt="VitaNips Logo" />
+             </Link>
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight font-display">
+              Sign in to your account
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Or <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500 hover:underline">start your health journey today</Link>
+            </p>
+          </div>
+
+          <div className="bg-white py-8 px-4 shadow-xl shadow-gray-200/50 sm:rounded-2xl sm:px-10 border border-gray-100">
             {error && (
-              <div role="alert" aria-live="assertive" className="mt-5 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                {error}
-              </div>
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-md"
+              >
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700">{error}</p>
+                  </div>
+                </div>
+              </motion.div>
             )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5" noValidate>
+            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
               <FormInput
                 name="email"
                 label="Email address"
@@ -105,6 +170,7 @@ const LoginPage: React.FC = () => {
                 disabled={isLoading}
                 placeholder="you@example.com"
                 autoComplete="email"
+                className="rounded-lg"
               />
 
               <div className="relative">
@@ -117,14 +183,19 @@ const LoginPage: React.FC = () => {
                   placeholder="••••••••"
                   autoComplete="current-password"
                   disabled={isLoading}
+                  className="rounded-lg"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute top-[34px] right-2 my-auto h-8 px-2 rounded-md text-sm text-gray-600 hover:bg-gray-100"
+                  className="absolute top-[38px] right-3 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? 'Hide' : 'Show'}
+                  {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                  ) : (
+                      <EyeIcon className="h-5 w-5" />
+                  )}
                 </button>
               </div>
 
@@ -132,39 +203,45 @@ const LoginPage: React.FC = () => {
                 <div className="flex items-center">
                   <input
                     id="remember-me"
+                    name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-primary focus:ring-primary rounded"
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded transition-colors"
                   />
-                  <label htmlFor="remember-me" className="ml-3 block text-sm text-gray-700">
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                     Remember me
                   </label>
                 </div>
-                <a href="#" className="text-primary hover:text-primary-dark font-medium">
-                  Forgot password?
-                </a>
+
+                <div className="text-sm">
+                  <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
+                    Forgot your password?
+                  </a>
+                </div>
               </div>
 
-              <button
-                type="submit"
-                className="btn btn-primary w-full"
-                disabled={isLoading}
-              >
-                {isLoading ? <Spinner size="sm" /> : 'Sign in'}
-              </button>
+              <div>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.01]"
+                >
+                  {isLoading ? <Spinner size="sm" color="white" /> : 'Sign in'}
+                </button>
+              </div>
             </form>
 
-            <p className="mt-6 text-center text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-primary hover:text-primary-dark font-medium">
-                Register here
-              </Link>
-            </p>
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">Protected by industry standard encryption</span>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <p className="mt-6 text-center text-xs text-gray-500">
-            By signing in you agree to our <a href="#" className="text-primary">Terms</a> and <a href="#" className="text-primary">Privacy Policy</a>.
-          </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

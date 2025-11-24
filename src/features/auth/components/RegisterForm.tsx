@@ -4,21 +4,23 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { extendedRegisterSchema, ExtendedRegisterFormData } from '../../../schemas/authSchema';
 import FormInput from '../../../components/forms/FormInput';
 import FormSelect from '../../../components/common/FormSelect';
-import { Button } from '../../../components/common';
 import Spinner from '../../../components/ui/Spinner';
 import { register as apiRegister } from '../../../api/auth';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckIcon, ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 const steps = [
-  { id: 1, title: 'Basic Info' },
-  { id: 2, title: 'Personal Details' },
-  { id: 3, title: 'Medical Profile' },
+  { id: 1, title: 'Account' },
+  { id: 2, title: 'Personal' },
+  { id: 3, title: 'Health' },
 ];
 
 const RegisterForm: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [direction, setDirection] = useState(0); // -1 for prev, 1 for next
   const navigate = useNavigate();
 
   const {
@@ -41,11 +43,13 @@ const RegisterForm: React.FC = () => {
 
     const isValid = await trigger(fieldsToValidate);
     if (isValid) {
+      setDirection(1);
       setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
+    setDirection(-1);
     setCurrentStep((prev) => prev - 1);
   };
 
@@ -74,153 +78,232 @@ const RegisterForm: React.FC = () => {
     }
   };
 
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 20 : -20,
+      opacity: 0,
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 20 : -20,
+      opacity: 0,
+    }),
+  };
+
   return (
-    <div className="w-full max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
+    <div className="w-full bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100">
       {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="flex justify-between mb-2">
-          {steps.map((step) => (
-            <div
-              key={step.id}
-              className={`text-xs font-semibold ${
-                step.id <= currentStep ? 'text-primary' : 'text-gray-400'
-              }`}
-            >
-              {step.title}
-            </div>
-          ))}
-        </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary transition-all duration-300 ease-in-out"
-            style={{ width: `${((currentStep) / (steps.length)) * 100}%` }}
-          ></div>
+      <div className="mb-10 relative">
+        <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-100 rounded-full -z-10 transform -translate-y-1/2" />
+        <div 
+            className="absolute top-1/2 left-0 h-1 bg-primary-500 rounded-full -z-10 transform -translate-y-1/2 transition-all duration-500 ease-in-out" 
+            style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }} 
+        />
+        
+        <div className="flex justify-between w-full">
+            {steps.map((step) => (
+                <div key={step.id} className="flex flex-col items-center">
+                    <div 
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300 ${
+                            step.id < currentStep 
+                                ? 'bg-primary-500 border-primary-500 text-white' 
+                                : step.id === currentStep 
+                                    ? 'bg-white border-primary-500 text-primary-500 scale-110 shadow-md shadow-primary-100' 
+                                    : 'bg-white border-gray-200 text-gray-400'
+                        }`}
+                    >
+                        {step.id < currentStep ? <CheckIcon className="w-5 h-5" /> : step.id}
+                    </div>
+                    <span className={`text-xs mt-2 font-medium transition-colors ${step.id <= currentStep ? 'text-primary-700' : 'text-gray-400'}`}>
+                        {step.title}
+                    </span>
+                </div>
+            ))}
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {currentStep === 1 && (
-          <>
-            <div className="grid grid-cols-2 gap-4">
-              <FormInput
-                label="First Name"
-                name="first_name"
-                register={register}
-                errors={errors}
-                placeholder="First Name"
-              />
-              <FormInput
-                label="Last Name"
-                name="last_name"
-                register={register}
-                errors={errors}
-                placeholder="Last Name"
-              />
-            </div>
-            <FormInput
-              label="Email"
-              name="email"
-              type="email"
-              register={register}
-              errors={errors}
-              placeholder="email@example.com"
-            />
-            <FormInput
-              label="Username"
-              name="username"
-              register={register}
-              errors={errors}
-              placeholder="username"
-            />
-            <FormInput
-              label="Password"
-              name="password"
-              type="password"
-              register={register}
-              errors={errors}
-              placeholder="********"
-            />
-            <FormInput
-              label="Confirm Password"
-              name="confirmPassword"
-              type="password"
-              register={register}
-              errors={errors}
-              placeholder="********"
-            />
-          </>
-        )}
+      <form onSubmit={handleSubmit(onSubmit)} className="relative overflow-hidden min-h-[380px]">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+            <motion.div
+                key={currentStep}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                    x: { type: "spring", stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.2 }
+                }}
+                className="space-y-5"
+            >
+                {currentStep === 1 && (
+                <>
+                    <div className="grid grid-cols-2 gap-4">
+                    <FormInput
+                        label="First Name"
+                        name="first_name"
+                        register={register}
+                        errors={errors}
+                        placeholder="Jane"
+                        className="rounded-lg"
+                    />
+                    <FormInput
+                        label="Last Name"
+                        name="last_name"
+                        register={register}
+                        errors={errors}
+                        placeholder="Doe"
+                         className="rounded-lg"
+                    />
+                    </div>
+                    <FormInput
+                    label="Email Address"
+                    name="email"
+                    type="email"
+                    register={register}
+                    errors={errors}
+                    placeholder="jane@example.com"
+                     className="rounded-lg"
+                    />
+                    <FormInput
+                    label="Username"
+                    name="username"
+                    register={register}
+                    errors={errors}
+                    placeholder="janedoe"
+                     className="rounded-lg"
+                    />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <FormInput
+                        label="Password"
+                        name="password"
+                        type="password"
+                        register={register}
+                        errors={errors}
+                        placeholder="••••••••"
+                         className="rounded-lg"
+                        />
+                        <FormInput
+                        label="Confirm Password"
+                        name="confirmPassword"
+                        type="password"
+                        register={register}
+                        errors={errors}
+                        placeholder="••••••••"
+                         className="rounded-lg"
+                        />
+                    </div>
+                </>
+                )}
 
-        {currentStep === 2 && (
-          <>
-            <FormInput
-              label="Phone Number"
-              name="phone_number"
-              register={register}
-              errors={errors}
-              placeholder="+1234567890"
-            />
-            <FormInput
-              label="Date of Birth"
-              name="date_of_birth"
-              type="date"
-              register={register}
-              errors={errors}
-            />
-            <FormSelect
-              label="Gender"
-              name="gender"
-              register={register}
-              errors={errors}
-              options={[
-                { value: 'male', label: 'Male' },
-                { value: 'female', label: 'Female' },
-                { value: 'other', label: 'Other' },
-              ]}
-            />
-          </>
-        )}
+                {currentStep === 2 && (
+                <>
+                    <FormInput
+                    label="Phone Number"
+                    name="phone_number"
+                    register={register}
+                    errors={errors}
+                    placeholder="+1 (555) 000-0000"
+                     className="rounded-lg"
+                    />
+                    <FormInput
+                    label="Date of Birth"
+                    name="date_of_birth"
+                    type="date"
+                    register={register}
+                    errors={errors}
+                     className="rounded-lg"
+                    />
+                    <FormSelect
+                    label="Gender"
+                    name="gender"
+                    register={register}
+                    errors={errors}
+                    options={[
+                        { value: 'male', label: 'Male' },
+                        { value: 'female', label: 'Female' },
+                        { value: 'other', label: 'Other' },
+                    ]}
+                     className="rounded-lg"
+                    />
+                </>
+                )}
 
-        {currentStep === 3 && (
-          <>
-            <FormInput
-              label="Blood Group"
-              name="blood_group"
-              register={register}
-              errors={errors}
-              placeholder="e.g., O+"
-            />
-            <FormInput
-              label="Genotype"
-              name="genotype"
-              register={register}
-              errors={errors}
-              placeholder="e.g., AA"
-            />
-            <FormInput
-              label="Allergies"
-              name="allergies"
-              register={register}
-              errors={errors}
-              placeholder="List any allergies"
-            />
-          </>
-        )}
+                {currentStep === 3 && (
+                <>
+                    <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl mb-4">
+                        <p className="text-sm text-blue-800">
+                            Helping us with your medical profile allows VitaNips to provide better recommendations. This is optional.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <FormInput
+                        label="Blood Group"
+                        name="blood_group"
+                        register={register}
+                        errors={errors}
+                        placeholder="e.g. O+"
+                         className="rounded-lg"
+                        />
+                        <FormInput
+                        label="Genotype"
+                        name="genotype"
+                        register={register}
+                        errors={errors}
+                        placeholder="e.g. AA"
+                         className="rounded-lg"
+                        />
+                    </div>
+                    <FormInput
+                    label="Known Allergies"
+                    name="allergies"
+                    register={register}
+                    errors={errors}
+                    placeholder="e.g. Peanuts, Penicillin"
+                     className="rounded-lg"
+                    />
+                </>
+                )}
+            </motion.div>
+        </AnimatePresence>
 
-        <div className="flex justify-between mt-8 pt-4 border-t">
-          {currentStep > 1 && (
-            <Button type="button" variant="outline" onClick={handlePrev}>
+        <div className="flex justify-between mt-10 pt-6 border-t border-gray-100">
+          {currentStep > 1 ? (
+            <button
+              type="button"
+              onClick={handlePrev}
+              className="flex items-center px-5 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+            >
+              <ChevronLeftIcon className="h-4 w-4 mr-2" />
               Back
-            </Button>
-          )}
-          {currentStep < steps.length ? (
-            <Button type="button" onClick={handleNext} className="ml-auto">
-              Next
-            </Button>
+            </button>
           ) : (
-            <Button type="submit" disabled={isLoading} className="ml-auto">
-              {isLoading ? <Spinner size="sm" /> : 'Register'}
-            </Button>
+              <div></div> // Spacer
+          )}
+
+          {currentStep < steps.length ? (
+            <button
+              type="button"
+              onClick={handleNext}
+              className="flex items-center px-6 py-2.5 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+            >
+              Next Step
+              <ChevronRightIcon className="h-4 w-4 ml-2" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="flex items-center px-8 py-2.5 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-transform transform hover:scale-[1.02]"
+            >
+              {isLoading ? <Spinner size="sm" color="white" /> : 'Create Account'}
+            </button>
           )}
         </div>
       </form>
@@ -229,4 +312,3 @@ const RegisterForm: React.FC = () => {
 };
 
 export default RegisterForm;
-
