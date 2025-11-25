@@ -52,6 +52,7 @@ import HealthDashboardPage from '../pages/HealthDashboardPage';
 import HealthAnalyticsPage from '../pages/HealthAnalyticsPage';
 import AboutPage from '../pages/AboutPage';
 import HelpCenterPage from '../pages/HelpCenterPage';
+import CareerPage from '../pages/CareerPage';
 import toast from 'react-hot-toast';
 
 const LoadingScreen: React.FC = () => (
@@ -183,6 +184,7 @@ const AppRouter: React.FC = () => {
         <Route path="/" element={<LandingPageRoute />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/help" element={<HelpCenterPage />} />
+        <Route path="/careers" element={<CareerPage />} />
 
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<LoginPage />} />
