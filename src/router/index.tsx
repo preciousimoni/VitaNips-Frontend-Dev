@@ -184,6 +184,7 @@ const AppRouter: React.FC = () => {
         <Route path="/" element={<LandingPageRoute />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/help" element={<HelpCenterPage />} />
+        <Route path="/contact" element={<Navigate to="/help" replace />} />
         <Route path="/careers" element={<CareerPage />} />
 
         <Route element={<PublicRoute />}>
