@@ -20,7 +20,7 @@ const FormInput = <TFormValues extends FieldValues>({
   helpText,
   ...rest
 }: FormInputProps<TFormValues>) => {
-  const error = errors[name];
+  const error = errors && errors[name];
 
   return (
     <div>

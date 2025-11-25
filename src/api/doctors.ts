@@ -1,7 +1,24 @@
 // src/api/doctors.ts
 import axiosInstance from './axiosInstance';
-import { Doctor, DoctorReview, DoctorAvailability } from '../types/doctors';
+import { Doctor, DoctorReview, DoctorAvailability, Specialty } from '../types/doctors';
 import { PaginatedResponse } from '../types/common';
+
+// Get all specialties
+export const getSpecialties = async (): Promise<Specialty[]> => {
+  try {
+    const response = await axiosInstance.get<Specialty[] | PaginatedResponse<Specialty>>('/doctors/specialties/');
+    // Handle both array and paginated responses
+    if (Array.isArray(response.data)) {
+      return response.data;
+    } else if (response.data && typeof response.data === 'object' && 'results' in response.data) {
+      return (response.data as PaginatedResponse<Specialty>).results;
+    }
+    return [];
+  } catch (error) {
+    console.error('Failed to fetch specialties:', error);
+    throw error;
+  }
+};
 
 interface GetDoctorsParams {
     search?: string;
@@ -126,4 +143,101 @@ export const updateAvailabilitySlot = async (
 
 export const deleteAvailabilitySlot = async (id: number): Promise<void> => {
   await axiosInstance.delete(`/doctors/portal/availability/${id}/`);
+};
+
+// Doctor Application
+export interface DoctorApplicationPayload {
+  first_name: string;
+  last_name: string;
+  specialty_ids: number[];
+  gender: 'M' | 'F';
+  years_of_experience: number;
+  education: string;
+  bio: string;
+  languages_spoken: string;
+  consultation_fee?: string;
+  is_available_for_virtual: boolean;
+  license_number: string;
+  license_issuing_authority: string;
+  license_expiry_date?: string;
+  hospital_name: string;
+  hospital_address: string;
+  hospital_phone: string;
+  hospital_email?: string;
+  hospital_contact_person?: string;
+  profile_picture?: File | string;
+}
+
+export interface DoctorApplication extends Doctor {
+  application_status: 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'needs_revision';
+  license_number?: string;
+  license_issuing_authority?: string;
+  license_expiry_date?: string;
+  hospital_name?: string;
+  hospital_address?: string;
+  hospital_phone?: string;
+  hospital_email?: string;
+  hospital_contact_person?: string;
+  submitted_at?: string;
+  reviewed_at?: string;
+  reviewed_by?: number;
+  reviewed_by_name?: string;
+  review_notes?: string;
+  rejection_reason?: string;
+}
+
+export const getMyApplication = async (): Promise<DoctorApplication> => {
+  const response = await axiosInstance.get<DoctorApplication>('/doctors/portal/application/');
+  return response.data;
+};
+
+export const submitDoctorApplication = async (payload: DoctorApplicationPayload): Promise<DoctorApplication> => {
+  const formData = new FormData();
+  
+  // Add all fields to FormData
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      if (key === 'specialty_ids' && Array.isArray(value)) {
+        value.forEach((id, index) => {
+          formData.append(`specialty_ids`, id.toString());
+        });
+      } else if (key === 'profile_picture' && value instanceof File) {
+        formData.append(key, value);
+      } else {
+        formData.append(key, value.toString());
+      }
+    }
+  });
+  
+  const response = await axiosInstance.post<DoctorApplication>('/doctors/portal/application/', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+export const updateDoctorApplication = async (payload: Partial<DoctorApplicationPayload>): Promise<DoctorApplication> => {
+  const formData = new FormData();
+  
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      if (key === 'specialty_ids' && Array.isArray(value)) {
+        value.forEach((id) => {
+          formData.append(`specialty_ids`, id.toString());
+        });
+      } else if (key === 'profile_picture' && value instanceof File) {
+        formData.append(key, value);
+      } else {
+        formData.append(key, value.toString());
+      }
+    }
+  });
+  
+  const response = await axiosInstance.patch<DoctorApplication>('/doctors/portal/application/', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
 };

@@ -21,6 +21,21 @@ export interface Doctor {
     is_available_for_virtual: boolean;
     is_verified: boolean;
     average_rating: number;
+    application_status?: 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'needs_revision';
+    license_number?: string;
+    license_issuing_authority?: string;
+    license_expiry_date?: string;
+    hospital_name?: string;
+    hospital_address?: string;
+    hospital_phone?: string;
+    hospital_email?: string;
+    hospital_contact_person?: string;
+    submitted_at?: string;
+    reviewed_at?: string;
+    reviewed_by?: number;
+    reviewed_by_name?: string;
+    review_notes?: string;
+    rejection_reason?: string;
     created_at: string;
     updated_at: string;
 }

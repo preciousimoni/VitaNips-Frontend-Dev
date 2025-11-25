@@ -60,12 +60,22 @@ export const getNotifications = async (
 };
 
 export const getUnreadNotificationCount = async (): Promise<UnreadNotificationCount> => {
-     try {
+    // Check if user is authenticated before making the request
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+        return { unread_count: 0 };
+    }
+    
+    try {
         const response = await axiosInstance.get<UnreadNotificationCount>('/notifications/unread_count/');
         return response.data ?? { unread_count: 0 };
-    } catch (error) {
+    } catch (error: any) {
+        // Silently handle 401 errors (user not authenticated)
+        if (error.response?.status === 401) {
+            return { unread_count: 0 };
+        }
         console.error('Failed to fetch notification count:', error);
-         return { unread_count: 0 };
+        return { unread_count: 0 };
     }
 };
 

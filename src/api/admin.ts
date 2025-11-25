@@ -60,6 +60,21 @@ export interface AdminDoctor {
   bio: string;
   consultation_fee: string;
   specialties: Array<{ id: number; name: string }>;
+  application_status?: 'draft' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'needs_revision';
+  license_number?: string;
+  license_issuing_authority?: string;
+  license_expiry_date?: string;
+  hospital_name?: string;
+  hospital_address?: string;
+  hospital_phone?: string;
+  hospital_email?: string;
+  hospital_contact_person?: string;
+  submitted_at?: string;
+  reviewed_at?: string;
+  reviewed_by?: number;
+  reviewed_by_name?: string;
+  review_notes?: string;
+  rejection_reason?: string;
   created_at: string;
 }
 
@@ -136,15 +151,31 @@ export const getAdminDoctors = async (filters?: {
   return response.data;
 };
 
-// Verify or unverify doctor
+// Review doctor application (new comprehensive workflow)
+export interface ReviewDoctorPayload {
+  action: 'approve' | 'reject' | 'request_revision' | 'start_review' | 'contact_hospital';
+  review_notes?: string;
+  rejection_reason?: string;
+  contact_hospital?: boolean;
+}
+
+export const reviewDoctorApplication = async (
+  doctorId: number,
+  payload: ReviewDoctorPayload
+): Promise<{ message: string; doctor: AdminDoctor; hospital_info?: any }> => {
+  const response = await axiosInstance.patch(`/admin/doctors/${doctorId}/verify/`, payload);
+  return response.data;
+};
+
+// Legacy verify function (for backward compatibility)
 export const verifyDoctor = async (
   doctorId: number,
   isVerified: boolean
 ): Promise<{ message: string; doctor: AdminDoctor }> => {
-  const response = await axiosInstance.patch(`/admin/doctors/${doctorId}/verify/`, {
-    is_verified: isVerified,
+  return reviewDoctorApplication(doctorId, {
+    action: isVerified ? 'approve' : 'reject',
+    rejection_reason: isVerified ? undefined : 'Application rejected',
   });
-  return response.data;
 };
 
 // Get all pharmacies with filters

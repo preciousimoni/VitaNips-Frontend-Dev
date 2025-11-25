@@ -83,6 +83,11 @@ const RegisterPage: React.FC = () => {
             <p className="mt-2 text-sm text-gray-600">
               Already have an account? <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500 hover:underline">Log in</Link>
             </p>
+            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+              <p className="text-sm text-blue-900">
+                <strong>Are you a doctor?</strong> After registering, you'll be able to submit your doctor application with your credentials, license information, and hospital details. Our admin team will review and verify your application.
+              </p>
+            </div>
           </div>
 
           <RegisterForm />

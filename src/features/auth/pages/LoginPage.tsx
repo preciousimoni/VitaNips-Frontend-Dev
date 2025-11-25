@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import axiosInstance from '../../../api/axiosInstance';
 import { AuthTokens } from '../../../types/auth';
@@ -19,6 +19,8 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [searchParams] = useSearchParams();
+  const isDoctorRegistration = searchParams.get('doctor') === 'true';
 
   const {
     register,
@@ -39,14 +41,33 @@ const LoginPage: React.FC = () => {
       // Login will fetch user profile
       await login(access, refresh);
 
-      // Fetch user profile to determine role
-      const userResponse = await axiosInstance.get('/users/profile/', {
-        headers: { Authorization: `Bearer ${access}` },
-      });
+      // Wait a bit for AuthContext to update user state
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Fetch user profile to determine role (use the one from AuthContext if available, otherwise fetch)
+      let user;
+      try {
+        const userResponse = await axiosInstance.get('/users/profile/', {
+          headers: { Authorization: `Bearer ${access}` },
+        });
+        user = userResponse.data;
+      } catch (err) {
+        console.error('Failed to fetch user profile:', err);
+        // If fetch fails, try to get from AuthContext
+        // But we'll proceed with redirect anyway
+        navigate('/dashboard');
+        return;
+      }
+      
+      // If user registered as doctor but doesn't have a doctor profile yet, redirect to application
+      if (isDoctorRegistration && !user.is_doctor) {
+        navigate('/doctor/application', { replace: true });
+        return;
+      }
 
       // Redirect to appropriate dashboard based on user role
-      const dashboardRoute = getDashboardRoute(userResponse.data);
-      navigate(dashboardRoute);
+      const dashboardRoute = getDashboardRoute(user);
+      navigate(dashboardRoute, { replace: true });
     } catch (err: unknown) {
       console.error('Login failed:', err);
       setError(apiErrorToMessage(err, 'Login failed. Please check your connection and try again.'));
@@ -138,6 +159,17 @@ const LoginPage: React.FC = () => {
             <p className="mt-2 text-sm text-gray-600">
               Or <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500 hover:underline">start your health journey today</Link>
             </p>
+            {isDoctorRegistration && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl"
+              >
+                <p className="text-sm text-blue-900">
+                  <strong>Doctor Registration:</strong> After logging in, you'll be redirected to submit your doctor application.
+                </p>
+              </motion.div>
+            )}
           </div>
 
           <div className="bg-white py-8 px-4 shadow-xl shadow-gray-200/50 sm:rounded-2xl sm:px-10 border border-gray-100">

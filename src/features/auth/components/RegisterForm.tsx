@@ -74,7 +74,15 @@ const RegisterForm: React.FC = () => {
 
       await apiRegister(payload);
       toast.success('Account created successfully!');
-      navigate('/login');
+      
+      // If user indicated they are a doctor, redirect to application page after login
+      // For now, redirect to login and they can access application from dashboard
+      if (data.is_doctor) {
+        toast.success('Please log in to submit your doctor application!');
+        navigate('/login?doctor=true');
+      } else {
+        navigate('/login');
+      }
     } catch (error: any) {
       console.error("Registration Error:", error);
       if (error.response && error.response.data) {
@@ -220,6 +228,20 @@ const RegisterForm: React.FC = () => {
                         placeholder="••••••••"
                          className="rounded-lg"
                         />
+                    </div>
+                    <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                        <input
+                            type="checkbox"
+                            id="is_doctor"
+                            {...register('is_doctor')}
+                            className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="is_doctor" className="text-sm text-gray-700 cursor-pointer">
+                            <span className="font-semibold text-gray-900">I am a doctor</span>
+                            <p className="text-xs text-gray-600 mt-1">
+                                Check this if you're a medical professional. After registration, you'll be able to submit your doctor application with your credentials and license information.
+                            </p>
+                        </label>
                     </div>
                 </>
                 )}

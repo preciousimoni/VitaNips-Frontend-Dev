@@ -16,15 +16,29 @@ import {
   ShieldCheckIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
-import { getAdminDoctors, verifyDoctor, AdminDoctor } from '../../api/admin';
+import { getAdminDoctors, reviewDoctorApplication, ReviewDoctorPayload, AdminDoctor } from '../../api/admin';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
+import Modal from '../../components/common/Modal';
+import {
+  BuildingOfficeIcon,
+  PhoneIcon,
+  IdentificationIcon,
+  DocumentTextIcon,
+  ExclamationTriangleIcon,
+} from '@heroicons/react/24/outline';
 
 const AdminDoctorsPage: React.FC = () => {
   const [doctors, setDoctors] = useState<AdminDoctor[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [verifiedFilter, setVerifiedFilter] = useState<'all' | 'verified' | 'pending'>('all');
+  const [selectedDoctor, setSelectedDoctor] = useState<AdminDoctor | null>(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewNotes, setReviewNotes] = useState('');
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [reviewAction, setReviewAction] = useState<'approve' | 'reject' | 'request_revision' | 'contact_hospital' | null>(null);
+  const [reviewing, setReviewing] = useState(false);
 
   const fetchDoctors = async () => {
     try {
@@ -57,6 +71,61 @@ const AdminDoctorsPage: React.FC = () => {
     } catch (error) {
       toast.error('Failed to update verification status');
       console.error(error);
+    }
+  };
+
+  const openReviewModal = (doctor: AdminDoctor) => {
+    setSelectedDoctor(doctor);
+    setReviewNotes(doctor.review_notes || '');
+    setRejectionReason(doctor.rejection_reason || '');
+    setReviewAction(null);
+    setShowReviewModal(true);
+  };
+
+  const handleReview = async () => {
+    if (!selectedDoctor || !reviewAction) return;
+
+    try {
+      setReviewing(true);
+      const payload: ReviewDoctorPayload = {
+        action: reviewAction,
+        review_notes: reviewNotes,
+        ...(reviewAction === 'reject' && { rejection_reason: rejectionReason }),
+      };
+
+      await reviewDoctorApplication(selectedDoctor.id, payload);
+      toast.success(`Application ${reviewAction === 'approve' ? 'approved' : reviewAction === 'reject' ? 'rejected' : 'review updated'} successfully`);
+      setShowReviewModal(false);
+      fetchDoctors();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to review application');
+      console.error(error);
+    } finally {
+      setReviewing(false);
+    }
+  };
+
+  const handleContactHospital = async () => {
+    if (!selectedDoctor) return;
+
+    try {
+      setReviewing(true);
+      const payload: ReviewDoctorPayload = {
+        action: 'contact_hospital',
+        contact_hospital: true,
+      };
+
+      const result = await reviewDoctorApplication(selectedDoctor.id, payload);
+      toast.success('Hospital contact information retrieved');
+      if (result.hospital_info) {
+        // Show hospital info in a toast or modal
+        console.log('Hospital Info:', result.hospital_info);
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to contact hospital');
+      console.error(error);
+    } finally {
+      setReviewing(false);
     }
   };
 
@@ -335,17 +404,28 @@ const AdminDoctorsPage: React.FC = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 flex flex-col gap-2">
                       {!doctor.is_verified ? (
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleVerification(doctor, true)}
-                          className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all flex items-center gap-2"
-                        >
-                          <CheckCircleIcon className="h-5 w-5" />
-                          Verify Doctor
-                        </motion.button>
+                        <>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => openReviewModal(doctor)}
+                            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold rounded-xl hover:shadow-xl transition-all flex items-center gap-2"
+                          >
+                            <DocumentTextIcon className="h-5 w-5" />
+                            Review Application
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleVerification(doctor, true)}
+                            className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all flex items-center gap-2"
+                          >
+                            <CheckCircleIcon className="h-5 w-5" />
+                            Quick Verify
+                          </motion.button>
+                        </>
                       ) : (
                         <motion.button
                           whileHover={{ scale: 1.05 }}
@@ -421,6 +501,224 @@ const AdminDoctorsPage: React.FC = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Review Modal */}
+      {showReviewModal && selectedDoctor && (
+        <Modal
+          isOpen={showReviewModal}
+          onClose={() => setShowReviewModal(false)}
+          title="Review Doctor Application"
+          size="xl"
+        >
+          <div className="space-y-6">
+            {/* Application Status */}
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-lg">Application Status</h3>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                  selectedDoctor.application_status === 'submitted' || selectedDoctor.application_status === 'under_review'
+                    ? 'bg-blue-100 text-blue-800'
+                    : selectedDoctor.application_status === 'approved'
+                    ? 'bg-green-100 text-green-800'
+                    : selectedDoctor.application_status === 'rejected'
+                    ? 'bg-red-100 text-red-800'
+                    : 'bg-orange-100 text-orange-800'
+                }`}>
+                  {selectedDoctor.application_status?.replace('_', ' ').toUpperCase() || 'PENDING'}
+                </span>
+              </div>
+              {selectedDoctor.submitted_at && (
+                <p className="text-sm text-gray-600">
+                  Submitted: {new Date(selectedDoctor.submitted_at).toLocaleString()}
+                </p>
+              )}
+            </div>
+
+            {/* License Information */}
+            {selectedDoctor.license_number && (
+              <div className="p-4 bg-blue-50 rounded-xl border-2 border-blue-200">
+                <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                  <IdentificationIcon className="h-6 w-6 text-blue-600" />
+                  License Information
+                </h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="font-semibold text-gray-700">License Number</p>
+                    <p className="text-gray-900">{selectedDoctor.license_number}</p>
+                  </div>
+                  {selectedDoctor.license_issuing_authority && (
+                    <div>
+                      <p className="font-semibold text-gray-700">Issuing Authority</p>
+                      <p className="text-gray-900">{selectedDoctor.license_issuing_authority}</p>
+                    </div>
+                  )}
+                  {selectedDoctor.license_expiry_date && (
+                    <div>
+                      <p className="font-semibold text-gray-700">Expiry Date</p>
+                      <p className="text-gray-900">{new Date(selectedDoctor.license_expiry_date).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Hospital Information */}
+            {selectedDoctor.hospital_name && (
+              <div className="p-4 bg-green-50 rounded-xl border-2 border-green-200">
+                <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                  <BuildingOfficeIcon className="h-6 w-6 text-green-600" />
+                  Hospital/Clinic Information
+                </h3>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <p className="font-semibold text-gray-700">Hospital Name</p>
+                    <p className="text-gray-900">{selectedDoctor.hospital_name}</p>
+                  </div>
+                  {selectedDoctor.hospital_address && (
+                    <div>
+                      <p className="font-semibold text-gray-700">Address</p>
+                      <p className="text-gray-900">{selectedDoctor.hospital_address}</p>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-2 gap-4">
+                    {selectedDoctor.hospital_phone && (
+                      <div>
+                        <p className="font-semibold text-gray-700 flex items-center gap-1">
+                          <PhoneIcon className="h-4 w-4" />
+                          Phone
+                        </p>
+                        <p className="text-gray-900">{selectedDoctor.hospital_phone}</p>
+                      </div>
+                    )}
+                    {selectedDoctor.hospital_email && (
+                      <div>
+                        <p className="font-semibold text-gray-700 flex items-center gap-1">
+                          <EnvelopeIcon className="h-4 w-4" />
+                          Email
+                        </p>
+                        <p className="text-gray-900">{selectedDoctor.hospital_email}</p>
+                      </div>
+                    )}
+                  </div>
+                  {selectedDoctor.hospital_contact_person && (
+                    <div>
+                      <p className="font-semibold text-gray-700">Contact Person</p>
+                      <p className="text-gray-900">{selectedDoctor.hospital_contact_person}</p>
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={handleContactHospital}
+                  disabled={reviewing}
+                  className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  <PhoneIcon className="h-4 w-4" />
+                  Contact Hospital for Verification
+                </button>
+              </div>
+            )}
+
+            {/* Review Actions */}
+            <div className="space-y-4">
+              <h3 className="font-bold text-lg">Review Actions</h3>
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={() => setReviewAction('approve')}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    reviewAction === 'approve'
+                      ? 'bg-green-50 border-green-500'
+                      : 'bg-white border-gray-200 hover:border-green-300'
+                  }`}
+                >
+                  <CheckCircleIcon className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                  <p className="font-bold text-sm">Approve</p>
+                </button>
+                <button
+                  onClick={() => setReviewAction('reject')}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    reviewAction === 'reject'
+                      ? 'bg-red-50 border-red-500'
+                      : 'bg-white border-gray-200 hover:border-red-300'
+                  }`}
+                >
+                  <XCircleIcon className="h-8 w-8 text-red-600 mx-auto mb-2" />
+                  <p className="font-bold text-sm">Reject</p>
+                </button>
+                <button
+                  onClick={() => setReviewAction('request_revision')}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    reviewAction === 'request_revision'
+                      ? 'bg-orange-50 border-orange-500'
+                      : 'bg-white border-gray-200 hover:border-orange-300'
+                  }`}
+                >
+                  <ExclamationTriangleIcon className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+                  <p className="font-bold text-sm">Request Revision</p>
+                </button>
+              </div>
+            </div>
+
+            {/* Review Notes */}
+            {reviewAction && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Review Notes
+                  </label>
+                  <textarea
+                    value={reviewNotes}
+                    onChange={(e) => setReviewNotes(e.target.value)}
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Add your review notes and comments..."
+                  />
+                </div>
+                {reviewAction === 'reject' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Rejection Reason <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      value={rejectionReason}
+                      onChange={(e) => setRejectionReason(e.target.value)}
+                      rows={3}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      placeholder="Please provide a reason for rejection..."
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <button
+                onClick={() => setShowReviewModal(false)}
+                className="px-6 py-2 rounded-xl font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              {reviewAction && (
+                <button
+                  onClick={handleReview}
+                  disabled={reviewing || (reviewAction === 'reject' && !rejectionReason)}
+                  className="px-6 py-2 rounded-xl font-bold text-white bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {reviewing ? (
+                    <>
+                      <Spinner size="sm" />
+                      Processing...
+                    </>
+                  ) : (
+                    `Confirm ${reviewAction === 'approve' ? 'Approval' : reviewAction === 'reject' ? 'Rejection' : 'Revision Request'}`
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

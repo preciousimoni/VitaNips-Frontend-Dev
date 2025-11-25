@@ -27,12 +27,14 @@ import {
 } from 'recharts';
 import { getDoctorEligibleAppointments } from '../../api/doctorPortal';
 import { getUserAppointments } from '../../api/appointments';
+import { getMyApplication } from '../../api/doctors';
 import { useAuth } from '../../contexts/AuthContext';
 import { Appointment } from '../../types/appointments';
 import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/common/EmptyState';
 import { formatTime } from '../../utils/date';
 import { format } from 'date-fns';
+import { DocumentTextIcon } from '@heroicons/react/24/outline';
 
 interface DashboardStats {
   pendingPrescriptions: number;
@@ -66,6 +68,7 @@ const DoctorDashboardPage: React.FC = () => {
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
@@ -73,7 +76,23 @@ const DoctorDashboardPage: React.FC = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    checkApplicationStatus();
   }, []);
+
+  const checkApplicationStatus = async () => {
+    try {
+      const application = await getMyApplication();
+      setApplicationStatus(application.application_status || null);
+    } catch (error) {
+      // If 404, no application exists yet
+      if (error && typeof error === 'object' && 'response' in error) {
+        const apiError = error as { response?: { status?: number } };
+        if (apiError.response?.status === 404) {
+          setApplicationStatus(null);
+        }
+      }
+    }
+  };
 
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -628,6 +647,78 @@ const DoctorDashboardPage: React.FC = () => {
                 <h3 className="text-2xl font-black text-gray-900">Quick Actions</h3>
               </div>
               <div className="space-y-3 relative z-10">
+                {/* Application Status Banner */}
+                {(!applicationStatus || applicationStatus === 'draft' || applicationStatus === 'needs_revision' || applicationStatus === 'rejected') && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`p-4 rounded-2xl border-2 mb-4 ${
+                      !applicationStatus || applicationStatus === 'draft'
+                        ? 'bg-yellow-50 border-yellow-300'
+                        : applicationStatus === 'needs_revision'
+                        ? 'bg-orange-50 border-orange-300'
+                        : 'bg-red-50 border-red-300'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <ExclamationCircleIcon className={`h-5 w-5 flex-shrink-0 mt-0.5 ${
+                        !applicationStatus || applicationStatus === 'draft'
+                          ? 'text-yellow-600'
+                          : applicationStatus === 'needs_revision'
+                          ? 'text-orange-600'
+                          : 'text-red-600'
+                      }`} />
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-gray-900 mb-1">
+                          {!applicationStatus || applicationStatus === 'draft'
+                            ? 'Complete Your Doctor Application'
+                            : applicationStatus === 'needs_revision'
+                            ? 'Application Needs Revision'
+                            : 'Application Rejected'}
+                        </p>
+                        <p className="text-xs text-gray-700 mb-2">
+                          {!applicationStatus || applicationStatus === 'draft'
+                            ? 'Submit your credentials to start accepting appointments'
+                            : applicationStatus === 'needs_revision'
+                            ? 'Please review admin feedback and update your application'
+                            : 'Your application was rejected. Please review and resubmit'}
+                        </p>
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => navigate('/doctor/application')}
+                          className={`text-xs font-bold px-4 py-2 rounded-lg transition-all ${
+                            !applicationStatus || applicationStatus === 'draft'
+                              ? 'bg-yellow-600 text-white hover:bg-yellow-700'
+                              : applicationStatus === 'needs_revision'
+                              ? 'bg-orange-600 text-white hover:bg-orange-700'
+                              : 'bg-red-600 text-white hover:bg-red-700'
+                          }`}
+                        >
+                          {!applicationStatus || applicationStatus === 'draft' ? 'Submit Application' : 'Update Application'}
+                        </motion.button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Application Status - Pending/Under Review */}
+                {(applicationStatus === 'submitted' || applicationStatus === 'under_review') && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 bg-blue-50 border-2 border-blue-300 rounded-2xl mb-4"
+                  >
+                    <div className="flex items-start gap-3">
+                      <ClockIcon className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-gray-900 mb-1">Application Under Review</p>
+                        <p className="text-xs text-gray-700">Your application is being reviewed by our admin team. You'll be notified once a decision is made.</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
                 <motion.button
                   whileHover={{ x: 5, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -643,6 +734,27 @@ const DoctorDashboardPage: React.FC = () => {
                       <CalendarIcon className="h-6 w-6 text-white" />
                     </motion.div>
                     <span className="font-bold text-gray-900 group-hover:text-primary text-lg">My Appointments</span>
+                  </div>
+                  <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-primary" />
+                </motion.button>
+                
+                <motion.button
+                  whileHover={{ x: 5, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/doctor/application')}
+                  className="w-full flex items-center justify-between p-5 bg-gradient-to-r from-primary/5 to-emerald-500/5 hover:from-primary/10 hover:to-emerald-500/10 rounded-2xl transition-all group border-2 border-transparent hover:border-primary/20 shadow-sm hover:shadow-md"
+                >
+                  <div className="flex items-center space-x-4">
+                    <motion.div
+                      whileHover={{ rotate: 360, scale: 1.1 }}
+                      transition={{ duration: 0.6 }}
+                      className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg"
+                    >
+                      <DocumentTextIcon className="h-6 w-6 text-white" />
+                    </motion.div>
+                    <span className="font-bold text-gray-900 group-hover:text-primary text-lg">
+                      {applicationStatus ? 'View Application' : 'Submit Application'}
+                    </span>
                   </div>
                   <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-primary" />
                 </motion.button>

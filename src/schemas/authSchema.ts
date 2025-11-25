@@ -41,6 +41,7 @@ export const extendedRegisterSchema = z
     username: z.string().min(3, 'Username must be at least 3 characters'),
     password: z.string().min(8, 'Password must be at least 8 characters long'),
     confirmPassword: z.string(),
+    is_doctor: z.boolean().optional().default(false),
     
     // Step 2
     phone_number: z.string().optional(),

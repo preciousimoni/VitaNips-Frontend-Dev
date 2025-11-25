@@ -42,6 +42,7 @@ import MentalWellnessResourcesPage from '../pages/MentalWellnessResourcesPage';
 import DoctorDashboardPage from '../pages/doctor/DoctorDashboardPage';
 import DoctorPrescriptionWorkspacePage from '../pages/doctor/DoctorPrescriptionWorkspacePage';
 import ManageAvailabilityPage from '../pages/doctor/ManageAvailabilityPage';
+import DoctorApplicationPage from '../pages/doctor/DoctorApplicationPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import AdminDoctorsPage from '../pages/admin/AdminDoctorsPage';
@@ -131,7 +132,11 @@ const DoctorRoute: React.FC = () => {
   if (!isAuthenticated) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
-  if (!user?.is_doctor) {
+  
+  // Allow access to application page even without doctor profile
+  const isApplicationPage = location.pathname === '/doctor/application';
+  
+  if (!user?.is_doctor && !isApplicationPage) {
       toast.error("Access Denied: Doctor credentials required.", { duration: 4000 });
       return <Navigate to="/" replace />;
   }
@@ -205,6 +210,7 @@ const AppRouter: React.FC = () => {
           <Route path="/doctor/dashboard" element={<DoctorDashboardPage />} />
           <Route path="/doctor/prescriptions" element={<DoctorPrescriptionWorkspacePage />} />
           <Route path="/doctor/availability" element={<ManageAvailabilityPage />} />
+          <Route path="/doctor/application" element={<DoctorApplicationPage />} />
         </Route>
 
         <Route element={<AdminRoute />}>
