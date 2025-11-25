@@ -5,7 +5,7 @@ import {
     ArrowLeftIcon, CalendarIcon, ClockIcon, VideoCameraIcon, BuildingOfficeIcon,
     CheckCircleIcon, XCircleIcon, InformationCircleIcon, TrashIcon, UserIcon,
     ArrowPathIcon, MapPinIcon, SparklesIcon, PhoneIcon, EnvelopeIcon,
-    ClipboardDocumentCheckIcon
+    ClipboardDocumentCheckIcon, ShieldCheckIcon, BanknotesIcon
 } from '@heroicons/react/24/outline';
 import { getAppointmentDetails, cancelAppointment, updateAppointment } from '../api/appointments';
 import { Appointment } from '../types/appointments';
@@ -404,6 +404,83 @@ const AppointmentDetailPage: React.FC = () => {
                                 </motion.div>
                             ))}
                         </div>
+
+                        {/* Insurance Information */}
+                        {appointment.user_insurance && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.45 }}
+                                className="bg-gradient-to-br from-teal-50 to-primary-50 rounded-3xl p-6 border-2 border-teal-200 shadow-lg"
+                            >
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="p-3 bg-gradient-to-br from-teal-500 to-primary-500 rounded-xl">
+                                        <ShieldCheckIcon className="h-6 w-6 text-white" />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-gray-900">Insurance Coverage</h3>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="bg-white rounded-xl p-4 border-2 border-gray-100">
+                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Insurance Plan</p>
+                                        <p className="text-lg font-bold text-gray-900">
+                                            {appointment.user_insurance.plan.provider.name}
+                                        </p>
+                                        <p className="text-sm text-gray-600">
+                                            {appointment.user_insurance.plan.name} ({appointment.user_insurance.plan.plan_type})
+                                        </p>
+                                    </div>
+                                    {appointment.consultation_fee && (
+                                        <>
+                                            <div className="bg-white rounded-xl p-4 border-2 border-gray-100">
+                                                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Consultation Fee</p>
+                                                <p className="text-lg font-bold text-gray-900">
+                                                    ₦{parseFloat(appointment.consultation_fee).toLocaleString(undefined, {
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    })}
+                                                </p>
+                                            </div>
+                                            {appointment.insurance_covered_amount && (
+                                                <div className="bg-green-50 rounded-xl p-4 border-2 border-green-200">
+                                                    <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                                        <CheckCircleIcon className="h-3.5 w-3.5" />
+                                                        Covered by Insurance
+                                                    </p>
+                                                    <p className="text-lg font-bold text-green-700">
+                                                        ₦{parseFloat(appointment.insurance_covered_amount).toLocaleString(undefined, {
+                                                            minimumFractionDigits: 2,
+                                                            maximumFractionDigits: 2,
+                                                        })}
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {appointment.patient_copay && (
+                                                <div className="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
+                                                    <p className="text-xs font-bold text-blue-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                                        <BanknotesIcon className="h-3.5 w-3.5" />
+                                                        Your Out-of-Pocket
+                                                    </p>
+                                                    <p className="text-lg font-bold text-blue-700">
+                                                        ₦{parseFloat(appointment.patient_copay).toLocaleString(undefined, {
+                                                            minimumFractionDigits: 2,
+                                                            maximumFractionDigits: 2,
+                                                        })}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                                {appointment.insurance_claim_generated && (
+                                    <div className="mt-4 p-3 bg-primary-100 rounded-xl border border-primary-300">
+                                        <p className="text-sm text-primary-800 font-semibold flex items-center gap-2">
+                                            <CheckCircleIcon className="h-5 w-5" />
+                                            Insurance claim has been automatically generated
+                                        </p>
+                                    </div>
+                                )}
+                            </motion.div>
+                        )}
 
                         {/* Reason & Notes */}
                         <div className="space-y-6">

@@ -59,8 +59,9 @@ const LoginPage: React.FC = () => {
         return;
       }
       
-      // If user registered as doctor but doesn't have a doctor profile yet, redirect to application
-      if (isDoctorRegistration && !user.is_doctor) {
+      // Check if user registered as doctor but hasn't submitted application yet
+      // This handles users who registered as doctors but haven't completed their application
+      if (!user.is_doctor && (user.registered_as_doctor || isDoctorRegistration)) {
         navigate('/doctor/application', { replace: true });
         return;
       }

@@ -14,8 +14,11 @@ import {
     VideoCameraIcon, 
     UserGroupIcon,
     ExclamationTriangleIcon,
-    CheckCircleIcon
+    CheckCircleIcon,
+    ShieldCheckIcon
 } from '@heroicons/react/24/outline';
+import { getUserInsurances } from '../../../api/insurance';
+import { UserInsurance } from '../../../types/insurance';
 
 interface AppointmentBookingFormProps {
     doctorId: number;
@@ -55,6 +58,8 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [userInsurances, setUserInsurances] = useState<UserInsurance[]>([]);
+    const [loadingInsurances, setLoadingInsurances] = useState<boolean>(false);
 
     // React Hook Form setup
     const {
@@ -70,7 +75,8 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
             date: '',
             start_time: '',
             reason: prefillReason || '',
-            notes: ''
+            notes: '',
+            user_insurance_id: null
         }
     });
 
@@ -82,6 +88,29 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
             setValue('reason', prefillReason);
         }
     }, [isFollowUp, prefillReason, setValue]);
+
+    // Fetch user's insurance plans
+    useEffect(() => {
+        const fetchInsurances = async () => {
+            setLoadingInsurances(true);
+            try {
+                const response = await getUserInsurances();
+                if (response && Array.isArray(response.results)) {
+                    setUserInsurances(response.results);
+                    // Auto-select primary insurance if available
+                    const primary = response.results.find(ins => ins.is_primary);
+                    if (primary) {
+                        setValue('user_insurance_id', primary.id);
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch insurance plans:', err);
+            } finally {
+                setLoadingInsurances(false);
+            }
+        };
+        fetchInsurances();
+    }, [setValue]);
 
     useEffect(() => {
         if (selectedDate && availability.length > 0) {
@@ -136,6 +165,7 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
             appointment_type: appointmentType,
             reason: data.reason.trim(),
             notes: data.notes?.trim() || undefined,
+            user_insurance_id: data.user_insurance_id || null,
         };
 
         try {
@@ -309,6 +339,38 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                     </label>
                 </div>
             </div>
+
+            {/* Insurance Selection */}
+            {userInsurances.length > 0 && (
+                <div>
+                    <label htmlFor="user_insurance_id" className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                        <ShieldCheckIcon className="h-5 w-5 text-primary" />
+                        Insurance Plan (Optional)
+                    </label>
+                    <select
+                        id="user_insurance_id"
+                        {...register('user_insurance_id', { valueAsNumber: true })}
+                        className={`input-field ${formErrors.user_insurance_id ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                        disabled={loadingInsurances}
+                    >
+                        <option value="">No Insurance</option>
+                        {userInsurances.map((insurance) => (
+                            <option key={insurance.id} value={insurance.id}>
+                                {insurance.plan.provider.name} - {insurance.plan.name}
+                                {insurance.is_primary ? ' (Primary)' : ''}
+                            </option>
+                        ))}
+                    </select>
+                    {watch('user_insurance_id') && (
+                        <div className="mt-2 p-3 bg-primary-50 rounded-lg border border-primary-200">
+                            <p className="text-xs text-gray-600">
+                                <span className="font-semibold">Note:</span> Insurance coverage will be calculated automatically. 
+                                A claim will be generated after your appointment is completed.
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Reason */}
             <div>

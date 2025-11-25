@@ -2,16 +2,22 @@ import axiosInstance from './axiosInstance';
 
 interface CreateOrderPayload {
     pharmacy_id: number;
+    user_insurance_id?: number | null;
 }
 
 export const createOrderFromPrescription = async (
     prescriptionId: number,
-    pharmacyId: number
+    pharmacyId: number,
+    userInsuranceId?: number | null
 ): Promise<any> => {
     try {
+        const payload: CreateOrderPayload = { pharmacy_id: pharmacyId };
+        if (userInsuranceId) {
+            payload.user_insurance_id = userInsuranceId;
+        }
         const response = await axiosInstance.post(
             `/pharmacy/prescriptions/${prescriptionId}/create_order/`,
-            { pharmacy_id: pharmacyId }
+            payload
         );
         return response.data;
     } catch (error) {

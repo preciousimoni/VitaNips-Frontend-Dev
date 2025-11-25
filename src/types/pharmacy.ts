@@ -42,6 +42,8 @@ export interface MedicationOrderItem {
     total_price: string | null;
 }
 
+import { UserInsurance } from './insurance';
+
 export interface MedicationOrder {
     id: number;
     user: number;
@@ -55,6 +57,11 @@ export interface MedicationOrder {
     pickup_or_delivery_date: string | null;
     notes: string | null;
     items: MedicationOrderItem[];
+    user_insurance?: UserInsurance | null;
+    user_insurance_id?: number | null;
+    insurance_covered_amount?: string | null;
+    patient_copay?: string | null;
+    insurance_claim_generated?: boolean;
 }
 
 export interface MedicationOrderUpdatePayload {

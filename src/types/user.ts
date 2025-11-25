@@ -26,6 +26,7 @@ export interface User {
 
     is_doctor: boolean;
     doctor_id?: number | null;
+    registered_as_doctor?: boolean;
 
     is_staff?: boolean;
     is_superuser?: boolean;

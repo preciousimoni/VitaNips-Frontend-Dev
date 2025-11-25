@@ -24,6 +24,8 @@ export const appointmentBookingSchema = z.object({
     .max(500, 'Reason must not exceed 500 characters'),
   
   notes: z.string().max(1000, 'Notes must not exceed 1000 characters').optional(),
+  
+  user_insurance_id: z.number().positive().optional().nullable(),
 });
 
 export type AppointmentBookingFormData = z.infer<typeof appointmentBookingSchema>;

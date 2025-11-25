@@ -1,7 +1,7 @@
 // src/pages/pharmacy/PharmacyOrderDetailPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, ShieldCheckIcon, BanknotesIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { getPharmacyOrderDetail, updatePharmacyOrder } from '../../api/pharmacy';
 import { MedicationOrder, MedicationOrderUpdatePayload } from '../../types/pharmacy';
 import axios from 'axios';
@@ -118,7 +118,40 @@ const PharmacyOrderDetailPage: React.FC = () => {
                             </li>
                         ))}
                     </ul>
-                    <p className='mt-2 font-medium'>Total: {order.total_amount ? `$${order.total_amount}` : 'Pending Calculation'}</p>
+                    <p className='mt-2 font-medium'>Total: {order.total_amount ? `₦${parseFloat(order.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'Pending Calculation'}</p>
+                    
+                    {/* Insurance Information */}
+                    {order.user_insurance && (
+                        <div className="mt-4 p-4 bg-teal-50 rounded-xl border-2 border-teal-200">
+                            <div className="flex items-center gap-2 mb-3">
+                                <ShieldCheckIcon className="h-5 w-5 text-teal-600" />
+                                <h4 className="font-bold text-gray-900">Insurance Coverage</h4>
+                            </div>
+                            <div className="space-y-2 text-sm">
+                                <p className="text-gray-700">
+                                    <span className="font-semibold">Plan:</span> {order.user_insurance.plan.provider.name} - {order.user_insurance.plan.name}
+                                </p>
+                                {order.total_amount && order.insurance_covered_amount && (
+                                    <>
+                                        <p className="text-green-700 font-semibold">
+                                            Covered: ₦{parseFloat(order.insurance_covered_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </p>
+                                        {order.patient_copay && (
+                                            <p className="text-blue-700 font-semibold">
+                                                Patient Pays: ₦{parseFloat(order.patient_copay).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
+                                {order.insurance_claim_generated && (
+                                    <p className="text-primary-700 font-semibold flex items-center gap-1 mt-2">
+                                        <CheckCircleIcon className="h-4 w-4" />
+                                        Insurance claim generated automatically
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div>

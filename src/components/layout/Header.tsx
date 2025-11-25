@@ -11,7 +11,8 @@ import {
     ShieldExclamationIcon,
     ShoppingBagIcon,
     CalendarDaysIcon,
-    DocumentTextIcon
+    DocumentTextIcon,
+    ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import NotificationCenter from '../notifications/NotificationCenter';
 
@@ -52,6 +53,7 @@ const Header: React.FC = () => {
     { name: 'Prescriptions', href: '/prescriptions', icon: DocumentTextIcon },
     { name: 'Doctors', href: '/doctors', icon: UserIcon },
     { name: 'Pharmacies', href: '/pharmacies', icon: ShoppingBagIcon },
+    { name: 'Insurance', href: '/insurance', icon: ShieldCheckIcon },
     { name: 'Health Tracking', href: '/health/vitals', icon: HeartIcon },
     { name: 'Emergency', href: '/emergency', icon: ShieldExclamationIcon },
   ];

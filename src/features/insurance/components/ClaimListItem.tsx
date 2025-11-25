@@ -1,94 +1,225 @@
 // src/features/insurance/components/ClaimListItem.tsx
 import React from 'react';
+import { motion } from 'framer-motion';
+import {
+  CalendarDaysIcon,
+  BanknotesIcon,
+  InformationCircleIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  DocumentTextIcon,
+  ExclamationTriangleIcon,
+  BuildingOfficeIcon,
+} from '@heroicons/react/24/outline';
 import { InsuranceClaim, ClaimStatus } from '../../../types/insuranceClaims';
-import { CalendarDaysIcon, BanknotesIcon, InformationCircleIcon, CheckCircleIcon, ClockIcon, DocumentTextIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 interface ClaimListItemProps {
-    claim: InsuranceClaim;
-    // onSelect?: (claim: InsuranceClaim) => void; // For future detail view
+  claim: InsuranceClaim;
 }
 
 const formatDateDisplay = (dateStr: string | null | undefined) => {
-    if (!dateStr) return 'N/A';
-    try {
-        return new Date(dateStr + 'T00:00:00Z').toLocaleDateString('en-US', {
-            year: 'numeric', month: 'short', day: 'numeric'
-        });
-    } catch { return dateStr; }
+  if (!dateStr) return 'N/A';
+  try {
+    return new Date(dateStr + 'T00:00:00Z').toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  } catch {
+    return dateStr;
+  }
 };
 
-const getStatusInfo = (status: ClaimStatus): { text: string; color: string; icon: React.ElementType } => {
-    switch (status) {
-        case 'submitted': return { text: 'Submitted', color: 'bg-blue-100 text-blue-700', icon: InformationCircleIcon };
-        case 'in_review': return { text: 'In Review', color: 'bg-yellow-100 text-yellow-700', icon: ClockIcon };
-        case 'additional_info': return { text: 'Info Requested', color: 'bg-orange-100 text-orange-700', icon: InformationCircleIcon };
-        case 'approved': return { text: 'Approved', color: 'bg-green-100 text-green-700', icon: CheckCircleIcon };
-        case 'partially_approved': return { text: 'Partially Approved', color: 'bg-teal-100 text-teal-700', icon: CheckCircleIcon };
-        case 'denied': return { text: 'Denied', color: 'bg-red-100 text-red-700', icon: ExclamationTriangleIcon };
-        case 'paid': return { text: 'Paid', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircleIcon };
-        default: return { text: status, color: 'bg-gray-100 text-gray-700', icon: InformationCircleIcon };
-    }
+const getStatusInfo = (status: ClaimStatus): {
+  text: string;
+  color: string;
+  bgColor: string;
+  icon: React.ElementType;
+} => {
+  switch (status) {
+    case 'submitted':
+      return {
+        text: 'Submitted',
+        color: 'text-blue-700',
+        bgColor: 'bg-blue-100',
+        icon: InformationCircleIcon,
+      };
+    case 'in_review':
+      return {
+        text: 'In Review',
+        color: 'text-yellow-700',
+        bgColor: 'bg-yellow-100',
+        icon: ClockIcon,
+      };
+    case 'additional_info':
+      return {
+        text: 'Info Requested',
+        color: 'text-orange-700',
+        bgColor: 'bg-orange-100',
+        icon: InformationCircleIcon,
+      };
+    case 'approved':
+      return {
+        text: 'Approved',
+        color: 'text-green-700',
+        bgColor: 'bg-green-100',
+        icon: CheckCircleIcon,
+      };
+    case 'partially_approved':
+      return {
+        text: 'Partially Approved',
+        color: 'text-teal-700',
+        bgColor: 'bg-teal-100',
+        icon: CheckCircleIcon,
+      };
+    case 'denied':
+      return {
+        text: 'Denied',
+        color: 'text-red-700',
+        bgColor: 'bg-red-100',
+        icon: ExclamationTriangleIcon,
+      };
+    case 'paid':
+      return {
+        text: 'Paid',
+        color: 'text-emerald-700',
+        bgColor: 'bg-emerald-100',
+        icon: CheckCircleIcon,
+      };
+    default:
+      return {
+        text: status,
+        color: 'text-gray-700',
+        bgColor: 'bg-gray-100',
+        icon: InformationCircleIcon,
+      };
+  }
 };
-
 
 const ClaimListItem: React.FC<ClaimListItemProps> = ({ claim }) => {
-    const statusInfo = getStatusInfo(claim.status);
+  const statusInfo = getStatusInfo(claim.status);
 
-    return (
-        <div className="bg-white p-4 my-3 rounded-lg shadow hover:shadow-xl transition-shadow duration-200 border-l-4 border-primary">
-            <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-2">
-                <div className="flex-grow">
-                    <div className="flex items-center mb-1">
-                        <DocumentTextIcon className="h-5 w-5 mr-2 text-primary flex-shrink-0" />
-                        <h3 className="font-semibold text-gray-800 text-md">
-                            Claim: {claim.claim_number || `ID ${claim.id}`}
-                        </h3>
-                    </div>
-                    <p className="text-xs text-gray-500 ml-7">
-                        For: {claim.user_insurance_display?.plan?.provider?.name} - {claim.user_insurance_display?.plan?.name}
-                    </p>
-                    <p className="text-sm text-gray-700 ml-7 mt-1">
-                        Medical Provider: <span className="font-medium">{claim.provider_name}</span>
-                    </p>
-                    <p className="text-xs text-gray-600 ml-7 mt-1">
-                        <CalendarDaysIcon className="h-3.5 w-3.5 inline mr-1 text-gray-500"/>
-                        Service Date: {formatDateDisplay(claim.service_date)}
-                    </p>
-                    <p className="text-xs text-gray-600 ml-7">
-                        <BanknotesIcon className="h-3.5 w-3.5 inline mr-1 text-gray-500"/>
-                        Amount Claimed: <span className="font-semibold">NGN {parseFloat(claim.claimed_amount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                    </p>
-                </div>
-                <div className="flex-shrink-0 mt-2 sm:mt-0 sm:text-right">
-                     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
-                        <statusInfo.icon className="h-3.5 w-3.5 mr-1.5" />
-                        {statusInfo.text}
-                    </span>
-                    <p className="text-xs text-gray-500 mt-1.5">
-                        Submitted: {formatDateDisplay(claim.date_submitted)}
-                    </p>
-                    {claim.date_processed && (
-                         <p className="text-xs text-gray-500 mt-0.5">
-                            Processed: {formatDateDisplay(claim.date_processed)}
-                        </p>
-                    )}
-                </div>
+  return (
+    <motion.div
+      whileHover={{ y: -2, scale: 1.01 }}
+      className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-gray-100 overflow-hidden group"
+    >
+      <div className="p-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-primary-100 rounded-xl">
+                <DocumentTextIcon className="h-6 w-6 text-primary-600" />
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900 text-lg">
+                  Claim: {claim.claim_number || `ID ${claim.id}`}
+                </h3>
+                {claim.user_insurance_display?.plan?.provider?.name && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    {claim.user_insurance_display.plan.provider.name} -{' '}
+                    {claim.user_insurance_display.plan.name}
+                  </p>
+                )}
+              </div>
             </div>
-            {claim.service_description &&
-                <p className="text-xs text-gray-600 mt-2 pt-2 border-t border-gray-200 ml-7">
-                    <span className="font-medium">Service:</span> {claim.service_description}
-                </p>
-            }
-            {claim.approved_amount &&
-                <p className="text-xs text-green-600 font-semibold mt-1 ml-7">
-                    Amount Approved: NGN {parseFloat(claim.approved_amount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
-                </p>
-            }
-            {claim.notes &&
-                <p className="text-xs text-gray-500 mt-1 ml-7">Notes: {claim.notes}</p>
-            }
+          </div>
+
+          {/* Status Badge */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm ${statusInfo.bgColor} ${statusInfo.color} border-2 border-current/20`}
+          >
+            <statusInfo.icon className="h-5 w-5" />
+            {statusInfo.text}
+          </motion.div>
         </div>
-    );
+
+        {/* Details Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="bg-gray-50 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <BuildingOfficeIcon className="h-5 w-5 text-gray-500" />
+              <span className="text-xs font-medium text-gray-500">Medical Provider</span>
+            </div>
+            <p className="text-sm font-bold text-gray-900">{claim.provider_name}</p>
+          </div>
+
+          <div className="bg-gray-50 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <CalendarDaysIcon className="h-5 w-5 text-gray-500" />
+              <span className="text-xs font-medium text-gray-500">Service Date</span>
+            </div>
+            <p className="text-sm font-bold text-gray-900">
+              {formatDateDisplay(claim.service_date)}
+            </p>
+          </div>
+
+          <div className="bg-gray-50 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <BanknotesIcon className="h-5 w-5 text-gray-500" />
+              <span className="text-xs font-medium text-gray-500">Amount Claimed</span>
+            </div>
+            <p className="text-lg font-bold text-primary">
+              ₦{parseFloat(claim.claimed_amount).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </p>
+          </div>
+
+          {claim.approved_amount && (
+            <div className="bg-green-50 rounded-xl p-4 border-2 border-green-200">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircleIcon className="h-5 w-5 text-green-600" />
+                <span className="text-xs font-medium text-green-700">Amount Approved</span>
+              </div>
+              <p className="text-lg font-bold text-green-700">
+                ₦{parseFloat(claim.approved_amount).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Service Description */}
+        {claim.service_description && (
+          <div className="mb-4 p-4 bg-blue-50 rounded-xl border-2 border-blue-200">
+            <p className="text-xs font-semibold text-blue-900 mb-1">Service Description</p>
+            <p className="text-sm text-gray-700">{claim.service_description}</p>
+          </div>
+        )}
+
+        {/* Dates and Notes */}
+        <div className="flex flex-wrap gap-4 text-xs text-gray-600 pt-4 border-t border-gray-200">
+          <div className="flex items-center gap-1">
+            <CalendarDaysIcon className="h-4 w-4" />
+            <span>
+              Submitted: <span className="font-semibold">{formatDateDisplay(claim.date_submitted)}</span>
+            </span>
+          </div>
+          {claim.date_processed && (
+            <div className="flex items-center gap-1">
+              <CheckCircleIcon className="h-4 w-4" />
+              <span>
+                Processed: <span className="font-semibold">{formatDateDisplay(claim.date_processed)}</span>
+              </span>
+            </div>
+          )}
+        </div>
+
+        {claim.notes && (
+          <div className="mt-4 p-3 bg-yellow-50 rounded-xl border border-yellow-200">
+            <p className="text-xs font-semibold text-yellow-900 mb-1">Notes</p>
+            <p className="text-xs text-gray-700">{claim.notes}</p>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
 };
 
 export default ClaimListItem;

@@ -4,6 +4,10 @@ import { User } from '../types/user';
 /**
  * Determines the appropriate dashboard route based on user role
  * Priority: Admin > Doctor > Pharmacy > Patient
+ * 
+ * Note: This function should be called after checking for doctor applications,
+ * as users who registered as doctors but haven't submitted applications
+ * should be redirected to /doctor/application instead.
  */
 export const getDashboardRoute = (user: User | null): string => {
   if (!user) {

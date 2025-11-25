@@ -16,7 +16,8 @@ import {
     ClockIcon,
     CheckCircleIcon,
     UserIcon,
-    SparklesIcon
+    SparklesIcon,
+    ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 
 import { getUserAppointments } from '../api/appointments';
@@ -274,6 +275,13 @@ const DashboardPage: React.FC = () => {
             href: '/pharmacies',
             color: 'from-emerald-500 to-teal-500',
             description: 'Order refills & find locations'
+        },
+        {
+            icon: ShieldCheckIcon,
+            label: 'Insurance',
+            href: '/insurance',
+            color: 'from-teal-500 to-primary-500',
+            description: 'Manage plans & claims'
         },
         {
             icon: ShieldExclamationIcon,
