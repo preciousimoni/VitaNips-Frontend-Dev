@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Pharmacy } from '../../../types/pharmacy';
 import { getPharmacies } from '../../../api/pharmacy';
 import Modal from '../../../components/common/Modal';
+import Skeleton from '../../../components/ui/Skeleton';
 
 interface PharmacySelectionModalProps {
     isOpen: boolean;
@@ -92,10 +93,6 @@ const PharmacySelectionModal: React.FC<PharmacySelectionModalProps> = ({
                 />
 
                 {error && <p className="text-red-600 text-sm">{error}</p>}
-
-import Skeleton from '../../../components/ui/Skeleton';
-
-// ... inside component ...
 
                 <div className="max-h-60 overflow-y-auto border rounded p-2 space-y-2">
                     {isLoading && pharmacies.length === 0 && (

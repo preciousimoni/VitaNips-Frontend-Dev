@@ -631,6 +631,25 @@ const DoctorDashboardPage: React.FC = () => {
                 <motion.button
                   whileHover={{ x: 5, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/appointments')}
+                  className="w-full flex items-center justify-between p-5 bg-gradient-to-r from-primary/5 to-emerald-500/5 hover:from-primary/10 hover:to-emerald-500/10 rounded-2xl transition-all group border-2 border-transparent hover:border-primary/20 shadow-sm hover:shadow-md"
+                >
+                  <div className="flex items-center space-x-4">
+                    <motion.div
+                      whileHover={{ rotate: 360, scale: 1.1 }}
+                      transition={{ duration: 0.6 }}
+                      className="p-3 bg-gradient-to-br from-primary to-emerald-600 rounded-xl shadow-lg"
+                    >
+                      <CalendarIcon className="h-6 w-6 text-white" />
+                    </motion.div>
+                    <span className="font-bold text-gray-900 group-hover:text-primary text-lg">My Appointments</span>
+                  </div>
+                  <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-primary" />
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ x: 5, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/doctor/prescriptions')}
                   className="w-full flex items-center justify-between p-5 bg-gradient-to-r from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 rounded-2xl transition-all group border-2 border-transparent hover:border-blue-200 shadow-sm hover:shadow-md"
                 >
@@ -651,19 +670,19 @@ const DoctorDashboardPage: React.FC = () => {
                   whileHover={{ x: 5, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/doctor/availability')}
-                  className="w-full flex items-center justify-between p-5 bg-gradient-to-r from-primary/5 to-emerald-500/5 hover:from-primary/10 hover:to-emerald-500/10 rounded-2xl transition-all group border-2 border-transparent hover:border-primary/20 shadow-sm hover:shadow-md"
+                  className="w-full flex items-center justify-between p-5 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-2xl transition-all group border-2 border-transparent hover:border-purple-200 shadow-sm hover:shadow-md"
                 >
                   <div className="flex items-center space-x-4">
                     <motion.div
                       whileHover={{ rotate: 360, scale: 1.1 }}
                       transition={{ duration: 0.6 }}
-                      className="p-3 bg-gradient-to-br from-primary to-emerald-600 rounded-xl shadow-lg"
+                      className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg"
                     >
-                      <CalendarIcon className="h-6 w-6 text-white" />
+                      <ClockIcon className="h-6 w-6 text-white" />
                     </motion.div>
-                    <span className="font-bold text-gray-900 group-hover:text-primary text-lg">Manage Availability</span>
+                    <span className="font-bold text-gray-900 group-hover:text-purple-700 text-lg">Manage Availability</span>
                   </div>
-                  <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-primary" />
+                  <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-purple-500" />
                 </motion.button>
 
                 <motion.button

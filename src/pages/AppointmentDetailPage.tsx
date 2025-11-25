@@ -9,8 +9,11 @@ import {
 } from '@heroicons/react/24/outline';
 import { getAppointmentDetails, cancelAppointment, updateAppointment } from '../api/appointments';
 import { Appointment } from '../types/appointments';
+import { createDoctorPrescription, DoctorPrescriptionPayload } from '../api/doctorPortal';
 import toast from 'react-hot-toast';
 import ConfirmDialog from '../components/common/ConfirmDialog';
+import Modal from '../components/common/Modal';
+import DoctorPrescriptionForm from '../features/doctor_portal/components/DoctorPrescriptionForm';
 import { formatDate, formatTime } from '../utils/date';
 import Spinner from '../components/ui/Spinner';
 import ErrorMessage from '../components/ui/ErrorMessage';
@@ -38,13 +41,15 @@ const AppointmentDetailPage: React.FC = () => {
     const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
 
     const { user } = useAuth();
-    const isDoctor = user?.user_type === 'doctor';
+    const isDoctor = user?.is_doctor || false;
 
     const [appointment, setAppointment] = useState<Appointment | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [isCancelling, setIsCancelling] = useState<boolean>(false);
     const [isMarkingCompleted, setIsMarkingCompleted] = useState<boolean>(false);
+    const [showPrescriptionModal, setShowPrescriptionModal] = useState<boolean>(false);
+    const [isSubmittingPrescription, setIsSubmittingPrescription] = useState<boolean>(false);
     
     const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
 
@@ -61,8 +66,8 @@ const AppointmentDetailPage: React.FC = () => {
             if (axios.isAxiosError(err) && err.response?.status === 404) {
                 setError("Appointment not found. It may have been deleted or does not exist.");
             } else {
-                const errorMessage = err instanceof Error ? err.message : "Failed to load appointment details.";
-                setError(errorMessage);
+            const errorMessage = err instanceof Error ? err.message : "Failed to load appointment details.";
+            setError(errorMessage); 
             }
             setAppointment(null);
         } finally { setIsLoading(false); }
@@ -123,7 +128,11 @@ const AppointmentDetailPage: React.FC = () => {
         try {
             const updatedAppointment = await updateAppointment(appointment.id, { status: 'completed' });
             setAppointment(updatedAppointment);
-            toast.success('Appointment marked as completed! You can now write a prescription.', { id: toastId });
+            toast.success('Appointment marked as completed!', { id: toastId });
+            // Automatically open prescription modal after marking as completed
+            setTimeout(() => {
+                setShowPrescriptionModal(true);
+            }, 500);
         } catch (err) {
             const errorMsg = err instanceof Error ? err.message : "Failed to mark appointment as completed.";
             setError(errorMsg);
@@ -131,6 +140,23 @@ const AppointmentDetailPage: React.FC = () => {
             console.error("Mark as completed error:", err);
         } finally {
             setIsMarkingCompleted(false);
+        }
+    };
+
+    const handlePrescriptionSubmit = async (payload: DoctorPrescriptionPayload) => {
+        setIsSubmittingPrescription(true);
+        try {
+            await createDoctorPrescription(payload);
+            toast.success('Prescription created successfully!');
+            setShowPrescriptionModal(false);
+            fetchAppointment(); // Refresh appointment data
+        } catch (err) {
+            const errorMsg = err instanceof Error ? err.message : "Failed to create prescription.";
+            toast.error(errorMsg);
+            console.error("Create prescription error:", err);
+            throw err; // Re-throw so form can handle it
+        } finally {
+            setIsSubmittingPrescription(false);
         }
     };
 
@@ -274,7 +300,7 @@ const AppointmentDetailPage: React.FC = () => {
                     <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
                         <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
                     </svg>
-                </div>
+                            </div>
             </motion.div>
 
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
@@ -320,7 +346,7 @@ const AppointmentDetailPage: React.FC = () => {
                                         {appointment.doctor_name || `Dr. ID ${appointment.doctor}`}
                                         <ArrowLeftIcon className="h-5 w-5 rotate-180 text-primary opacity-0 group-hover/link:opacity-100 transition-opacity" />
                                     </Link>
-                                </div>
+                        </div>
                             </div>
                         </motion.div>
 
@@ -391,13 +417,13 @@ const AppointmentDetailPage: React.FC = () => {
                                         <InformationCircleIcon className="h-5 w-5 text-white" />
                                     </div>
                                     <h3 className="text-2xl font-black text-gray-900">Reason for Visit</h3>
-                                </div>
+                    </div>
                                 <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 p-6 rounded-2xl border-2 border-gray-200 text-gray-700 leading-relaxed text-lg">
                                     {appointment.reason || <span className="italic text-gray-400">Not specified</span>}
-                                </div>
+                    </div>
                             </motion.div>
                             
-                            {appointment.notes && (
+                    {appointment.notes && (
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -430,6 +456,50 @@ const AppointmentDetailPage: React.FC = () => {
                                     <InformationCircleIcon className="h-6 w-6 mr-4 text-orange-600" />
                                 </motion.div>
                                 <p className="text-lg">A follow-up is recommended for this appointment.</p>
+                            </motion.div>
+                        )}
+
+                        {/* Prescription Prompt Banner - For Completed Appointments */}
+                        {appointment.status === 'completed' && isDoctor && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.7 }}
+                                className="bg-gradient-to-r from-purple-50 via-indigo-50 to-pink-50 rounded-3xl p-8 border-2 border-purple-200 relative overflow-hidden"
+                            >
+                                <motion.div
+                                    animate={{ 
+                                        scale: [1, 1.2, 1],
+                                        rotate: [0, 90, 0]
+                                    }}
+                                    transition={{ duration: 10, repeat: Infinity }}
+                                    className="absolute top-0 right-0 w-32 h-32 bg-purple-200/30 rounded-full blur-3xl"
+                                ></motion.div>
+                                
+                                <div className="flex items-start gap-6 relative z-10">
+                                    <motion.div
+                                        animate={{ scale: [1, 1.1, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                        className="p-4 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl shadow-lg flex-shrink-0"
+                                    >
+                                        <ClipboardDocumentCheckIcon className="h-8 w-8 text-white" />
+                                    </motion.div>
+                                    <div className="flex-1">
+                                        <h3 className="text-2xl font-black text-gray-900 mb-2">Ready to Write Prescription</h3>
+                                        <p className="text-gray-700 leading-relaxed mb-4 text-lg">
+                                            This appointment has been completed. You can now write a prescription for the patient.
+                                        </p>
+                                        <motion.button
+                                            onClick={() => setShowPrescriptionModal(true)}
+                                            whileHover={{ scale: 1.05, y: -2 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center gap-2"
+                                        >
+                                            <ClipboardDocumentCheckIcon className="h-5 w-5" />
+                                            Write Prescription Now
+                                        </motion.button>
+                                    </div>
+                                </div>
                             </motion.div>
                         )}
 
@@ -477,7 +547,7 @@ const AppointmentDetailPage: React.FC = () => {
                                 </div>
                             </motion.div>
                         )}
-                    </div>
+                </div>
 
                     {/* Actions Footer */}
                     <motion.div
@@ -492,29 +562,31 @@ const AppointmentDetailPage: React.FC = () => {
                                 whileTap={{ scale: 0.95 }}
                                 onClick={handleMarkAsCompleted}
                                 disabled={isMarkingCompleted}
-                                className="px-8 py-4 bg-gradient-to-r from-primary to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all disabled:opacity-50 flex items-center shadow-lg"
+                                className="px-10 py-5 bg-gradient-to-r from-primary to-emerald-600 text-white font-black text-lg rounded-2xl hover:shadow-2xl transition-all disabled:opacity-50 flex items-center shadow-xl border-4 border-white/20"
                             >
-                                <CheckCircleIcon className="h-5 w-5 mr-2" />
-                                {isMarkingCompleted ? 'Marking...' : 'Mark as Completed'}
+                                <motion.div
+                                    animate={isMarkingCompleted ? { rotate: 360 } : {}}
+                                    transition={{ duration: 1, repeat: isMarkingCompleted ? Infinity : 0, ease: "linear" }}
+                                >
+                                    <CheckCircleIcon className="h-6 w-6 mr-3" />
+                                </motion.div>
+                                {isMarkingCompleted ? 'Marking as Completed...' : '✓ Mark Consultation as Completed'}
                             </motion.button>
                         )}
 
                         {appointment.status === 'completed' && isDoctor && (
-                            <motion.div
+                            <motion.button
                                 whileHover={{ scale: 1.05, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
+                                onClick={() => setShowPrescriptionModal(true)}
+                                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center"
                             >
-                                <Link 
-                                    to="/doctor/prescriptions" 
-                                    className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center"
-                                >
-                                    <ClipboardDocumentCheckIcon className="h-5 w-5 mr-2" />
-                                    Write Prescription
-                                </Link>
-                            </motion.div>
+                                <ClipboardDocumentCheckIcon className="h-5 w-5 mr-2" />
+                                Write Prescription
+                            </motion.button>
                         )}
 
-                        {canCancel && (
+                    {canCancel && (
                             <motion.button
                                 whileHover={{ scale: 1.05, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
@@ -527,15 +599,15 @@ const AppointmentDetailPage: React.FC = () => {
                             </motion.button>
                         )}
                         
-                        {showScheduleFollowUp && (
+                    {showScheduleFollowUp && (
                             <motion.button
                                 whileHover={{ scale: 1.05, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
-                                onClick={handleScheduleFollowUp}
+                            onClick={handleScheduleFollowUp}
                                 className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center"
-                            >
-                                <ArrowPathIcon className="h-5 w-5 mr-2" />
-                                Schedule Follow-up
+                        >
+                            <ArrowPathIcon className="h-5 w-5 mr-2" />
+                            Schedule Follow-up
                             </motion.button>
                         )}
 
@@ -568,6 +640,24 @@ const AppointmentDetailPage: React.FC = () => {
                 isLoading={isCancelling}
                 isDangerous={true}
             />
+
+            {/* Prescription Modal */}
+            {appointment && appointment.status === 'completed' && isDoctor && (
+                <Modal
+                    isOpen={showPrescriptionModal}
+                    onClose={() => setShowPrescriptionModal(false)}
+                    title={`Write Prescription for ${appointment.patient_name || 'Patient'}`}
+                >
+                    <DoctorPrescriptionForm
+                        appointmentId={appointment.id}
+                        patientName={appointment.patient_name || `Patient ID ${appointment.user}`}
+                        appointmentDate={appointment.date}
+                        onSubmit={handlePrescriptionSubmit}
+                        onCancel={() => setShowPrescriptionModal(false)}
+                        isSubmitting={isSubmittingPrescription}
+                    />
+                </Modal>
+            )}
         </div>
     );
 };
