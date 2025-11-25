@@ -88,3 +88,42 @@ export interface PostReviewPayload {
           throw error;
       }
   };
+
+// Doctor Portal - Manage own availability
+export const getMyAvailability = async (): Promise<DoctorAvailability[]> => {
+  const response = await axiosInstance.get<PaginatedResponse<DoctorAvailability> | DoctorAvailability[]>('/doctors/portal/availability/');
+  // Handle both paginated and non-paginated responses
+  if (Array.isArray(response.data)) {
+    return response.data;
+  } else if (response.data && typeof response.data === 'object' && 'results' in response.data) {
+    return (response.data as PaginatedResponse<DoctorAvailability>).results;
+  }
+  return [];
+};
+
+export const createAvailabilitySlot = async (data: {
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  is_available: boolean;
+}): Promise<DoctorAvailability> => {
+  const response = await axiosInstance.post<DoctorAvailability>('/doctors/portal/availability/', data);
+  return response.data;
+};
+
+export const updateAvailabilitySlot = async (
+  id: number,
+  data: {
+    day_of_week: number;
+    start_time: string;
+    end_time: string;
+    is_available: boolean;
+  }
+): Promise<DoctorAvailability> => {
+  const response = await axiosInstance.put<DoctorAvailability>(`/doctors/portal/availability/${id}/`, data);
+  return response.data;
+};
+
+export const deleteAvailabilitySlot = async (id: number): Promise<void> => {
+  await axiosInstance.delete(`/doctors/portal/availability/${id}/`);
+};

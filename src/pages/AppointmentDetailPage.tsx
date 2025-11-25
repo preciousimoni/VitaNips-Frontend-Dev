@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import {
     ArrowLeftIcon, CalendarIcon, ClockIcon, VideoCameraIcon, BuildingOfficeIcon,
     CheckCircleIcon, XCircleIcon, InformationCircleIcon, TrashIcon, UserIcon,
-    ArrowPathIcon, MapPinIcon
+    ArrowPathIcon, MapPinIcon, SparklesIcon, PhoneIcon, EnvelopeIcon
 } from '@heroicons/react/24/outline';
 import { getAppointmentDetails, cancelAppointment } from '../api/appointments';
 import { Appointment } from '../types/appointments';
@@ -28,6 +29,11 @@ const getStatusInfo = (status: Appointment['status']): { text: string; color: st
 const AppointmentDetailPage: React.FC = () => {
     const { appointmentId } = useParams<{ appointmentId: string }>();
     const navigate = useNavigate();
+    
+    // All hooks must be called before any conditional returns
+    const { scrollYProgress } = useScroll();
+    const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+    const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
 
     const [appointment, setAppointment] = useState<Appointment | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -103,21 +109,35 @@ const AppointmentDetailPage: React.FC = () => {
         });
     };
 
-    if (isLoading) return <div className="flex justify-center items-center min-h-screen bg-gray-50"><Spinner size="lg" /></div>;
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
+                <Spinner size="lg" />
+            </div>
+        );
+    }
     
     if (error || !appointment) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center max-w-md w-full">
-                    <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <XCircleIcon className="h-8 w-8 text-red-500" />
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 flex flex-col items-center justify-center p-4">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-white p-8 rounded-3xl shadow-2xl border border-gray-100 text-center max-w-md w-full"
+                >
+                    <div className="bg-gradient-to-br from-red-50 to-pink-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <XCircleIcon className="h-10 w-10 text-red-500" />
                     </div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">Unable to Load Appointment</h2>
-                    <p className="text-gray-500 mb-6">{error || "Appointment not found."}</p>
-                    <Link to="/appointments" className="btn-primary w-full block text-center">
+                    <h2 className="text-2xl font-black text-gray-900 mb-3">Unable to Load Appointment</h2>
+                    <p className="text-gray-600 mb-8">{error || "Appointment not found."}</p>
+                    <Link 
+                        to="/appointments" 
+                        className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-primary to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                    >
+                        <ArrowLeftIcon className="h-5 w-5 mr-2" />
                         Back to Appointments
                     </Link>
-                </div>
+                </motion.div>
             </div>
         );
     }
@@ -139,137 +159,346 @@ const AppointmentDetailPage: React.FC = () => {
     const { text: statusText, color: statusColor, bgColor: statusBgColor, icon: StatusIcon } = getStatusInfo(appointment.status);
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto">
-                <Link to="/appointments" className="inline-flex items-center text-gray-500 hover:text-primary mb-6 transition-colors group">
-                    <ArrowLeftIcon className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" /> 
-                    Back to Appointments
-                </Link>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
+            {/* Hero Header */}
+            <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative bg-gradient-to-br from-primary via-emerald-600 to-teal-600 overflow-hidden mb-8"
+            >
+                {/* Animated Background Elements */}
+                <div className="absolute inset-0 opacity-10">
+                    <motion.div 
+                        style={{ y }}
+                        className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob"
+                    ></motion.div>
+                    <motion.div 
+                        style={{ y: y2 }}
+                        className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-2000"
+                    ></motion.div>
+                </div>
 
-                <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100">
-                    {/* Header */}
-                    <div className="p-6 sm:p-8 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white">
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Appointment Details</h1>
-                            <p className="text-gray-500 text-sm mt-1">ID: #{appointment.id}</p>
-                        </div>
-                        <div className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold ${statusColor} ${statusBgColor}`}>
-                            <StatusIcon className="h-5 w-5 mr-2" />
-                            {statusText}
-                        </div>
-                    </div>
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        <motion.button
+                            onClick={() => navigate('/appointments')}
+                            whileHover={{ scale: 1.05, x: -5 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="inline-flex items-center gap-2 text-white/90 hover:text-white mb-6 font-bold"
+                        >
+                            <ArrowLeftIcon className="h-5 w-5" />
+                            Back to Appointments
+                        </motion.button>
 
-                    <div className="p-6 sm:p-8 space-y-8">
-                        {/* Doctor Info Card */}
-                        <div className="bg-gray-50 rounded-2xl p-4 flex items-center space-x-4 border border-gray-100">
-                            <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center shadow-sm text-primary">
-                                <UserIcon className="h-6 w-6" />
-                            </div>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="inline-flex items-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white font-bold text-sm mb-4"
+                        >
+                            <SparklesIcon className="h-4 w-4 mr-2" />
+                            APPOINTMENT DETAILS
+                        </motion.div>
+
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                             <div>
-                                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Doctor</p>
-                                <Link to={`/doctors/${appointment.doctor}`} className="text-lg font-bold text-gray-900 hover:text-primary transition-colors">
-                                    {appointment.doctor_name || `Dr. ID ${appointment.doctor}`}
-                                </Link>
+                                <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
+                                    Appointment{' '}
+                                    <span className="relative inline-block">
+                                        #{appointment.id}
+                                        <motion.span
+                                            initial={{ scaleX: 0 }}
+                                            animate={{ scaleX: 1 }}
+                                            transition={{ delay: 0.8, duration: 0.8 }}
+                                            className="absolute -bottom-2 left-0 right-0 h-3 bg-yellow-400/30"
+                                        ></motion.span>
+                                    </span>
+                                </h1>
+                                <p className="text-lg text-white/90">
+                                    {formatDate(appointment.date)} • {formatTime(appointment.start_time)}
+                                </p>
                             </div>
+                            
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.4 }}
+                                className={`inline-flex items-center px-6 py-3 rounded-2xl font-bold text-sm shadow-lg border-2 ${
+                                    appointment.status === 'confirmed' ? 'bg-white/20 backdrop-blur-sm border-white/30 text-white' :
+                                    appointment.status === 'completed' ? 'bg-white/20 backdrop-blur-sm border-white/30 text-white' :
+                                    appointment.status === 'cancelled' ? 'bg-red-500/20 backdrop-blur-sm border-red-300/30 text-white' :
+                                    'bg-white/20 backdrop-blur-sm border-white/30 text-white'
+                                }`}
+                            >
+                                <StatusIcon className="h-6 w-6 mr-2" />
+                                {statusText}
+                            </motion.div>
                         </div>
+                    </motion.div>
+                </div>
+
+                {/* Bottom Wave */}
+                <div className="absolute bottom-0 left-0 right-0">
+                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
+                    </svg>
+                </div>
+            </motion.div>
+
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 overflow-hidden border border-gray-100"
+                >
+
+                    <div className="p-8 sm:p-10 space-y-8">
+                        {/* Doctor Info Card */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            whileHover={{ scale: 1.02, y: -2 }}
+                            className="bg-gradient-to-br from-primary/5 to-emerald-500/5 rounded-3xl p-6 border-2 border-primary/20 relative overflow-hidden group"
+                        >
+                            <motion.div
+                                animate={{ 
+                                    scale: [1, 1.2, 1],
+                                    rotate: [0, 90, 0]
+                                }}
+                                transition={{ duration: 10, repeat: Infinity }}
+                                className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl"
+                            ></motion.div>
+                            
+                            <div className="flex items-center space-x-6 relative z-10">
+                                <motion.div
+                                    whileHover={{ rotate: 360, scale: 1.1 }}
+                                    transition={{ duration: 0.6 }}
+                                    className="h-16 w-16 bg-gradient-to-br from-primary to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg"
+                                >
+                                    <UserIcon className="h-8 w-8 text-white" />
+                                </motion.div>
+                                <div className="flex-1">
+                                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Healthcare Provider</p>
+                                    <Link 
+                                        to={`/doctors/${appointment.doctor}`} 
+                                        className="text-2xl font-black text-gray-900 hover:text-primary transition-colors inline-flex items-center gap-2 group/link"
+                                    >
+                                        {appointment.doctor_name || `Dr. ID ${appointment.doctor}`}
+                                        <ArrowLeftIcon className="h-5 w-5 rotate-180 text-primary opacity-0 group-hover/link:opacity-100 transition-opacity" />
+                                    </Link>
+                                </div>
+                            </div>
+                        </motion.div>
 
                         {/* Details Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="flex items-start p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                                <CalendarIcon className="h-6 w-6 text-primary mr-4 mt-1 flex-shrink-0" />
-                                <div>
-                                    <p className="text-sm font-medium text-gray-500">Date</p>
-                                    <p className="text-lg font-semibold text-gray-900">{formatDate(appointment.date)}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                                <ClockIcon className="h-6 w-6 text-primary mr-4 mt-1 flex-shrink-0" />
-                                <div>
-                                    <p className="text-sm font-medium text-gray-500">Time</p>
-                                    <p className="text-lg font-semibold text-gray-900">{formatTime(appointment.start_time)} - {formatTime(appointment.end_time)}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                                {appointment.appointment_type === 'virtual' ?
-                                    <VideoCameraIcon className="h-6 w-6 text-purple-600 mr-4 mt-1 flex-shrink-0" /> :
-                                    <BuildingOfficeIcon className="h-6 w-6 text-teal-600 mr-4 mt-1 flex-shrink-0" />}
-                                <div>
-                                    <p className="text-sm font-medium text-gray-500">Consultation Type</p>
-                                    <p className="text-lg font-semibold text-gray-900 capitalize">{appointment.appointment_type.replace('_', '-')}</p>
-                                </div>
-                            </div>
-                            {appointment.appointment_type !== 'virtual' && (
-                                <div className="flex items-start p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                                    <MapPinIcon className="h-6 w-6 text-red-500 mr-4 mt-1 flex-shrink-0" />
-                                    <div>
-                                        <p className="text-sm font-medium text-gray-500">Location</p>
-                                        <p className="text-lg font-semibold text-gray-900">Medical Center</p>
+                            {[
+                                {
+                                    icon: CalendarIcon,
+                                    label: 'Date',
+                                    value: formatDate(appointment.date),
+                                    gradient: 'from-blue-500 to-cyan-500',
+                                    delay: 0.1
+                                },
+                                {
+                                    icon: ClockIcon,
+                                    label: 'Time',
+                                    value: `${formatTime(appointment.start_time)} - ${formatTime(appointment.end_time)}`,
+                                    gradient: 'from-emerald-500 to-teal-500',
+                                    delay: 0.2
+                                },
+                                {
+                                    icon: appointment.appointment_type === 'virtual' ? VideoCameraIcon : BuildingOfficeIcon,
+                                    label: 'Consultation Type',
+                                    value: appointment.appointment_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                                    gradient: appointment.appointment_type === 'virtual' ? 'from-purple-500 to-pink-500' : 'from-teal-500 to-cyan-500',
+                                    delay: 0.3
+                                },
+                                ...(appointment.appointment_type !== 'virtual' ? [{
+                                    icon: MapPinIcon,
+                                    label: 'Location',
+                                    value: 'Medical Center',
+                                    gradient: 'from-red-500 to-rose-500',
+                                    delay: 0.4
+                                }] : [])
+                            ].map((item, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: item.delay }}
+                                    whileHover={{ y: -5, scale: 1.02 }}
+                                    className="flex items-start p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-white border-2 border-gray-100 hover:border-primary/30 transition-all shadow-sm hover:shadow-lg group"
+                                >
+                                    <motion.div
+                                        whileHover={{ rotate: 360, scale: 1.1 }}
+                                        transition={{ duration: 0.6 }}
+                                        className={`h-12 w-12 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg mr-4 flex-shrink-0`}
+                                    >
+                                        <item.icon className="h-6 w-6 text-white" />
+                                    </motion.div>
+                                    <div className="flex-1">
+                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">{item.label}</p>
+                                        <p className="text-xl font-black text-gray-900 group-hover:text-primary transition-colors">{item.value}</p>
                                     </div>
-                                </div>
-                            )}
+                                </motion.div>
+                            ))}
                         </div>
 
                         {/* Reason & Notes */}
                         <div className="space-y-6">
-                            <div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-3">Reason for Visit</h3>
-                                <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100 text-gray-700 leading-relaxed">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                            >
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="p-2 bg-gradient-to-br from-primary to-emerald-600 rounded-xl">
+                                        <InformationCircleIcon className="h-5 w-5 text-white" />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-gray-900">Reason for Visit</h3>
+                                </div>
+                                <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 p-6 rounded-2xl border-2 border-gray-200 text-gray-700 leading-relaxed text-lg">
                                     {appointment.reason || <span className="italic text-gray-400">Not specified</span>}
                                 </div>
-                            </div>
+                            </motion.div>
                             
                             {appointment.notes && (
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-3">Doctor's Notes</h3>
-                                    <div className="bg-blue-50 p-5 rounded-2xl border border-blue-100 text-blue-900 leading-relaxed whitespace-pre-wrap">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.6 }}
+                                >
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl">
+                                            <CheckCircleIcon className="h-5 w-5 text-white" />
+                                        </div>
+                                        <h3 className="text-2xl font-black text-gray-900">Doctor's Notes</h3>
+                                    </div>
+                                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-2xl border-2 border-blue-200 text-blue-900 leading-relaxed whitespace-pre-wrap text-lg shadow-sm">
                                         {appointment.notes}
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
                         </div>
 
                         {appointment.followup_required && !showScheduleFollowUp && (
-                            <div className="bg-orange-50 border border-orange-100 rounded-xl p-4 flex items-center text-orange-800 font-medium">
-                                <InformationCircleIcon className="h-5 w-5 mr-3" />
-                                A follow-up is recommended for this appointment.
-                            </div>
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.7 }}
+                                className="bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl p-6 flex items-center text-orange-900 font-bold shadow-lg"
+                            >
+                                <motion.div
+                                    animate={{ scale: [1, 1.2, 1] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                >
+                                    <InformationCircleIcon className="h-6 w-6 mr-4 text-orange-600" />
+                                </motion.div>
+                                <p className="text-lg">A follow-up is recommended for this appointment.</p>
+                            </motion.div>
+                        )}
+
+                        {/* Virtual Consultation Info */}
+                        {appointment.appointment_type === 'virtual' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.8 }}
+                                className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border-2 border-purple-200 relative overflow-hidden"
+                            >
+                                <motion.div
+                                    animate={{ 
+                                        scale: [1, 1.2, 1],
+                                        rotate: [0, 90, 0]
+                                    }}
+                                    transition={{ duration: 10, repeat: Infinity }}
+                                    className="absolute top-0 right-0 w-32 h-32 bg-purple-200/30 rounded-full blur-3xl"
+                                ></motion.div>
+                                
+                                <div className="flex items-start gap-6 relative z-10">
+                                    <motion.div
+                                        animate={{ scale: [1, 1.1, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                        className="p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-lg flex-shrink-0"
+                                    >
+                                        <VideoCameraIcon className="h-8 w-8 text-white" />
+                                    </motion.div>
+                                    <div className="flex-1">
+                                        <h3 className="text-2xl font-black text-gray-900 mb-3">Virtual Consultation</h3>
+                                        <p className="text-gray-700 leading-relaxed mb-4 text-lg">
+                                            This is a virtual appointment. You can join the video call 15 minutes before the scheduled time. Make sure you have a stable internet connection and a quiet environment.
+                                        </p>
+                                        {canJoinCall && (
+                                            <div className="flex items-center gap-3 px-4 py-2 bg-green-100 rounded-xl border border-green-300 w-fit">
+                                                <motion.div
+                                                    animate={{ scale: [1, 1.2, 1] }}
+                                                    transition={{ duration: 2, repeat: Infinity }}
+                                                    className="h-3 w-3 bg-green-500 rounded-full"
+                                                ></motion.div>
+                                                <span className="text-green-800 font-bold">You can join now!</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.div>
                         )}
                     </div>
 
                     {/* Actions Footer */}
-                    <div className="bg-gray-50 p-6 sm:p-8 border-t border-gray-100 flex flex-wrap gap-4 justify-end">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8 }}
+                        className="bg-gradient-to-br from-gray-50 to-white p-8 border-t-2 border-gray-200 flex flex-wrap gap-4 justify-end"
+                    >
                         {canCancel && (
-                            <button 
+                            <motion.button
+                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileTap={{ scale: 0.95 }}
                                 onClick={handleCancel} 
                                 disabled={isCancelling} 
-                                className="px-6 py-3 border border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-50 transition-colors disabled:opacity-50 flex items-center shadow-sm"
+                                className="px-8 py-4 border-2 border-red-300 text-red-600 font-bold rounded-xl hover:bg-red-50 transition-all disabled:opacity-50 flex items-center shadow-lg hover:shadow-xl"
                             >
                                 <TrashIcon className="h-5 w-5 mr-2" />
                                 {isCancelling ? 'Cancelling...' : 'Cancel Appointment'}
-                            </button>
+                            </motion.button>
                         )}
                         
                         {showScheduleFollowUp && (
-                            <button
+                            <motion.button
+                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileTap={{ scale: 0.95 }}
                                 onClick={handleScheduleFollowUp}
-                                className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-md flex items-center"
+                                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center"
                             >
                                 <ArrowPathIcon className="h-5 w-5 mr-2" />
                                 Schedule Follow-up
-                            </button>
+                            </motion.button>
                         )}
 
                         {canJoinCall && (
-                            <Link 
-                                to={`/appointments/${appointment.id}/call`} 
-                                className="px-8 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors shadow-lg hover:shadow-green-200 flex items-center transform hover:-translate-y-0.5"
+                            <motion.div
+                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileTap={{ scale: 0.95 }}
                             >
-                                <VideoCameraIcon className="h-5 w-5 mr-2" />
-                                Join Virtual Call
-                            </Link>
+                                <Link 
+                                    to={`/appointments/${appointment.id}/call`} 
+                                    className="px-10 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center"
+                                >
+                                    <VideoCameraIcon className="h-6 w-6 mr-2" />
+                                    Join Virtual Call
+                                </Link>
+                            </motion.div>
                         )}
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
             </div>
 
             <ConfirmDialog

@@ -40,6 +40,7 @@ import HealthyEatingTipsPage from '../pages/articles/HealthyEatingTipsPage';
 import MentalWellnessResourcesPage from '../pages/MentalWellnessResourcesPage';
 import DoctorDashboardPage from '../pages/doctor/DoctorDashboardPage';
 import DoctorPrescriptionWorkspacePage from '../pages/doctor/DoctorPrescriptionWorkspacePage';
+import ManageAvailabilityPage from '../pages/doctor/ManageAvailabilityPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import AdminDoctorsPage from '../pages/admin/AdminDoctorsPage';
@@ -201,6 +202,7 @@ const AppRouter: React.FC = () => {
         <Route element={<DoctorRoute />}>
           <Route path="/doctor/dashboard" element={<DoctorDashboardPage />} />
           <Route path="/doctor/prescriptions" element={<DoctorPrescriptionWorkspacePage />} />
+          <Route path="/doctor/availability" element={<ManageAvailabilityPage />} />
         </Route>
 
         <Route element={<AdminRoute />}>
