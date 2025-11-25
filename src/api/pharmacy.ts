@@ -1,6 +1,6 @@
 // src/api/pharmacy.ts
 import axiosInstance from './axiosInstance';
-import { Pharmacy, Medication, MedicationOrder, MedicationOrderUpdatePayload } from '../types/pharmacy';
+import { Pharmacy, Medication, MedicationOrder, MedicationOrderUpdatePayload, PharmacyInventory, PharmacyInventoryCreatePayload, PharmacyInventoryUpdatePayload } from '../types/pharmacy';
 import { PaginatedResponse } from '../types/common';
 
 interface GetPharmaciesParams {
@@ -131,6 +131,67 @@ interface GetPharmacyOrdersParams {
           return response.data;
       } catch (error) {
           console.error(`Failed to update pharmacy order ${orderId}:`, error);
+          throw error;
+      }
+  };
+
+  // Pharmacy Inventory Management
+  export const getPharmacyInventory = async (
+      paramsOrUrl: { page?: number; search?: string; in_stock?: boolean } | string | null = null
+  ): Promise<PaginatedResponse<PharmacyInventory>> => {
+      const endpoint = '/pharmacy/portal/inventory/';
+      try {
+          let response;
+          if (typeof paramsOrUrl === 'string') {
+              const url = new URL(paramsOrUrl);
+              const pathWithQuery = url.pathname + url.search;
+              response = await axiosInstance.get<PaginatedResponse<PharmacyInventory>>(pathWithQuery);
+          } else {
+              response = await axiosInstance.get<PaginatedResponse<PharmacyInventory>>(endpoint, { params: paramsOrUrl });
+          }
+          return response.data;
+      } catch (error) {
+          console.error('Failed to fetch pharmacy inventory:', error);
+          throw error;
+      }
+  };
+
+  export const createPharmacyInventory = async (
+      payload: PharmacyInventoryCreatePayload
+  ): Promise<PharmacyInventory> => {
+      try {
+          const response = await axiosInstance.post<PharmacyInventory>(
+              '/pharmacy/portal/inventory/',
+              payload
+          );
+          return response.data;
+      } catch (error) {
+          console.error('Failed to create pharmacy inventory:', error);
+          throw error;
+      }
+  };
+
+  export const updatePharmacyInventory = async (
+      inventoryId: number,
+      payload: Partial<PharmacyInventoryUpdatePayload>
+  ): Promise<PharmacyInventory> => {
+      try {
+          const response = await axiosInstance.patch<PharmacyInventory>(
+              `/pharmacy/portal/inventory/${inventoryId}/`,
+              payload
+          );
+          return response.data;
+      } catch (error) {
+          console.error(`Failed to update pharmacy inventory ${inventoryId}:`, error);
+          throw error;
+      }
+  };
+
+  export const deletePharmacyInventory = async (inventoryId: number): Promise<void> => {
+      try {
+          await axiosInstance.delete(`/pharmacy/portal/inventory/${inventoryId}/`);
+      } catch (error) {
+          console.error(`Failed to delete pharmacy inventory ${inventoryId}:`, error);
           throw error;
       }
   };

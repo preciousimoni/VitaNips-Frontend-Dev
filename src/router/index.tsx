@@ -27,6 +27,7 @@ import MapLocatorPage from '../pages/MapLocatorPage';
 import PharmacyDashboardPage from '../pages/pharmacy/PharmacyDashboardPage';
 import PharmacyOrderListPage from '../pages/pharmacy/PharmacyOrderListPage';
 import PharmacyOrderDetailPage from '../pages/pharmacy/PharmacyOrderDetailPage';
+import PharmacyInventoryPage from '../pages/pharmacy/PharmacyInventoryPage';
 import MedicationRemindersPage from '../pages/MedicationRemindersPage';
 import VideoCallPage from '../pages/VideoCallPage';
 import VitalsLogPage from '../pages/VitalsLogPage';
@@ -197,6 +198,7 @@ const AppRouter: React.FC = () => {
           <Route path="/portal/dashboard" element={<PharmacyDashboardPage />} />
           <Route path="/portal/orders" element={<PharmacyOrderListPage />} />
           <Route path="/portal/orders/:orderId" element={<PharmacyOrderDetailPage />} />
+          <Route path="/portal/inventory" element={<PharmacyInventoryPage />} />
         </Route>
 
         <Route element={<DoctorRoute />}>

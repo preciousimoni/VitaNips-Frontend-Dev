@@ -63,3 +63,26 @@ export interface MedicationOrderUpdatePayload {
   pickup_or_delivery_date?: string | null;
   total_amount?: string | null;
 }
+
+export interface PharmacyInventory {
+  id: number;
+  pharmacy: number;
+  medication: Medication;
+  in_stock: boolean;
+  quantity: number;
+  price: string;
+  last_updated: string;
+}
+
+export interface PharmacyInventoryCreatePayload {
+  medication_id: number;
+  in_stock: boolean;
+  quantity: number;
+  price: string;
+}
+
+export interface PharmacyInventoryUpdatePayload {
+  in_stock?: boolean;
+  quantity?: number;
+  price?: string;
+}
