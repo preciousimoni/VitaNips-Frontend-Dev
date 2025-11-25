@@ -4,15 +4,17 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import {
     ArrowLeftIcon, CalendarIcon, ClockIcon, VideoCameraIcon, BuildingOfficeIcon,
     CheckCircleIcon, XCircleIcon, InformationCircleIcon, TrashIcon, UserIcon,
-    ArrowPathIcon, MapPinIcon, SparklesIcon, PhoneIcon, EnvelopeIcon
+    ArrowPathIcon, MapPinIcon, SparklesIcon, PhoneIcon, EnvelopeIcon,
+    ClipboardDocumentCheckIcon
 } from '@heroicons/react/24/outline';
-import { getAppointmentDetails, cancelAppointment } from '../api/appointments';
+import { getAppointmentDetails, cancelAppointment, updateAppointment } from '../api/appointments';
 import { Appointment } from '../types/appointments';
 import toast from 'react-hot-toast';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import { formatDate, formatTime } from '../utils/date';
 import Spinner from '../components/ui/Spinner';
 import ErrorMessage from '../components/ui/ErrorMessage';
+import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
 const getStatusInfo = (status: Appointment['status']): { text: string; color: string; bgColor: string; icon: React.ElementType } => {
@@ -35,10 +37,14 @@ const AppointmentDetailPage: React.FC = () => {
     const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
     const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
 
+    const { user } = useAuth();
+    const isDoctor = user?.user_type === 'doctor';
+
     const [appointment, setAppointment] = useState<Appointment | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [isCancelling, setIsCancelling] = useState<boolean>(false);
+    const [isMarkingCompleted, setIsMarkingCompleted] = useState<boolean>(false);
     
     const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
 
@@ -109,6 +115,25 @@ const AppointmentDetailPage: React.FC = () => {
         });
     };
 
+    const handleMarkAsCompleted = async () => {
+        if (!appointment) return;
+        setIsMarkingCompleted(true);
+        setError(null);
+        const toastId = toast.loading("Marking appointment as completed...");
+        try {
+            const updatedAppointment = await updateAppointment(appointment.id, { status: 'completed' });
+            setAppointment(updatedAppointment);
+            toast.success('Appointment marked as completed! You can now write a prescription.', { id: toastId });
+        } catch (err) {
+            const errorMsg = err instanceof Error ? err.message : "Failed to mark appointment as completed.";
+            setError(errorMsg);
+            toast.error(errorMsg, { id: toastId });
+            console.error("Mark as completed error:", err);
+        } finally {
+            setIsMarkingCompleted(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
@@ -155,6 +180,9 @@ const AppointmentDetailPage: React.FC = () => {
         callInProgressOrJoinable;
 
     const showScheduleFollowUp = appointment.status === 'completed' || (appointment.followup_required && appointment.status !== 'cancelled');
+    
+    // Doctor can mark appointment as completed if it's scheduled or confirmed
+    const canMarkAsCompleted = isDoctor && ['scheduled', 'confirmed'].includes(appointment.status) && !isMarkingCompleted;
 
     const { text: statusText, color: statusColor, bgColor: statusBgColor, icon: StatusIcon } = getStatusInfo(appointment.status);
 
@@ -458,6 +486,34 @@ const AppointmentDetailPage: React.FC = () => {
                         transition={{ delay: 0.8 }}
                         className="bg-gradient-to-br from-gray-50 to-white p-8 border-t-2 border-gray-200 flex flex-wrap gap-4 justify-end"
                     >
+                        {canMarkAsCompleted && (
+                            <motion.button
+                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={handleMarkAsCompleted}
+                                disabled={isMarkingCompleted}
+                                className="px-8 py-4 bg-gradient-to-r from-primary to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all disabled:opacity-50 flex items-center shadow-lg"
+                            >
+                                <CheckCircleIcon className="h-5 w-5 mr-2" />
+                                {isMarkingCompleted ? 'Marking...' : 'Mark as Completed'}
+                            </motion.button>
+                        )}
+
+                        {appointment.status === 'completed' && isDoctor && (
+                            <motion.div
+                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <Link 
+                                    to="/doctor/prescriptions" 
+                                    className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center"
+                                >
+                                    <ClipboardDocumentCheckIcon className="h-5 w-5 mr-2" />
+                                    Write Prescription
+                                </Link>
+                            </motion.div>
+                        )}
+
                         {canCancel && (
                             <motion.button
                                 whileHover={{ scale: 1.05, y: -2 }}
