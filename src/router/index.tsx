@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getDashboardRoute } from '../utils/routing';
 import MainLayout from '../components/layout/MainLayout';
 import SmartDashboardRedirect from '../components/routing/SmartDashboardRedirect';
+import ScrollToTop from '../components/routing/ScrollToTop';
 import LandingPage from '../pages/LandingPage';
 import LoginPage from '../features/auth/pages/LoginPage';
 import RegisterPage from '../features/auth/pages/RegisterPage';
@@ -22,6 +23,8 @@ import EmergencyContactsPage from '../pages/EmergencyContactsPage';
 import AppointmentsPage from '../pages/AppointmentsPage';
 import AppointmentDetailPage from '../pages/AppointmentDetailPage';
 import PrescriptionsPage from '../pages/PrescriptionsPage';
+import UserOrdersPage from '../pages/UserOrdersPage';
+import UserOrderDetailPage from '../pages/UserOrderDetailPage';
 import MedicalDocumentsPage from '../pages/MedicalDocumentsPage';
 import MapLocatorPage from '../pages/MapLocatorPage';
 import PharmacyDashboardPage from '../pages/pharmacy/PharmacyDashboardPage';
@@ -31,7 +34,6 @@ import PharmacyInventoryPage from '../pages/pharmacy/PharmacyInventoryPage';
 import MedicationRemindersPage from '../pages/MedicationRemindersPage';
 import VideoCallPage from '../pages/VideoCallPage';
 import VitalsLogPage from '../pages/VitalsLogPage';
-import SymptomLogPage from '../pages/SymptomLogPage';
 import FoodLogPage from '../pages/FoodLogPage';
 import ExerciseLogPage from '../pages/ExerciseLogPage';
 import SleepLogPage from '../pages/SleepLogPage';
@@ -48,6 +50,7 @@ import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import AdminDoctorsPage from '../pages/admin/AdminDoctorsPage';
 import AdminPharmaciesPage from '../pages/admin/AdminPharmaciesPage';
 import AdminAnalyticsPage from '../pages/admin/AdminAnalyticsPage';
+import AdminAppointmentsPage from '../pages/admin/AdminAppointmentsPage';
 import EmergencyPage from '../pages/EmergencyPage';
 import AlertSentPage from '../pages/AlertSentPage';
 import CreateOrderPage from '../pages/CreateOrderPage';
@@ -56,6 +59,7 @@ import HealthAnalyticsPage from '../pages/HealthAnalyticsPage';
 import AboutPage from '../pages/AboutPage';
 import HelpCenterPage from '../pages/HelpCenterPage';
 import CareerPage from '../pages/CareerPage';
+import PaymentCallbackPage from '../pages/PaymentCallbackPage';
 import toast from 'react-hot-toast';
 
 const LoadingScreen: React.FC = () => (
@@ -65,9 +69,9 @@ const LoadingScreen: React.FC = () => (
 );
 
 const PublicRoute: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
 
-  if (isLoading) return <LoadingScreen />;
+  if (loading) return <LoadingScreen />;
 
   // If authenticated user tries to access login/register, redirect to their appropriate dashboard
   if (isAuthenticated) {
@@ -79,16 +83,18 @@ const PublicRoute: React.FC = () => {
 };
 
 const ProtectedRoute: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
-  if (isLoading) return <LoadingScreen />;
+  if (loading) return <LoadingScreen />;
 
   if (!isAuthenticated) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  if (user?.is_pharmacy_staff) {
+  // Don't redirect pharmacy staff from order detail pages - they should be able to view orders
+  // Only redirect if they're trying to access the main dashboard
+  if (user?.is_pharmacy_staff && location.pathname === '/dashboard') {
     return <Navigate to="/portal/dashboard" replace />;
   }
 
@@ -100,12 +106,12 @@ const ProtectedRoute: React.FC = () => {
 };
 
 const PharmacyRoute: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
-  console.log("PharmacyRoute Check:", { isAuthenticated, isLoading, isStaff: user?.is_pharmacy_staff, user });
+  console.log("PharmacyRoute Check:", { isAuthenticated, loading, isStaff: user?.is_pharmacy_staff, user });
 
-  if (isLoading) return <LoadingScreen />;
+  if (loading) return <LoadingScreen />;
 
   if (!isAuthenticated) {
     return <Navigate to="/" state={{ from: location }} replace />;
@@ -123,10 +129,10 @@ const PharmacyRoute: React.FC = () => {
 };
 
 const DoctorRoute: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
+  if (loading) {
     return <div className="flex justify-center items-center h-screen"><p>Loading Doctor Portal...</p></div>;
   }
   if (!isAuthenticated) {
@@ -148,10 +154,10 @@ const DoctorRoute: React.FC = () => {
 };
 
 const AdminRoute: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
+  if (loading) {
     return <div className="flex justify-center items-center h-screen"><p>Loading Admin Panel...</p></div>;
   }
   if (!isAuthenticated) {
@@ -169,9 +175,9 @@ const AdminRoute: React.FC = () => {
 };
 
 const LandingPageRoute: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
 
-  if (isLoading) return <LoadingScreen />;
+  if (loading) return <LoadingScreen />;
 
   // If authenticated, redirect to the appropriate dashboard
   if (isAuthenticated) {
@@ -186,6 +192,7 @@ const LandingPageRoute: React.FC = () => {
 const AppRouter: React.FC = () => {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Landing page with authentication check */}
         <Route path="/" element={<LandingPageRoute />} />
@@ -197,6 +204,7 @@ const AppRouter: React.FC = () => {
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/payment/callback" element={<PaymentCallbackPage />} />
         </Route>
 
         <Route element={<PharmacyRoute />}>
@@ -219,6 +227,7 @@ const AppRouter: React.FC = () => {
           <Route path="/admin/doctors" element={<AdminDoctorsPage />} />
           <Route path="/admin/pharmacies" element={<AdminPharmaciesPage />} />
           <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
+          <Route path="/admin/appointments" element={<AdminAppointmentsPage />} />
         </Route>
 
         <Route element={<ProtectedRoute />}>
@@ -248,6 +257,8 @@ const AppRouter: React.FC = () => {
           <Route path="/emergency/alert-sent" element={<AlertSentPage />} />
 
           {/* Pharmacy & Orders */}
+          <Route path="/orders" element={<UserOrdersPage />} />
+          <Route path="/orders/:orderId" element={<UserOrderDetailPage />} />
           <Route path="/prescriptions/:id/order" element={<CreateOrderPage />} />
 
           {/* Health & Analytics */}
@@ -255,7 +266,6 @@ const AppRouter: React.FC = () => {
           <Route path="/health/analytics" element={<HealthAnalyticsPage />} />
           
           <Route path="/health/vitals" element={<VitalsLogPage />} />
-          <Route path="/health/symptoms" element={<SymptomLogPage />} />
           <Route path="/health/food" element={<FoodLogPage />} />
           <Route path="/health/exercise" element={<ExerciseLogPage />} />
           <Route path="/health/sleep" element={<SleepLogPage />} />

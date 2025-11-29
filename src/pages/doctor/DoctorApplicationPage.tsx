@@ -289,6 +289,23 @@ const DoctorApplicationPage: React.FC = () => {
         ></motion.div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Back Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="mb-6"
+          >
+            <motion.button
+              whileHover={{ x: -4 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/doctor/dashboard')}
+              className="inline-flex items-center text-white/90 hover:text-white font-bold transition-colors group"
+            >
+              <ArrowLeftIcon className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+              Back to Dashboard
+            </motion.button>
+          </motion.div>
+          
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

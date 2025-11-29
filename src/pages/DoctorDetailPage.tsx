@@ -515,6 +515,7 @@ const DoctorDetailPage: React.FC = () => {
         <AppointmentBookingForm
           doctorId={doctor.id}
           doctorName={doctor.full_name}
+          doctorConsultationFee={doctor.consultation_fee ? parseFloat(doctor.consultation_fee) : null}
           availability={availability}
           onBookingSuccess={handleBookingSuccess}
           onCancel={() => setShowBookingModal(false)}

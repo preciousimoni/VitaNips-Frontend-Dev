@@ -3,7 +3,6 @@ import axiosInstance from './axiosInstance';
 import { PaginatedResponse } from '../types/common';
 import {
     VitalSignLog, VitalSignPayload,
-    SymptomLog, SymptomPayload,
     FoodLog, FoodPayload,
     ExerciseLog, ExercisePayload,
     SleepLog, SleepPayload
@@ -30,29 +29,6 @@ export const updateVitalSign = async (id: number, payload: Partial<VitalSignPayl
 };
 export const deleteVitalSign = async (id: number): Promise<void> => {
     await axiosInstance.delete(`/health/vital-signs/${id}/`);
-};
-
-// --- Symptom Logs ---
-export const getSymptomLogs = async (paramsOrUrl: { page?: number } | string | null = null): Promise<PaginatedResponse<SymptomLog>> => {
-    const endpoint = '/health/symptoms/';
-    let response;
-    if (typeof paramsOrUrl === 'string') {
-        const url = new URL(paramsOrUrl);
-        const pathWithQuery = (url.pathname + url.search).replace(axiosInstance.defaults.baseURL || '', '');
-        response = await axiosInstance.get<PaginatedResponse<SymptomLog>>(pathWithQuery);
-    } else {
-        response = await axiosInstance.get<PaginatedResponse<SymptomLog>>(endpoint, { params: paramsOrUrl });
-    }
-    return response.data;
-};
-export const createSymptomLog = async (payload: SymptomPayload): Promise<SymptomLog> => {
-    return (await axiosInstance.post<SymptomLog>('/health/symptoms/', payload)).data;
-};
-export const updateSymptomLog = async (id: number, payload: Partial<SymptomPayload>): Promise<SymptomLog> => {
-    return (await axiosInstance.patch<SymptomLog>(`/health/symptoms/${id}/`, payload)).data;
-};
-export const deleteSymptomLog = async (id: number): Promise<void> => {
-    await axiosInstance.delete(`/health/symptoms/${id}/`);
 };
 
 // --- Food Logs ---

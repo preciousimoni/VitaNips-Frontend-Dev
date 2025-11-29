@@ -35,6 +35,7 @@ export interface AppointmentPayload {
     reason: string;
     notes?: string | null;
     user_insurance_id?: number | null;
+    payment_reference?: string;
 }
 
 export interface TwilioTokenResponse {

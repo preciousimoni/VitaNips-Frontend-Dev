@@ -19,10 +19,12 @@ import {
 } from '@heroicons/react/24/outline';
 import { getUserInsurances } from '../../../api/insurance';
 import { UserInsurance } from '../../../types/insurance';
+import PaymentModal from '../../../components/payment/PaymentModal';
 
 interface AppointmentBookingFormProps {
     doctorId: number;
     doctorName: string;
+    doctorConsultationFee: number | null;
     availability: DoctorAvailability[];
     onBookingSuccess: (newAppointment: Appointment) => void;
     onCancel: () => void;
@@ -48,6 +50,7 @@ const generateTimeSlots = (start: string, end: string, intervalMinutes = 30): st
 const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
     doctorId,
     doctorName,
+    doctorConsultationFee,
     availability,
     onBookingSuccess,
     onCancel,
@@ -60,6 +63,9 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [userInsurances, setUserInsurances] = useState<UserInsurance[]>([]);
     const [loadingInsurances, setLoadingInsurances] = useState<boolean>(false);
+    const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
+    const [pendingAppointmentData, setPendingAppointmentData] = useState<AppointmentBookingFormData | null>(null);
+    const [pendingAppointmentId, setPendingAppointmentId] = useState<number | null>(null);
 
     // React Hook Form setup
     const {
@@ -145,7 +151,7 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
 
     const today = new Date().toISOString().split('T')[0];
 
-    const onSubmit = async (data: AppointmentBookingFormData) => {
+    const createAppointmentWithPayment = async (data: AppointmentBookingFormData, paymentReference?: string) => {
         setError(null);
         setIsSubmitting(true);
         
@@ -165,13 +171,16 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
             appointment_type: appointmentType,
             reason: data.reason.trim(),
             notes: data.notes?.trim() || undefined,
-            user_insurance_id: data.user_insurance_id || null,
+            user_insurance_id: data.user_insurance_id ? (typeof data.user_insurance_id === 'string' ? parseInt(data.user_insurance_id, 10) : data.user_insurance_id) : null,
+            payment_reference: paymentReference || undefined,
         };
 
         try {
             const newAppointment = await createAppointment(payload);
             toast.success('Appointment booked successfully!');
             onBookingSuccess(newAppointment);
+            setShowPaymentModal(false);
+            setPendingAppointmentData(null);
         } catch (err: unknown) {
             console.error("Appointment booking error:", err);
             const errorData = (err as { response?: { data?: unknown } }).response?.data;
@@ -191,6 +200,83 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
         }
     };
 
+    const onSubmit = async (data: AppointmentBookingFormData) => {
+        // Convert insurance ID to number if it's a string (from select field)
+        const insuranceId = data.user_insurance_id 
+            ? (typeof data.user_insurance_id === 'string' ? parseInt(data.user_insurance_id, 10) : data.user_insurance_id)
+            : null;
+        const selectedInsurance = insuranceId 
+            ? userInsurances.find(ins => ins.id === insuranceId)
+            : null;
+
+        // Check if payment is required (no insurance AND consultation fee exists)
+        const hasConsultationFee = doctorConsultationFee !== null && 
+                                   doctorConsultationFee !== undefined && 
+                                   Number(doctorConsultationFee) > 0;
+        const requiresPayment = !selectedInsurance && hasConsultationFee;
+
+        if (requiresPayment) {
+            // Create appointment first with payment_status='pending' to reserve the slot
+            try {
+                setError(null);
+                setIsSubmitting(true);
+                
+                const endTime = calculateEndTime(data.start_time);
+                if (!endTime) {
+                    setError("Invalid start time selected, cannot calculate end time.");
+                    toast.error("Invalid start time.");
+                    setIsSubmitting(false);
+                    return;
+                }
+
+                const payload: AppointmentPayload = {
+                    doctor: doctorId,
+                    date: data.date,
+                    start_time: data.start_time,
+                    end_time: endTime,
+                    appointment_type: appointmentType,
+                    reason: data.reason.trim(),
+                    notes: data.notes?.trim() || undefined,
+                    user_insurance_id: insuranceId,
+                    // No payment_reference yet - will be added after payment
+                };
+
+                // Create appointment with pending payment status
+                const newAppointment = await createAppointment(payload);
+                
+                // Store appointment ID and show payment modal
+                setPendingAppointmentData(data);
+                setPendingAppointmentId(newAppointment.id);
+                setShowPaymentModal(true);
+                setIsSubmitting(false);
+            } catch (err: unknown) {
+                console.error("Appointment booking error:", err);
+                const errorData = (err as { response?: { data?: unknown } }).response?.data;
+                let errorMessage = "Failed to book appointment. The time slot might be unavailable or there was a server error.";
+                if (errorData && typeof errorData === 'object') {
+                    const messages = Object.entries(errorData)
+                        .map(([key, val]) => `${key === 'detail' ? '' : key + ': '}${Array.isArray(val) ? val.join(', ') : val}`)
+                        .join(' \n');
+                    errorMessage = messages || errorMessage;
+                } else if (err instanceof Error) {
+                    errorMessage = err.message;
+                }
+                setError(errorMessage);
+                toast.error(errorMessage, { duration: 5000 });
+                setIsSubmitting(false);
+            }
+        } else {
+            // No payment required (insurance covers it or no fee), proceed directly
+            await createAppointmentWithPayment(data);
+        }
+    };
+
+    const handlePaymentSuccess = async (paymentReference: string) => {
+        // Payment success is handled by PaymentCallbackPage now
+        // This callback is kept for backward compatibility but won't be called
+        // since we redirect to Flutterwave
+    };
+
     const getAvailableDays = useMemo(() => {
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return availability
@@ -200,6 +286,7 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
     }, [availability]);
 
     return (
+        <>
         <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-6 p-4 md:p-6">
             {/* Header */}
             <div className="border-b border-gray-200 pb-4">
@@ -340,6 +427,41 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                 </div>
             </div>
 
+            {/* Cost Summary */}
+            {doctorConsultationFee !== null && doctorConsultationFee !== undefined && doctorConsultationFee > 0 && (
+                <div className="bg-gradient-to-br from-primary/10 to-emerald-50 rounded-xl p-4 border-2 border-primary/20">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-semibold text-gray-700">Consultation Fee:</span>
+                        <span className="text-lg font-black text-primary">₦{parseFloat(doctorConsultationFee.toString()).toLocaleString()}</span>
+                    </div>
+                    {watch('user_insurance_id') ? (
+                        <p className="text-xs text-gray-600 mt-2 flex items-center">
+                            <ShieldCheckIcon className="h-4 w-4 mr-1" />
+                            Insurance will be applied to reduce your cost
+                        </p>
+                    ) : (
+                        <div className="mt-3">
+                            <p className="text-xs text-orange-700 mb-3 flex items-center">
+                                <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
+                                Payment required before appointment confirmation
+                            </p>
+                            <button
+                                type="button"
+                                onClick={handleFormSubmit(onSubmit)}
+                                disabled={isSubmitting || !selectedDate || !selectedTime || !watch('reason') || (watch('reason')?.length || 0) < 10}
+                                className="w-full py-2.5 px-4 bg-gradient-to-r from-primary to-emerald-600 text-white font-bold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                <CheckCircleIcon className="h-5 w-5" />
+                                Proceed to Payment
+                            </button>
+                            <p className="text-xs text-gray-500 mt-2 text-center">
+                                Complete the form above, then click to pay
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* Insurance Selection */}
             {userInsurances.length > 0 && (
                 <div>
@@ -349,7 +471,7 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                     </label>
                     <select
                         id="user_insurance_id"
-                        {...register('user_insurance_id', { valueAsNumber: true })}
+                        {...register('user_insurance_id')}
                         className={`input-field ${formErrors.user_insurance_id ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                         disabled={loadingInsurances}
                     >
@@ -438,6 +560,25 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                 </button>
             </div>
         </form>
+
+        {/* Payment Modal */}
+        {showPaymentModal && doctorConsultationFee !== null && doctorConsultationFee !== undefined && doctorConsultationFee > 0 && pendingAppointmentData && pendingAppointmentId && (
+            <PaymentModal
+                isOpen={showPaymentModal}
+                onClose={() => {
+                    setShowPaymentModal(false);
+                    setPendingAppointmentData(null);
+                    setPendingAppointmentId(null);
+                }}
+                amount={parseFloat(doctorConsultationFee.toString())}
+                paymentType="appointment"
+                paymentForId={pendingAppointmentId}
+                title="Consultation Payment"
+                description={`Payment for consultation with ${doctorName} on ${new Date(pendingAppointmentData.date).toLocaleDateString()} at ${pendingAppointmentData.start_time}`}
+                onPaymentSuccess={handlePaymentSuccess}
+            />
+        )}
+        </>
     );
 };
 

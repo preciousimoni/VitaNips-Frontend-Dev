@@ -46,7 +46,14 @@ import { UserInsurance } from './insurance';
 
 export interface MedicationOrder {
     id: number;
-    user: number;
+    user: number | {
+        id: number;
+        username: string;
+        email: string;
+        first_name?: string;
+        last_name?: string;
+        phone_number?: string;
+    };
     pharmacy: number;
     prescription: number | null;
     status: 'pending' | 'processing' | 'ready' | 'delivering' | 'completed' | 'cancelled';
@@ -62,6 +69,8 @@ export interface MedicationOrder {
     insurance_covered_amount?: string | null;
     patient_copay?: string | null;
     insurance_claim_generated?: boolean;
+    payment_reference?: string | null;
+    payment_status?: 'pending' | 'paid' | 'failed' | 'refunded';
 }
 
 export interface MedicationOrderUpdatePayload {

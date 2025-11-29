@@ -205,3 +205,42 @@ export const getAdminAnalytics = async (): Promise<AdminAnalytics> => {
   const response = await axiosInstance.get('/admin/analytics/');
   return response.data;
 };
+
+// Get all appointments (admin only)
+export const getAdminAppointments = async (filters?: {
+  status?: string;
+  search?: string;
+  date_from?: string;
+  date_to?: string;
+  page?: number;
+  page_size?: number;
+}): Promise<{ count: number; next: string | null; previous: string | null; results: any[] }> => {
+  const params = new URLSearchParams();
+  if (filters?.status) params.append('status', filters.status);
+  if (filters?.search) params.append('search', filters.search);
+  if (filters?.date_from) params.append('date_from', filters.date_from);
+  if (filters?.date_to) params.append('date_to', filters.date_to);
+  if (filters?.page) params.append('page', filters.page.toString());
+  if (filters?.page_size) params.append('page_size', filters.page_size.toString());
+  
+  const response = await axiosInstance.get(`/admin/appointments/?${params.toString()}`);
+  return response.data;
+};
+
+// Get recent admin activities
+export interface AdminActivity {
+  id: string;
+  type: string;
+  action: string;
+  description: string;
+  target_name: string;
+  actor_name: string;
+  timestamp: string;
+  icon: string;
+  color: string;
+}
+
+export const getAdminRecentActivity = async (): Promise<{ activities: AdminActivity[] }> => {
+  const response = await axiosInstance.get('/admin/activity/');
+  return response.data;
+};

@@ -79,9 +79,9 @@ export const getUnreadNotificationCount = async (): Promise<UnreadNotificationCo
     }
 };
 
-export const markNotificationRead = async (notificationId: number): Promise<Notification> => {
+export const markNotificationRead = async (notificationId: number): Promise<{ status: string }> => {
     try {
-        const response = await axiosInstance.post<Notification>(`/notifications/${notificationId}/read/`);
+        const response = await axiosInstance.post<{ status: string }>(`/notifications/${notificationId}/mark_as_read/`);
         return response.data;
     } catch (error) {
         console.error(`Failed to mark notification ${notificationId} as read:`, error);
@@ -91,7 +91,7 @@ export const markNotificationRead = async (notificationId: number): Promise<Noti
 
 export const markAllNotificationsRead = async (): Promise<{ status: string }> => {
     try {
-        const response = await axiosInstance.post<{ status: string }>('/notifications/read_all/');
+        const response = await axiosInstance.post<{ status: string }>('/notifications/mark_all_as_read/');
         return response.data;
     } catch (error) {
         console.error('Failed to mark all notifications as read:', error);

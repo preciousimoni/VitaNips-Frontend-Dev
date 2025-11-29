@@ -14,10 +14,15 @@ import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
   ClipboardDocumentListIcon,
+  CalendarDaysIcon,
+  ClockIcon,
+  XCircleIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
-import { getAdminStats, AdminStats } from '../../api/admin';
+import { getAdminStats, AdminStats, getAdminRecentActivity, AdminActivity } from '../../api/admin';
 import { useAuth } from '../../contexts/AuthContext';
 import Spinner from '../../components/ui/Spinner';
+import { formatRelativeTime } from '../../utils/date';
 
 const AdminDashboard: React.FC = () => {
     const { user } = useAuth();
@@ -25,6 +30,8 @@ const AdminDashboard: React.FC = () => {
     const [stats, setStats] = useState<AdminStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [activities, setActivities] = useState<AdminActivity[]>([]);
+    const [loadingActivities, setLoadingActivities] = useState(true);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -39,7 +46,20 @@ const AdminDashboard: React.FC = () => {
             }
         };
 
+        const fetchActivities = async () => {
+            try {
+                setLoadingActivities(true);
+                const data = await getAdminRecentActivity();
+                setActivities(data.activities);
+            } catch (err) {
+                console.error('Failed to fetch recent activities:', err);
+            } finally {
+                setLoadingActivities(false);
+            }
+        };
+
         fetchStats();
+        fetchActivities();
     }, []);
 
     const statsCards = stats
@@ -74,11 +94,11 @@ const AdminDashboard: React.FC = () => {
             {
                 title: 'Appointments',
                 value: stats.appointments?.this_month || stats.appointments?.total || 0,
-                icon: DocumentTextIcon,
+                icon: CalendarDaysIcon,
                 gradient: 'from-orange-500 to-red-500',
                 bgGradient: 'from-orange-50 to-red-50',
                 description: `${stats.appointments?.today || 0} today, ${stats.appointments?.total || 0} total`,
-                link: '/admin/analytics',
+                link: '/admin/appointments', // Link to admin appointments management page
             },
             {
                 title: 'Orders',
@@ -87,7 +107,7 @@ const AdminDashboard: React.FC = () => {
                 gradient: 'from-indigo-500 to-blue-500',
                 bgGradient: 'from-indigo-50 to-blue-50',
                 description: `${stats.orders?.pending || 0} pending`,
-                link: '/admin/analytics',
+                link: null, // No dedicated admin orders page yet - make non-clickable
             },
         ]
         : [];
@@ -268,7 +288,9 @@ const AdminDashboard: React.FC = () => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.4 + index * 0.1 }}
                                 whileHover={{ y: -5, scale: 1.02 }}
-                                className="relative bg-white rounded-3xl shadow-lg border border-gray-100 p-6 overflow-hidden group cursor-pointer"
+                                className={`relative bg-white rounded-3xl shadow-lg border border-gray-100 p-6 overflow-hidden group ${
+                                    stat.link ? 'cursor-pointer' : 'cursor-default'
+                                }`}
                                 onClick={() => stat.link && navigate(stat.link)}
                             >
                                 {/* Animated background blob */}
@@ -428,12 +450,75 @@ const AdminDashboard: React.FC = () => {
                             </motion.div>
                             <h2 className="text-xl font-black text-gray-900">Recent Activity</h2>
                         </div>
-                        <div className="space-y-3 text-sm text-gray-600">
-                            <p className="text-gray-500 italic">No recent admin actions</p>
-                            <p className="text-xs text-gray-400 mt-4">
-                                Activity logs will appear here
-                            </p>
-                        </div>
+                        {loadingActivities ? (
+                            <div className="flex justify-center py-8">
+                                <Spinner size="sm" />
+                            </div>
+                        ) : activities.length === 0 ? (
+                            <div className="space-y-3 text-sm text-gray-600">
+                                <p className="text-gray-500 italic">No recent admin actions</p>
+                                <p className="text-xs text-gray-400 mt-4">
+                                    Activity logs will appear here
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="space-y-3 max-h-96 overflow-y-auto">
+                                {activities.map((activity, index) => {
+                                    const getIcon = () => {
+                                        const colorClass = activity.color === 'green' ? 'text-green-600' :
+                                                         activity.color === 'red' ? 'text-red-600' :
+                                                         activity.color === 'blue' ? 'text-blue-600' :
+                                                         activity.color === 'orange' ? 'text-orange-600' : 'text-gray-600';
+                                        
+                                        switch (activity.icon) {
+                                            case 'check-circle':
+                                                return <CheckCircleIcon className={`h-4 w-4 ${colorClass}`} />;
+                                            case 'x-circle':
+                                                return <XCircleIcon className={`h-4 w-4 ${colorClass}`} />;
+                                            case 'clock':
+                                                return <ClockIcon className={`h-4 w-4 ${colorClass}`} />;
+                                            case 'user-plus':
+                                                return <UserIcon className={`h-4 w-4 ${colorClass}`} />;
+                                            case 'user-minus':
+                                                return <UserIcon className={`h-4 w-4 ${colorClass}`} />;
+                                            default:
+                                                return <BellAlertIcon className={`h-4 w-4 ${colorClass}`} />;
+                                        }
+                                    };
+
+                                    const getBgColor = () => {
+                                        return activity.color === 'green' ? 'bg-green-50' :
+                                               activity.color === 'red' ? 'bg-red-50' :
+                                               activity.color === 'blue' ? 'bg-blue-50' :
+                                               activity.color === 'orange' ? 'bg-orange-50' : 'bg-gray-50';
+                                    };
+
+                                    return (
+                                        <motion.div
+                                            key={activity.id}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.8 + index * 0.05 }}
+                                            className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                                        >
+                                            <div className={`flex-shrink-0 p-2 rounded-lg ${getBgColor()}`}>
+                                                {getIcon()}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold text-gray-900 line-clamp-2">
+                                                    {activity.description}
+                                                </p>
+                                                <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                                                    <span>{activity.actor_name}</span>
+                                                    <span>•</span>
+                                                    <span>{formatRelativeTime(activity.timestamp)}</span>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </motion.div>
                 </div>
 

@@ -70,50 +70,6 @@ export const vitalSignsSchema = z.object({
 
 export type VitalSignsFormData = z.infer<typeof vitalSignsSchema>;
 
-// Symptom Log Schema
-export const symptomLogSchema = z.object({
-  symptom_name: z.string()
-    .min(1, 'Symptom name is required')
-    .min(2, 'Symptom name must be at least 2 characters')
-    .max(100, 'Symptom name must not exceed 100 characters'),
-  
-  severity: z.enum(['mild', 'moderate', 'severe'], {
-    message: 'Please select a severity level',
-  }),
-  
-  description: z.string()
-    .min(10, 'Please provide more details (at least 10 characters)')
-    .max(1000, 'Description must not exceed 1000 characters'),
-  
-  date_started: z.string()
-    .min(1, 'Start date is required')
-    .refine((date) => {
-      const startDate = new Date(date);
-      const today = new Date();
-      return startDate <= today;
-    }, {
-      message: 'Start date cannot be in the future',
-    }),
-  
-  date_ended: z.string()
-    .optional()
-    .or(z.literal('')),
-  
-  notes: z.string()
-    .max(500, 'Notes must not exceed 500 characters')
-    .optional(),
-}).refine((data) => {
-  if (!data.date_ended) return true;
-  const start = new Date(data.date_started);
-  const end = new Date(data.date_ended);
-  return end >= start;
-}, {
-  message: 'End date must be after start date',
-  path: ['date_ended'],
-});
-
-export type SymptomLogFormData = z.infer<typeof symptomLogSchema>;
-
 // Food Journal Schema
 export const foodJournalSchema = z.object({
   meal_type: z.enum(['breakfast', 'lunch', 'dinner', 'snack'], {

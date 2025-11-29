@@ -44,16 +44,32 @@ interface DashboardStats {
   completedToday: number;
 }
 
-// Mock data for the chart - in a real app, this would come from an analytics endpoint
-const activityData = [
-  { name: 'Mon', patients: 4, prescriptions: 2 },
-  { name: 'Tue', patients: 6, prescriptions: 5 },
-  { name: 'Wed', patients: 8, prescriptions: 4 },
-  { name: 'Thu', patients: 5, prescriptions: 3 },
-  { name: 'Fri', patients: 9, prescriptions: 7 },
-  { name: 'Sat', patients: 3, prescriptions: 1 },
-  { name: 'Sun', patients: 2, prescriptions: 0 },
-];
+// Generate weekly activity data from appointments
+const generateActivityData = (appointments: Appointment[]) => {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const today = new Date();
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Monday
+  
+  const data = days.map((day, index) => {
+    const date = new Date(startOfWeek);
+    date.setDate(startOfWeek.getDate() + index);
+    const dateStr = date.toISOString().split('T')[0];
+    
+    const dayAppointments = appointments.filter(apt => apt.date === dateStr);
+    const patients = new Set(dayAppointments.map(apt => 
+      typeof apt.user === 'object' ? apt.user?.id || apt.user : apt.user
+    )).size;
+    
+    return {
+      name: day,
+      patients,
+      prescriptions: 0 // Would need prescription data to calculate this
+    };
+  });
+  
+  return data;
+};
 
 const DoctorDashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -66,6 +82,7 @@ const DoctorDashboardPage: React.FC = () => {
     completedToday: 0
   });
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
+  const [allAppointments, setAllAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
@@ -107,15 +124,21 @@ const DoctorDashboardPage: React.FC = () => {
         getUserAppointments({ ordering: '-date,-start_time' })
       ]);
 
-      const allAppointments = appointmentsResponse.results || [];
+      const appointments = appointmentsResponse.results || [];
+      
+      // Filter eligible appointments to only count those WITHOUT existing prescriptions
+      const eligibleAppointments = prescriptionsResponse.results || [];
+      const pendingPrescriptionsCount = eligibleAppointments.filter(
+        (apt: any) => !apt.has_existing_prescription
+      ).length;
       
       // Filter today's appointments
-      const todayApts = allAppointments.filter(apt => 
+      const todayApts = appointments.filter(apt => 
         apt.date === today
       );
       
       // Filter upcoming appointments (next 7 days)
-      const upcomingApts = allAppointments.filter(apt => {
+      const upcomingApts = appointments.filter(apt => {
         const aptDate = new Date(apt.date);
         const todayDate = new Date(today);
         const diffTime = aptDate.getTime() - todayDate.getTime();
@@ -127,11 +150,13 @@ const DoctorDashboardPage: React.FC = () => {
       // Count completed today
       const completedToday = todayApts.filter(apt => apt.status === 'completed').length;
       
-      // Count unique patients
-      const uniquePatients = new Set(allAppointments.map(apt => apt.user)).size;
+      // Count unique patients (handle both user ID and user object)
+      const uniquePatients = new Set(
+        appointments.map(apt => typeof apt.user === 'object' ? apt.user?.id || apt.user : apt.user)
+      ).size;
 
       setStats({
-        pendingPrescriptions: prescriptionsResponse.results?.length || 0,
+        pendingPrescriptions: pendingPrescriptionsCount,
         todayAppointments: todayApts.length,
         upcomingAppointments: upcomingApts.length,
         totalPatients: uniquePatients,
@@ -139,6 +164,7 @@ const DoctorDashboardPage: React.FC = () => {
       });
       
       setTodayAppointments(todayApts.slice(0, 5));
+      setAllAppointments(appointments);
       
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
@@ -399,14 +425,6 @@ const DoctorDashboardPage: React.FC = () => {
                 >
                   <UserGroupIcon className="h-6 w-6 text-white" />
                 </motion.div>
-                <motion.span 
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-200"
-                >
-                  +12%
-                </motion.span>
               </div>
               <p className="text-sm font-bold text-gray-500 uppercase tracking-wider">Total Patients</p>
               <h3 className="text-4xl font-black text-gray-900 mt-2">{stats.totalPatients}</h3>
@@ -416,7 +434,8 @@ const DoctorDashboardPage: React.FC = () => {
           {/* Upcoming */}
           <motion.div 
             whileHover={{ y: -5, scale: 1.02 }}
-            className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 hover:shadow-2xl transition-all group relative overflow-hidden"
+            onClick={() => navigate('/appointments')}
+            className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 hover:shadow-2xl transition-all cursor-pointer group relative overflow-hidden"
           >
             <motion.div
               animate={{ 
@@ -481,7 +500,7 @@ const DoctorDashboardPage: React.FC = () => {
               </div>
               <div className="h-64 w-full relative z-10">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={activityData}>
+                  <AreaChart data={generateActivityData(allAppointments)}>
                     <defs>
                       <linearGradient id="colorPatients" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#32a852" stopOpacity={0.3}/>
@@ -540,13 +559,15 @@ const DoctorDashboardPage: React.FC = () => {
                     <p className="text-sm text-gray-500">{todayAppointments.length} appointments</p>
                   </div>
                 </div>
-                <Link 
-                  to="/appointments" 
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate('/appointments')}
                   className="text-sm font-bold text-primary hover:text-primary-dark hover:underline flex items-center gap-1"
                 >
-                  View Calendar
+                  View All
                   <ArrowRightIcon className="h-4 w-4" />
-                </Link>
+                </motion.button>
               </div>
 
               {todayAppointments.length === 0 ? (
@@ -722,46 +743,6 @@ const DoctorDashboardPage: React.FC = () => {
                 <motion.button
                   whileHover={{ x: 5, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => navigate('/appointments')}
-                  className="w-full flex items-center justify-between p-5 bg-gradient-to-r from-primary/5 to-emerald-500/5 hover:from-primary/10 hover:to-emerald-500/10 rounded-2xl transition-all group border-2 border-transparent hover:border-primary/20 shadow-sm hover:shadow-md"
-                >
-                  <div className="flex items-center space-x-4">
-                    <motion.div
-                      whileHover={{ rotate: 360, scale: 1.1 }}
-                      transition={{ duration: 0.6 }}
-                      className="p-3 bg-gradient-to-br from-primary to-emerald-600 rounded-xl shadow-lg"
-                    >
-                      <CalendarIcon className="h-6 w-6 text-white" />
-                    </motion.div>
-                    <span className="font-bold text-gray-900 group-hover:text-primary text-lg">My Appointments</span>
-                  </div>
-                  <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-primary" />
-                </motion.button>
-                
-                <motion.button
-                  whileHover={{ x: 5, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => navigate('/doctor/application')}
-                  className="w-full flex items-center justify-between p-5 bg-gradient-to-r from-primary/5 to-emerald-500/5 hover:from-primary/10 hover:to-emerald-500/10 rounded-2xl transition-all group border-2 border-transparent hover:border-primary/20 shadow-sm hover:shadow-md"
-                >
-                  <div className="flex items-center space-x-4">
-                    <motion.div
-                      whileHover={{ rotate: 360, scale: 1.1 }}
-                      transition={{ duration: 0.6 }}
-                      className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg"
-                    >
-                      <DocumentTextIcon className="h-6 w-6 text-white" />
-                    </motion.div>
-                    <span className="font-bold text-gray-900 group-hover:text-primary text-lg">
-                      {applicationStatus ? 'View Application' : 'Submit Application'}
-                    </span>
-                  </div>
-                  <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-primary" />
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ x: 5, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/doctor/prescriptions')}
                   className="w-full flex items-center justify-between p-5 bg-gradient-to-r from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 rounded-2xl transition-all group border-2 border-transparent hover:border-blue-200 shadow-sm hover:shadow-md"
                 >
@@ -773,9 +754,9 @@ const DoctorDashboardPage: React.FC = () => {
                     >
                       <ClipboardDocumentListIcon className="h-6 w-6 text-white" />
                     </motion.div>
-                    <span className="font-bold text-gray-900 group-hover:text-blue-700 text-lg">Write Prescription</span>
+                    <span className="font-bold text-gray-900 group-hover:text-blue-700 text-lg">Prescriptions</span>
                   </div>
-                  <PlusIcon className="h-5 w-5 text-gray-400 group-hover:text-blue-500" />
+                  <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-blue-500" />
                 </motion.button>
 
                 <motion.button
@@ -792,139 +773,13 @@ const DoctorDashboardPage: React.FC = () => {
                     >
                       <ClockIcon className="h-6 w-6 text-white" />
                     </motion.div>
-                    <span className="font-bold text-gray-900 group-hover:text-purple-700 text-lg">Manage Availability</span>
+                    <span className="font-bold text-gray-900 group-hover:text-purple-700 text-lg">Availability</span>
                   </div>
                   <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-purple-500" />
                 </motion.button>
-
-                <motion.button
-                  whileHover={{ x: 5, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => navigate('/profile')}
-                  className="w-full flex items-center justify-between p-5 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-2xl transition-all group border-2 border-transparent hover:border-purple-200 shadow-sm hover:shadow-md"
-                >
-                  <div className="flex items-center space-x-4">
-                    <motion.div
-                      whileHover={{ rotate: 360, scale: 1.1 }}
-                      transition={{ duration: 0.6 }}
-                      className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg"
-                    >
-                      <UserGroupIcon className="h-6 w-6 text-white" />
-                    </motion.div>
-                    <span className="font-bold text-gray-900 group-hover:text-purple-700 text-lg">Doctor Profile</span>
-                  </div>
-                  <EllipsisHorizontalIcon className="h-5 w-5 text-gray-400 group-hover:text-purple-500" />
-                </motion.button>
               </div>
             </motion.div>
 
-            {/* Pending Prescriptions List (Mini) */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 relative overflow-hidden"
-            >
-              <motion.div
-                animate={{ 
-                  scale: [1, 1.3, 1],
-                  rotate: [0, -90, 0]
-                }}
-                transition={{ duration: 12, repeat: Infinity }}
-                className="absolute bottom-0 right-0 w-32 h-32 bg-amber-100/50 rounded-full blur-3xl"
-              ></motion.div>
-
-              <div className="flex items-center justify-between mb-6 relative z-10">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl">
-                    <ClipboardDocumentListIcon className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-black text-gray-900">Pending Prescriptions</h3>
-                </div>
-                {stats.pendingPrescriptions > 0 && (
-                  <motion.span 
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg"
-                  >
-                    {stats.pendingPrescriptions} New
-                  </motion.span>
-                )}
-              </div>
-              
-              {stats.pendingPrescriptions === 0 ? (
-                 <div className="text-center py-8 text-gray-500 relative z-10">
-                   <motion.div
-                     animate={{ scale: [1, 1.1, 1] }}
-                     transition={{ duration: 2, repeat: Infinity }}
-                   >
-                     <CheckCircleIcon className="h-12 w-12 text-green-400 mx-auto mb-3" />
-                   </motion.div>
-                   <p className="font-bold text-gray-600">All caught up!</p>
-                 </div>
-              ) : (
-                <div className="space-y-3 relative z-10">
-                   <motion.div 
-                     whileHover={{ scale: 1.02, y: -2 }}
-                     className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border-2 border-amber-200 shadow-md"
-                   >
-                     <p className="text-sm text-amber-900 font-bold mb-4">
-                       You have pending prescriptions to review and sign.
-                     </p>
-                     <motion.button 
-                       whileHover={{ scale: 1.05 }}
-                       whileTap={{ scale: 0.95 }}
-                       onClick={() => navigate('/doctor/prescriptions')}
-                       className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-bold rounded-xl hover:shadow-lg transition-all shadow-md"
-                     >
-                       Review Now
-                     </motion.button>
-                   </motion.div>
-                </div>
-              )}
-            </motion.div>
-
-            {/* System Notifications (Mock) */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 rounded-3xl shadow-2xl p-8 text-white relative overflow-hidden"
-            >
-              <motion.div
-                animate={{ 
-                  scale: [1, 1.2, 1],
-                  opacity: [0.3, 0.5, 0.3]
-                }}
-                transition={{ duration: 8, repeat: Infinity }}
-                className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl"
-              ></motion.div>
-
-               <div className="flex items-center gap-3 mb-6 relative z-10">
-                 <div className="p-2 bg-yellow-400/20 rounded-xl border border-yellow-400/30">
-                   <ExclamationCircleIcon className="h-5 w-5 text-yellow-400" />
-                 </div>
-                 <h3 className="text-xl font-black">System Updates</h3>
-               </div>
-               <div className="space-y-4 relative z-10">
-                 <div className="flex items-start space-x-3 text-sm opacity-90 border-b border-gray-700 pb-4">
-                   <motion.div 
-                     animate={{ scale: [1, 1.2, 1] }}
-                     transition={{ duration: 2, repeat: Infinity }}
-                     className="h-2 w-2 bg-green-400 rounded-full mt-1.5 flex-shrink-0"
-                   ></motion.div>
-                   <p className="font-medium">Platform maintenance scheduled for Sunday, 2:00 AM WAT.</p>
-                 </div>
-                 <div className="flex items-start space-x-3 text-sm opacity-90">
-                   <motion.div 
-                     animate={{ scale: [1, 1.2, 1] }}
-                     transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                     className="h-2 w-2 bg-blue-400 rounded-full mt-1.5 flex-shrink-0"
-                   ></motion.div>
-                   <p className="font-medium">New telehealth features now available. Check your email for details.</p>
-                 </div>
-               </div>
-            </motion.div>
 
           </div>
         </div>

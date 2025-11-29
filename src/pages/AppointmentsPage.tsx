@@ -14,8 +14,10 @@ import {
     ExclamationCircleIcon,
     ChevronRightIcon,
     UserIcon,
-    SparklesIcon
+    SparklesIcon,
+    ArrowLeftIcon
 } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 import { getUserAppointments, cancelAppointment } from '../api/appointments';
 import { Appointment } from '../types/appointments';
 import Spinner from '../components/ui/Spinner';
@@ -186,6 +188,21 @@ const AppointmentsPage: React.FC = () => {
                 </div>
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    {/* Back Button */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="mb-6"
+                    >
+                        <Link 
+                            to="/dashboard" 
+                            className="inline-flex items-center text-white/90 hover:text-white font-bold transition-colors group"
+                        >
+                            <ArrowLeftIcon className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+                            Back to Dashboard
+                        </Link>
+                    </motion.div>
+                    
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         <motion.div 
                             initial={{ opacity: 0, x: -20 }}
@@ -321,163 +338,205 @@ const AppointmentsPage: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
-                        className="grid gap-6"
+                        className="space-y-8"
                     >
-                        <AnimatePresence mode="popLayout">
-                        {filteredAppointments.map((apt, index) => {
-                            const aptDate = parseISO(apt.date);
-                            const isAptToday = isToday(aptDate);
-                            const otherPartyName = isDoctor ? apt.patient_name || 'Unknown Patient' : apt.doctor_name || 'Unknown Doctor';
-                            
-                            return (
-                                <motion.div 
-                                    key={apt.id}
-                                    layout
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    transition={{ delay: index * 0.05 }}
-                                    whileHover={{ y: -4 }}
-                                    onClick={() => navigate(`/appointments/${apt.id}`)}
-                                    className="group bg-white rounded-2xl border border-gray-200 p-6 shadow-lg hover:shadow-2xl hover:border-primary/40 transition-all duration-300 cursor-pointer relative overflow-hidden"
-                                >
-                                    {/* Gradient Background Overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                    
-                                    {/* Status accent line */}
-                                    <motion.div 
-                                        className={`absolute left-0 top-0 bottom-0 w-1.5 ${
-                                            apt.status === 'confirmed' ? 'bg-gradient-to-b from-green-400 to-green-600' : 
-                                            apt.status === 'scheduled' ? 'bg-gradient-to-b from-blue-400 to-blue-600' : 
-                                            apt.status === 'cancelled' ? 'bg-gradient-to-b from-red-400 to-red-600' : 'bg-gray-300'
-                                        }`}
-                                        initial={{ scaleY: 0 }}
-                                        animate={{ scaleY: 1 }}
-                                        transition={{ delay: index * 0.05 + 0.2 }}
-                                    ></motion.div>
+                        {/* Group appointments by date */}
+                        {(() => {
+                            const groupedByDate: Record<string, Appointment[]> = {};
+                            filteredAppointments.forEach(apt => {
+                                const dateKey = format(parseISO(apt.date), 'yyyy-MM-dd');
+                                if (!groupedByDate[dateKey]) {
+                                    groupedByDate[dateKey] = [];
+                                }
+                                groupedByDate[dateKey].push(apt);
+                            });
 
-                                    <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pl-4">
-                                        {/* Date & Time Box */}
-                                        <div className="flex items-center gap-4">
-                                            <motion.div 
-                                                whileHover={{ scale: 1.05, rotate: 2 }}
-                                                className="relative flex flex-col items-center justify-center w-20 h-20 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl border-2 border-primary/20 group-hover:border-primary/40 transition-all shadow-md"
-                                            >
-                                                <div className="absolute inset-0 bg-white/50 rounded-2xl backdrop-blur-sm"></div>
-                                                <span className="relative text-xs font-bold text-primary uppercase tracking-wide">
-                                                    {format(aptDate, 'MMM')}
-                                                </span>
-                                                <span className="relative text-3xl font-black text-gray-900">
-                                                    {format(aptDate, 'd')}
-                                                </span>
-                                            </motion.div>
-
-                        <div>
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">
-                                                        {formatTimeDisplay(apt.start_time)}
-                                                    </h3>
-                                                    {isAptToday && (
-                                                        <motion.span 
-                                                            initial={{ scale: 0 }}
-                                                            animate={{ scale: 1 }}
-                                                            className="px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-red-500 to-pink-500 text-white uppercase tracking-wide shadow-lg"
-                                                        >
-                                                            Today
-                                                        </motion.span>
-                            )}
-                        </div>
-                                                <p className="text-gray-600 text-sm flex items-center gap-2 font-medium">
-                                                    <ClockIcon className="h-4 w-4 text-primary" />
-                                                    {format(aptDate, 'EEEE')} • {apt.duration || 30} mins
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Info Section */}
-                                        <div className="flex-1 md:px-8">
-                                            <div className="flex items-center gap-3 mb-3">
-                                                <motion.div 
-                                                    whileHover={{ scale: 1.1, rotate: 5 }}
-                                                    className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white font-bold text-base shadow-lg"
-                                                >
-                                                    {otherPartyName.substring(0,2).toUpperCase()}
-                                                </motion.div>
-                                                <div>
-                                                    <p className="font-bold text-gray-900 text-base group-hover:text-primary transition-colors">{otherPartyName}</p>
-                                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">{isDoctor ? 'Patient' : 'Doctor'}</p>
-                                                </div>
-                                            </div>
-                                            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-                                                <p className="text-sm text-gray-700 line-clamp-2">
-                                                    <span className="font-bold text-gray-900">Reason:</span> {apt.reason}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Status & Type */}
-                                        <div className="flex flex-col items-end gap-3 min-w-[140px]">
-                                            {getStatusBadge(apt.status)}
-                                            <motion.div 
-                                                whileHover={{ scale: 1.05 }}
-                                                className={`flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl shadow-md ${
-                                                    apt.appointment_type === 'virtual' 
-                                                        ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white' 
-                                                        : 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
-                                                }`}
-                                            >
-                                                {apt.appointment_type === 'virtual' ? (
-                                                    <>
-                                                        <VideoCameraIcon className="h-4 w-4" /> Virtual
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <BuildingOfficeIcon className="h-4 w-4" /> In-Person
-                                                    </>
-                                                )}
-                                            </motion.div>
-                    </div>
-
-                                        {/* Actions */}
-                                        <div className="flex items-center gap-3 w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0 mt-4 md:mt-0 justify-end">
-                                            {activeTab === 'upcoming' && (
-                                                <>
-                                                    {apt.status === 'confirmed' && apt.appointment_type === 'virtual' && isAptToday && (
-                                                        <motion.button
-                                                            whileHover={{ scale: 1.05 }}
-                                                            whileTap={{ scale: 0.95 }}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                navigate(`/appointments/${apt.id}/call`);
-                                                            }}
-                                                            className="px-4 py-2.5 bg-gradient-to-r from-primary to-primary-dark text-white text-sm font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center gap-2"
-                                                        >
-                                                            <VideoCameraIcon className="h-5 w-5" />
-                                                            Join Call
-                                                        </motion.button>
-                                                    )}
-                                                    <motion.button
-                                                        whileHover={{ scale: 1.05 }}
-                                                        whileTap={{ scale: 0.95 }}
-                                                        onClick={(e) => handleCancelClick(apt.id, e)}
-                                                        className="px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-700 text-sm font-bold rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all"
-                                                    >
-                                                        Cancel
-                                                    </motion.button>
-                                                </>
-                                            )}
-                                            <motion.button 
-                                                whileHover={{ x: 5 }}
-                                                className="p-2.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-xl transition-colors"
-                                            >
-                                                <ChevronRightIcon className="h-6 w-6" />
-                                            </motion.button>
-                                        </div>
-                                    </div>
-                                </motion.div>
+                            // Sort dates
+                            const sortedDates = Object.keys(groupedByDate).sort((a, b) => 
+                                new Date(a).getTime() - new Date(b).getTime()
                             );
-                        })}
-                        </AnimatePresence>
+
+                            return sortedDates.map((dateKey, groupIndex) => {
+                                const dateAppointments = groupedByDate[dateKey]
+                                    .sort((a, b) => a.start_time.localeCompare(b.start_time));
+                                const date = parseISO(dateKey);
+                                const isTodayDate = isToday(date);
+                                const isTomorrow = format(date, 'yyyy-MM-dd') === format(new Date(Date.now() + 86400000), 'yyyy-MM-dd');
+                                
+                                return (
+                                    <motion.div
+                                        key={dateKey}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: groupIndex * 0.1 }}
+                                        className="space-y-4"
+                                    >
+                                        {/* Date Header */}
+                                        <div className="flex items-center gap-4 mb-2">
+                                            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                                            <div className="flex items-center gap-3 px-4 py-2 bg-white rounded-2xl border-2 border-gray-200 shadow-sm">
+                                                <CalendarDaysIcon className="h-5 w-5 text-primary" />
+                                                <span className="font-black text-gray-900">
+                                                    {isTodayDate ? 'Today' : isTomorrow ? 'Tomorrow' : format(date, 'EEEE, MMMM d, yyyy')}
+                                                </span>
+                                                <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
+                                                    {dateAppointments.length} {dateAppointments.length === 1 ? 'appointment' : 'appointments'}
+                                                </span>
+                                            </div>
+                                            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                                        </div>
+
+                                        {/* Appointments for this date */}
+                                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                            <AnimatePresence mode="popLayout">
+                                                {dateAppointments.map((apt, index) => {
+                                                    const aptDate = parseISO(apt.date);
+                                                    const isAptToday = isToday(aptDate);
+                                                    const otherPartyName = isDoctor ? apt.patient_name || 'Unknown Patient' : apt.doctor_name || 'Unknown Doctor';
+                                                    
+                                                    return (
+                                                        <motion.div 
+                                                            key={apt.id}
+                                                            layout
+                                                            initial={{ opacity: 0, y: 20 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            exit={{ opacity: 0, scale: 0.95 }}
+                                                            transition={{ delay: index * 0.05 }}
+                                                            whileHover={{ y: -4, scale: 1.01 }}
+                                                            onClick={() => navigate(`/appointments/${apt.id}`)}
+                                                            className="group bg-white rounded-3xl border-2 border-gray-100 p-6 shadow-lg hover:shadow-2xl hover:border-primary/30 transition-all duration-300 cursor-pointer relative overflow-hidden"
+                                                        >
+                                                            {/* Decorative gradient blob */}
+                                                            <motion.div
+                                                                animate={{ 
+                                                                    scale: [1, 1.2, 1],
+                                                                    rotate: [0, 90, 0]
+                                                                }}
+                                                                transition={{ duration: 8, repeat: Infinity }}
+                                                                className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-10 -mt-10 opacity-50 blur-2xl"
+                                                            ></motion.div>
+
+                                                            {/* Status accent line */}
+                                                            <motion.div 
+                                                                className={`absolute left-0 top-0 bottom-0 w-1.5 ${
+                                                                    apt.status === 'confirmed' ? 'bg-gradient-to-b from-green-400 to-green-600' : 
+                                                                    apt.status === 'scheduled' ? 'bg-gradient-to-b from-blue-400 to-blue-600' : 
+                                                                    apt.status === 'cancelled' ? 'bg-gradient-to-b from-red-400 to-red-600' : 'bg-gray-300'
+                                                                }`}
+                                                                initial={{ scaleY: 0 }}
+                                                                animate={{ scaleY: 1 }}
+                                                                transition={{ delay: index * 0.05 + 0.2 }}
+                                                            ></motion.div>
+
+                                                            <div className="relative pl-4 space-y-4">
+                                                                {/* Time & Status Row */}
+                                                                <div className="flex items-start justify-between">
+                                                                    <div className="flex-1">
+                                                                        <div className="flex items-center gap-2 mb-2">
+                                                                            <ClockIcon className="h-5 w-5 text-primary" />
+                                                                            <h3 className="text-2xl font-black text-gray-900 group-hover:text-primary transition-colors">
+                                                                                {formatTimeDisplay(apt.start_time)}
+                                                                            </h3>
+                                                                        </div>
+                                                                        <p className="text-sm text-gray-600 font-medium">
+                                                                            {apt.duration || 30} minutes
+                                                                        </p>
+                                                                    </div>
+                                                                    {getStatusBadge(apt.status)}
+                                                                </div>
+
+                                                                {/* Doctor/Patient Info */}
+                                                                <div className="flex items-center gap-3">
+                                                                    <motion.div 
+                                                                        whileHover={{ scale: 1.1, rotate: 5 }}
+                                                                        className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center text-white font-black text-lg shadow-lg flex-shrink-0"
+                                                                    >
+                                                                        {otherPartyName.substring(0,2).toUpperCase()}
+                                                                    </motion.div>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <p className="font-black text-gray-900 text-lg group-hover:text-primary transition-colors truncate">
+                                                                            {otherPartyName}
+                                                                        </p>
+                                                                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                                                                            {isDoctor ? 'Patient' : 'Doctor'}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Reason */}
+                                                                <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-2xl p-4 border border-gray-200">
+                                                                    <p className="text-sm text-gray-700 line-clamp-2">
+                                                                        <span className="font-black text-gray-900">Reason:</span>{' '}
+                                                                        <span className="font-medium">{apt.reason || 'General Consultation'}</span>
+                                                                    </p>
+                                                                </div>
+
+                                                                {/* Type & Actions Row */}
+                                                                <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                                                                    <motion.div 
+                                                                        whileHover={{ scale: 1.05 }}
+                                                                        className={`flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm ${
+                                                                            apt.appointment_type === 'virtual' 
+                                                                                ? 'bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-700 border border-purple-200' 
+                                                                                : 'bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 border border-orange-200'
+                                                                        }`}
+                                                                    >
+                                                                        {apt.appointment_type === 'virtual' ? (
+                                                                            <>
+                                                                                <VideoCameraIcon className="h-4 w-4" /> Virtual
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <BuildingOfficeIcon className="h-4 w-4" /> In-Person
+                                                                            </>
+                                                                        )}
+                                                                    </motion.div>
+
+                                                                    <div className="flex items-center gap-2">
+                                                                        {activeTab === 'upcoming' && (
+                                                                            <>
+                                                                                {apt.status === 'confirmed' && apt.appointment_type === 'virtual' && isAptToday && (
+                                                                                    <motion.button
+                                                                                        whileHover={{ scale: 1.05 }}
+                                                                                        whileTap={{ scale: 0.95 }}
+                                                                                        onClick={(e) => {
+                                                                                            e.stopPropagation();
+                                                                                            navigate(`/appointments/${apt.id}/call`);
+                                                                                        }}
+                                                                                        className="px-3 py-1.5 bg-gradient-to-r from-primary to-emerald-600 text-white text-xs font-bold rounded-xl hover:shadow-lg transition-all shadow-md flex items-center gap-1.5"
+                                                                                    >
+                                                                                        <VideoCameraIcon className="h-4 w-4" />
+                                                                                        Join
+                                                                                    </motion.button>
+                                                                                )}
+                                                                                <motion.button
+                                                                                    whileHover={{ scale: 1.05 }}
+                                                                                    whileTap={{ scale: 0.95 }}
+                                                                                    onClick={(e) => handleCancelClick(apt.id, e)}
+                                                                                    className="px-3 py-1.5 bg-white border-2 border-gray-200 text-gray-700 text-xs font-bold rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all"
+                                                                                >
+                                                                                    Cancel
+                                                                                </motion.button>
+                                                                            </>
+                                                                        )}
+                                                                        <motion.button 
+                                                                            whileHover={{ x: 3, scale: 1.1 }}
+                                                                            className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                                                        >
+                                                                            <ChevronRightIcon className="h-5 w-5" />
+                                                                        </motion.button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </motion.div>
+                                                    );
+                                                })}
+                                            </AnimatePresence>
+                                        </div>
+                                    </motion.div>
+                                );
+                            });
+                        })()}
                     </motion.div>
                 ) : (
                     <motion.div 

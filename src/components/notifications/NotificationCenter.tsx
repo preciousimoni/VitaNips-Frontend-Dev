@@ -171,7 +171,7 @@ const NotificationCenter: React.FC = () => {
             {/* Dropdown */}
             {isOpen && (
                 <div 
-                    className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-[600px] flex flex-col"
+                    className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-[600px] flex flex-col"
                     role="dialog"
                     aria-label="Notifications panel"
                     aria-modal="false"

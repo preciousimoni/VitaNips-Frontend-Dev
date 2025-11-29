@@ -200,10 +200,8 @@ const Header: React.FC = () => {
                   )}
                 </button>
 
-                {/* Notification Center */}
-                <div className="hidden lg:block">
-                  <NotificationCenter />
-                </div>
+                {/* Notification Center - Visible for all authenticated users on all screen sizes */}
+                <NotificationCenter />
 
                 {/* Profile Dropdown */}
                 <div className="relative" ref={dropdownRef}>
@@ -316,7 +314,7 @@ const Header: React.FC = () => {
 
         {/* Mobile Navigation Menu */}
         <AnimatePresence>
-          {isAuthenticated && !user?.is_pharmacy_staff && isMobileMenuOpen && (
+          {isAuthenticated && isMobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -325,24 +323,55 @@ const Header: React.FC = () => {
               className="lg:hidden border-t border-gray-200 overflow-hidden"
             >
               <div className="py-3 space-y-1">
-                {[...primaryNavItems, ...secondaryNavItems, emergencyNavItem].map((item) => {
-                  const active = isActive(item.href);
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
-                        active
-                          ? 'bg-primary/10 text-primary'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      <item.icon className="h-5 w-5 mr-3" />
-                      {item.name}
-                    </Link>
-                  );
-                })}
+                {!user?.is_pharmacy_staff && (
+                  <>
+                    {[...primaryNavItems, ...secondaryNavItems, emergencyNavItem].map((item) => {
+                      const active = isActive(item.href);
+                      return (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
+                            active
+                              ? 'bg-primary/10 text-primary'
+                              : 'text-gray-700 hover:bg-gray-100'
+                          }`}
+                        >
+                          <item.icon className="h-5 w-5 mr-3" />
+                          {item.name}
+                        </Link>
+                      );
+                    })}
+                  </>
+                )}
+                {/* Notifications link for all user types */}
+                <Link
+                  to="/notifications"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive('/notifications')
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <BellAlertIcon className="h-5 w-5 mr-3" />
+                  Notifications
+                </Link>
+                {user?.is_pharmacy_staff && (
+                  <Link
+                    to="/portal/dashboard"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive('/portal/dashboard')
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <ShoppingBagIcon className="h-5 w-5 mr-3" />
+                    Portal Dashboard
+                  </Link>
+                )}
               </div>
             </motion.div>
           )}

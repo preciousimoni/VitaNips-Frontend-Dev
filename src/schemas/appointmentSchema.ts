@@ -25,7 +25,25 @@ export const appointmentBookingSchema = z.object({
   
   notes: z.string().max(1000, 'Notes must not exceed 1000 characters').optional(),
   
-  user_insurance_id: z.number().positive().optional().nullable(),
+  user_insurance_id: z.preprocess(
+    (val) => {
+      // Handle empty string, null, undefined
+      if (val === '' || val === null || val === undefined) {
+        return null;
+      }
+      // If it's already a number, validate it
+      if (typeof val === 'number') {
+        return val > 0 ? val : null;
+      }
+      // If it's a string, try to parse it
+      if (typeof val === 'string') {
+        const num = parseInt(val, 10);
+        return isNaN(num) || num <= 0 ? null : num;
+      }
+      return null;
+    },
+    z.number().positive().nullable().optional()
+  ),
 });
 
 export type AppointmentBookingFormData = z.infer<typeof appointmentBookingSchema>;

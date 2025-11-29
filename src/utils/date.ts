@@ -1,4 +1,4 @@
-import { format, parseISO, isValid, parse } from 'date-fns';
+import { format, parseISO, isValid, parse, formatDistanceToNowStrict } from 'date-fns';
 
 /**
  * Formats a date string or Date object into a readable string.
@@ -63,4 +63,25 @@ export const formatTime = (time: string | Date | null | undefined): string => {
 
     if (!isValid(parsedDate)) return 'Invalid Time';
     return format(parsedDate, 'h:mm a');
+};
+
+/**
+ * Formats a date-time string into a human-readable relative time (e.g., "2 minutes ago").
+ */
+export const formatRelativeTime = (dateTimeStr: string): string => {
+    try {
+        const date = parseISO(dateTimeStr);
+        if (!isValid(date)) {
+            // Fallback for non-ISO strings, try parsing as a generic date
+            const fallbackDate = new Date(dateTimeStr);
+            if (isValid(fallbackDate)) {
+                return formatDistanceToNowStrict(fallbackDate, { addSuffix: true });
+            }
+            return 'Invalid Date';
+        }
+        return formatDistanceToNowStrict(date, { addSuffix: true });
+    } catch (error) {
+        console.error("Error formatting relative time:", error);
+        return 'Unknown';
+    }
 };

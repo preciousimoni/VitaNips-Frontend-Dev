@@ -69,7 +69,7 @@ const LandingPage: React.FC = () => {
         {
             icon: HeartIcon,
             title: 'Vital Tracking',
-            description: 'Monitor your vitals, symptoms, and health metrics in one comprehensive dashboard with trend analysis.',
+            description: 'Monitor your vitals and health metrics in one comprehensive dashboard with trend analysis.',
             color: 'bg-red-50 text-red-600',
             delay: 0.3
         },

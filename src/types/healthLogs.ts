@@ -18,21 +18,6 @@ export interface VitalSignLog {
 }
 export type VitalSignPayload = Omit<VitalSignLog, 'id' | 'user' | 'created_at'>;
 
-// --- Symptom Log ---
-export type SymptomSeverity = 1 | 2 | 3 | 4; // Mild, Moderate, Severe, Very Severe
-
-export interface SymptomLog {
-    id: number;
-    user: number;
-    symptom: string;
-    date_experienced: string; // ISO DateTime string
-    severity: SymptomSeverity;
-    duration?: string | null; // e.g., "2 hours", "all day"
-    notes?: string | null;
-    created_at: string;
-}
-export type SymptomPayload = Omit<SymptomLog, 'id' | 'user' | 'created_at'>;
-
 // --- Food Log ---
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 
