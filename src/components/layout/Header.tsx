@@ -237,8 +237,8 @@ const Header: React.FC = () => {
                 {/* Notification Center - Visible for all authenticated users on all screen sizes */}
                 <NotificationCenter />
 
-                {/* Subscription Status Badge */}
-                <SubscriptionStatusBadge />
+                {/* Subscription Status Badge - Only for Patients */}
+                {isPatient && <SubscriptionStatusBadge />}
 
                 {/* Profile Dropdown */}
                 <div className="relative" ref={dropdownRef}>
@@ -281,8 +281,9 @@ const Header: React.FC = () => {
                           </p>
                         </div>
 
-                        {/* Menu Items */}
+                        {/* Menu Items - Role-Based */}
                         <div className="py-1">
+                          {/* Profile & Settings - Available for all users */}
                           <Link
                             to="/profile"
                             onClick={() => setIsDropdownOpen(false)}
@@ -292,6 +293,7 @@ const Header: React.FC = () => {
                             Profile & Settings
                           </Link>
 
+                          {/* Notification Settings - Available for all users */}
                           <Link
                             to="/settings/notifications"
                             onClick={() => setIsDropdownOpen(false)}
@@ -301,26 +303,33 @@ const Header: React.FC = () => {
                             Notification Settings
                           </Link>
 
-                          <Link
-                            to="/subscription"
-                            onClick={() => setIsDropdownOpen(false)}
-                            className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 transition-colors"
-                          >
-                            <ShieldCheckIcon className="h-4 w-4 mr-3 text-gray-400" />
-                            Subscription
-                          </Link>
+                          {/* Subscription & Premium Features - Only for Patients */}
+                          {isPatient && (
+                            <>
+                              <Link
+                                to="/subscription"
+                                onClick={() => setIsDropdownOpen(false)}
+                                className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 transition-colors"
+                              >
+                                <ShieldCheckIcon className="h-4 w-4 mr-3 text-gray-400" />
+                                Subscription
+                              </Link>
 
-                          <Link
-                            to="/premium-hub"
-                            onClick={() => setIsDropdownOpen(false)}
-                            className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 transition-colors"
-                          >
-                            <SparklesIcon className="h-4 w-4 mr-3 text-gray-400" />
-                            Premium Features Hub
-                          </Link>
+                              <Link
+                                to="/premium-hub"
+                                onClick={() => setIsDropdownOpen(false)}
+                                className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 transition-colors"
+                              >
+                                <SparklesIcon className="h-4 w-4 mr-3 text-gray-400" />
+                                Premium Features Hub
+                              </Link>
+                            </>
+                          )}
 
+                          {/* Divider before Sign Out */}
                           <div className="border-t border-gray-100 my-1"></div>
 
+                          {/* Sign Out - Available for all users */}
                           <button
                             onClick={handleLogout}
                             className="flex items-center w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
