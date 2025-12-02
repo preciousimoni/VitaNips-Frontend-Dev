@@ -1,6 +1,14 @@
 // src/pages/MedicationRemindersPage.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { BellAlertIcon, PlusIcon } from '@heroicons/react/24/solid';
+import {
+    BellSlashIcon,
+    MagnifyingGlassIcon,
+    FunnelIcon,
+    ClockIcon,
+    CheckCircleIcon,
+} from '@heroicons/react/24/outline';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     getMedicationReminders,
     createMedicationReminder,
@@ -13,6 +21,8 @@ import MedicationReminderForm from '../features/pharmacy/components/MedicationRe
 import Modal from '../components/common/Modal';
 import toast from 'react-hot-toast';
 import ConfirmDialog from '../components/common/ConfirmDialog';
+import PageWrapper from '../components/common/PageWrapper';
+import Spinner from '../components/ui/Spinner';
 
 const MedicationRemindersPage: React.FC = () => {
     const [reminders, setReminders] = useState<MedicationReminder[]>([]);
@@ -29,6 +39,10 @@ const MedicationRemindersPage: React.FC = () => {
     const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+    // Filter and search states
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
 
     const sortReminders = (data: MedicationReminder[]): MedicationReminder[] => {
         return [...data].sort((a, b) => {
@@ -59,7 +73,7 @@ const MedicationRemindersPage: React.FC = () => {
                 const newReminders = response.results;
                 setReminders(prev => sortReminders(url ? [...prev, ...newReminders] : newReminders));
                 setNextPageUrl(response.next);
-                if (reset || !url) { // Set total count on initial load or full reset
+                if (reset || !url) {
                     setTotalCount(response.count);
                 }
             } else {
@@ -77,8 +91,49 @@ const MedicationRemindersPage: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        fetchReminders(null, true); // Initial load
+        fetchReminders(null, true);
     }, [fetchReminders]);
+
+    // Filter and search reminders
+    const filteredReminders = useMemo(() => {
+        let filtered = reminders;
+
+        // Filter by active status
+        if (filterActive === 'active') {
+            filtered = filtered.filter(r => r.is_active);
+        } else if (filterActive === 'inactive') {
+            filtered = filtered.filter(r => !r.is_active);
+        }
+
+        // Search filter
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            filtered = filtered.filter(r => 
+                r.medication_display?.name?.toLowerCase().includes(query) ||
+                r.dosage?.toLowerCase().includes(query) ||
+                r.notes?.toLowerCase().includes(query)
+            );
+        }
+
+        return filtered;
+    }, [reminders, filterActive, searchQuery]);
+
+    // Calculate statistics
+    const stats = useMemo(() => {
+        const active = reminders.filter(r => r.is_active).length;
+        const inactive = reminders.filter(r => !r.is_active).length;
+        const today = new Date();
+        const todayReminders = reminders.filter(r => {
+            if (!r.is_active) return false;
+            const startDate = r.start_date ? new Date(r.start_date) : null;
+            const endDate = r.end_date ? new Date(r.end_date) : null;
+            if (startDate && today < startDate) return false;
+            if (endDate && today > endDate) return false;
+            return true;
+        }).length;
+
+        return { total: reminders.length, active, inactive, today: todayReminders };
+    }, [reminders]);
 
     const handleAddClick = () => {
         setEditingReminder(null);
@@ -96,7 +151,7 @@ const MedicationRemindersPage: React.FC = () => {
     };
 
     const handleFormSubmit = async (payload: MedicationReminderPayload, id?: number) => {
-        setIsSubmittingForm(true); // Use dedicated state for form submission
+        setIsSubmittingForm(true);
         try {
             if (id) {
                 await updateMedicationReminder(id, payload);
@@ -105,10 +160,9 @@ const MedicationRemindersPage: React.FC = () => {
             }
             setShowFormModal(false);
             setEditingReminder(null);
-            await fetchReminders(null, true); // Refresh list completely after add/edit
+            await fetchReminders(null, true);
         } catch (err) {
             console.error("Failed to save reminder from page handler:", err);
-            // Error is displayed within the form, but re-throwing allows form to catch it.
             throw err;
         } finally {
             setIsSubmittingForm(false);
@@ -130,7 +184,7 @@ const MedicationRemindersPage: React.FC = () => {
             toast.success("Reminder deleted successfully.", { id: toastId });
             setShowConfirmDialog(false);
             setDeleteId(null);
-            await fetchReminders(null, true); // Refresh list
+            await fetchReminders(null, true);
         } catch (err) {
             const errorMsg = err instanceof Error ? err.message : "Failed to delete reminder.";
             setError(errorMsg);
@@ -148,106 +202,299 @@ const MedicationRemindersPage: React.FC = () => {
 
     const handleToggleActive = async (id: number, newActiveState: boolean) => {
         const originalReminders = [...reminders];
-        setReminders(prev => prev.map(r => r.id === id ? { ...r, is_active: newActiveState } : r)); // Optimistic update
+        setReminders(prev => prev.map(r => r.id === id ? { ...r, is_active: newActiveState } : r));
 
         try {
             await updateMedicationReminder(id, { is_active: newActiveState });
             toast.success(`Reminder ${newActiveState ? 'activated' : 'deactivated'}.`);
-            // Optionally re-fetch to ensure consistency if backend has other side effects
-            // await fetchReminders(null, true);
         } catch (error) {
             console.error("Failed to toggle reminder active state", error);
-            setReminders(originalReminders); // Revert optimistic update
+            setReminders(originalReminders);
             toast.error("Could not update reminder status. Please try again.");
         }
     };
 
-
     return (
-        <div className="max-w-3xl mx-auto">
-            <div className="flex justify-between items-center mb-6 pb-3 border-b">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Medication Reminders</h1>
-                <button
-                    onClick={handleAddClick}
-                    className="btn-primary inline-flex items-center px-3 py-2 sm:px-4 text-sm sm:text-base"
-                >
-                    <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2" /> Add Reminder
-                </button>
-            </div>
-
-            <Modal
-                isOpen={showFormModal}
-                onClose={handleFormCancel}
-                title={editingReminder ? 'Edit Reminder' : 'Add New Reminder'}
-            >
-                <MedicationReminderForm
-                    initialData={editingReminder}
-                    onSubmit={handleFormSubmit}
-                    onCancel={handleFormCancel}
-                    isSubmitting={isSubmittingForm}
-                />
-            </Modal>
-
-            <ConfirmDialog
-                isOpen={showConfirmDialog}
-                onClose={handleCancelDelete}
-                onConfirm={handleConfirmDelete}
-                title="Delete Medication Reminder"
-                message="Are you sure you want to delete this reminder? This action cannot be undone."
-                confirmText="Delete"
-                cancelText="Cancel"
-                isLoading={isDeleting}
-            />
-
-            {isLoading && reminders.length === 0 && (
-                <div className="text-center py-10 text-muted">
-                    <svg className="mx-auto h-12 w-12 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.5v3m0 9v3m-4.5-4.5h3m9 0h3M5.636 5.636l2.122 2.122m9.9 9.9l2.122 2.122M5.636 18.364l2.122-2.122m9.9-9.9l2.122-2.122" />
-                    </svg>
-                    Loading reminders...
-                </div>
-            )}
-            {error && <p className="text-red-600 text-center py-4 bg-red-50 p-3 rounded-md my-4">{error}</p>}
-
-            {!isLoading && !error && reminders.length === 0 && (
-                <div className="text-center py-16 bg-gray-50 rounded-lg shadow">
-                    <BellAlertIcon className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-2 text-lg font-medium text-gray-900">No Reminders Yet</h3>
-                    <p className="mt-1 text-sm text-gray-500">Stay on track with your medications by adding a reminder.</p>
-                    <div className="mt-6">
-                        <button onClick={handleAddClick} type="button" className="btn-primary inline-flex items-center">
-                            <PlusIcon className="h-5 w-5 mr-2" /> Add Your First Reminder
-                        </button>
+        <PageWrapper title="Medication Reminders">
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50/30 pb-12">
+                {/* Hero Section */}
+                <div className="relative bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 pt-20 pb-24 overflow-hidden">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 1.1 }}
+                        animate={{ opacity: 0.1, scale: 1 }}
+                        className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/medical-icons.png')]"
+                    />
+                    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+                        >
+                            <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                                        <BellAlertIcon className="h-8 w-8 text-white" />
+                                    </div>
+                                    <h1 className="text-4xl md:text-5xl font-black text-white">
+                                        Medication Reminders
+                                    </h1>
+                                </div>
+                                <p className="text-xl text-white/90 max-w-2xl">
+                                    Never miss a dose. Set up reminders to stay on track with your medications.
+                                </p>
+                            </div>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={handleAddClick}
+                                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-amber-600 font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all relative z-10"
+                            >
+                                <PlusIcon className="h-6 w-6" />
+                                Add Reminder
+                            </motion.button>
+                        </motion.div>
                     </div>
                 </div>
-            )}
 
-            {reminders.length > 0 && (
-                <div className="space-y-3"> {/* Use space-y instead of ul for direct children */}
-                    {reminders.map(reminder => (
-                        <MedicationReminderListItem
-                            key={reminder.id}
-                            reminder={reminder}
-                            onEdit={handleEditClick}
-                            onDelete={handleDelete}
-                            onToggleActive={handleToggleActive}
-                        />
-                    ))}
-                </div>
-            )}
+                {/* Statistics Cards */}
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-600">Total Reminders</p>
+                                    <p className="text-3xl font-black text-gray-900 mt-2">{stats.total}</p>
+                                </div>
+                                <div className="p-3 bg-amber-100 rounded-xl">
+                                    <BellAlertIcon className="h-6 w-6 text-amber-600" />
+                                </div>
+                            </div>
+                        </motion.div>
 
-            {nextPageUrl && !isLoadingMore && (
-                <div className="mt-8 text-center">
-                    <button onClick={() => fetchReminders(nextPageUrl, false)} className="btn-primary px-6 py-2 text-sm">
-                        Load More Reminders
-                    </button>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-600">Active</p>
+                                    <p className="text-3xl font-black text-green-600 mt-2">{stats.active}</p>
+                                </div>
+                                <div className="p-3 bg-green-100 rounded-xl">
+                                    <CheckCircleIcon className="h-6 w-6 text-green-600" />
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-600">Inactive</p>
+                                    <p className="text-3xl font-black text-gray-500 mt-2">{stats.inactive}</p>
+                                </div>
+                                <div className="p-3 bg-gray-100 rounded-xl">
+                                    <BellSlashIcon className="h-6 w-6 text-gray-500" />
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-600">Today's Reminders</p>
+                                    <p className="text-3xl font-black text-blue-600 mt-2">{stats.today}</p>
+                                </div>
+                                <div className="p-3 bg-blue-100 rounded-xl">
+                                    <ClockIcon className="h-6 w-6 text-blue-600" />
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* Search and Filter Bar */}
+                    <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
+                        <div className="flex flex-col md:flex-row gap-4">
+                            <div className="flex-1 relative">
+                                <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Search reminders by medication, dosage, or notes..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                                />
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <FunnelIcon className="h-5 w-5 text-gray-400" />
+                                <div className="flex bg-gray-100 rounded-xl p-1">
+                                    {(['all', 'active', 'inactive'] as const).map((filter) => (
+                                        <button
+                                            key={filter}
+                                            onClick={() => setFilterActive(filter)}
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                                filterActive === filter
+                                                    ? 'bg-white text-amber-600 shadow-sm'
+                                                    : 'text-gray-600 hover:text-gray-900'
+                                            }`}
+                                        >
+                                            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Error Display */}
+                    {error && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4"
+                        >
+                            <p className="text-red-700 text-sm">{error}</p>
+                        </motion.div>
+                    )}
+
+                    {/* Loading State */}
+                    {isLoading && reminders.length === 0 && (
+                        <div className="flex items-center justify-center py-20">
+                            <Spinner size="lg" />
+                        </div>
+                    )}
+
+                    {/* Empty State */}
+                    {!isLoading && !error && filteredReminders.length === 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="text-center py-20 bg-white rounded-2xl shadow-lg border border-gray-100"
+                        >
+                            <div className="max-w-md mx-auto">
+                                <div className="p-4 bg-amber-100 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                                    <BellAlertIcon className="h-12 w-12 text-amber-600" />
+                                </div>
+                                <h3 className="text-2xl font-black text-gray-900 mb-2">
+                                    {searchQuery || filterActive !== 'all' ? 'No Reminders Found' : 'No Reminders Yet'}
+                                </h3>
+                                <p className="text-gray-600 mb-8">
+                                    {searchQuery || filterActive !== 'all'
+                                        ? 'Try adjusting your search or filter criteria.'
+                                        : 'Stay on track with your medications by adding a reminder.'}
+                                </p>
+                                {(!searchQuery && filterActive === 'all') && (
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={handleAddClick}
+                                        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                                    >
+                                        <PlusIcon className="h-5 w-5" />
+                                        Add Your First Reminder
+                                    </motion.button>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* Reminders List */}
+                    <AnimatePresence mode="wait">
+                        {filteredReminders.length > 0 && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="space-y-4"
+                            >
+                                {filteredReminders.map((reminder, index) => (
+                                    <motion.div
+                                        key={reminder.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                    >
+                                        <MedicationReminderListItem
+                                            reminder={reminder}
+                                            onEdit={handleEditClick}
+                                            onDelete={handleDelete}
+                                            onToggleActive={handleToggleActive}
+                                        />
+                                    </motion.div>
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Load More */}
+                    {nextPageUrl && !isLoadingMore && (
+                        <div className="mt-8 text-center">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => fetchReminders(nextPageUrl, false)}
+                                className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                            >
+                                Load More Reminders
+                            </motion.button>
+                        </div>
+                    )}
+                    {isLoadingMore && (
+                        <div className="mt-8 text-center">
+                            <Spinner size="md" />
+                            <p className="text-gray-600 mt-4 text-sm">Loading more reminders...</p>
+                        </div>
+                    )}
+                    {!isLoading && !nextPageUrl && totalCount > 0 && reminders.length === totalCount && (
+                        <p className="text-center text-gray-500 text-sm mt-8">
+                            All {totalCount} reminder{totalCount !== 1 ? 's' : ''} loaded.
+                        </p>
+                    )}
                 </div>
-            )}
-            {isLoadingMore && <p className="text-muted text-center py-4 text-sm">Loading more...</p>}
-            {!isLoading && !nextPageUrl && totalCount > 0 && reminders.length === totalCount && (
-                <p className="text-center text-muted text-sm mt-6">All {totalCount} reminders loaded.</p>
-            )}
-        </div>
+
+                {/* Form Modal */}
+                <Modal
+                    isOpen={showFormModal}
+                    onClose={handleFormCancel}
+                    title={editingReminder ? 'Edit Reminder' : 'Add New Reminder'}
+                >
+                    <MedicationReminderForm
+                        initialData={editingReminder}
+                        onSubmit={handleFormSubmit}
+                        onCancel={handleFormCancel}
+                        isSubmitting={isSubmittingForm}
+                    />
+                </Modal>
+
+                {/* Delete Confirmation Dialog */}
+                <ConfirmDialog
+                    isOpen={showConfirmDialog}
+                    onClose={handleCancelDelete}
+                    onConfirm={handleConfirmDelete}
+                    title="Delete Medication Reminder"
+                    message="Are you sure you want to delete this reminder? This action cannot be undone."
+                    confirmText="Delete"
+                    cancelText="Cancel"
+                    isLoading={isDeleting}
+                />
+            </div>
+        </PageWrapper>
     );
 };
 

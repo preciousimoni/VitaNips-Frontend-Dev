@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Spinner from '../ui/Spinner';
 import toast from 'react-hot-toast';
-import { initializePayment, verifyPayment } from '../../api/payments';
+import { initializePayment, verifyPayment, CommissionBreakdown } from '../../api/payments';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface PaymentModalProps {
@@ -40,6 +40,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank_transfer' | 'ussd'>('card');
     const [paymentReference, setPaymentReference] = useState<string | null>(null);
     const [authorizationUrl, setAuthorizationUrl] = useState<string | null>(null);
+    const [commissionBreakdown, setCommissionBreakdown] = useState<CommissionBreakdown | null>(null);
 
     const formatCardNumber = (value: string) => {
         const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -87,6 +88,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
             setPaymentReference(response.reference || response.tx_ref);
             setAuthorizationUrl(response.authorization_url);
+            
+            // Store commission breakdown if available
+            if (response.commission_breakdown) {
+                setCommissionBreakdown(response.commission_breakdown);
+            }
             
             // For card payments, redirect to Flutterwave payment page
             if (paymentMethod === 'card' && response.authorization_url) {
@@ -230,6 +236,20 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                                                 <span className="font-semibold text-gray-900 text-right max-w-xs">{description}</span>
                                             </div>
                                         )}
+                                        {commissionBreakdown && (
+                                            <div className="mt-3 pt-3 border-t border-primary/20">
+                                                <div className="space-y-1 text-xs">
+                                                    <div className="flex justify-between text-gray-600">
+                                                        <span>Platform Fee ({commissionBreakdown.commission_rate}):</span>
+                                                        <span className="font-semibold">₦{parseFloat(commissionBreakdown.platform_commission).toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="flex justify-between text-gray-600">
+                                                        <span>Provider Receives:</span>
+                                                        <span className="font-semibold">₦{parseFloat(commissionBreakdown.provider_net_amount).toLocaleString()}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                         <div className="border-t border-primary/20 pt-2 mt-2">
                                             <div className="flex justify-between items-center">
                                                 <span className="text-lg font-bold text-gray-900">Total Amount:</span>
@@ -243,6 +263,20 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                             {/* Generic Summary - If no description provided */}
                             {!description && (
                                 <div className="bg-gradient-to-br from-primary/10 to-emerald-50 rounded-2xl p-6 mb-6 border border-primary/20">
+                                    {commissionBreakdown && (
+                                        <div className="mb-3 pb-3 border-b border-primary/20">
+                                            <div className="space-y-1 text-xs">
+                                                <div className="flex justify-between text-gray-600">
+                                                    <span>Platform Fee ({commissionBreakdown.commission_rate}):</span>
+                                                    <span className="font-semibold">₦{parseFloat(commissionBreakdown.platform_commission).toLocaleString()}</span>
+                                                </div>
+                                                <div className="flex justify-between text-gray-600">
+                                                    <span>Provider Receives:</span>
+                                                    <span className="font-semibold">₦{parseFloat(commissionBreakdown.provider_net_amount).toLocaleString()}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                     <div className="flex justify-between items-center">
                                         <span className="text-lg font-bold text-gray-900">Total Amount:</span>
                                         <span className="text-2xl font-black text-primary">₦{amount.toLocaleString()}</span>

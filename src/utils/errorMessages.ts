@@ -88,6 +88,11 @@ function parseDetailError(data: unknown): string | null {
   if (typeof errorData === 'object') {
     const fieldErrors: string[] = [];
     Object.entries(errorData).forEach(([field, value]) => {
+      // Skip error object fields (like 'error', 'message', 'upgrade_url')
+      if (['error', 'message', 'upgrade_url', 'current_count', 'limit'].includes(field)) {
+        return;
+      }
+      
       if (Array.isArray(value)) {
         const messages = value.filter(v => typeof v === 'string');
         if (messages.length > 0) {
@@ -95,11 +100,19 @@ function parseDetailError(data: unknown): string | null {
         }
       } else if (typeof value === 'string') {
         fieldErrors.push(`${formatFieldName(field)}: ${value}`);
+      } else if (typeof value === 'object' && value !== null) {
+        // Handle nested errors
+        const nestedErrors = Object.entries(value as Record<string, unknown>)
+          .map(([k, v]) => Array.isArray(v) ? v.join(', ') : String(v))
+          .join(', ');
+        if (nestedErrors) {
+          fieldErrors.push(`${formatFieldName(field)}: ${nestedErrors}`);
+        }
       }
     });
     
     if (fieldErrors.length > 0) {
-      return fieldErrors.join(' | ');
+      return fieldErrors.join('. ');
     }
   }
 

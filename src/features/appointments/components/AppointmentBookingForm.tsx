@@ -1,5 +1,6 @@
 // src/features/appointments/components/AppointmentBookingForm.tsx
 import React, { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AppointmentPayload, Appointment } from '../../../types/appointments';
@@ -8,6 +9,7 @@ import { createAppointment } from '../../../api/appointments';
 import { formatTime } from '../../../utils';
 import { appointmentBookingSchema, AppointmentBookingFormData } from '../../../schemas/appointmentSchema';
 import toast from 'react-hot-toast';
+import { getErrorMessage } from '../../../utils/errorMessages';
 import { 
     CalendarDaysIcon, 
     UserIcon, 
@@ -20,6 +22,7 @@ import {
 import { getUserInsurances } from '../../../api/insurance';
 import { UserInsurance } from '../../../types/insurance';
 import PaymentModal from '../../../components/payment/PaymentModal';
+import UpgradeModal from '../../../components/common/UpgradeModal';
 
 interface AppointmentBookingFormProps {
     doctorId: number;
@@ -66,6 +69,8 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
     const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
     const [pendingAppointmentData, setPendingAppointmentData] = useState<AppointmentBookingFormData | null>(null);
     const [pendingAppointmentId, setPendingAppointmentId] = useState<number | null>(null);
+    const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
+    const [upgradeModalData, setUpgradeModalData] = useState<{ limit?: number; message?: string } | null>(null);
 
     // React Hook Form setup
     const {
@@ -183,18 +188,50 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
             setPendingAppointmentData(null);
         } catch (err: unknown) {
             console.error("Appointment booking error:", err);
-            const errorData = (err as { response?: { data?: unknown } }).response?.data;
-            let errorMessage = "Failed to book appointment. The time slot might be unavailable or there was a server error.";
-            if (errorData && typeof errorData === 'object') {
-                const messages = Object.entries(errorData)
-                    .map(([key, val]) => `${key === 'detail' ? '' : key + ': '}${Array.isArray(val) ? val.join(', ') : val}`)
-                    .join(' \n');
-                errorMessage = messages || errorMessage;
-            } else if (err instanceof Error) {
-                errorMessage = err.message;
+            const axiosError = err as { response?: { data?: unknown; status?: number } };
+            const errorData = axiosError.response?.data;
+            
+            // Log full error for debugging - CHECK THIS IN CONSOLE!
+            console.log("🔍 Full error response:", {
+                status: axiosError.response?.status,
+                data: errorData,
+                fullError: err
+            });
+            
+            // Check if it's an appointment limit error
+            if (errorData && typeof errorData === 'object' && 'error' in errorData) {
+                const errorObj = errorData as { error?: string; message?: string; current_count?: number; limit?: number; upgrade_url?: string };
+                if (errorObj.error === 'Appointment limit reached') {
+                    setUpgradeModalData({
+                        limit: errorObj.limit,
+                        message: errorObj.message
+                    });
+                    setShowUpgradeModal(true);
+                    setIsSubmitting(false);
+                    return;
+                }
             }
+            
+            // Use the error utility to get user-friendly message
+            const errorMessage = getErrorMessage(err);
             setError(errorMessage);
-            toast.error(errorMessage, { duration: 5000 });
+            
+            // Show styled toast notification
+            toast.error(errorMessage, { 
+                duration: 6000,
+                style: {
+                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    color: '#fff',
+                    padding: '16px 20px',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    maxWidth: '500px',
+                    boxShadow: '0 10px 25px rgba(239, 68, 68, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                },
+                icon: '❌'
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -251,23 +288,89 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                 setIsSubmitting(false);
             } catch (err: unknown) {
                 console.error("Appointment booking error:", err);
-                const errorData = (err as { response?: { data?: unknown } }).response?.data;
-                let errorMessage = "Failed to book appointment. The time slot might be unavailable or there was a server error.";
+                const axiosError = err as { response?: { data?: unknown; status?: number } };
+                const errorData = axiosError.response?.data;
+                
+                // Check if it's an appointment limit error
+                if (errorData && typeof errorData === 'object' && 'error' in errorData) {
+                    const errorObj = errorData as { error?: string; message?: string; current_count?: number; limit?: number; upgrade_url?: string };
+                    if (errorObj.error === 'Appointment limit reached') {
+                        setUpgradeModalData({
+                            limit: errorObj.limit,
+                            message: errorObj.message
+                        });
+                        setShowUpgradeModal(true);
+                        setIsSubmitting(false);
+                        return;
+                    }
+                }
+                
+                // Parse Django REST Framework validation errors
+                let errorMessage = "Failed to book appointment. Please check your input and try again.";
                 if (errorData && typeof errorData === 'object') {
-                    const messages = Object.entries(errorData)
-                        .map(([key, val]) => `${key === 'detail' ? '' : key + ': '}${Array.isArray(val) ? val.join(', ') : val}`)
-                        .join(' \n');
-                    errorMessage = messages || errorMessage;
+                    const errorMessages: string[] = [];
+                    
+                    Object.entries(errorData).forEach(([key, val]) => {
+                        if (Array.isArray(val)) {
+                            val.forEach(msg => {
+                                if (typeof msg === 'string') {
+                                    errorMessages.push(`${key === 'detail' || key === 'non_field_errors' ? '' : key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ') + ': '}${msg}`);
+                                }
+                            });
+                        } else if (typeof val === 'string') {
+                            errorMessages.push(val);
+                        } else if (typeof val === 'object' && val !== null) {
+                            errorMessages.push(`${key}: ${JSON.stringify(val)}`);
+                        }
+                    });
+                    
+                    if (errorMessages.length > 0) {
+                        errorMessage = errorMessages.join('. ');
+                    } else {
+                        errorMessage = JSON.stringify(errorData);
+                    }
                 } else if (err instanceof Error) {
                     errorMessage = err.message;
                 }
+                
                 setError(errorMessage);
-                toast.error(errorMessage, { duration: 5000 });
+                toast.error(errorMessage, { 
+                    duration: 6000,
+                    style: {
+                        background: '#ef4444',
+                        color: '#fff',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        fontSize: '14px',
+                        maxWidth: '500px'
+                    }
+                });
                 setIsSubmitting(false);
             }
         } else {
             // No payment required (insurance covers it or no fee), proceed directly
-            await createAppointmentWithPayment(data);
+            try {
+                await createAppointmentWithPayment(data);
+            } catch (err: unknown) {
+                const errorData = (err as { response?: { data?: unknown } }).response?.data;
+                
+                // Check if it's an appointment limit error
+                if (errorData && typeof errorData === 'object' && 'error' in errorData) {
+                    const errorObj = errorData as { error?: string; message?: string; current_count?: number; limit?: number; upgrade_url?: string };
+                    if (errorObj.error === 'Appointment limit reached') {
+                        setUpgradeModalData({
+                            limit: errorObj.limit,
+                            message: errorObj.message
+                        });
+                        setShowUpgradeModal(true);
+                        setIsSubmitting(false);
+                        return;
+                    }
+                }
+                
+                // Re-throw other errors
+                throw err;
+            }
         }
     };
 
@@ -307,15 +410,29 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
 
             {/* Error Display */}
             {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <div className="flex items-center">
-                        <ExclamationTriangleIcon className="h-5 w-5 text-red-400 mr-2" />
-                        <div className="text-sm text-red-700">
-                            <p className="font-medium">Booking Error</p>
-                            <p className="mt-1">{error}</p>
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-gradient-to-r from-red-50 via-orange-50 to-red-50 border-2 border-red-300 rounded-xl p-4 shadow-lg"
+                >
+                    <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0">
+                            <div className="p-2 bg-red-100 rounded-lg">
+                                <ExclamationTriangleIcon className="h-5 w-5 text-red-600" />
+                            </div>
+                        </div>
+                        <div className="flex-1">
+                            <p className="font-bold text-red-900 mb-1">Booking Error</p>
+                            <p className="text-sm text-red-700 leading-relaxed">{error}</p>
+                            <button
+                                onClick={() => setError(null)}
+                                className="mt-2 text-xs text-red-600 hover:text-red-800 font-medium underline"
+                            >
+                                Dismiss
+                            </button>
                         </div>
                     </div>
-                </div>
+                </motion.div>
             )}
 
             {/* Date Selection */}
@@ -578,6 +695,19 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                 onPaymentSuccess={handlePaymentSuccess}
             />
         )}
+
+        {/* Upgrade Modal */}
+        <UpgradeModal
+            isOpen={showUpgradeModal}
+            onClose={() => {
+                setShowUpgradeModal(false);
+                setUpgradeModalData(null);
+            }}
+            title="Appointment Limit Reached"
+            message={upgradeModalData?.message || "Upgrade to Premium for unlimited appointments"}
+            feature="appointments"
+            currentLimit={upgradeModalData?.limit}
+        />
         </>
     );
 };

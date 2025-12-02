@@ -79,6 +79,20 @@ export const getHealthGoals = async (params?: any): Promise<PaginatedResponse<He
     return response.data;
 };
 
+export const createHealthGoal = async (payload: any): Promise<HealthGoal> => {
+    const response = await axiosInstance.post('/health/health-goals/', payload);
+    return response.data;
+};
+
+export const updateHealthGoal = async (id: number, payload: any): Promise<HealthGoal> => {
+    const response = await axiosInstance.patch(`/health/health-goals/${id}/`, payload);
+    return response.data;
+};
+
+export const deleteHealthGoal = async (id: number): Promise<void> => {
+    await axiosInstance.delete(`/health/health-goals/${id}/`);
+};
+
 // Insights
 export const getHealthInsights = async (): Promise<PaginatedResponse<HealthInsight>> => {
     const response = await axiosInstance.get('/health/insights/');

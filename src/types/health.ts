@@ -39,11 +39,19 @@ export interface ExerciseLog {
 export interface HealthGoal {
     id: number;
     goal_type: string;
+    custom_type?: string;
     target_value: number;
     current_value: number;
     unit: string;
+    start_date: string;
+    target_date: string;
     status: string;
+    frequency: string;
+    reminders_enabled: boolean;
     progress: number;
+    notes?: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export interface HealthInsight {

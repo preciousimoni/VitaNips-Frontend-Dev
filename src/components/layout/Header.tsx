@@ -15,9 +15,11 @@ import {
     DocumentTextIcon,
     ShieldCheckIcon,
     Bars3Icon,
-    XMarkIcon
+    XMarkIcon,
+    SparklesIcon
 } from '@heroicons/react/24/outline';
 import NotificationCenter from '../notifications/NotificationCenter';
+import SubscriptionStatusBadge from '../common/SubscriptionStatusBadge';
 
 const Header: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -203,6 +205,9 @@ const Header: React.FC = () => {
                 {/* Notification Center - Visible for all authenticated users on all screen sizes */}
                 <NotificationCenter />
 
+                {/* Subscription Status Badge */}
+                <SubscriptionStatusBadge />
+
                 {/* Profile Dropdown */}
                 <div className="relative" ref={dropdownRef}>
                   <button
@@ -262,6 +267,24 @@ const Header: React.FC = () => {
                           >
                             <BellAlertIcon className="h-4 w-4 mr-3 text-gray-400" />
                             Notification Settings
+                          </Link>
+
+                          <Link
+                            to="/subscription"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 transition-colors"
+                          >
+                            <ShieldCheckIcon className="h-4 w-4 mr-3 text-gray-400" />
+                            Subscription
+                          </Link>
+
+                          <Link
+                            to="/premium-hub"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-primary/5 transition-colors"
+                          >
+                            <SparklesIcon className="h-4 w-4 mr-3 text-gray-400" />
+                            Premium Features Hub
                           </Link>
 
                           <div className="border-t border-gray-100 my-1"></div>

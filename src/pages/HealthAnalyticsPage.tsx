@@ -5,6 +5,8 @@ import PageWrapper from '@components/common/PageWrapper';
 import RecommendationsList from '@features/analytics/components/RecommendationsList';
 import TrendPredictionChart from '@features/analytics/components/TrendPredictionChart';
 import Spinner from '@components/ui/Spinner';
+import { DocumentArrowDownIcon } from '@heroicons/react/24/outline';
+import toast from 'react-hot-toast';
 
 const HealthAnalyticsPage = () => {
     const [selectedMetric, setSelectedMetric] = useState('weight');
@@ -19,8 +21,45 @@ const HealthAnalyticsPage = () => {
         queryFn: () => getHealthTrends(selectedMetric)
     });
 
+    const handleExportReport = async () => {
+        try {
+            // Generate a comprehensive health report
+            const reportData = {
+                metric: selectedMetric,
+                trends: trendData,
+                recommendations: recommendations,
+                generatedAt: new Date().toISOString(),
+            };
+
+            // Create a downloadable JSON/PDF report
+            const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `health-report-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            toast.success('Health report downloaded successfully!');
+        } catch (error) {
+            console.error('Error exporting report:', error);
+            toast.error('Failed to export report. Please try again.');
+        }
+    };
+
     return (
         <PageWrapper title="Advanced Health Analytics">
+            <div className="mb-6 flex justify-end">
+                <button
+                    onClick={handleExportReport}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-xl hover:shadow-lg transition-all"
+                >
+                    <DocumentArrowDownIcon className="h-5 w-5" />
+                    Export Report
+                </button>
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* Left Column: Trends & Predictions */}

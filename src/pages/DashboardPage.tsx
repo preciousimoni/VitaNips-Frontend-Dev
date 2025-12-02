@@ -343,6 +343,13 @@ const DashboardPage: React.FC = () => {
             color: 'from-amber-500 to-orange-500',
             description: 'Manage your daily schedule'
         },
+        {
+            icon: SparklesIcon,
+            label: 'Premium Features',
+            href: '/premium-hub',
+            color: 'from-purple-500 to-indigo-600',
+            description: 'Access all premium features'
+        },
     ];
 
     const getAppointmentStatusIcon = (status: string) => {

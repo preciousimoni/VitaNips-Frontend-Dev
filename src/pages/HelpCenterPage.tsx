@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
@@ -16,8 +16,12 @@ import {
     SparklesIcon,
     ClockIcon,
     MapPinIcon,
-    ArrowRightIcon
+    ArrowRightIcon,
+    VideoCameraIcon
 } from '@heroicons/react/24/outline';
+import { useAuth } from '../contexts/AuthContext';
+import { getCurrentSubscription } from '../api/payments';
+import { UserSubscription } from '../types/payments';
 
 const faqs = [
     {
@@ -50,10 +54,30 @@ const categories = [
 ];
 
 const HelpCenterPage: React.FC = () => {
+    const { user } = useAuth();
+    const [subscription, setSubscription] = useState<UserSubscription | null>(null);
     const [searchQuery, setSearchTerm] = useState('');
     const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+    const [showChatSupport, setShowChatSupport] = useState(false);
     const { scrollYProgress } = useScroll();
     const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+
+    useEffect(() => {
+        const loadSubscription = async () => {
+            if (user) {
+                try {
+                    const sub = await getCurrentSubscription();
+                    setSubscription(sub);
+                } catch (err) {
+                    console.error('Failed to load subscription:', err);
+                }
+            }
+        };
+        loadSubscription();
+    }, [user]);
+
+    const subscriptionTier = subscription?.plan?.tier || 'free';
+    const has24_7Support = subscriptionTier === 'premium' || subscriptionTier === 'family';
 
     const toggleFaq = (index: number) => {
         setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -333,9 +357,51 @@ const HelpCenterPage: React.FC = () => {
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-600">Help?</span>
                             </h2>
                             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                                Our dedicated support team is available 24/7 to assist you with any issues
+                                {has24_7Support 
+                                    ? 'Our dedicated support team is available 24/7 to assist you with any issues'
+                                    : 'Get help from our support team. Upgrade to Premium or Family Plan for 24/7 support.'}
                             </p>
+                            {has24_7Support && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    className="inline-flex items-center gap-2 px-6 py-3 bg-green-100 border border-green-200 rounded-full text-green-700 font-semibold mt-4"
+                                >
+                                    <ClockIcon className="h-5 w-5" />
+                                    <span>24/7 Support Active</span>
+                                </motion.div>
+                            )}
                         </motion.div>
+                        
+                        {has24_7Support && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="mb-12 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-3xl p-8 text-white shadow-2xl"
+                            >
+                                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-4 bg-white/20 backdrop-blur-sm rounded-2xl">
+                                            <ChatBubbleLeftRightIcon className="h-10 w-10 text-white" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-2xl font-black mb-2">24/7 Live Chat Support</h3>
+                                            <p className="text-white/90">
+                                                Get instant help from our support team anytime, day or night. Average response time: 2 minutes.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowChatSupport(true)}
+                                        className="px-8 py-4 bg-white text-blue-600 font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all whitespace-nowrap"
+                                    >
+                                        Start Live Chat
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
                             {[

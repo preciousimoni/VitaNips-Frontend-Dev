@@ -58,6 +58,13 @@ import HealthDashboardPage from '../pages/HealthDashboardPage';
 import HealthAnalyticsPage from '../pages/HealthAnalyticsPage';
 import AboutPage from '../pages/AboutPage';
 import HelpCenterPage from '../pages/HelpCenterPage';
+import SubscriptionPage from '../pages/SubscriptionPage';
+import PremiumFeaturesPage from '../pages/PremiumFeaturesPage';
+import PremiumFeaturesHubPage from '../pages/PremiumFeaturesHubPage';
+import FamilyDashboardPage from '../pages/FamilyDashboardPage';
+import SharedRemindersPage from '../pages/SharedRemindersPage';
+import HealthGoalsPage from '../pages/HealthGoalsPage';
+import WaterLogPage from '../pages/WaterLogPage';
 import CareerPage from '../pages/CareerPage';
 import PaymentCallbackPage from '../pages/PaymentCallbackPage';
 import toast from 'react-hot-toast';
@@ -252,6 +259,13 @@ const AppRouter: React.FC = () => {
           <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
           <Route path="/medical-documents" element={<MedicalDocumentsPage />} />
           
+          {/* Subscriptions & Premium Features */}
+          <Route path="/subscription" element={<SubscriptionPage />} />
+          <Route path="/premium-features" element={<PremiumFeaturesPage />} />
+          <Route path="/premium-hub" element={<PremiumFeaturesHubPage />} />
+          <Route path="/family/dashboard" element={<FamilyDashboardPage />} />
+          <Route path="/family/reminders" element={<SharedRemindersPage />} />
+          
           {/* Emergency */}
           <Route path="/emergency" element={<EmergencyPage />} />
           <Route path="/emergency/alert-sent" element={<AlertSentPage />} />
@@ -264,6 +278,8 @@ const AppRouter: React.FC = () => {
           {/* Health & Analytics */}
           <Route path="/health/dashboard" element={<HealthDashboardPage />} />
           <Route path="/health/analytics" element={<HealthAnalyticsPage />} />
+          <Route path="/health/goals" element={<HealthGoalsPage />} />
+          <Route path="/health/water" element={<WaterLogPage />} />
           
           <Route path="/health/vitals" element={<VitalsLogPage />} />
           <Route path="/health/food" element={<FoodLogPage />} />
