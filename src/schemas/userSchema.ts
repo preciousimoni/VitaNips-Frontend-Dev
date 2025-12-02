@@ -11,8 +11,24 @@ export const profileSchema = z.object({
   genotype: z.string().optional(),
   allergies: z.string().optional(),
   chronic_conditions: z.string().optional(),
-  weight: z.number().optional(),
-  height: z.number().optional(),
+  weight: z.union([
+    z.string().transform((val) => {
+      if (val === '' || val === null || val === undefined) return undefined;
+      const num = parseFloat(val);
+      return isNaN(num) ? undefined : num;
+    }),
+    z.number(),
+    z.undefined()
+  ]).optional(),
+  height: z.union([
+    z.string().transform((val) => {
+      if (val === '' || val === null || val === undefined) return undefined;
+      const num = parseFloat(val);
+      return isNaN(num) ? undefined : num;
+    }),
+    z.number(),
+    z.undefined()
+  ]).optional(),
   medical_history_summary: z.string().optional(),
 });
 

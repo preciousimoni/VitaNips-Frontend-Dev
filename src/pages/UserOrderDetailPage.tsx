@@ -14,7 +14,7 @@ import {
     TruckIcon,
     XCircleIcon,
 } from '@heroicons/react/24/outline';
-import { getUserOrderDetail } from '../api/orders';
+import { getUserOrderDetail, confirmPickup } from '../api/orders';
 import { MedicationOrder } from '../types/pharmacy';
 import { initializePayment, verifyPayment } from '../api/payments';
 import axiosInstance from '../api/axiosInstance';
@@ -109,6 +109,7 @@ const UserOrderDetailPage: React.FC = () => {
     const [selectedInsuranceId, setSelectedInsuranceId] = useState<number | null>(null);
     const [isUpdatingInsurance, setIsUpdatingInsurance] = useState<boolean>(false);
     const [loadingInsurances, setLoadingInsurances] = useState<boolean>(false);
+    const [isConfirmingPickup, setIsConfirmingPickup] = useState<boolean>(false);
 
     const fetchOrder = useCallback(async () => {
         if (!orderId) {
@@ -407,6 +408,28 @@ const UserOrderDetailPage: React.FC = () => {
         }
     };
 
+    const handleConfirmPickup = async () => {
+        if (!order) return;
+        
+        // Confirm action
+        if (!window.confirm('Have you picked up your order from the pharmacy? This will mark the order as completed.')) {
+            return;
+        }
+        
+        setIsConfirmingPickup(true);
+        try {
+            const response = await confirmPickup(order.id);
+            toast.success(response.message || 'Pickup confirmed successfully!');
+            // Refresh order to get updated status
+            await fetchOrder();
+        } catch (error: any) {
+            console.error('Failed to confirm pickup:', error);
+            toast.error(error.response?.data?.error || 'Failed to confirm pickup. Please try again.');
+        } finally {
+            setIsConfirmingPickup(false);
+        }
+    };
+
     const handlePayNow = async () => {
         if (!order || !order.total_amount) return;
         
@@ -555,6 +578,43 @@ const UserOrderDetailPage: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
+                            {/* Confirm Pickup Button - Show only when order is ready and not a delivery order */}
+                            {order.status === 'ready' && !order.is_delivery && (
+                                <div className="mt-6 pt-6 border-t-2 border-gray-200">
+                                    <div className="bg-blue-50 rounded-2xl p-6 border-2 border-blue-200">
+                                        <div className="flex items-start gap-4 mb-4">
+                                            <div className="p-3 bg-blue-100 rounded-xl">
+                                                <CheckCircleIcon className="h-6 w-6 text-blue-600" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h4 className="text-lg font-black text-gray-900 mb-2">Ready for Pickup</h4>
+                                                <p className="text-sm text-gray-700 mb-4">
+                                                    Your order is ready! Please pick it up from the pharmacy and confirm when you've received it.
+                                                </p>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.02 }}
+                                                    whileTap={{ scale: 0.98 }}
+                                                    onClick={handleConfirmPickup}
+                                                    disabled={isConfirmingPickup}
+                                                    className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-black rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                                >
+                                                    {isConfirmingPickup ? (
+                                                        <>
+                                                            <Spinner size="sm" />
+                                                            Confirming...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <CheckCircleIcon className="h-5 w-5" />
+                                                            Confirm Pickup
+                                                        </>
+                                                    )}
+                                                </motion.button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </motion.div>
 
                         {/* Payment Requirement Card */}

@@ -95,6 +95,48 @@ const PharmacyDashboardPage: React.FC = () => {
         order.order_date.startsWith(today)
       );
       
+      // Calculate revenue from paid/completed orders
+      const paidOrders = allOrders.filter(o => {
+        // Exclude cancelled orders
+        if (o.status === 'cancelled') {
+          return false;
+        }
+        
+        // Must have a total_amount greater than 0
+        const hasAmount = o.total_amount && parseFloat(String(o.total_amount)) > 0;
+        if (!hasAmount) {
+          return false;
+        }
+        
+        // Include if:
+        // 1. Payment status is 'paid'
+        // 2. OR has payment_reference (indicating payment was made)
+        // 3. OR status is 'completed' (order was completed, implying payment was made)
+        const isPaid = o.payment_status === 'paid';
+        const hasPaymentRef = o.payment_reference && String(o.payment_reference).trim() !== '';
+        const isCompleted = o.status === 'completed';
+        
+        return isPaid || hasPaymentRef || isCompleted;
+      });
+      
+      const calculatedRevenue = paidOrders.reduce((sum, o) => {
+        const amount = parseFloat(String(o.total_amount || '0'));
+        return sum + (isNaN(amount) ? 0 : amount);
+      }, 0);
+      
+      console.log('Revenue calculation:', {
+        totalOrders: allOrders.length,
+        paidOrdersCount: paidOrders.length,
+        paidOrders: paidOrders.map(o => ({
+          id: o.id,
+          status: o.status,
+          payment_status: o.payment_status,
+          payment_reference: o.payment_reference,
+          total_amount: o.total_amount
+        })),
+        calculatedRevenue
+      });
+      
       // Calculate stats
       const stats: DashboardStats = {
         pending: allOrders.filter(o => o.status === 'pending').length,
@@ -104,9 +146,7 @@ const PharmacyDashboardPage: React.FC = () => {
         completed: allOrders.filter(o => o.status === 'completed').length,
         cancelled: allOrders.filter(o => o.status === 'cancelled').length,
         totalToday: todayOrders.length,
-        totalRevenue: allOrders
-          .filter(o => o.status === 'completed' && o.total_amount)
-          .reduce((sum, o) => sum + parseFloat(o.total_amount || '0'), 0)
+        totalRevenue: calculatedRevenue
       };
       
       setStats(stats);

@@ -238,6 +238,7 @@ const AppRouter: React.FC = () => {
         </Route>
 
         <Route element={<ProtectedRoute />}>
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/dashboard" element={
             <SmartDashboardRedirect>
               <DashboardPage />
@@ -254,7 +255,6 @@ const AppRouter: React.FC = () => {
           <Route path="/appointments/:appointmentId" element={<AppointmentDetailPage />} />
           <Route path="/appointments/:appointmentId/call" element={<VideoCallPage />} />
           <Route path="/prescriptions" element={<PrescriptionsPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
           <Route path="/medical-documents" element={<MedicalDocumentsPage />} />

@@ -8,6 +8,8 @@ import axiosInstance from '../../../api/axiosInstance';
 import { toast } from 'react-hot-toast';
 import { UserProfileUpdatePayload } from '../../../types/user';
 import Skeleton from '../../../components/ui/Skeleton';
+import { getUserEmergencyContacts } from '../../../api/emergencyContacts';
+import { EmergencyContact } from '../../../types/user';
 import { 
     UserCircleIcon, 
     HeartIcon, 
@@ -17,9 +19,9 @@ import {
     EnvelopeIcon,
     PhoneIcon,
     MapPinIcon,
-    CalendarIcon,
     LifebuoyIcon,
-    PlusIcon
+    PlusIcon,
+    ArrowRightIcon
 } from '@heroicons/react/24/outline';
 import { Tab } from '@headlessui/react';
 import { Link } from 'react-router-dom';
@@ -31,6 +33,9 @@ function classNames(...classes: string[]) {
 const ProfilePage: React.FC = () => {
   const { user, fetchUserProfile, accessToken, loading: authLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([]);
+  const [loadingContacts, setLoadingContacts] = useState(false);
   
   const {
     register,
@@ -39,11 +44,33 @@ const ProfilePage: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
+    defaultValues: {
+      first_name: '',
+      last_name: '',
+      phone_number: '',
+      date_of_birth: '',
+      address: '',
+      blood_group: '',
+      genotype: '',
+      allergies: '',
+      chronic_conditions: '',
+      weight: undefined,
+      height: undefined,
+      medical_history_summary: '',
+    },
   });
+
+  // Refresh user profile when component mounts to ensure latest data including emergency contacts
+  useEffect(() => {
+    if (accessToken) {
+      fetchUserProfile(accessToken, true); // Skip auth reset to prevent redirect
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken]); // Only depend on accessToken to avoid infinite loops
 
   useEffect(() => {
     if (user) {
-      reset({
+      const formData: ProfileFormData = {
         first_name: user.first_name || '',
         last_name: user.last_name || '',
         phone_number: user.phone_number || '',
@@ -56,9 +83,63 @@ const ProfilePage: React.FC = () => {
         weight: user.weight || undefined,
         height: user.height || undefined,
         medical_history_summary: user.medical_history_summary || '',
-      });
+      };
+      reset(formData);
     }
   }, [user, reset]);
+
+  // Fetch emergency contacts if not in user object
+  useEffect(() => {
+    const fetchContacts = async () => {
+      // If user has emergency_contacts in the user object, use those
+      if (user?.emergency_contacts && Array.isArray(user.emergency_contacts) && user.emergency_contacts.length > 0) {
+        setEmergencyContacts(user.emergency_contacts);
+        return;
+      }
+      
+      // Otherwise, fetch them directly (always fetch to ensure we have the latest data)
+      if (accessToken) {
+        setLoadingContacts(true);
+        try {
+          const response = await getUserEmergencyContacts();
+          if (response && Array.isArray(response.results)) {
+            setEmergencyContacts(response.results);
+          } else {
+            setEmergencyContacts([]);
+          }
+        } catch (error) {
+          console.error('Failed to fetch emergency contacts:', error);
+          setEmergencyContacts([]);
+        } finally {
+          setLoadingContacts(false);
+        }
+      }
+    };
+
+    fetchContacts();
+  }, [user, accessToken]);
+
+  // Refresh profile when emergency contacts tab is selected
+  const handleTabChange = async (index: number) => {
+    setSelectedTab(index);
+    // If emergency contacts tab (index 2) is selected, refresh user profile and fetch contacts
+    if (index === 2 && accessToken) {
+      fetchUserProfile(accessToken, true); // Skip auth reset to prevent redirect
+      // Also fetch contacts directly to ensure we have the latest data
+      setLoadingContacts(true);
+      try {
+        const response = await getUserEmergencyContacts();
+        if (response && Array.isArray(response.results)) {
+          setEmergencyContacts(response.results);
+        }
+      } catch (error) {
+        console.error('Failed to fetch emergency contacts:', error);
+      } finally {
+        setLoadingContacts(false);
+      }
+    }
+  };
+
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
@@ -69,7 +150,7 @@ const ProfilePage: React.FC = () => {
       };
       await axiosInstance.patch('/users/profile/', payload);
       if (accessToken) {
-        await fetchUserProfile(accessToken);
+        await fetchUserProfile(accessToken, true); // Skip auth reset to prevent redirect
       }
       toast.success('Profile updated successfully!');
       setIsEditing(false);
@@ -98,11 +179,12 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
       {/* Cover Image & Header */}
-      <div className="h-48 w-full bg-gradient-to-r from-primary-dark to-primary relative">
+      <div className="h-48 w-full bg-gradient-to-r from-primary-dark to-primary relative overflow-hidden">
         <div className="absolute inset-0 bg-pattern opacity-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent"></div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
         <div className="flex flex-col md:flex-row items-end md:items-end gap-6 mb-8">
             {/* Avatar */}
             <div className="relative group">
@@ -174,61 +256,43 @@ const ProfilePage: React.FC = () => {
                 </div>
 
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-bold text-gray-900 flex items-center">
-                            <LifebuoyIcon className="h-5 w-5 text-orange-500 mr-2" />
-                            Emergency Contacts
-                        </h3>
+                    <h3 className="font-bold text-gray-900 mb-4 flex items-center">
+                        <ShieldCheckIcon className="h-5 w-5 text-indigo-500 mr-2" />
+                        Quick Links
+                    </h3>
+                    <div className="space-y-3">
                         <Link 
                             to="/emergency-contacts"
-                            className="text-xs text-primary hover:text-primary-dark font-medium"
+                            className="flex items-center justify-between p-3 bg-orange-50 border border-orange-100 rounded-lg hover:bg-orange-100 transition-colors group"
                         >
-                            Manage
+                            <div className="flex items-center">
+                                <LifebuoyIcon className="h-5 w-5 text-orange-600 mr-3" />
+                                <div>
+                                    <p className="font-semibold text-gray-900 text-sm">Emergency Contacts</p>
+                                    <p className="text-xs text-gray-500">
+                                        {emergencyContacts.length > 0 
+                                            ? `${emergencyContacts.length} contact${emergencyContacts.length !== 1 ? 's' : ''}`
+                                            : 'Add contacts'
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                            <ArrowRightIcon className="h-4 w-4 text-gray-400 group-hover:text-orange-600 transition-colors" />
+                        </Link>
+                        <Link 
+                            to="/insurance"
+                            className="flex items-center justify-between p-3 bg-blue-50 border border-blue-100 rounded-lg hover:bg-blue-100 transition-colors group"
+                        >
+                            <div className="flex items-center">
+                                <ShieldCheckIcon className="h-5 w-5 text-blue-600 mr-3" />
+                                <div>
+                                    <p className="font-semibold text-gray-900 text-sm">Insurance</p>
+                                    <p className="text-xs text-gray-500">Manage coverage</p>
+                                </div>
+                            </div>
+                            <ArrowRightIcon className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
                         </Link>
                     </div>
-                    {user?.emergency_contacts && user.emergency_contacts.length > 0 ? (
-                        <div className="space-y-3">
-                            {user.emergency_contacts.slice(0, 2).map((contact) => (
-                                <div key={contact.id} className="p-3 bg-orange-50 border border-orange-100 rounded-lg">
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex-1">
-                                            <p className="font-semibold text-gray-900 text-sm">{contact.name}</p>
-                                            <p className="text-xs text-gray-500">{contact.relationship}</p>
-                                            <p className="text-xs text-gray-600 mt-1 flex items-center">
-                                                <PhoneIcon className="h-3 w-3 mr-1" />
-                                                {contact.phone_number}
-                                            </p>
-                                        </div>
-                                        {contact.is_primary && (
-                                            <span className="px-2 py-0.5 bg-orange-500 text-white text-xs rounded-full font-medium">
-                                                Primary
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                            {user.emergency_contacts.length > 2 && (
-                                <Link 
-                                    to="/emergency-contacts"
-                                    className="block text-center text-xs text-primary hover:text-primary-dark font-medium pt-2"
-                                >
-                                    +{user.emergency_contacts.length - 2} more contacts
-                                </Link>
-                            )}
-                        </div>
-                    ) : (
-                        <div className="text-center py-6">
-                            <LifebuoyIcon className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                            <p className="text-sm text-gray-500 mb-3">No emergency contacts yet</p>
-                            <Link 
-                                to="/emergency-contacts"
-                                className="inline-flex items-center px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
-                            >
-                                <PlusIcon className="h-4 w-4 mr-2" />
-                                Add Contact
-                            </Link>
-                        </div>
-                    )}
                 </div>
 
                 <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl shadow-lg p-6 text-white">
@@ -247,14 +311,14 @@ const ProfilePage: React.FC = () => {
             {/* Main Content - Tabs */}
             <div className="lg:col-span-2">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <Tab.Group>
-                        <Tab.List className="flex border-b border-gray-200 bg-gray-50/50">
+                    <Tab.Group selectedIndex={selectedTab} onChange={handleTabChange}>
+                        <Tab.List className="flex border-b border-gray-200 bg-gray-50/50 overflow-x-auto">
                             {['Personal Information', 'Medical Details', 'Emergency Contacts', 'Account'].map((category) => (
                                 <Tab
                                     key={category}
                                     className={({ selected }) =>
                                         classNames(
-                                            'w-full py-4 text-sm font-medium leading-5 focus:outline-none transition-colors border-b-2',
+                                            'flex-shrink-0 px-4 py-4 text-sm font-medium leading-5 focus:outline-none transition-colors border-b-2 whitespace-nowrap',
                                             selected
                                                 ? 'text-primary border-primary bg-white'
                                                 : 'text-gray-500 border-transparent hover:text-gray-700 hover:bg-gray-100'
@@ -275,24 +339,21 @@ const ProfilePage: React.FC = () => {
             label="First Name"
             register={register}
             errors={errors}
-                                            disabled={!isEditing || isSubmitting}
-                                            icon={<UserCircleIcon className="h-5 w-5 text-gray-400" />}
+            disabled={!isEditing || isSubmitting}
           />
           <FormInput
             name="last_name"
             label="Last Name"
             register={register}
             errors={errors}
-                                            disabled={!isEditing || isSubmitting}
-                                            icon={<UserCircleIcon className="h-5 w-5 text-gray-400" />}
+            disabled={!isEditing || isSubmitting}
           />
           <FormInput
             name="phone_number"
             label="Phone Number"
             register={register}
             errors={errors}
-                                            disabled={!isEditing || isSubmitting}
-                                            icon={<PhoneIcon className="h-5 w-5 text-gray-400" />}
+            disabled={!isEditing || isSubmitting}
           />
           <FormInput
             name="date_of_birth"
@@ -300,19 +361,17 @@ const ProfilePage: React.FC = () => {
             type="date"
             register={register}
             errors={errors}
-                                            disabled={!isEditing || isSubmitting}
-                                            icon={<CalendarIcon className="h-5 w-5 text-gray-400" />}
+            disabled={!isEditing || isSubmitting}
           />
-                                        <div className="md:col-span-2">
-        <FormInput
-          name="address"
-          label="Address"
-          register={register}
-          errors={errors}
-                                                disabled={!isEditing || isSubmitting}
-                                                icon={<MapPinIcon className="h-5 w-5 text-gray-400" />}
-                                            />
-                                        </div>
+          <div className="md:col-span-2">
+            <FormInput
+              name="address"
+              label="Address"
+              register={register}
+              errors={errors}
+              disabled={!isEditing || isSubmitting}
+            />
+          </div>
                                     </div>
                                 </Tab.Panel>
 
@@ -400,21 +459,25 @@ const ProfilePage: React.FC = () => {
                                         </Link>
                                     </div>
 
-                                    {user?.emergency_contacts && user.emergency_contacts.length > 0 ? (
+                                    {loadingContacts ? (
+                                        <div className="text-center py-12">
+                                            <p className="text-gray-500">Loading emergency contacts...</p>
+                                        </div>
+                                    ) : emergencyContacts.length > 0 ? (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            {user.emergency_contacts.map((contact) => (
+                                            {emergencyContacts.map((contact) => (
                                                 <div 
                                                     key={contact.id} 
-                                                    className="p-5 bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200 rounded-xl hover:shadow-md transition-shadow"
+                                                    className="p-5 bg-gradient-to-br from-orange-50 to-red-50 border border-orange-200 rounded-xl hover:shadow-lg transition-all duration-200"
                                                 >
                                                     <div className="flex items-start justify-between mb-3">
                                                         <div className="flex items-center gap-3">
-                                                            <div className="h-12 w-12 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-lg">
-                                                                {contact.name.charAt(0).toUpperCase()}
+                                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                                                                {contact.name?.charAt(0).toUpperCase() || '?'}
                                                             </div>
                                                             <div>
-                                                                <h4 className="font-bold text-gray-900">{contact.name}</h4>
-                                                                <p className="text-sm text-gray-600">{contact.relationship}</p>
+                                                                <h4 className="font-bold text-gray-900">{contact.name || 'Unnamed Contact'}</h4>
+                                                                <p className="text-sm text-gray-600 capitalize">{contact.relationship || 'Contact'}</p>
                                                             </div>
                                                         </div>
                                                         {contact.is_primary && (
@@ -424,16 +487,24 @@ const ProfilePage: React.FC = () => {
                                                         )}
                                                     </div>
                                                     <div className="space-y-2 mt-4">
-                                                        <div className="flex items-center text-sm text-gray-700">
-                                                            <PhoneIcon className="h-4 w-4 mr-2 text-orange-600" />
-                                                            <a href={`tel:${contact.phone_number}`} className="hover:text-orange-600 font-medium">
-                                                                {contact.phone_number}
-                                                            </a>
-                                                        </div>
+                                                        {contact.phone_number && (
+                                                            <div className="flex items-center text-sm text-gray-700">
+                                                                <PhoneIcon className="h-4 w-4 mr-2 text-orange-600 flex-shrink-0" />
+                                                                <a href={`tel:${contact.phone_number}`} className="hover:text-orange-600 font-medium truncate">
+                                                                    {contact.phone_number}
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                        {contact.alternative_phone && (
+                                                            <div className="flex items-center text-sm text-gray-600">
+                                                                <PhoneIcon className="h-4 w-4 mr-2 text-gray-400 flex-shrink-0" />
+                                                                <span className="truncate">Alt: {contact.alternative_phone}</span>
+                                                            </div>
+                                                        )}
                                                         {contact.email && (
                                                             <div className="flex items-center text-sm text-gray-700">
-                                                                <EnvelopeIcon className="h-4 w-4 mr-2 text-orange-600" />
-                                                                <a href={`mailto:${contact.email}`} className="hover:text-orange-600">
+                                                                <EnvelopeIcon className="h-4 w-4 mr-2 text-orange-600 flex-shrink-0" />
+                                                                <a href={`mailto:${contact.email}`} className="hover:text-orange-600 truncate">
                                                                     {contact.email}
                                                                 </a>
                                                             </div>
@@ -441,7 +512,7 @@ const ProfilePage: React.FC = () => {
                                                         {contact.address && (
                                                             <div className="flex items-start text-sm text-gray-700">
                                                                 <MapPinIcon className="h-4 w-4 mr-2 text-orange-600 mt-0.5 flex-shrink-0" />
-                                                                <span>{contact.address}</span>
+                                                                <span className="line-clamp-2">{contact.address}</span>
                                                             </div>
                                                         )}
                                                     </div>

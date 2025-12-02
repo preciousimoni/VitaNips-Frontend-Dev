@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { BellIcon } from '@heroicons/react/24/outline';
 import { BellIcon as BellSolidIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import {
     getNotifications,
     getUnreadNotificationCount,
@@ -13,6 +14,7 @@ import { Notification } from '../../types/notifications';
 import { formatRelativeTime } from '../../utils';
 
 const NotificationCenter: React.FC = () => {
+    const { isAuthenticated, user } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -26,9 +28,15 @@ const NotificationCenter: React.FC = () => {
     const fetchUnreadCount = useCallback(async () => {
         try {
             const data = await getUnreadNotificationCount();
-            setUnreadCount(data.unread_count);
-        } catch (error) {
+            setUnreadCount(data.unread_count || 0);
+        } catch (error: any) {
             console.error('Error fetching unread count:', error);
+            // Log more details for debugging
+            if (error.response) {
+                console.error('Response status:', error.response.status);
+                console.error('Response data:', error.response.data);
+            }
+            setUnreadCount(0);
         }
     }, []);
 
@@ -37,27 +45,44 @@ const NotificationCenter: React.FC = () => {
         if (loading) return;
         setLoading(true);
         try {
+            console.log('Fetching notifications, reset:', reset, 'nextPage:', nextPage);
             const response = await getNotifications(reset ? null : nextPage);
+            console.log('Notifications response:', response);
             if (reset) {
-                setNotifications(response.results);
+                setNotifications(response.results || []);
             } else {
-                setNotifications(prev => [...prev, ...response.results]);
+                setNotifications(prev => [...prev, ...(response.results || [])]);
             }
             setHasMore(!!response.next);
             setNextPage(response.next);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching notifications:', error);
+            // Log more details for debugging
+            if (error.response) {
+                console.error('Response status:', error.response.status);
+                console.error('Response data:', error.response.data);
+            }
+            // Set empty array on error to prevent UI issues
+            if (reset) {
+                setNotifications([]);
+            }
         } finally {
             setLoading(false);
         }
     }, [loading, nextPage]);
 
-    // Initial load
+    // Initial load - only if authenticated
     useEffect(() => {
-        fetchUnreadCount();
-        const interval = setInterval(fetchUnreadCount, 30000); // Poll every 30 seconds
-        return () => clearInterval(interval);
-    }, [fetchUnreadCount]);
+        if (isAuthenticated && user) {
+            console.log('NotificationCenter: User authenticated, fetching unread count. User:', user.email, 'Role:', user.is_doctor ? 'doctor' : user.is_pharmacy_staff ? 'pharmacy' : user.is_staff ? 'admin' : 'patient');
+            fetchUnreadCount();
+            const interval = setInterval(fetchUnreadCount, 30000); // Poll every 30 seconds
+            return () => clearInterval(interval);
+        } else {
+            console.log('NotificationCenter: User not authenticated, skipping fetch');
+            setUnreadCount(0);
+        }
+    }, [isAuthenticated, user, fetchUnreadCount]);
 
     // Load notifications when dropdown opens
     useEffect(() => {

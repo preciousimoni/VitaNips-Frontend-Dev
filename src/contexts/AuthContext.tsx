@@ -13,7 +13,7 @@ interface AuthContextType {
     login: (access: string, refresh: string) => Promise<void>;
     logout: () => void;
     loading: boolean;
-    fetchUserProfile: (token: string) => Promise<void>;
+    fetchUserProfile: (token: string, skipAuthReset?: boolean) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

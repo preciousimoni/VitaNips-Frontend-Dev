@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircleIcon, XCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, XCircleIcon, ClockIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 import { verifyPayment } from '../api/payments';
 import axiosInstance from '../api/axiosInstance';
 import Spinner from '../components/ui/Spinner';
@@ -57,9 +58,7 @@ const PaymentCallbackPage: React.FC = () => {
                     if (!isMounted) return;
                     setStatus('failed');
                     setMessage('Payment reference not found. Please contact support.');
-                    redirectTimeout = setTimeout(() => {
-                        if (isMounted) navigate('/dashboard');
-                    }, 4000);
+                    // Don't auto-redirect, let user decide where to go
                     return;
                 }
 
@@ -68,9 +67,7 @@ const PaymentCallbackPage: React.FC = () => {
                     if (!isMounted) return;
                     setStatus('failed');
                     setMessage('Payment was not successful. Please try again.');
-                    redirectTimeout = setTimeout(() => {
-                        if (isMounted) navigate('/dashboard');
-                    }, 4000);
+                    // Don't auto-redirect, let user decide where to go
                     return;
                 }
 
@@ -156,9 +153,7 @@ const PaymentCallbackPage: React.FC = () => {
                         if (!isMounted) return;
                         setStatus('failed');
                         setMessage('Payment verification failed. Please contact support with your payment reference: ' + reference);
-                        redirectTimeout = setTimeout(() => {
-                            if (isMounted) navigate('/dashboard');
-                        }, 4000);
+                        // Don't auto-redirect, let user decide where to go
                         return;
                     }
                     
@@ -312,9 +307,7 @@ const PaymentCallbackPage: React.FC = () => {
                         if (!isMounted) return;
                         setStatus('failed');
                         setMessage('Unknown payment type. Please contact support.');
-                        redirectTimeout = setTimeout(() => {
-                            if (isMounted) navigate('/dashboard');
-                        }, 4000);
+                        // Don't auto-redirect, let user decide where to go
                     }
                 } catch (updateError: any) {
                     console.error('Failed to update with payment reference:', updateError);
@@ -338,9 +331,7 @@ const PaymentCallbackPage: React.FC = () => {
                 if (!isMounted) return;
                 setStatus('failed');
                 setMessage(error.response?.data?.error || error.message || 'Failed to process payment. Please contact support.');
-                redirectTimeout = setTimeout(() => {
-                    if (isMounted) navigate('/dashboard');
-                }, 4000);
+                // Don't auto-redirect, let user decide where to go
             }
         };
 
@@ -389,7 +380,52 @@ const PaymentCallbackPage: React.FC = () => {
                             <CheckCircleIcon className="h-12 w-12 text-green-600" />
                         </motion.div>
                         <h2 className="text-2xl font-black text-green-600 mb-2">Payment Successful!</h2>
-                        <p className="text-gray-600">{message}</p>
+                        <p className="text-gray-600 mb-6">{message}</p>
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                            <button
+                                onClick={() => {
+                                    const tx_ref = searchParams.get('tx_ref');
+                                    const transaction_id = searchParams.get('transaction_id');
+                                    // Try to extract payment type and ID from sessionStorage or URL
+                                    let paymentType = null;
+                                    let paymentForId = null;
+                                    
+                                    // Check sessionStorage for payment info
+                                    for (let i = 0; i < sessionStorage.length; i++) {
+                                        const key = sessionStorage.key(i);
+                                        if (key && key.startsWith('payment_info_')) {
+                                            try {
+                                                const storedInfo = JSON.parse(sessionStorage.getItem(key) || '{}');
+                                                if (storedInfo.txRef === tx_ref || storedInfo.txRef === transaction_id) {
+                                                    paymentType = storedInfo.paymentType;
+                                                    paymentForId = storedInfo.orderId;
+                                                    break;
+                                                }
+                                            } catch (e) {
+                                                console.error('Failed to parse stored payment info:', e);
+                                            }
+                                        }
+                                    }
+                                    
+                                    if (paymentType === 'medication_order' && paymentForId) {
+                                        navigate(`/orders/${paymentForId}`);
+                                    } else if (paymentType === 'appointment' && paymentForId) {
+                                        navigate(`/appointments/${paymentForId}`);
+                                    } else {
+                                        navigate('/orders');
+                                    }
+                                }}
+                                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
+                            >
+                                View Order/Appointment
+                            </button>
+                            <Link
+                                to="/dashboard"
+                                className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors text-center"
+                            >
+                                Go to Dashboard
+                            </Link>
+                        </div>
                     </>
                 )}
 
@@ -404,7 +440,21 @@ const PaymentCallbackPage: React.FC = () => {
                             <XCircleIcon className="h-12 w-12 text-red-600" />
                         </motion.div>
                         <h2 className="text-2xl font-black text-red-600 mb-2">Payment Failed</h2>
-                        <p className="text-gray-600">{message}</p>
+                        <p className="text-gray-600 mb-6">{message}</p>
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                            <Link
+                                to="/orders"
+                                className="px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors text-center"
+                            >
+                                View Orders
+                            </Link>
+                            <Link
+                                to="/dashboard"
+                                className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors text-center"
+                            >
+                                Go to Dashboard
+                            </Link>
+                        </div>
                     </>
                 )}
             </motion.div>

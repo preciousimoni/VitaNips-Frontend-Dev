@@ -62,3 +62,13 @@ export const getUserOrderDetail = async (id: number): Promise<any> => {
     }
 };
 
+export const confirmPickup = async (orderId: number): Promise<any> => {
+    try {
+        const response = await axiosInstance.post(`/pharmacy/orders/${orderId}/confirm_pickup/`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to confirm pickup:', error);
+        throw error;
+    }
+};
+
