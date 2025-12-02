@@ -16,7 +16,9 @@ import {
     ShieldCheckIcon,
     Bars3Icon,
     XMarkIcon,
-    SparklesIcon
+    SparklesIcon,
+    ClockIcon,
+    ChartBarIcon
 } from '@heroicons/react/24/outline';
 import NotificationCenter from '../notifications/NotificationCenter';
 import SubscriptionStatusBadge from '../common/SubscriptionStatusBadge';
@@ -61,20 +63,61 @@ const Header: React.FC = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  // Organized navigation items - grouped by category
-  const primaryNavItems = [
+  // Determine user role
+  const isAdmin = user?.is_staff || user?.is_superuser;
+  const isDoctor = user?.is_doctor || user?.doctor_id;
+  const isPharmacyStaff = user?.is_pharmacy_staff;
+  const isPatient = !isAdmin && !isDoctor && !isPharmacyStaff;
+
+  // Patient navigation items
+  const patientPrimaryNavItems = [
     { name: 'Appointments', href: '/appointments', icon: CalendarDaysIcon, shortName: 'Appts' },
     { name: 'Prescriptions', href: '/prescriptions', icon: DocumentTextIcon, shortName: 'Rx' },
     { name: 'Doctors', href: '/doctors', icon: UserIcon, shortName: 'Doctors' },
   ];
 
-  const secondaryNavItems = [
+  const patientSecondaryNavItems = [
     { name: 'Health', href: '/health/vitals', icon: HeartIcon, shortName: 'Health' },
     { name: 'Insurance', href: '/insurance', icon: ShieldCheckIcon, shortName: 'Insurance' },
     { name: 'Pharmacies', href: '/pharmacies', icon: ShoppingBagIcon, shortName: 'Pharmacy' },
   ];
 
+  // Doctor navigation items
+  const doctorNavItems = [
+    { name: 'Dashboard', href: '/doctor/dashboard', icon: ChartBarIcon, shortName: 'Dashboard' },
+    { name: 'Appointments', href: '/appointments', icon: CalendarDaysIcon, shortName: 'Appts' },
+    { name: 'Prescriptions', href: '/doctor/prescriptions', icon: DocumentTextIcon, shortName: 'Rx' },
+    { name: 'Availability', href: '/doctor/availability', icon: ClockIcon, shortName: 'Schedule' },
+  ];
+
+  // Admin navigation items
+  const adminNavItems = [
+    { name: 'Dashboard', href: '/admin/dashboard', icon: ChartBarIcon, shortName: 'Dashboard' },
+    { name: 'Users', href: '/admin/users', icon: UserIcon, shortName: 'Users' },
+    { name: 'Doctors', href: '/admin/doctors', icon: ShieldCheckIcon, shortName: 'Doctors' },
+    { name: 'Pharmacies', href: '/admin/pharmacies', icon: ShoppingBagIcon, shortName: 'Pharmacy' },
+    { name: 'Analytics', href: '/admin/analytics', icon: ChartBarIcon, shortName: 'Analytics' },
+    { name: 'Appointments', href: '/admin/appointments', icon: CalendarDaysIcon, shortName: 'Appts' },
+  ];
+
+  // Pharmacy staff navigation items
+  const pharmacyNavItems = [
+    { name: 'Dashboard', href: '/portal/dashboard', icon: ChartBarIcon, shortName: 'Dashboard' },
+    { name: 'Orders', href: '/portal/orders', icon: ShoppingBagIcon, shortName: 'Orders' },
+    { name: 'Inventory', href: '/portal/inventory', icon: DocumentTextIcon, shortName: 'Inventory' },
+  ];
+
   const emergencyNavItem = { name: 'Emergency', href: '/emergency', icon: ShieldExclamationIcon, shortName: 'SOS' };
+
+  // Get navigation items based on user role
+  const getNavItems = () => {
+    if (isAdmin) return { primary: adminNavItems, secondary: [], showEmergency: false };
+    if (isDoctor) return { primary: doctorNavItems, secondary: [], showEmergency: false };
+    if (isPharmacyStaff) return { primary: pharmacyNavItems, secondary: [], showEmergency: false };
+    return { primary: patientPrimaryNavItems, secondary: patientSecondaryNavItems, showEmergency: true };
+  };
+
+  const { primary: primaryNavItems, secondary: secondaryNavItems, showEmergency } = getNavItems();
 
   const isActive = (href: string) => location.pathname === href || location.pathname.startsWith(href + '/');
 
@@ -93,101 +136,90 @@ const Header: React.FC = () => {
           <div className="flex items-center space-x-3">
             {isAuthenticated ? (
               <>
-                {/* Desktop Navigation - Clean & Organized */}
-                {!user?.is_pharmacy_staff && (
-                  <div className="hidden lg:flex items-center space-x-1">
-                    {/* Primary Navigation - Most Used */}
-                    <div className="flex items-center space-x-1 bg-gray-50/80 rounded-lg p-1">
-                      {primaryNavItems.map((item) => {
-                        const active = isActive(item.href);
-                        return (
-                          <Link
-                            key={item.name}
-                            to={item.href}
-                            className={`relative px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
-                              active
-                                ? 'bg-white text-primary shadow-sm'
-                                : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
-                            }`}
-                          >
-                            <item.icon className={`h-4 w-4 ${active ? 'text-primary' : ''}`} />
-                            <span>{item.name}</span>
-                            {active && (
-                              <motion.div
-                                layoutId="activeNavIndicator"
-                                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
-                                initial={false}
-                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                              />
-                            )}
-                          </Link>
-                        );
-                      })}
-                    </div>
-
-                    {/* Divider */}
-                    <div className="w-px h-6 bg-gray-300 mx-1"></div>
-
-                    {/* Secondary Navigation - Compact Icons */}
-                    <div className="flex items-center space-x-1">
-                      {secondaryNavItems.map((item) => {
-                        const active = isActive(item.href);
-                        return (
-                          <Link
-                            key={item.name}
-                            to={item.href}
-                            className={`relative p-2 rounded-lg text-sm font-medium transition-all duration-200 group ${
-                              active
-                                ? 'bg-primary/10 text-primary'
-                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                            }`}
-                            title={item.name}
-                          >
-                            <item.icon className="h-5 w-5" />
-                            {active && (
-                              <motion.div
-                                layoutId="activeNavIndicatorSecondary"
-                                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"
-                                initial={false}
-                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                              />
-                            )}
-                          </Link>
-                        );
-                      })}
-                    </div>
-
-                    {/* Emergency - Prominent */}
-                    <div className="w-px h-6 bg-gray-300 mx-1"></div>
-                    <Link
-                      to={emergencyNavItem.href}
-                      className={`relative px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1.5 ${
-                        isActive(emergencyNavItem.href)
-                          ? 'bg-red-50 text-red-600 border border-red-200'
-                          : 'bg-red-50/50 text-red-600 hover:bg-red-100 border border-red-200/50'
-                      }`}
-                    >
-                      <emergencyNavItem.icon className="h-4 w-4" />
-                      <span className="hidden xl:inline">{emergencyNavItem.name}</span>
-                      <span className="xl:hidden">{emergencyNavItem.shortName}</span>
-                    </Link>
+                {/* Desktop Navigation - Role-Based */}
+                <div className="hidden lg:flex items-center space-x-1">
+                  {/* Primary Navigation - Role-Specific */}
+                  <div className="flex items-center space-x-1 bg-gray-50/80 rounded-lg p-1">
+                    {primaryNavItems.map((item) => {
+                      const active = isActive(item.href);
+                      return (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className={`relative px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                            active
+                              ? 'bg-white text-primary shadow-sm'
+                              : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
+                          }`}
+                        >
+                          <item.icon className={`h-4 w-4 ${active ? 'text-primary' : ''}`} />
+                          <span>{item.name}</span>
+                          {active && (
+                            <motion.div
+                              layoutId="activeNavIndicator"
+                              className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                              initial={false}
+                              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                            />
+                          )}
+                        </Link>
+                      );
+                    })}
                   </div>
-                )}
 
-                {user?.is_pharmacy_staff && (
-                  <div className="hidden md:flex items-center">
-                    <Link 
-                      to="/portal/dashboard" 
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                        isActive('/portal/dashboard')
-                          ? 'bg-primary text-white'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      Portal Dashboard
-                    </Link>
-                  </div>
-                )}
+                  {/* Secondary Navigation - Only for Patients */}
+                  {secondaryNavItems.length > 0 && (
+                    <>
+                      <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                      <div className="flex items-center space-x-1">
+                        {secondaryNavItems.map((item) => {
+                          const active = isActive(item.href);
+                          return (
+                            <Link
+                              key={item.name}
+                              to={item.href}
+                              className={`relative p-2 rounded-lg text-sm font-medium transition-all duration-200 group ${
+                                active
+                                  ? 'bg-primary/10 text-primary'
+                                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                              }`}
+                              title={item.name}
+                            >
+                              <item.icon className="h-5 w-5" />
+                              {active && (
+                                <motion.div
+                                  layoutId="activeNavIndicatorSecondary"
+                                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"
+                                  initial={false}
+                                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                />
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Emergency - Only for Patients */}
+                  {showEmergency && (
+                    <>
+                      <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                      <Link
+                        to={emergencyNavItem.href}
+                        className={`relative px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-1.5 ${
+                          isActive(emergencyNavItem.href)
+                            ? 'bg-red-50 text-red-600 border border-red-200'
+                            : 'bg-red-50/50 text-red-600 hover:bg-red-100 border border-red-200/50'
+                        }`}
+                      >
+                        <emergencyNavItem.icon className="h-4 w-4" />
+                        <span className="hidden xl:inline">{emergencyNavItem.name}</span>
+                        <span className="xl:hidden">{emergencyNavItem.shortName}</span>
+                      </Link>
+                    </>
+                  )}
+                </div>
 
                 {/* Mobile Menu Button */}
                 <button
@@ -346,28 +378,62 @@ const Header: React.FC = () => {
               className="lg:hidden border-t border-gray-200 overflow-hidden"
             >
               <div className="py-3 space-y-1">
-                {!user?.is_pharmacy_staff && (
-                  <>
-                    {[...primaryNavItems, ...secondaryNavItems, emergencyNavItem].map((item) => {
-                      const active = isActive(item.href);
-                      return (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
-                            active
-                              ? 'bg-primary/10 text-primary'
-                              : 'text-gray-700 hover:bg-gray-100'
-                          }`}
-                        >
-                          <item.icon className="h-5 w-5 mr-3" />
-                          {item.name}
-                        </Link>
-                      );
-                    })}
-                  </>
+                {/* Primary Navigation Items */}
+                {primaryNavItems.map((item) => {
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
+                        active
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      <item.icon className="h-5 w-5 mr-3" />
+                      {item.name}
+                    </Link>
+                  );
+                })}
+
+                {/* Secondary Navigation Items (Patients only) */}
+                {secondaryNavItems.map((item) => {
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
+                        active
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      <item.icon className="h-5 w-5 mr-3" />
+                      {item.name}
+                    </Link>
+                  );
+                })}
+
+                {/* Emergency (Patients only) */}
+                {showEmergency && (
+                  <Link
+                    to={emergencyNavItem.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-bold transition-colors ${
+                      isActive(emergencyNavItem.href)
+                        ? 'bg-red-50 text-red-600'
+                        : 'bg-red-50/50 text-red-600 hover:bg-red-100'
+                    }`}
+                  >
+                    <emergencyNavItem.icon className="h-5 w-5 mr-3" />
+                    {emergencyNavItem.name}
+                  </Link>
                 )}
+
                 {/* Notifications link for all user types */}
                 <Link
                   to="/notifications"
@@ -381,20 +447,6 @@ const Header: React.FC = () => {
                   <BellAlertIcon className="h-5 w-5 mr-3" />
                   Notifications
                 </Link>
-                {user?.is_pharmacy_staff && (
-                  <Link
-                    to="/portal/dashboard"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive('/portal/dashboard')
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    <ShoppingBagIcon className="h-5 w-5 mr-3" />
-                    Portal Dashboard
-                  </Link>
-                )}
               </div>
             </motion.div>
           )}
