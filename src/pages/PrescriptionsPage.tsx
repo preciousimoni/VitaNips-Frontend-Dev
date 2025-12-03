@@ -106,16 +106,16 @@ const PrescriptionsPage: React.FC = () => {
                     className="absolute top-1/2 left-1/2 w-72 h-72 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
                 ></motion.div>
 
-                {/* Floating Icon Cards */}
+                {/* Floating Icon Cards - Hidden on Mobile */}
                 <motion.div
-                    className="absolute top-1/4 left-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg"
+                    className="hidden md:block absolute top-1/4 left-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg"
                     animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
                     transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
                 >
                     <ClipboardDocumentListIcon className="h-8 w-8 text-white" />
                 </motion.div>
                 <motion.div
-                    className="absolute bottom-1/4 right-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg"
+                    className="hidden md:block absolute bottom-1/4 right-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg"
                     animate={{ y: [0, 10, 0], rotate: [0, -5, 0] }}
                     transition={{ repeat: Infinity, duration: 6, ease: "easeInOut", delay: 1 }}
                 >
@@ -127,13 +127,13 @@ const PrescriptionsPage: React.FC = () => {
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="mb-6"
+                        className="mb-4 md:mb-6"
                     >
                         <Link 
                             to="/dashboard" 
-                            className="inline-flex items-center text-white/90 hover:text-white font-bold transition-colors group"
+                            className="inline-flex items-center text-white/90 hover:text-white font-bold transition-colors group text-sm md:text-base"
                         >
-                            <ArrowLeftIcon className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+                            <ArrowLeftIcon className="h-4 w-4 md:h-5 md:w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
                             Back to Dashboard
                         </Link>
                     </motion.div>
@@ -142,18 +142,18 @@ const PrescriptionsPage: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="inline-flex items-center px-5 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-bold uppercase tracking-wider mb-6"
+                        className="inline-flex items-center px-4 py-1.5 md:px-5 md:py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-xs md:text-sm font-bold uppercase tracking-wider mb-4 md:mb-6"
                     >
-                        <SparklesIcon className="h-4 w-4 mr-2" />
+                        <SparklesIcon className="h-3 w-3 md:h-4 md:w-4 mr-2" />
                         YOUR PRESCRIPTIONS
                     </motion.div>
 
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div>
-                            <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
+                            <h1 className="text-3xl md:text-5xl font-black text-white mb-2">
                                 Medical Prescriptions
                             </h1>
-                            <p className="text-lg text-white/90">
+                            <p className="text-base md:text-lg text-white/90 max-w-xl">
                                 View, manage, and forward your prescriptions to pharmacies
                             </p>
                             {totalCount > 0 && (
@@ -161,9 +161,9 @@ const PrescriptionsPage: React.FC = () => {
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 0.4 }}
-                                    className="flex items-center gap-2 mt-4 text-sm text-white/80 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 w-fit"
+                                    className="flex items-center gap-2 mt-4 text-xs md:text-sm text-white/80 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 w-fit"
                                 >
-                                    <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
+                                    <div className="h-1.5 w-1.5 md:h-2 md:w-2 bg-green-400 rounded-full animate-pulse"></div>
                                     <span className="font-bold">{totalCount}</span> {totalCount === 1 ? 'Prescription' : 'Prescriptions'} on Record
                                 </motion.div>
                             )}

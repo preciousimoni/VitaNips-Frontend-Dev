@@ -21,10 +21,11 @@ import { HeartIcon as HeartIconSolid, StarIcon as StarIconSolid } from '@heroico
 import { useAuth } from '../contexts/AuthContext';
 import Footer from '../components/layout/Footer';
 
+import Header from '../components/layout/Header';
+
 const LandingPage: React.FC = () => {
     const { isAuthenticated, user } = useAuth();
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     
     const heroRef = useRef(null);
@@ -37,16 +38,11 @@ const LandingPage: React.FC = () => {
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
         const handleMouseMove = (e: MouseEvent) => {
             setMousePosition({ x: e.clientX, y: e.clientY });
         };
-        window.addEventListener('scroll', handleScroll);
         window.addEventListener('mousemove', handleMouseMove);
         return () => {
-            window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('mousemove', handleMouseMove);
         };
     }, []);
@@ -136,40 +132,8 @@ const LandingPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-white font-sans overflow-x-hidden selection:bg-primary selection:text-white flex flex-col">
             
-            {/* Navigation */}
-            <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-4'}`}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-16">
-                        <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                            <img src="/logo.png" alt="VitaNips" className="h-10 w-auto" />
-                            <span className={`ml-2 text-2xl font-extrabold tracking-tight ${scrolled ? 'text-gray-900' : 'text-gray-900'}`}>Vita<span className="text-primary">Nips</span></span>
-                        </div>
-                        <div className="hidden md:flex items-center space-x-8">
-                            {['Features', 'How it Works', 'Testimonials'].map((item) => (
-                                <a key={item} href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm font-medium text-gray-600 hover:text-primary transition-colors relative group">
-                                    {item}
-                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                                </a>
-                            ))}
-                            {isAuthenticated ? (
-                                <div className="flex items-center space-x-4">
-                                    <Link to="/dashboard" className="text-gray-600 hover:text-primary font-medium transition-colors">Dashboard</Link>
-                                    <Link to="/profile" className="bg-primary text-white px-5 py-2.5 rounded-full font-bold shadow-lg shadow-primary/30 hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-0.5">
-                                        {user?.first_name || 'My Account'}
-                                    </Link>
-                                </div>
-                            ) : (
-                                <div className="flex items-center space-x-4">
-                                    <Link to="/login" className="text-gray-600 hover:text-primary font-bold transition-colors">Login</Link>
-                                    <Link to="/register" className="bg-primary text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-primary/30 hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-0.5">
-                                        Get Started
-                                    </Link>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </nav>
+            {/* Unified Header with Landing Page Variant */}
+            <Header variant="landing" />
 
             <main className="flex-grow">
                 {/* Hero Section */}

@@ -6,7 +6,6 @@ import {
   ShieldCheckIcon,
   PlusIcon,
   DocumentTextIcon,
-  SparklesIcon,
   CheckCircleIcon,
 } from '@heroicons/react/24/outline';
 import { getUserInsurances, addUserInsurance, updateUserInsurance, deleteUserInsurance } from '../api/insurance';
@@ -170,96 +169,75 @@ const UserInsurancePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Gradient Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-500 to-teal-600">
-        {/* Animated Blobs */}
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 90, 0],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, -60, 0],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-32 -right-32 w-[30rem] h-[30rem] bg-teal-500/20 rounded-full blur-3xl"
-        />
+      {/* Hero Section */}
+      <div className="relative bg-primary overflow-hidden">
+          <div className="absolute inset-0">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary-dark opacity-90" />
+              <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80')] bg-cover bg-center mix-blend-overlay opacity-20" />
+          </div>
+          
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                  <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="text-white"
+                  >
+                      <h1 className="text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
+                          <ShieldCheckIcon className="h-8 w-8 md:h-10 md:w-10 text-emerald-300" />
+                          Insurance Plans
+                      </h1>
+                      <p className="text-white/90 text-base md:text-lg max-w-xl">
+                          Manage your health insurance coverage and view benefits
+                      </p>
+                  </motion.div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
-          >
-            <div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="flex items-center gap-3 mb-4"
-              >
-                <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl">
-                  <ShieldCheckIcon className="h-8 w-8 text-white" />
-                </div>
-                <SparklesIcon className="h-6 w-6 text-white/80" />
-              </motion.div>
-              <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
-                Insurance Management
-              </h1>
-              <p className="text-lg text-white/90">
-                Manage your health insurance plans and claims
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/insurance/claims')}
-                className="px-6 py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl font-semibold hover:bg-white/20 transition-all border-2 border-white/20 flex items-center gap-2"
-              >
-                <DocumentTextIcon className="h-5 w-5" />
-                View Claims
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleAddClick}
-                className="px-6 py-3 bg-white text-primary-600 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg flex items-center gap-2"
-              >
-                <PlusIcon className="h-5 w-5" />
-                Add Plan
-              </motion.button>
-            </div>
-          </motion.div>
-
-          {/* Primary Insurance Badge */}
-          {primaryInsurance && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="mt-6 p-4 bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-white/20"
-            >
-              <div className="flex items-center gap-3">
-                <CheckCircleIcon className="h-6 w-6 text-white" />
-                <div>
-                  <p className="text-white/90 text-sm font-medium">Primary Insurance</p>
-                  <p className="text-white font-bold">
-                    {primaryInsurance.plan.provider.name} - {primaryInsurance.plan.name}
-                  </p>
-                </div>
+                  <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="flex flex-col sm:flex-row gap-3 w-full md:w-auto"
+                  >
+                      <button 
+                        onClick={() => navigate('/insurance/claims')}
+                        className="px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg hover:bg-white/20 transition-colors font-medium text-sm flex items-center justify-center gap-2"
+                      >
+                          <DocumentTextIcon className="h-5 w-5" />
+                          View Claims
+                      </button>
+                      <button 
+                          onClick={() => {
+                              setEditingInsurance(null);
+                              setShowFormModal(true);
+                          }}
+                          className="px-4 py-2 bg-white text-primary rounded-lg hover:bg-gray-50 transition-colors font-bold text-sm shadow-lg flex items-center justify-center gap-2"
+                      >
+                          <PlusIcon className="h-5 w-5" />
+                          Add New Plan
+                      </button>
+                  </motion.div>
               </div>
-            </motion.div>
-          )}
-        </div>
+
+              {/* Primary Insurance Badge */}
+              {primaryInsurance && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="mt-6 p-4 bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-white/20 inline-block"
+                >
+                  <div className="flex items-center gap-3">
+                    <CheckCircleIcon className="h-6 w-6 text-white" />
+                    <div>
+                      <p className="text-white/90 text-sm font-medium">Primary Insurance</p>
+                      <p className="text-white font-bold">
+                        {primaryInsurance.plan.provider.name} - {primaryInsurance.plan.name}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+          </div>
       </div>
 
       {/* Main Content */}

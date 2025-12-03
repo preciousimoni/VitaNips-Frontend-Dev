@@ -385,27 +385,28 @@ const DashboardPage: React.FC = () => {
                     <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-4000"></div>
                 </div>
 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="relative max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-8 sm:py-10 md:py-14">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6">
                         <motion.div 
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="flex-1"
+                            className="flex-1 min-w-0"
                         >
                             <motion.div 
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3 }}
-                                className="flex items-center gap-3 mb-4 flex-wrap"
+                                className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 flex-wrap"
                             >
-                                <span className="px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-xs font-bold uppercase tracking-wider text-white">
-                                    <SparklesIcon className="h-4 w-4 inline mr-2" />
-                                    Dashboard Overview
+                                <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-xs font-bold uppercase tracking-wider text-white">
+                                    <SparklesIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 inline mr-1.5 sm:mr-2" />
+                                    <span className="hidden sm:inline">Dashboard Overview</span>
+                                    <span className="sm:hidden">Dashboard</span>
                                 </span>
-                                <span className="text-sm text-white/80 font-medium">{formatDate(new Date().toISOString())}</span>
+                                <span className="text-xs sm:text-sm text-white/80 font-medium">{formatDate(new Date().toISOString())}</span>
                             </motion.div>
-                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black mb-4 text-white tracking-tight font-display">
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-3 sm:mb-4 text-white tracking-tight font-display">
                                 Good {getGreeting()},{' '}
                                 <span className="relative inline-block">
                                     <span className="relative z-10">{user?.first_name || 'User'}</span>
@@ -417,11 +418,11 @@ const DashboardPage: React.FC = () => {
                                     ></motion.span>
                                 </span>
                             </h1>
-                            <p className="text-base md:text-lg text-white/90 max-w-2xl leading-relaxed">
+                            <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-2xl leading-relaxed">
                                 {t('welcomeMessage', "Your health dashboard is updated. You have")}{' '}
-                                <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded">{upcomingAppointments.length} upcoming appointments</span>{' '}
+                                <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded text-xs sm:text-sm">{upcomingAppointments.length} upcoming appointments</span>{' '}
                                 {t('and')}{' '}
-                                <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded">{activeReminders.length} active reminders</span>.
+                                <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded text-xs sm:text-sm">{activeReminders.length} active reminders</span>.
                             </p>
                         </motion.div>
                         
@@ -430,19 +431,20 @@ const DashboardPage: React.FC = () => {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.4 }}
+                            className="flex-shrink-0"
                         >
                             <Link to="/notifications" className="relative group">
                                 <motion.div 
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="p-4 bg-white/20 backdrop-blur-sm rounded-2xl border-2 border-white/30 hover:bg-white/30 transition-all shadow-lg"
+                                    className="p-3 sm:p-4 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl border-2 border-white/30 hover:bg-white/30 transition-all shadow-lg"
                                 >
-                                    <BellAlertIcon className="h-8 w-8 text-white" />
+                                    <BellAlertIcon className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                                     {unreadCount > 0 && (
                                         <motion.span 
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
-                                            className="absolute -top-1 -right-1 flex items-center justify-center h-6 w-6 rounded-full bg-red-500 text-white text-xs font-bold ring-4 ring-primary animate-pulse"
+                                            className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-red-500 text-white text-xs font-bold ring-2 sm:ring-4 ring-primary animate-pulse"
                                         >
                                             {unreadCount > 9 ? '9+' : unreadCount}
                                         </motion.span>
@@ -463,23 +465,23 @@ const DashboardPage: React.FC = () => {
 
             {/* Main Content */}
             <motion.div 
-                className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8"
+                className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 space-y-6 sm:space-y-8"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
             >
                 {/* Quick Actions - Streamlined */}
                 <motion.div variants={itemVariants}>
-                    <div className="flex items-center gap-4 mb-6">
-                        <div className="p-3 bg-gradient-to-br from-primary to-teal-600 rounded-2xl shadow-lg">
-                            <SparklesIcon className="h-6 w-6 text-white" />
+                    <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                        <div className="p-2 sm:p-3 bg-gradient-to-br from-primary to-teal-600 rounded-xl sm:rounded-2xl shadow-lg">
+                            <SparklesIcon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                         </div>
                         <div>
-                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-display">Quick Actions</h2>
-                            <p className="text-gray-600 text-sm">Access key features instantly</p>
+                            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 font-display">Quick Actions</h2>
+                            <p className="text-gray-600 text-xs sm:text-sm">Access key features instantly</p>
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                         {quickActions.filter(action => 
                             // Remove reminders from quick actions since it's in main content
                             action.label !== 'Reminders'
@@ -497,24 +499,25 @@ const DashboardPage: React.FC = () => {
                 </motion.div>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                     {/* Left Column - Appointments & Vitals */}
-                    <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6 md:space-y-8">
+                    <motion.div variants={itemVariants} className="lg:col-span-2 space-y-4 sm:space-y-6 md:space-y-8">
                         {/* Upcoming Appointments */}
-                        <div className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 p-6 md:p-8 border border-gray-100">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-gray-900 flex items-center font-display">
-                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mr-3 shadow-lg shadow-primary/10">
-                                        <CalendarDaysIcon className="h-5 w-5 text-white" />
+                        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg shadow-gray-200/50 p-4 sm:p-6 md:p-8 border border-gray-100">
+                            <div className="flex items-center justify-between mb-4 sm:mb-6">
+                                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center font-display">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mr-2 sm:mr-3 shadow-lg shadow-primary/10">
+                                        <CalendarDaysIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                                     </div>
                                     <span>Appointments</span>
                                 </h2>
                                 <Link 
                                     to="/appointments" 
-                                    className="text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
+                                    className="text-xs sm:text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
                                 >
-                                    View All
-                                    <ArrowRightIcon className="h-4 w-4" />
+                                    <span className="hidden sm:inline">View All</span>
+                                    <span className="sm:hidden">All</span>
+                                    <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                 </Link>
                             </div>
                             

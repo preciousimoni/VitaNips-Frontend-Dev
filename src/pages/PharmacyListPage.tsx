@@ -6,7 +6,6 @@ import { Pharmacy } from '../types/pharmacy';
 import PharmacyCard from '../features/pharmacy/components/PharmacyCard';
 import PharmacyLocator from '../features/pharmacy/components/PharmacyLocator';
 import Skeleton from '../components/ui/Skeleton';
-import HealthHeader from '../features/health/components/HealthHeader';
 import EmptyState from '../components/common/EmptyState';
 import LocationPermissionModal from '../components/common/LocationPermissionModal';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -235,31 +234,31 @@ const PharmacyListPage: React.FC = () => {
                     <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-4000"></div>
                 </div>
 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
                     <motion.div 
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="flex items-center gap-5"
+                        className="flex items-center gap-4 md:gap-5"
                     >
                         <div className="relative">
                             <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl"></div>
-                            <div className="relative p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
-                                <ShoppingBagIcon className="h-12 w-12 text-white" />
+                            <div className="relative p-3 md:p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
+                                <ShoppingBagIcon className="h-8 w-8 md:h-12 md:w-12 text-white" />
                             </div>
                         </div>
                         <div className="text-white">
-                            <h1 className="text-3xl md:text-4xl font-bold mb-2">Find Pharmacies</h1>
-                            <p className="text-white/90 text-base md:text-lg">
+                            <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Find Pharmacies</h1>
+                            <p className="text-white/90 text-sm md:text-lg">
                                 Locate trusted pharmacies nearby or search by name
                             </p>
                             {totalCount > 0 && (
                                 <motion.div 
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    className="flex items-center gap-2 mt-3 text-sm text-white/80"
+                                    className="flex items-center gap-2 mt-2 md:mt-3 text-xs md:text-sm text-white/80"
                                 >
-                                    <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
+                                    <div className="h-1.5 w-1.5 md:h-2 md:w-2 bg-green-400 rounded-full animate-pulse"></div>
                                     {totalCount} {totalCount === 1 ? 'Pharmacy' : 'Pharmacies'} Available
                                 </motion.div>
                             )}
@@ -281,17 +280,17 @@ const PharmacyListPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="mb-10 bg-white rounded-3xl shadow-2xl p-8 border-2 border-emerald-100 relative overflow-hidden"
+            className="mb-8 md:mb-10 bg-white rounded-3xl shadow-xl md:shadow-2xl p-6 md:p-8 border-2 border-emerald-100 relative overflow-hidden"
         >
             {/* Decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full blur-3xl -mr-16 -mt-16 opacity-60 pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-green-100 to-emerald-100 rounded-full blur-3xl -ml-12 -mb-12 opacity-40 pointer-events-none"></div>
 
-            <form onSubmit={handleSearchSubmit} className="relative z-10 flex flex-col gap-6">
-                <div className="flex flex-col md:flex-row gap-4">
+            <form onSubmit={handleSearchSubmit} className="relative z-10 flex flex-col gap-4 md:gap-6">
+                <div className="flex flex-col md:flex-row gap-3 md:gap-4">
                     <div className="flex-grow relative group">
-                        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                            <MagnifyingGlassIcon className="h-6 w-6 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
+                        <div className="absolute inset-y-0 left-0 pl-4 md:pl-5 flex items-center pointer-events-none">
+                            <MagnifyingGlassIcon className="h-5 w-5 md:h-6 md:w-6 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
                         </div>
                         <input
                             type="text"
@@ -299,7 +298,7 @@ const PharmacyListPage: React.FC = () => {
                             placeholder="Search pharmacy name or address..."
                             value={searchTerm}
                             onChange={handleSearchChange}
-                            className="block w-full pl-14 pr-4 py-4 bg-gray-50 border-2 border-transparent focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 rounded-2xl transition-all text-gray-900 placeholder-gray-400 font-medium text-lg shadow-sm hover:shadow-md"
+                            className="block w-full pl-12 md:pl-14 pr-4 py-3 md:py-4 bg-gray-50 border-2 border-transparent focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 rounded-2xl transition-all text-gray-900 placeholder-gray-400 font-medium text-base md:text-lg shadow-sm hover:shadow-md"
                         />
                     </div>
                     <motion.button
@@ -307,15 +306,16 @@ const PharmacyListPage: React.FC = () => {
                         disabled={isLoading || isGettingLocation}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="btn bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-10 py-4 rounded-2xl font-bold shadow-xl shadow-emerald-600/30 transition-all disabled:opacity-70 disabled:scale-100"
+                        className="btn bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-6 md:px-10 py-3 md:py-4 rounded-2xl font-bold shadow-xl shadow-emerald-600/30 transition-all disabled:opacity-70 disabled:scale-100 w-full md:w-auto"
                     >
                         {isLoading && !isLoadingMore ? (
-                            <span className="flex items-center gap-2">
+                            <span className="flex items-center justify-center gap-2">
                                 <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
-                                Searching...
+                                <span className="hidden md:inline">Searching...</span>
+                                <span className="md:hidden">Search</span>
                             </span>
                         ) : 'Search'}
                     </motion.button>

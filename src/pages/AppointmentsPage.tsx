@@ -1,21 +1,21 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     CalendarDaysIcon, 
+    PlusIcon, 
     ClockIcon, 
-    VideoCameraIcon, 
-    BuildingOfficeIcon, 
-    MagnifyingGlassIcon,
-    FunnelIcon,
-    PlusIcon,
+    VideoCameraIcon,
     CheckCircleIcon,
     XCircleIcon,
-    ExclamationCircleIcon,
-    ChevronRightIcon,
-    UserIcon,
+    ArrowLeftIcon,
     SparklesIcon,
-    ArrowLeftIcon
+    BuildingOfficeIcon,
+    ChevronRightIcon
+} from '@heroicons/react/24/solid';
+import { 
+    MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { getUserAppointments, cancelAppointment } from '../api/appointments';
@@ -23,7 +23,7 @@ import { Appointment } from '../types/appointments';
 import Spinner from '../components/ui/Spinner';
 import { ConfirmDialog } from '../components/common';
 import { useAuth } from '../contexts/AuthContext';
-import { format, parseISO, isToday, isPast, isFuture } from 'date-fns';
+import { format, parseISO, isToday } from 'date-fns';
 import toast from 'react-hot-toast';
 
 type TabType = 'upcoming' | 'completed' | 'cancelled';
@@ -84,7 +84,6 @@ const AppointmentsPage: React.FC = () => {
 
     const filteredAppointments = appointments.filter(apt => {
         // 1. Filter by Tab
-        const aptDate = parseISO(apt.date); // Assuming 'YYYY-MM-DD'
         // Combine date and time for precise comparison if needed, but status is usually sufficient source of truth
         const isCompletedStatus = ['completed', 'no_show'].includes(apt.status);
         const isCancelledStatus = ['cancelled'].includes(apt.status);
@@ -172,6 +171,17 @@ const AppointmentsPage: React.FC = () => {
         }
     };
 
+    const calculateDuration = (start: string, end: string) => {
+        try {
+            const startDate = new Date(`1970-01-01T${start}`);
+            const endDate = new Date(`1970-01-01T${end}`);
+            const diff = (endDate.getTime() - startDate.getTime()) / 60000;
+            return diff > 0 ? diff : 30;
+        } catch (e) {
+            return 30;
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 pb-12">
             {/* Hero Header Section */}
@@ -187,50 +197,50 @@ const AppointmentsPage: React.FC = () => {
                     <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-4000"></div>
                 </div>
 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12">
                     {/* Back Button */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="mb-6"
+                        className="mb-4 md:mb-6"
                     >
                         <Link 
                             to="/dashboard" 
-                            className="inline-flex items-center text-white/90 hover:text-white font-bold transition-colors group"
+                            className="inline-flex items-center text-white/90 hover:text-white font-bold transition-colors group text-sm md:text-base"
                         >
-                            <ArrowLeftIcon className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+                            <ArrowLeftIcon className="h-4 w-4 md:h-5 md:w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
                             Back to Dashboard
                         </Link>
                     </motion.div>
                     
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                         <motion.div 
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="flex items-center gap-5"
+                            className="flex items-center gap-4 md:gap-5"
                         >
                             <div className="relative">
                                 <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl"></div>
-                                <div className="relative p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
-                                    <CalendarDaysIcon className="h-12 w-12 text-white" />
+                                <div className="relative p-3 md:p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
+                                    <CalendarDaysIcon className="h-8 w-8 md:h-12 md:w-12 text-white" />
                                 </div>
                             </div>
                             <div className="text-white">
-                                <h1 className="text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
+                                <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
                                     {isDoctor ? 'Manage Schedule' : 'My Appointments'}
-                                    <SparklesIcon className="h-8 w-8 text-yellow-300 animate-pulse" />
+                                    <SparklesIcon className="h-6 w-6 md:h-8 md:w-8 text-yellow-300 animate-pulse" />
                                 </h1>
-                                <p className="text-white/90 text-base md:text-lg">
+                                <p className="text-white/90 text-sm md:text-lg max-w-md">
                                     {isDoctor ? 'View and manage your patient consultations' : 'Track your upcoming visits and health journey'}
                                 </p>
-                                <div className="flex items-center gap-4 mt-3 text-sm text-white/80">
+                                <div className="flex items-center gap-4 mt-2 md:mt-3 text-xs md:text-sm text-white/80">
                                     <span className="flex items-center gap-1">
-                                        <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
+                                        <div className="h-1.5 w-1.5 md:h-2 md:w-2 bg-green-400 rounded-full animate-pulse"></div>
                                         {filteredAppointments.filter(a => a.status === 'confirmed').length} Confirmed
                                     </span>
                                     <span className="flex items-center gap-1">
-                                        <div className="h-2 w-2 bg-blue-400 rounded-full animate-pulse"></div>
+                                        <div className="h-1.5 w-1.5 md:h-2 md:w-2 bg-blue-400 rounded-full animate-pulse"></div>
                                         {filteredAppointments.filter(a => a.status === 'scheduled').length} Scheduled
                                     </span>
                                 </div>
@@ -245,7 +255,7 @@ const AppointmentsPage: React.FC = () => {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => navigate('/doctors')}
-                                className="group relative px-6 py-3 bg-white text-primary rounded-xl font-bold hover:shadow-2xl transition-all duration-300 flex items-center gap-3 overflow-hidden"
+                                className="w-full md:w-auto group relative px-6 py-3 bg-white text-primary rounded-xl font-bold hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 overflow-hidden"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 <PlusIcon className="h-5 w-5 relative z-10 group-hover:rotate-90 transition-transform duration-300" />
@@ -272,9 +282,9 @@ const AppointmentsPage: React.FC = () => {
                     className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8"
                 >
                     {/* Tabs */}
-                    <div className="relative flex p-1.5 bg-white rounded-2xl border border-gray-200 shadow-lg w-full md:w-auto backdrop-blur-sm">
+                    <div className="relative flex p-1.5 bg-white rounded-2xl border border-gray-200 shadow-lg w-full md:w-auto backdrop-blur-sm overflow-x-auto no-scrollbar">
                         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 rounded-2xl"></div>
-                        {(['upcoming', 'completed', 'cancelled'] as TabType[]).map((tab, index) => (
+                        {(['upcoming', 'completed', 'cancelled'] as TabType[]).map((tab) => (
                             <motion.button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
@@ -428,33 +438,35 @@ const AppointmentsPage: React.FC = () => {
                                                                 transition={{ delay: index * 0.05 + 0.2 }}
                                                             ></motion.div>
 
-                                                            <div className="relative pl-4 space-y-4">
+                                                            <div className="relative pl-3 md:pl-4 space-y-3 md:space-y-4">
                                                                 {/* Time & Status Row */}
-                                                                <div className="flex items-start justify-between">
+                                                                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-0">
                                                                     <div className="flex-1">
-                                                                        <div className="flex items-center gap-2 mb-2">
-                                                                            <ClockIcon className="h-5 w-5 text-primary" />
-                                                                            <h3 className="text-2xl font-black text-gray-900 group-hover:text-primary transition-colors">
+                                                                        <div className="flex items-center gap-2 mb-1 md:mb-2">
+                                                                            <ClockIcon className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                                                                            <h3 className="text-xl md:text-2xl font-black text-gray-900 group-hover:text-primary transition-colors">
                                                                                 {formatTimeDisplay(apt.start_time)}
                                                                             </h3>
                                                                         </div>
-                                                                        <p className="text-sm text-gray-600 font-medium">
-                                                                            {apt.duration || 30} minutes
+                                                                        <p className="text-xs md:text-sm text-gray-600 font-medium">
+                                                                            {calculateDuration(apt.start_time, apt.end_time)} minutes
                                                                         </p>
                                                                     </div>
-                                                                    {getStatusBadge(apt.status)}
+                                                                    <div className="self-start">
+                                                                        {getStatusBadge(apt.status)}
+                                                                    </div>
                                                                 </div>
 
                                                                 {/* Doctor/Patient Info */}
                                                                 <div className="flex items-center gap-3">
                                                                     <motion.div 
                                                                         whileHover={{ scale: 1.1, rotate: 5 }}
-                                                                        className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center text-white font-black text-lg shadow-lg flex-shrink-0"
+                                                                        className="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center text-white font-black text-lg shadow-lg flex-shrink-0"
                                                                     >
                                                                         {otherPartyName.substring(0,2).toUpperCase()}
                                                                     </motion.div>
                                                                     <div className="flex-1 min-w-0">
-                                                                        <p className="font-black text-gray-900 text-lg group-hover:text-primary transition-colors truncate">
+                                                                        <p className="font-black text-gray-900 text-base md:text-lg group-hover:text-primary transition-colors truncate">
                                                                             {otherPartyName}
                                                                         </p>
                                                                         <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
@@ -464,18 +476,18 @@ const AppointmentsPage: React.FC = () => {
                                                                 </div>
 
                                                                 {/* Reason */}
-                                                                <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-2xl p-4 border border-gray-200">
-                                                                    <p className="text-sm text-gray-700 line-clamp-2">
+                                                                <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-2xl p-3 md:p-4 border border-gray-200">
+                                                                    <p className="text-xs md:text-sm text-gray-700 line-clamp-2">
                                                                         <span className="font-black text-gray-900">Reason:</span>{' '}
                                                                         <span className="font-medium">{apt.reason || 'General Consultation'}</span>
                                                                     </p>
                                                                 </div>
 
                                                                 {/* Type & Actions Row */}
-                                                                <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                                                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 pt-3 md:pt-2 border-t border-gray-200">
                                                                     <motion.div 
                                                                         whileHover={{ scale: 1.05 }}
-                                                                        className={`flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm ${
+                                                                        className={`flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm w-full sm:w-auto justify-center sm:justify-start ${
                                                                             apt.appointment_type === 'virtual' 
                                                                                 ? 'bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-700 border border-purple-200' 
                                                                                 : 'bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 border border-orange-200'
@@ -492,7 +504,7 @@ const AppointmentsPage: React.FC = () => {
                                                                         )}
                                                                     </motion.div>
 
-                                                                    <div className="flex items-center gap-2">
+                                                                    <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                                                                         {activeTab === 'upcoming' && (
                                                                             <>
                                                                                 {apt.status === 'confirmed' && apt.appointment_type === 'virtual' && isAptToday && (
@@ -503,7 +515,7 @@ const AppointmentsPage: React.FC = () => {
                                                                                             e.stopPropagation();
                                                                                             navigate(`/appointments/${apt.id}/call`);
                                                                                         }}
-                                                                                        className="px-3 py-1.5 bg-gradient-to-r from-primary to-emerald-600 text-white text-xs font-bold rounded-xl hover:shadow-lg transition-all shadow-md flex items-center gap-1.5"
+                                                                                        className="flex-1 sm:flex-none justify-center px-3 py-1.5 bg-gradient-to-r from-primary to-emerald-600 text-white text-xs font-bold rounded-xl hover:shadow-lg transition-all shadow-md flex items-center gap-1.5"
                                                                                     >
                                                                                         <VideoCameraIcon className="h-4 w-4" />
                                                                                         Join
@@ -513,7 +525,7 @@ const AppointmentsPage: React.FC = () => {
                                                                                     whileHover={{ scale: 1.05 }}
                                                                                     whileTap={{ scale: 0.95 }}
                                                                                     onClick={(e) => handleCancelClick(apt.id, e)}
-                                                                                    className="px-3 py-1.5 bg-white border-2 border-gray-200 text-gray-700 text-xs font-bold rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all"
+                                                                                    className="flex-1 sm:flex-none justify-center px-3 py-1.5 bg-white border-2 border-gray-200 text-gray-700 text-xs font-bold rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all"
                                                                                 >
                                                                                     Cancel
                                                                                 </motion.button>
@@ -610,7 +622,6 @@ const AppointmentsPage: React.FC = () => {
                 confirmText="Yes, Cancel It"
                 cancelText="No, Keep It"
                 isLoading={isCancelling}
-                isDangerous={true}
             />
         </div>
     );

@@ -23,13 +23,34 @@ import {
 import NotificationCenter from '../notifications/NotificationCenter';
 import SubscriptionStatusBadge from '../common/SubscriptionStatusBadge';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  variant?: 'default' | 'landing';
+}
+
+const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    if (variant === 'landing') {
+      window.addEventListener('scroll', handleScroll);
+      // Initial check
+      handleScroll();
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [variant]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -121,19 +142,25 @@ const Header: React.FC = () => {
 
   const isActive = (href: string) => location.pathname === href || location.pathname.startsWith(href + '/');
 
+  const headerClasses = variant === 'landing'
+    ? `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-white/95 backdrop-blur-lg shadow-sm py-0' : 'bg-transparent py-2'
+      }`
+    : 'sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-200/50 shadow-sm';
+
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <header className={headerClasses}>
+      <nav className="container mx-auto px-4 sm:px-4 lg:px-8">
+        <div className="flex justify-between items-center h-16 sm:h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
-            <img src="/logo.png" alt="VitaNips Logo" className="h-9 w-auto drop-shadow-sm transition-transform group-hover:scale-105" />
-            <span className="text-xl font-black bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+          <Link to="/" className="flex items-center space-x-2 sm:space-x-2 group flex-shrink-0">
+            <img src="/logo.png" alt="VitaNips Logo" className="h-8 sm:h-9 w-auto drop-shadow-sm transition-transform group-hover:scale-105" />
+            <span className="text-xl sm:text-xl font-black bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
               VitaNips
             </span>
           </Link>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-2 lg:space-x-3">
             {isAuthenticated ? (
               <>
                 {/* Desktop Navigation - Role-Based */}
@@ -221,30 +248,34 @@ const Header: React.FC = () => {
                   )}
                 </div>
 
+                {/* Notification Center - Always visible for all authenticated users */}
+                <NotificationCenter />
+
+                {/* Subscription Status Badge - Only for Patients (hidden on mobile to save space) */}
+                {isPatient && (
+                  <div className="hidden md:block">
+                    <SubscriptionStatusBadge />
+                  </div>
+                )}
+
                 {/* Mobile Menu Button */}
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                  className="lg:hidden p-2.5 sm:p-2 rounded-lg text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                   aria-label="Toggle menu"
                 >
                   {isMobileMenuOpen ? (
-                    <XMarkIcon className="h-6 w-6" />
+                    <XMarkIcon className="h-6 w-6 sm:h-6 sm:w-6" />
                   ) : (
-                    <Bars3Icon className="h-6 w-6" />
+                    <Bars3Icon className="h-6 w-6 sm:h-6 sm:w-6" />
                   )}
                 </button>
 
-                {/* Notification Center - Visible for all authenticated users on all screen sizes */}
-                <NotificationCenter />
-
-                {/* Subscription Status Badge - Only for Patients */}
-                {isPatient && <SubscriptionStatusBadge />}
-
-                {/* Profile Dropdown */}
+                {/* Profile Dropdown - Always visible */}
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={toggleDropdown}
-                    className="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    className="flex items-center space-x-1.5 sm:space-x-2 p-1.5 sm:p-1.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-w-[44px] min-h-[44px]"
                     aria-haspopup="menu"
                     aria-expanded={isDropdownOpen}
                   >
@@ -252,14 +283,14 @@ const Header: React.FC = () => {
                       <img 
                         src={user.profile_picture} 
                         alt="Profile"
-                        className="h-8 w-8 rounded-full object-cover border-2 border-gray-200 shadow-sm" 
+                        className="h-8 w-8 sm:h-8 sm:w-8 rounded-full object-cover border-2 border-gray-200 shadow-sm" 
                       />
                     ) : (
-                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-sm">
-                        <UserIcon className="h-5 w-5 text-white" />
+                      <div className="h-8 w-8 sm:h-8 sm:w-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-sm">
+                        <UserIcon className="h-5 w-5 sm:h-5 sm:w-5 text-white" />
                       </div>
                     )}
-                    <ChevronDownIcon className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDownIcon className={`hidden sm:block h-4 w-4 text-gray-500 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   <AnimatePresence>
@@ -383,79 +414,79 @@ const Header: React.FC = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="lg:hidden border-t border-gray-200 overflow-hidden"
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="lg:hidden border-t border-gray-200 overflow-hidden bg-white"
             >
-              <div className="py-3 space-y-1">
+              <div className="py-3 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
+
                 {/* Primary Navigation Items */}
-                {primaryNavItems.map((item) => {
-                  const active = isActive(item.href);
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
-                        active
-                          ? 'bg-primary/10 text-primary'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      <item.icon className="h-5 w-5 mr-3" />
-                      {item.name}
-                    </Link>
-                  );
-                })}
+                <div className="px-3 pt-3">
+                  <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Main Menu</p>
+                  {primaryNavItems.map((item) => {
+                    const active = isActive(item.href);
+                    return (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`flex items-center px-4 py-3 mx-1 rounded-lg text-base font-medium transition-colors min-h-[44px] ${
+                          active
+                            ? 'bg-primary/10 text-primary shadow-sm'
+                            : 'text-gray-700 hover:bg-gray-50 active:bg-gray-100'
+                        }`}
+                      >
+                        <item.icon className="h-6 w-6 mr-3 flex-shrink-0" />
+                        {item.name}
+                      </Link>
+                    );
+                  })}
+                </div>
 
                 {/* Secondary Navigation Items (Patients only) */}
-                {secondaryNavItems.map((item) => {
-                  const active = isActive(item.href);
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
-                        active
-                          ? 'bg-primary/10 text-primary'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      <item.icon className="h-5 w-5 mr-3" />
-                      {item.name}
-                    </Link>
-                  );
-                })}
+                {secondaryNavItems.length > 0 && (
+                  <div className="px-3 pt-3 border-t border-gray-100 mt-2">
+                    <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 mt-2">More</p>
+                    {secondaryNavItems.map((item) => {
+                      const active = isActive(item.href);
+                      return (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={`flex items-center px-4 py-3 mx-1 rounded-lg text-base font-medium transition-colors min-h-[44px] ${
+                            active
+                              ? 'bg-primary/10 text-primary shadow-sm'
+                              : 'text-gray-700 hover:bg-gray-50 active:bg-gray-100'
+                          }`}
+                        >
+                          <item.icon className="h-6 w-6 mr-3 flex-shrink-0" />
+                          {item.name}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
 
                 {/* Emergency (Patients only) */}
                 {showEmergency && (
-                  <Link
-                    to={emergencyNavItem.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-bold transition-colors ${
-                      isActive(emergencyNavItem.href)
-                        ? 'bg-red-50 text-red-600'
-                        : 'bg-red-50/50 text-red-600 hover:bg-red-100'
-                    }`}
-                  >
-                    <emergencyNavItem.icon className="h-5 w-5 mr-3" />
-                    {emergencyNavItem.name}
-                  </Link>
+                  <div className="px-3 pt-3 border-t border-gray-100 mt-2">
+                    <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 mt-2">Emergency</p>
+                    <Link
+                      to={emergencyNavItem.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center px-4 py-3 mx-1 rounded-lg text-base font-bold transition-colors min-h-[44px] border-2 ${
+                        isActive(emergencyNavItem.href)
+                          ? 'bg-red-50 text-red-600 border-red-200 shadow-sm'
+                          : 'bg-red-50/50 text-red-600 border-red-200/50 hover:bg-red-100 active:bg-red-100'
+                      }`}
+                    >
+                      <emergencyNavItem.icon className="h-6 w-6 mr-3 flex-shrink-0" />
+                      {emergencyNavItem.name}
+                    </Link>
+                  </div>
                 )}
 
-                {/* Notifications link for all user types */}
-                <Link
-                  to="/notifications"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive('/notifications')
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <BellAlertIcon className="h-5 w-5 mr-3" />
-                  Notifications
-                </Link>
+
               </div>
             </motion.div>
           )}
