@@ -738,7 +738,7 @@ const UserOrderDetailPage: React.FC = () => {
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                             onClick={handlePayNow}
-                                            disabled={isProcessingPayment || (order?.user_insurance && order.patient_copay && parseFloat(order.patient_copay || '0') === 0)}
+                                            disabled={!!(isProcessingPayment || (order?.user_insurance && order.patient_copay && parseFloat(order.patient_copay || '0') === 0))}
                                             className="w-full py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white font-black rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                                         >
                                             {isProcessingPayment ? (
@@ -895,7 +895,7 @@ const UserOrderDetailPage: React.FC = () => {
                         >
                             <h3 className="text-2xl font-black text-gray-900 mb-6">Order Items</h3>
                             <div className="space-y-4">
-                                {order.items?.map((item, index) => (
+                                {order.items?.map((item) => (
                                     <div key={item.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                         <div className="flex justify-between items-start">
                                             <div>

@@ -7,16 +7,10 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import {
   BellIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  InformationCircleIcon,
   CalendarDaysIcon,
   DocumentTextIcon,
   ShoppingBagIcon,
   CheckIcon,
-  XMarkIcon,
-  FunnelIcon,
-  SparklesIcon
 } from '@heroicons/react/24/outline';
 import { formatDate, formatTime } from '../utils/date';
 import { formatRelativeTime } from '../utils';

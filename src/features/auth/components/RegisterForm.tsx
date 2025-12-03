@@ -266,7 +266,6 @@ const RegisterForm: React.FC = () => {
                     />
                     <FormSelect
                     label="Gender"
-                    name="gender"
                     {...register('gender')}
                     error={errors.gender?.message}
                     options={[

@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import {
     ArrowLeftIcon, CalendarIcon, ClockIcon, VideoCameraIcon, BuildingOfficeIcon,
     CheckCircleIcon, XCircleIcon, InformationCircleIcon, TrashIcon, UserIcon,
-    ArrowPathIcon, MapPinIcon, SparklesIcon, PhoneIcon, EnvelopeIcon,
+    ArrowPathIcon, MapPinIcon, SparklesIcon,
     ClipboardDocumentCheckIcon, ShieldCheckIcon, BanknotesIcon
 } from '@heroicons/react/24/outline';
 import { getAppointmentDetails, cancelAppointment, updateAppointment } from '../api/appointments';
@@ -16,7 +16,7 @@ import Modal from '../components/common/Modal';
 import DoctorPrescriptionForm from '../features/doctor_portal/components/DoctorPrescriptionForm';
 import { formatDate, formatTime } from '../utils/date';
 import Spinner from '../components/ui/Spinner';
-import ErrorMessage from '../components/ui/ErrorMessage';
+// import ErrorMessage from '../components/ui/ErrorMessage';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
@@ -210,7 +210,7 @@ const AppointmentDetailPage: React.FC = () => {
     // Doctor can mark appointment as completed if it's scheduled or confirmed
     const canMarkAsCompleted = isDoctor && ['scheduled', 'confirmed'].includes(appointment.status) && !isMarkingCompleted;
 
-    const { text: statusText, color: statusColor, bgColor: statusBgColor, icon: StatusIcon } = getStatusInfo(appointment.status);
+    const { text: statusText, icon: StatusIcon } = getStatusInfo(appointment.status);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">

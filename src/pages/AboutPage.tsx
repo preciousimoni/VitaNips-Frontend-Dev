@@ -21,7 +21,7 @@ import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 const AboutPage: React.FC = () => {
     const { scrollYProgress } = useScroll();
     const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+    // const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
     return (
         <div className="min-h-screen bg-white flex flex-col">

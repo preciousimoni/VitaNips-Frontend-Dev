@@ -13,7 +13,6 @@ import {
   getPremiumFeatures,
   purchasePremiumFeature,
   subscribePremiumSOS,
-  cancelPremiumSOS,
   PremiumFeaturesList
 } from '../api/payments';
 import Spinner from '../components/ui/Spinner';

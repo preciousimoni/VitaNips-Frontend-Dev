@@ -10,8 +10,6 @@ import {
     PlusIcon,
     PencilIcon,
     TrashIcon,
-    CheckCircleIcon,
-    XCircleIcon,
     CurrencyDollarIcon,
     BeakerIcon
 } from '@heroicons/react/24/outline';
@@ -24,7 +22,7 @@ import {
     getMedications
 } from '../../api/pharmacy';
 import { PharmacyInventory, Medication, PharmacyInventoryCreatePayload } from '../../types/pharmacy';
-import { PaginatedResponse } from '../../types/common';
+// import { PaginatedResponse } from '../../types/common';
 import { useAuth } from '../../contexts/AuthContext';
 import Spinner from '../../components/ui/Spinner';
 import ErrorMessage from '../../components/ui/ErrorMessage';
@@ -35,7 +33,7 @@ import { formatDate } from '../../utils/date';
 
 const PharmacyInventoryPage: React.FC = () => {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    // const { user } = useAuth();
     
     // All hooks must be called before any conditional returns
     const { scrollYProgress } = useScroll();

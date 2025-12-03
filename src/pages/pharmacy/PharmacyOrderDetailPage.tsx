@@ -3,8 +3,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-    ArrowLeftIcon, ShieldCheckIcon, BanknotesIcon, CheckCircleIcon, 
-    ExclamationCircleIcon, PencilIcon, XMarkIcon, CalculatorIcon 
+    ArrowLeftIcon, ShieldCheckIcon, CheckCircleIcon, 
+    PencilIcon, XMarkIcon, CalculatorIcon 
 } from '@heroicons/react/24/outline';
 import { getPharmacyOrderDetail, updatePharmacyOrder } from '../../api/pharmacy';
 import { MedicationOrder, MedicationOrderUpdatePayload } from '../../types/pharmacy';
@@ -358,7 +358,7 @@ const PharmacyOrderDetailPage: React.FC = () => {
                         {order.status === 'pending' && (
                             <button 
                                 onClick={() => handleStatusUpdate('processing')} 
-                                disabled={isUpdating || (order.total_amount && !order.user_insurance && (order.payment_status !== 'paid' && order.payment_status))} 
+                                disabled={!!(isUpdating || (order.total_amount && !order.user_insurance && order.payment_status && order.payment_status !== 'paid'))} 
                                 className='btn-primary py-1 px-3 text-sm bg-blue-600 hover:bg-blue-700 disabled:opacity-50'
                             >
                                 Mark as Processing
@@ -367,7 +367,7 @@ const PharmacyOrderDetailPage: React.FC = () => {
                         {order.status === 'processing' && (
                             <button 
                                 onClick={() => handleStatusUpdate('ready')} 
-                                disabled={isUpdating || (order.total_amount && !order.user_insurance && (order.payment_status !== 'paid' && order.payment_status))} 
+                                disabled={!!(isUpdating || (order.total_amount && !order.user_insurance && order.payment_status && order.payment_status !== 'paid'))} 
                                 className='btn-primary py-1 px-3 text-sm bg-green-600 hover:bg-green-700 disabled:opacity-50'
                             >
                                 Mark as Ready

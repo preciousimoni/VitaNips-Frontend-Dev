@@ -125,7 +125,7 @@ describe('NotificationCenter', () => {
       previous: null,
       results: mockNotifications,
     });
-    vi.mocked(notificationsApi.markNotificationRead).mockResolvedValue(mockNotifications[0]);
+    vi.mocked(notificationsApi.markNotificationRead).mockResolvedValue({ status: 'success' });
 
     render(<NotificationCenter />);
 

@@ -1,12 +1,11 @@
 // src/pages/UserOrdersPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     CubeIcon,
     SparklesIcon,
     MagnifyingGlassIcon,
-    FunnelIcon,
     ArrowLeftIcon,
     ClockIcon,
     CheckCircleIcon,
@@ -18,7 +17,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { getUserOrders } from '../api/orders';
 import { MedicationOrder } from '../types/pharmacy';
-import Spinner from '../components/ui/Spinner';
+// import Spinner from '../components/ui/Spinner';
 import ErrorMessage from '../components/ui/ErrorMessage';
 import Skeleton from '../components/ui/Skeleton';
 import { formatDate } from '../utils/date';
@@ -27,7 +26,7 @@ import toast from 'react-hot-toast';
 type TabType = 'all' | 'pending' | 'processing' | 'ready' | 'delivering' | 'completed' | 'cancelled';
 
 const UserOrdersPage: React.FC = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [orders, setOrders] = useState<MedicationOrder[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<TabType>('all');
@@ -315,7 +314,7 @@ const UserOrdersPage: React.FC = () => {
                         animate="visible"
                         className="space-y-4"
                     >
-                        {filteredOrders.map((order, index) => {
+                        {filteredOrders.map((order) => {
                             const statusInfo = getStatusInfo(order.status);
                             const StatusIcon = statusInfo.icon;
 

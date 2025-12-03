@@ -51,7 +51,7 @@ const EnhancedVideoCallRoom: React.FC<EnhancedVideoCallRoomProps> = ({
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const screenShareRef = useRef<MediaStream | null>(null);
-  const startTimeRef = useRef<Date>(new Date());
+  // const startTimeRef = useRef<Date>(new Date());
 
   const navigate = useNavigate();
 

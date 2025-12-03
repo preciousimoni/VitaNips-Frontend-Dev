@@ -9,7 +9,6 @@ import {
   UserIcon,
   SparklesIcon,
   ArrowLeftIcon,
-  FunnelIcon,
   CheckCircleIcon,
   XCircleIcon,
   ExclamationCircleIcon,
@@ -19,7 +18,7 @@ import {
 import { getAdminAppointments } from '../../api/admin';
 import { Appointment } from '../../types/appointments';
 import Spinner from '../../components/ui/Spinner';
-import { format, parseISO, isToday, isPast, isFuture } from 'date-fns';
+import { format, parseISO, isToday, isFuture } from 'date-fns';
 
 const AdminAppointmentsPage: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);

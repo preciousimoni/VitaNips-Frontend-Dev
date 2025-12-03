@@ -9,8 +9,6 @@ import {
   BuildingOfficeIcon,
   AcademicCapIcon,
   IdentificationIcon,
-  PhoneIcon,
-  EnvelopeIcon,
   UserIcon,
   CheckCircleIcon,
   XCircleIcon,
@@ -73,7 +71,7 @@ const DoctorApplicationPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
     setValue,
-    watch,
+    // watch,
   } = useForm<ApplicationFormData>({
     resolver: zodResolver(applicationSchema) as any,
     defaultValues: {
@@ -162,7 +160,10 @@ const DoctorApplicationPage: React.FC = () => {
             setSelectedSpecialties(ids);
             setValue('specialty_ids', ids);
           } else if (key !== 'specialties' && key !== 'id' && key !== 'application_status') {
-            setValue(key as keyof ApplicationFormData, applicationData[key] as any);
+            const value = (applicationData as any)[key];
+            if (value !== undefined) {
+              setValue(key as keyof ApplicationFormData, value);
+            }
           }
         });
       }

@@ -9,11 +9,10 @@ import {
     ArrowPathIcon,
     PencilIcon,
     TrashIcon,
-    CheckCircleIcon,
     ClockIcon,
     CalendarDaysIcon
 } from '@heroicons/react/24/outline';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { getHealthGoals, createHealthGoal, updateHealthGoal, deleteHealthGoal } from '../api/healthMetrics';
 import { HealthGoal } from '../types/health';
 import Modal from '../components/common/Modal';

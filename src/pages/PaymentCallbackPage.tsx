@@ -2,12 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircleIcon, XCircleIcon, ClockIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { verifyPayment } from '../api/payments';
 import axiosInstance from '../api/axiosInstance';
 import Spinner from '../components/ui/Spinner';
-import toast from 'react-hot-toast';
+// import toast from 'react-hot-toast';
 
 const PaymentCallbackPage: React.FC = () => {
     const [searchParams] = useSearchParams();

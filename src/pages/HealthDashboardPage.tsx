@@ -78,7 +78,7 @@ const HealthDashboardPage = () => {
                                 { label: 'Vitals', href: '/health/vitals', icon: HeartIcon },
                                 { label: 'Exercise', href: '/health/exercise', icon: ChartBarIcon },
                                 { label: 'Goals', href: '/health/goals', icon: TrophyIcon }
-                            ].map((link, index) => (
+                            ].map((link) => (
                                 <Link
                                     key={link.href}
                                     to={link.href}

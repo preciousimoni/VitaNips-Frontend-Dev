@@ -28,7 +28,7 @@ import Modal from '../../components/common/Modal';
 import DoctorPrescriptionForm from '../../features/doctor_portal/components/DoctorPrescriptionForm';
 import { formatDate, formatTime } from '../../utils/date';
 import Spinner from '../../components/ui/Spinner';
-import EmptyState from '../../components/common/EmptyState';
+// import EmptyState from '../../components/common/EmptyState';
 import { format } from 'date-fns';
 
 // Enhanced appointment card component
@@ -255,14 +255,14 @@ const DoctorPrescriptionWorkspacePage: React.FC = () => {
     );
 
     const filteredPrescriptions = writtenPrescriptions.filter(pres => {
-        const patientEmail = typeof pres.user === 'object' && pres.user !== null && 'email' in pres.user 
+        const patientEmail: string | undefined = typeof pres.user === 'object' && pres.user !== null && 'email' in pres.user 
             ? (pres.user as { email?: string }).email 
-            : String(pres.user);
+            : typeof pres.user === 'object' ? undefined : String(pres.user);
         const patientName = typeof pres.user === 'object' && pres.user !== null 
             ? `${(pres.user as any).first_name || ''} ${(pres.user as any).last_name || ''}`.trim() || (pres.user as any).username
             : 'Patient';
         return patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-               (patientEmail && patientEmail.toLowerCase().includes(searchQuery.toLowerCase())) ||
+               (patientEmail ? patientEmail.toLowerCase().includes(searchQuery.toLowerCase()) : false) ||
                pres.diagnosis?.toLowerCase().includes(searchQuery.toLowerCase());
     });
 

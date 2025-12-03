@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import {
   UsersIcon,
   BuildingStorefrontIcon,
-  DocumentTextIcon,
   ChartBarIcon,
   ShieldCheckIcon,
   BellAlertIcon,

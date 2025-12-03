@@ -13,7 +13,6 @@ import {
     PlayIcon,
     XMarkIcon,
     SparklesIcon,
-    StarIcon,
     ChartBarIcon,
     LockClosedIcon
 } from '@heroicons/react/24/outline';
@@ -24,18 +23,18 @@ import Footer from '../components/layout/Footer';
 import Header from '../components/layout/Header';
 
 const LandingPage: React.FC = () => {
-    const { isAuthenticated, user } = useAuth();
+    const { isAuthenticated } = useAuth();
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    // const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     
     const heroRef = useRef(null);
     const featuresRef = useRef(null);
     const { scrollYProgress } = useScroll();
-    const heroInView = useInView(heroRef, { once: false });
-    const featuresInView = useInView(featuresRef, { once: false });
+    // const heroInView = useInView(heroRef, { once: false });
+    // const featuresInView = useInView(featuresRef, { once: false });
     
     const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+    // const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {

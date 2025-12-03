@@ -9,7 +9,6 @@ import {
     ExclamationTriangleIcon,
     UserGroupIcon,
     ArrowRightIcon,
-    SparklesIcon,
     BellAlertIcon
 } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';

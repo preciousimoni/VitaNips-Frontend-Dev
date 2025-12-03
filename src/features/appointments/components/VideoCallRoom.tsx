@@ -496,8 +496,9 @@ const VideoCallRoom: React.FC<VideoCallRoomProps> = ({ appointmentId, onCallEnd 
             if (videoContainer) {
                 try {
                     // Detach all video tracks first
-                    if (roomRef.current) {
-                        roomRef.current.localParticipant.videoTracks.forEach(publication => {
+                    const currentRoom = roomRef.current;
+                    if (currentRoom) {
+                        currentRoom.localParticipant.videoTracks.forEach((publication: any) => {
                             if (publication.track) {
                                 try {
                                     publication.track.detach();

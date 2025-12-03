@@ -1,9 +1,9 @@
 // src/pages/WaterLogPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { ArrowPathIcon, ClockIcon, CalendarDaysIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
-import { motion, AnimatePresence } from 'framer-motion';
-import { getWaterLogs, createWaterLog, getTodayWaterLog } from '../api/healthMetrics';
+import { ArrowPathIcon, ClockIcon, CalendarDaysIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
+import { getWaterLogs, createWaterLog } from '../api/healthMetrics';
 import Modal from '../components/common/Modal';
 import toast from 'react-hot-toast';
 import Spinner from '../components/ui/Spinner';

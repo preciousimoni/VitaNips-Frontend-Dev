@@ -5,7 +5,7 @@ import { getDoctors } from '../api/doctors';
 import { Doctor } from '../types/doctors';
 import DoctorCard from '../features/doctors/components/DoctorCard';
 import Skeleton from '../components/ui/Skeleton';
-import { useAuth } from '../contexts/AuthContext';
+// import { useAuth } from '../contexts/AuthContext';
 
 const DoctorListPage: React.FC = () => {
     const [doctors, setDoctors] = useState<Doctor[]>([]);

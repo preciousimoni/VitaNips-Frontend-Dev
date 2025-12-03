@@ -12,7 +12,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getPharmacyOrders } from '../../api/pharmacy';
 import { MedicationOrder } from '../../types/pharmacy';
 import PharmacyOrderListItem from '../../features/pharmacy_portal/components/PharmacyOrderListItem';
-import Spinner from '../../components/ui/Spinner';
+// import Spinner from '../../components/ui/Spinner';
 import ErrorMessage from '../../components/ui/ErrorMessage';
 import Skeleton from '../../components/ui/Skeleton';
 

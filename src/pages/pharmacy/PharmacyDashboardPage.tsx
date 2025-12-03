@@ -11,7 +11,6 @@ import {
   ArrowRightIcon,
   SparklesIcon,
   ChartBarIcon,
-  BellAlertIcon,
   TruckIcon,
   CubeIcon,
   CurrencyDollarIcon
@@ -29,8 +28,7 @@ import { getPharmacyOrders } from '../../api/pharmacy';
 import { MedicationOrder } from '../../types/pharmacy';
 import { useAuth } from '../../contexts/AuthContext';
 import Spinner from '../../components/ui/Spinner';
-import { formatDate, formatTime } from '../../utils/date';
-import { format } from 'date-fns';
+import { formatDate } from '../../utils/date';
 
 interface DashboardStats {
   pending: number;

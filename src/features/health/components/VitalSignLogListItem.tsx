@@ -8,16 +8,16 @@ interface VitalSignLogListItemProps {
     onDelete: (id: number) => void;
 }
 
-const _formatDateTimeDisplay = (isoString: string | null | undefined) => {
-    if (!isoString) return 'N/A';
-    try {
-        return new Date(isoString).toLocaleString('en-US', {
-            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-        });
-    } catch {
-        return isoString;
-    }
-};
+// const _formatDateTimeDisplay = (isoString: string | null | undefined) => {
+//     if (!isoString) return 'N/A';
+//     try {
+//         return new Date(isoString).toLocaleString('en-US', {
+//             month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+//         });
+//     } catch {
+//         return isoString;
+//     }
+// };
 
 const formatDay = (isoString: string) => {
     try {

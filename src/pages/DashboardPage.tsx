@@ -15,7 +15,6 @@ import {
     PlusIcon,
     ClockIcon,
     CheckCircleIcon,
-    UserIcon,
     SparklesIcon,
     ShieldCheckIcon,
     CubeIcon,
@@ -36,7 +35,7 @@ import { VitalSignLog } from '../types/healthLogs';
 import { MedicationOrder } from '../types/pharmacy';
 import { Prescription } from '../types/prescriptions';
 import ErrorMessage from '../components/ui/ErrorMessage';
-import Spinner from '../components/ui/Spinner';
+// import Spinner from '../components/ui/Spinner';
 import Skeleton from '../components/ui/Skeleton';
 import { formatDate, formatTime } from '../utils/date';
 
@@ -158,7 +157,7 @@ const DashboardPage: React.FC = () => {
     const [prescriptionsError, setPrescriptionsError] = useState<string | null>(null);
 
     const [unreadCount, setUnreadCount] = useState<number>(0);
-    const [notificationsLoading, setNotificationsLoading] = useState<boolean>(true);
+    // const [notificationsLoading, setNotificationsLoading] = useState<boolean>(true);
 
     const fetchDashboardData = useCallback(async () => {
         // Fetch Appointments
@@ -716,7 +715,7 @@ const DashboardPage: React.FC = () => {
                                 />
                             ) : (
                                 <div className="space-y-3">
-                                    {recentOrders.map((order, index) => {
+                                    {recentOrders.map((order) => {
                                         const getStatusInfo = (status: string) => {
                                             switch (status) {
                                                 case 'pending':

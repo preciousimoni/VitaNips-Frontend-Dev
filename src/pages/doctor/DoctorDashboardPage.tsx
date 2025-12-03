@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   CalendarIcon, 
   ClipboardDocumentListIcon, 
   UserGroupIcon,
   ClockIcon,
-  CheckCircleIcon,
   ExclamationCircleIcon,
   ArrowRightIcon,
   VideoCameraIcon,
-  EllipsisHorizontalIcon,
-  PlusIcon,
   SparklesIcon,
   ChartBarIcon,
   BellAlertIcon
@@ -34,7 +31,7 @@ import Spinner from '../../components/ui/Spinner';
 import EmptyState from '../../components/common/EmptyState';
 import { formatTime } from '../../utils/date';
 import { format } from 'date-fns';
-import { DocumentTextIcon } from '@heroicons/react/24/outline';
+// import { DocumentTextIcon } from '@heroicons/react/24/outline';
 
 interface DashboardStats {
   pendingPrescriptions: number;
@@ -58,7 +55,7 @@ const generateActivityData = (appointments: Appointment[]) => {
     
     const dayAppointments = appointments.filter(apt => apt.date === dateStr);
     const patients = new Set(dayAppointments.map(apt => 
-      typeof apt.user === 'object' ? apt.user?.id || apt.user : apt.user
+      typeof apt.user === 'object' && apt.user !== null ? (apt.user as any).id : apt.user
     )).size;
     
     return {
@@ -152,7 +149,12 @@ const DoctorDashboardPage: React.FC = () => {
       
       // Count unique patients (handle both user ID and user object)
       const uniquePatients = new Set(
-        appointments.map(apt => typeof apt.user === 'object' ? apt.user?.id || apt.user : apt.user)
+        appointments.map(apt => {
+          if (typeof apt.user === 'object' && apt.user !== null) {
+            return (apt.user as any).id || apt.user;
+          }
+          return apt.user;
+        })
       ).size;
 
       setStats({
@@ -578,7 +580,7 @@ const DoctorDashboardPage: React.FC = () => {
                 />
               ) : (
                 <div className="space-y-4 relative z-10">
-                  {todayAppointments.map((apt, index) => (
+                  {todayAppointments.map((apt) => (
                     <motion.div 
                       key={apt.id}
                       initial={{ opacity: 0, x: -20 }}

@@ -10,9 +10,8 @@ import {
   CalendarIcon,
   AcademicCapIcon,
   ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
 } from '@heroicons/react/24/outline';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { getAdminAnalytics, AdminAnalytics } from '../../api/admin';
 import Spinner from '../../components/ui/Spinner';
 
@@ -235,7 +234,7 @@ const AdminAnalyticsPage: React.FC = () => {
                   fill="url(#colorGradient)"
                   radius={[8, 8, 0, 0]}
                 >
-                  {userGrowthData.map((entry, index) => (
+                  {userGrowthData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Bar>
@@ -297,7 +296,7 @@ const AdminAnalyticsPage: React.FC = () => {
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {appointmentsData.map((entry, index) => (
+                      {appointmentsData.map((_entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -395,7 +394,7 @@ const AdminAnalyticsPage: React.FC = () => {
                       fill="url(#specialtyGradient)"
                       radius={[0, 8, 8, 0]}
                     >
-                      {specialtiesData.map((entry, index) => (
+                      {specialtiesData.map((_entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Bar>
