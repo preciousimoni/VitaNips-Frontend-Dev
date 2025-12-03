@@ -57,7 +57,7 @@ const HelpCenterPage: React.FC = () => {
     const [subscription, setSubscription] = useState<UserSubscription | null>(null);
     const [searchQuery, setSearchTerm] = useState('');
     const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-    // const [showChatSupport, setShowChatSupport] = useState(false);
+    const [showChatSupport, setShowChatSupport] = useState(false);
     const { scrollYProgress } = useScroll();
     const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
 

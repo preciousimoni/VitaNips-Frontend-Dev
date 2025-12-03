@@ -23,7 +23,7 @@ import {
 } from '../../api/pharmacy';
 import { PharmacyInventory, Medication, PharmacyInventoryCreatePayload } from '../../types/pharmacy';
 // import { PaginatedResponse } from '../../types/common';
-import { useAuth } from '../../contexts/AuthContext';
+// import { useAuth } from '../../contexts/AuthContext';
 import Spinner from '../../components/ui/Spinner';
 import ErrorMessage from '../../components/ui/ErrorMessage';
 import Skeleton from '../../components/ui/Skeleton';

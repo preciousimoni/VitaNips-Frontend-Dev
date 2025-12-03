@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { 
     HeartIcon, 
     BellAlertIcon, 
@@ -25,7 +25,7 @@ import Header from '../components/layout/Header';
 const LandingPage: React.FC = () => {
     const { isAuthenticated } = useAuth();
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-    // const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     
     const heroRef = useRef(null);
     const featuresRef = useRef(null);

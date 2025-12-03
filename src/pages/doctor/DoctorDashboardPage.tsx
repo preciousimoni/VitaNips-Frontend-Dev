@@ -580,7 +580,7 @@ const DoctorDashboardPage: React.FC = () => {
                 />
               ) : (
                 <div className="space-y-4 relative z-10">
-                  {todayAppointments.map((apt) => (
+                  {todayAppointments.map((apt, index) => (
                     <motion.div 
                       key={apt.id}
                       initial={{ opacity: 0, x: -20 }}

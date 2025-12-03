@@ -6,8 +6,6 @@ import {
     DocumentTextIcon, 
     ClipboardDocumentListIcon, 
     MagnifyingGlassIcon, 
-    FunnelIcon,
-    ArrowRightIcon,
     ArrowLeftIcon,
     CheckCircleIcon,
     ClockIcon,

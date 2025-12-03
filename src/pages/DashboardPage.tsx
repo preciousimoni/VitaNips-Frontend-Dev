@@ -157,7 +157,7 @@ const DashboardPage: React.FC = () => {
     const [prescriptionsError, setPrescriptionsError] = useState<string | null>(null);
 
     const [unreadCount, setUnreadCount] = useState<number>(0);
-    // const [notificationsLoading, setNotificationsLoading] = useState<boolean>(true);
+    const [notificationsLoading, setNotificationsLoading] = useState<boolean>(true);
 
     const fetchDashboardData = useCallback(async () => {
         // Fetch Appointments

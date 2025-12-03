@@ -23,7 +23,7 @@ interface Doctor {
 const DocumentShareDialog: React.FC<DocumentShareDialogProps> = ({ documentId, documentTitle, onClose }) => {
     const [selectedDoctorId, setSelectedDoctorId] = useState<string>('');
     const [permission, setPermission] = useState<'view' | 'download'>('view');
-    // const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
     // Fetch doctors to share with
     const { data: doctors = [] } = useQuery({
