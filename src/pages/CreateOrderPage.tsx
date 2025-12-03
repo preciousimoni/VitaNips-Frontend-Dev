@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getPharmacies } from '@api/pharmacy';
@@ -8,8 +8,8 @@ import { getUserInsurances } from '@api/insurance';
 import PharmacyLocator from '@features/pharmacy/components/PharmacyLocator';
 import PharmacyCard from '@features/pharmacy/components/PharmacyCard';
 import PageWrapper from '@components/common/PageWrapper';
-import { Pharmacy } from '@types/pharmacy';
-import { UserInsurance } from '@types/insurance';
+import { Pharmacy } from '../types/pharmacy';
+import { UserInsurance } from '../types/insurance';
 import { toast } from 'react-hot-toast';
 import Spinner from '@components/ui/Spinner';
 import { ShieldCheckIcon } from '@heroicons/react/24/outline';
@@ -91,7 +91,7 @@ const CreateOrderPage = () => {
     }
 
     if (!prescription) {
-        return <PageWrapper error="Prescription not found" />;
+        return <PageWrapper error="Prescription not found"><div></div></PageWrapper>;
     }
 
     return (

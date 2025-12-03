@@ -36,13 +36,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     const [isProcessing, setIsProcessing] = useState(false);
     const [isInitializing, setIsInitializing] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank_transfer' | 'ussd'>('card');
-    const [paymentReference, setPaymentReference] = useState<string | null>(null);
+    const [_paymentReference, setPaymentReference] = useState<string | null>(null);
     const [authorizationUrl, setAuthorizationUrl] = useState<string | null>(null);
     const [commissionBreakdown, setCommissionBreakdown] = useState<CommissionBreakdown | null>(null);
-    const [cardNumber, setCardNumber] = useState<string>('');
-    const [cardExpiry, setCardExpiry] = useState<string>('');
+    const [_cardNumber, _setCardNumber] = useState<string>('');
+    const [_cardExpiry, _setCardExpiry] = useState<string>('');
 
-    const formatCardNumber = (value: string) => {
+    const _formatCardNumber = (value: string) => {
         const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
         const matches = v.match(/\d{4,16}/g);
         const match = matches && matches[0] || '';
@@ -57,7 +57,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         }
     };
 
-    const formatExpiry = (value: string) => {
+    const _formatExpiry = (value: string) => {
         const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
         if (v.length >= 2) {
             return v.substring(0, 2) + '/' + v.substring(2, 4);
@@ -86,7 +86,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 callback_url: `${window.location.origin}/payment/callback`
             });
 
-            setPaymentReference(response.reference || response.tx_ref);
+            setPaymentReference(response.reference || response.tx_ref || null);
             setAuthorizationUrl(response.authorization_url);
             
             // Store commission breakdown if available

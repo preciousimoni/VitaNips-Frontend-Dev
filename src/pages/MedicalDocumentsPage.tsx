@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { getUserMedicalDocuments } from '@api/health';
@@ -6,7 +6,7 @@ import DocumentUploader from '@features/health/components/DocumentUploader';
 import DocumentShareDialog from '@features/health/components/DocumentShareDialog';
 import PageWrapper from '@components/common/PageWrapper';
 import Modal from '@components/common/Modal';
-import { MedicalDocument } from '@types/health';
+import { MedicalDocument } from '../types/health';
 import { format } from 'date-fns';
 import { DocumentIcon, ArrowDownTrayIcon, ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
 
@@ -69,7 +69,7 @@ const MedicalDocumentsPage = () => {
                                     </div>
                                     <div className="flex space-x-2">
                                         <a 
-                                            href={doc.file_url} 
+                                            href={doc.file_url || undefined} 
                                             target="_blank" 
                                             rel="noopener noreferrer"
                                             className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"

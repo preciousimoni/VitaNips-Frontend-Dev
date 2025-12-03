@@ -231,7 +231,7 @@ const VideoCallRoom: React.FC<VideoCallRoomProps> = ({ appointmentId, onCallEnd 
                     console.warn('Error stopping existing track:', e);
                 }
                 try {
-                    if (el.parentNode === remoteVideoRef.current) {
+                    if (remoteVideoRef.current && el.parentNode === remoteVideoRef.current) {
                         remoteVideoRef.current.removeChild(el);
                     }
                 } catch (e) {
@@ -375,8 +375,8 @@ const VideoCallRoom: React.FC<VideoCallRoomProps> = ({ appointmentId, onCallEnd 
                     // Safely clear any existing elements
                     try {
                         while (videoContainer.firstChild) {
-                            const child = videoContainer.firstChild;
-                            if (child.parentNode === videoContainer) {
+                            const child: ChildNode | null = videoContainer.firstChild;
+                            if (child && child.parentNode === videoContainer) {
                                 videoContainer.removeChild(child);
                             } else {
                                 break; // Child already removed, exit loop

@@ -43,7 +43,7 @@ const ProfilePage: React.FC = () => {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema),
+    resolver: zodResolver(profileSchema) as any,
     defaultValues: {
       first_name: '',
       last_name: '',

@@ -29,7 +29,7 @@ const RegisterForm: React.FC = () => {
     trigger,
     formState: { errors },
   } = useForm<ExtendedRegisterFormData>({
-    resolver: zodResolver(extendedRegisterSchema),
+    resolver: zodResolver(extendedRegisterSchema) as any,
     mode: 'onChange',
   });
 
@@ -267,8 +267,8 @@ const RegisterForm: React.FC = () => {
                     <FormSelect
                     label="Gender"
                     name="gender"
-                    register={register}
-                    errors={errors}
+                    {...register('gender')}
+                    error={errors.gender?.message}
                     options={[
                         { value: 'male', label: 'Male' },
                         { value: 'female', label: 'Female' },

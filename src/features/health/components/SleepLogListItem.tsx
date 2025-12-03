@@ -1,5 +1,5 @@
 import React from 'react';
-import { SleepLog, SleepQuality } from '../../../types/healthLogs';
+import { SleepLog } from '../../../types/healthLogs';
 import { PencilSquareIcon, TrashIcon, MoonIcon, StarIcon } from '@heroicons/react/24/outline';
 
 interface SleepLogListItemProps {

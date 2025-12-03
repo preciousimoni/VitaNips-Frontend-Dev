@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { shareDocument, getSharedDocuments } from '../../../api/health'; // We'll need to add getDoctors or similar to search users
-import { Dialog } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { shareDocument } from '../../../api/health'; // We'll need to add getDoctors or similar to search users
 import toast from 'react-hot-toast';
 import axiosInstance from '../../../api/axiosInstance';
 
@@ -25,7 +23,7 @@ interface Doctor {
 const DocumentShareDialog: React.FC<DocumentShareDialogProps> = ({ documentId, documentTitle, onClose }) => {
     const [selectedDoctorId, setSelectedDoctorId] = useState<string>('');
     const [permission, setPermission] = useState<'view' | 'download'>('view');
-    const queryClient = useQueryClient();
+    // const queryClient = useQueryClient();
 
     // Fetch doctors to share with
     const { data: doctors = [] } = useQuery({

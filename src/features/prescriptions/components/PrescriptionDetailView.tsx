@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Prescription, PrescriptionItem } from '../../../types/prescriptions';
 import { Link } from 'react-router-dom';
 import {
-    ClipboardDocumentListIcon, 
     TagIcon, 
     InformationCircleIcon, 
     ForwardIcon,

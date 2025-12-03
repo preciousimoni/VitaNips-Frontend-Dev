@@ -16,7 +16,7 @@ import {
   ShieldCheckIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
-import { getAdminDoctors, reviewDoctorApplication, ReviewDoctorPayload, AdminDoctor } from '../../api/admin';
+import { getAdminDoctors, reviewDoctorApplication, ReviewDoctorPayload, AdminDoctor, verifyDoctor } from '../../api/admin';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 import Modal from '../../components/common/Modal';

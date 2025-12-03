@@ -40,7 +40,7 @@ const UserOrdersPage: React.FC = () => {
         try {
             const response = await getUserOrders();
             // Handle both paginated and non-paginated responses
-            const ordersList = response.results || response || [];
+            const ordersList = (Array.isArray(response) ? response : response.results) || [];
             setOrders(Array.isArray(ordersList) ? ordersList : []);
         } catch (err) {
             console.error('Failed to fetch orders:', err);

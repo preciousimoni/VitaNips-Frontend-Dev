@@ -711,7 +711,7 @@ const UserOrderDetailPage: React.FC = () => {
                                                 <div className="flex justify-between items-center">
                                                     <span className="text-lg font-bold text-gray-700">Total Amount:</span>
                                                     <span className="text-2xl font-black text-orange-600">
-                                                        ₦{parseFloat(order.total_amount).toLocaleString()}
+                                                        ₦{order.total_amount ? parseFloat(order.total_amount).toLocaleString() : '0.00'}
                                                     </span>
                                                 </div>
                                                 {order?.user_insurance && order.insurance_covered_amount && (
@@ -738,7 +738,7 @@ const UserOrderDetailPage: React.FC = () => {
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                             onClick={handlePayNow}
-                                            disabled={isProcessingPayment || (order?.user_insurance && order.patient_copay && parseFloat(order.patient_copay) === 0)}
+                                            disabled={isProcessingPayment || (order?.user_insurance && order.patient_copay && parseFloat(order.patient_copay || '0') === 0)}
                                             className="w-full py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white font-black rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                                         >
                                             {isProcessingPayment ? (

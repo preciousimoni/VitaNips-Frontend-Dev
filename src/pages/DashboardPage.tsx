@@ -233,7 +233,7 @@ const DashboardPage: React.FC = () => {
         setOrdersError(null);
         try {
             const response = await getUserOrders();
-            const orders = response.results || response || [];
+            const orders = (Array.isArray(response) ? response : response.results) || [];
             const recent = Array.isArray(orders) ? orders.slice(0, 5) : [];
             setRecentOrders(recent);
         } catch (err) {

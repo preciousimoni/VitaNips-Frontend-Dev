@@ -14,14 +14,13 @@ import {
   VideoCameraIcon,
   PhoneXMarkIcon,
   ComputerDesktopIcon,
-  ChatBubbleLeftIcon,
   Cog6ToothIcon,
 } from '@heroicons/react/24/solid';
 import {
   MicrophoneIcon as MicOffIcon,
   VideoCameraIcon as VideoOffIcon,
 } from '@heroicons/react/24/outline';
-import { startVirtualSession, endVideoSession } from '../../../api/video';
+import { startVirtualSession, endVideoSession } from '@api/video';
 
 interface EnhancedVideoCallRoomProps {
   appointmentId: number;
@@ -116,11 +115,16 @@ const EnhancedVideoCallRoom: React.FC<EnhancedVideoCallRoomProps> = ({
 
     participant.tracks.forEach((publication) => {
       if (publication.isSubscribed && publication.track) {
-        attachTrack(publication.track);
+        const track = publication.track;
+        if (track.kind === 'video' || track.kind === 'audio') {
+          attachTrack(track as RemoteVideoTrack | RemoteAudioTrack);
+        }
       }
     });
 
-    participant.on('trackSubscribed', attachTrack);
+    participant.on('trackSubscribed', (track: RemoteVideoTrack | RemoteAudioTrack) => {
+      attachTrack(track);
+    });
     participant.on('trackUnsubscribed', detachTrack);
   }, []);
 
@@ -226,7 +230,7 @@ const EnhancedVideoCallRoom: React.FC<EnhancedVideoCallRoomProps> = ({
       }
 
       // Calculate duration
-      const duration = Math.floor((new Date().getTime() - startTimeRef.current.getTime()) / 60000);
+      // const duration = Math.floor((new Date().getTime() - startTimeRef.current.getTime()) / 60000);
 
       await endVideoSession(appointmentId);
 

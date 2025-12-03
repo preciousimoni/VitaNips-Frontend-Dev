@@ -75,7 +75,7 @@ const DoctorApplicationPage: React.FC = () => {
     setValue,
     watch,
   } = useForm<ApplicationFormData>({
-    resolver: zodResolver(applicationSchema),
+    resolver: zodResolver(applicationSchema) as any,
     defaultValues: {
       first_name: '',
       last_name: '',
@@ -162,7 +162,7 @@ const DoctorApplicationPage: React.FC = () => {
             setSelectedSpecialties(ids);
             setValue('specialty_ids', ids);
           } else if (key !== 'specialties' && key !== 'id' && key !== 'application_status') {
-            setValue(key as any, applicationData[key]);
+            setValue(key as keyof ApplicationFormData, applicationData[key] as any);
           }
         });
       }

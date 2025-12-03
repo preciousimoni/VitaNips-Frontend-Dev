@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useForm, UseFormRegister, FieldErrors } from 'react-hook-form';
+import { useForm, UseFormRegister } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User } from '../../../types/user';
 import { UserProfileUpdatePayload, uploadProfilePicture } from '../../../api/user';
@@ -76,7 +76,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<UserProfileFormValues>({
-    resolver: zodResolver(userProfileSchema),
+    resolver: zodResolver(userProfileSchema) as any,
     defaultValues: {
       first_name: '',
       last_name: '',

@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
     HeartIcon, 
@@ -7,7 +7,7 @@ import {
     ArrowPathIcon,
     TrophyIcon
 } from '@heroicons/react/24/outline';
-import { PlusCircleIcon } from '@heroicons/react/24/solid';
+// import { PlusCircleIcon } from '@heroicons/react/24/solid';
 
 const QuickHealthLogger = () => {
     const navigate = useNavigate();

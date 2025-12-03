@@ -80,7 +80,7 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
         setValue,
         formState: { errors: formErrors }
     } = useForm<AppointmentBookingFormData>({
-        resolver: zodResolver(appointmentBookingSchema),
+        resolver: zodResolver(appointmentBookingSchema) as any,
         defaultValues: {
             doctor: doctorId,
             date: '',
@@ -374,7 +374,7 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
         }
     };
 
-    const handlePaymentSuccess = async (paymentReference: string) => {
+    const handlePaymentSuccess = async (_paymentReference: string) => {
         // Payment success is handled by PaymentCallbackPage now
         // This callback is kept for backward compatibility but won't be called
         // since we redirect to Flutterwave

@@ -18,7 +18,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { formatDate, formatTime } from '../../../utils/date';
 
-const formatDateTime = (dateStr: string | null) => {
+const _formatDateTime = (dateStr: string | null) => {
     if (!dateStr) return 'N/A';
     try {
         return new Date(dateStr).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short'});

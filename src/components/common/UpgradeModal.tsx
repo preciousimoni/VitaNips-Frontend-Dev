@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 import {
   XMarkIcon,
   StarIcon,
-  SparklesIcon,
-  CheckCircleIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import { CheckCircleIcon as CheckCircleIconSolid } from '@heroicons/react/24/solid';

@@ -66,7 +66,7 @@ const VaccinationForm: React.FC<VaccinationFormProps> = ({
         e.preventDefault();
         setError(null);
 
-        if (!formData.vaccine_name || !formData.date_administered || formData.dose_number < 1) {
+        if (!formData.vaccine_name || !formData.date_administered || !formData.dose_number || formData.dose_number < 1) {
             setError("Vaccine Name, Date Administered, and Dose Number (>=1) are required.");
             return;
         }

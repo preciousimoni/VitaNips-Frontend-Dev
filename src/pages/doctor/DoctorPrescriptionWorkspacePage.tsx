@@ -262,7 +262,7 @@ const DoctorPrescriptionWorkspacePage: React.FC = () => {
             ? `${(pres.user as any).first_name || ''} ${(pres.user as any).last_name || ''}`.trim() || (pres.user as any).username
             : 'Patient';
         return patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-               patientEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
+               (patientEmail && patientEmail.toLowerCase().includes(searchQuery.toLowerCase())) ||
                pres.diagnosis?.toLowerCase().includes(searchQuery.toLowerCase());
     });
 

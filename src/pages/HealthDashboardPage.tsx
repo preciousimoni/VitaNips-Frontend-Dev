@@ -1,8 +1,8 @@
-import React from 'react';
+// import React from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { getVitalSigns, getHealthInsights } from '@api/healthMetrics';
-import PageWrapper from '@components/common/PageWrapper';
+// import PageWrapper from '@components/common/PageWrapper';
 import VitalSignChart from '@features/health/components/VitalSignChart';
 import QuickHealthLogger from '@features/health/components/QuickHealthLogger';
 import { InformationCircleIcon, ExclamationTriangleIcon, HeartIcon, SparklesIcon, ChartBarIcon, TrophyIcon } from '@heroicons/react/24/solid';

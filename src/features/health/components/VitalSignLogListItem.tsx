@@ -1,6 +1,6 @@
 import React from 'react';
 import { VitalSignLog } from '../../../types/healthLogs';
-import { PencilSquareIcon, TrashIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 interface VitalSignLogListItemProps {
     log: VitalSignLog;
@@ -8,7 +8,7 @@ interface VitalSignLogListItemProps {
     onDelete: (id: number) => void;
 }
 
-const formatDateTimeDisplay = (isoString: string | null | undefined) => {
+const _formatDateTimeDisplay = (isoString: string | null | undefined) => {
     if (!isoString) return 'N/A';
     try {
         return new Date(isoString).toLocaleString('en-US', {

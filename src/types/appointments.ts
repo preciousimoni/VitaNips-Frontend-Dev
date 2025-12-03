@@ -4,7 +4,7 @@ import { UserInsurance } from './insurance';
 export interface Appointment {
     id: number;
     user: number;
-    doctor: number;
+    doctor: number | string;
     date: string;
     start_time: string;
     end_time: string;
@@ -16,7 +16,6 @@ export interface Appointment {
     patient_name?: string;
     patient_email?: string;
     doctor_name?: string;
-    doctor?: string | number;
     specialty?: string;
     user_insurance?: UserInsurance | null;
     user_insurance_id?: number | null;

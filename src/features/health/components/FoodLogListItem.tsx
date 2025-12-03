@@ -1,6 +1,6 @@
 import React from 'react';
 import { FoodLog } from '../../../types/healthLogs';
-import { PencilSquareIcon, TrashIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 interface FoodLogListItemProps {
     log: FoodLog;

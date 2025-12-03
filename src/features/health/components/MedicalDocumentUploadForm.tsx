@@ -44,8 +44,8 @@ const MedicalDocumentUploadForm: React.FC<MedicalDocumentUploadFormProps> = ({
         }
 
         const payload: MedicalDocumentUploadPayload = {
-            description: description || null,
-            document_type: documentType || null,
+            description: description || undefined,
+            document_type: documentType || undefined,
         };
 
         try {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Pharmacy } from '@types/pharmacy';
+import { Pharmacy } from '../../../types/pharmacy';
 import { MapPinIcon, PhoneIcon, ClockIcon, CheckBadgeIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 

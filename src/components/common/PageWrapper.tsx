@@ -19,6 +19,7 @@ interface PageWrapperProps {
     loadingText?: string;
     children: React.ReactNode;
     className?: string;
+    title?: string;
 }
 
 const PageWrapper: React.FC<PageWrapperProps> = ({

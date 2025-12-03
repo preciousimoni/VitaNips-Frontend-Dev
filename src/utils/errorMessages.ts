@@ -103,7 +103,7 @@ function parseDetailError(data: unknown): string | null {
       } else if (typeof value === 'object' && value !== null) {
         // Handle nested errors
         const nestedErrors = Object.entries(value as Record<string, unknown>)
-          .map(([k, v]) => Array.isArray(v) ? v.join(', ') : String(v))
+          .map(([_k, v]) => Array.isArray(v) ? v.join(', ') : String(v))
           .join(', ');
         if (nestedErrors) {
           fieldErrors.push(`${formatFieldName(field)}: ${nestedErrors}`);

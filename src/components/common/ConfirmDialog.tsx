@@ -13,6 +13,7 @@ interface ConfirmDialogProps {
     confirmButtonClass?: string;
     icon?: React.ReactNode;
     isLoading?: boolean;
+    isDangerous?: boolean;
 }
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({

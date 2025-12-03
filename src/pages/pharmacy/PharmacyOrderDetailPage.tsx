@@ -358,7 +358,7 @@ const PharmacyOrderDetailPage: React.FC = () => {
                         {order.status === 'pending' && (
                             <button 
                                 onClick={() => handleStatusUpdate('processing')} 
-                                disabled={isUpdating || (order.total_amount && !order.user_insurance && order.payment_status !== 'paid')} 
+                                disabled={isUpdating || (order.total_amount && !order.user_insurance && (order.payment_status !== 'paid' && order.payment_status))} 
                                 className='btn-primary py-1 px-3 text-sm bg-blue-600 hover:bg-blue-700 disabled:opacity-50'
                             >
                                 Mark as Processing
@@ -367,7 +367,7 @@ const PharmacyOrderDetailPage: React.FC = () => {
                         {order.status === 'processing' && (
                             <button 
                                 onClick={() => handleStatusUpdate('ready')} 
-                                disabled={isUpdating || (order.total_amount && !order.user_insurance && order.payment_status !== 'paid')} 
+                                disabled={isUpdating || (order.total_amount && !order.user_insurance && (order.payment_status !== 'paid' && order.payment_status))} 
                                 className='btn-primary py-1 px-3 text-sm bg-green-600 hover:bg-green-700 disabled:opacity-50'
                             >
                                 Mark as Ready
