@@ -4,9 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     XMarkIcon,
     CreditCardIcon,
-    LockClosedIcon,
-    CheckCircleIcon,
-    ExclamationCircleIcon
+    LockClosedIcon
 } from '@heroicons/react/24/outline';
 import Spinner from '../ui/Spinner';
 import toast from 'react-hot-toast';
@@ -30,7 +28,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     amount,
     paymentType,
     paymentForId,
-    title,
+    // title,
     description,
     onPaymentSuccess
 }) => {
@@ -41,6 +39,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     const [paymentReference, setPaymentReference] = useState<string | null>(null);
     const [authorizationUrl, setAuthorizationUrl] = useState<string | null>(null);
     const [commissionBreakdown, setCommissionBreakdown] = useState<CommissionBreakdown | null>(null);
+    const [cardNumber, setCardNumber] = useState<string>('');
+    const [cardExpiry, setCardExpiry] = useState<string>('');
 
     const formatCardNumber = (value: string) => {
         const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -65,15 +65,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         return v;
     };
 
-    const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const formatted = formatCardNumber(e.target.value);
-        setCardNumber(formatted);
-    };
+    // const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const formatted = formatCardNumber(e.target.value);
+    //     setCardNumber(formatted);
+    // };
 
-    const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const formatted = formatExpiry(e.target.value);
-        setCardExpiry(formatted);
-    };
+    // const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const formatted = formatExpiry(e.target.value);
+    //     setCardExpiry(formatted);
+    // };
 
     const handleInitializePayment = async () => {
         setIsInitializing(true);
@@ -150,11 +150,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             await handleInitializePayment();
         } else if (paymentMethod === 'bank_transfer') {
             // Show bank transfer details
-            toast.info('Please complete bank transfer. Order will be confirmed once payment is verified.');
+            toast('Please complete bank transfer. Order will be confirmed once payment is verified.');
             onClose();
         } else if (paymentMethod === 'ussd') {
             // Show USSD instructions
-            toast.info('Please complete USSD payment. Order will be confirmed once payment is verified.');
+            toast('Please complete USSD payment. Order will be confirmed once payment is verified.');
             onClose();
         }
     };

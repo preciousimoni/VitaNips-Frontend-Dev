@@ -198,7 +198,7 @@ export const submitDoctorApplication = async (payload: DoctorApplicationPayload)
   Object.entries(payload).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       if (key === 'specialty_ids' && Array.isArray(value)) {
-        value.forEach((id, index) => {
+        value.forEach((id) => {
           formData.append(`specialty_ids`, id.toString());
         });
       } else if (key === 'profile_picture' && value instanceof File) {

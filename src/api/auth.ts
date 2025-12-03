@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance';
-import { AuthTokens, DecodedToken } from '../types/auth';
+import { AuthTokens } from '../types/auth';
 import { User } from '../types/user';
 
 // Define types for Login and Register payloads locally if not shared

@@ -19,7 +19,7 @@ const queryClient = new QueryClient({
 });
 
 const AppContent: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  // const { isAuthenticated } = useAuth();
   useEffect(() => {
     // Initialize dynamic branding based on logo dominant color
     initBrandingFromLogo();

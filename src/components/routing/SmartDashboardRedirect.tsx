@@ -10,7 +10,7 @@ import { getDashboardRoute } from '../../utils/routing';
  * Otherwise redirects to role-specific dashboard
  */
 const SmartDashboardRedirect: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, isLoading } = useAuth();
+  const { user, loading: isLoading } = useAuth();
 
   if (isLoading) {
     return (

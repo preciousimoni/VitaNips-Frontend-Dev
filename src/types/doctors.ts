@@ -30,6 +30,7 @@ export interface Doctor {
     hospital_phone?: string;
     hospital_email?: string;
     hospital_contact_person?: string;
+    office_address?: string | null;
     submitted_at?: string;
     reviewed_at?: string;
     reviewed_by?: number;

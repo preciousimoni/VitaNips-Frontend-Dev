@@ -53,9 +53,14 @@ const ExerciseLogPage: React.FC = () => {
         try {
             const response = await getExerciseLogs(url);
             const newLogs = response.results;
-            const sorted = sortLogs(url ? [...prev, ...newLogs] : newLogs);
-            setLogs(sorted);
-            if (reset) calculateStats(sorted);
+            setLogs(currentLogs => {
+                const sorted = sortLogs(url ? [...currentLogs, ...newLogs] : newLogs);
+                if (reset) {
+                    // Calculate stats after state update
+                    setTimeout(() => calculateStats(sorted), 0);
+                }
+                return sorted;
+            });
             setNextPageUrl(response.next);
             if (reset || !url) setTotalCount(response.count);
         } catch (err) {

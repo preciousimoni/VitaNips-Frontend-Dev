@@ -79,3 +79,27 @@ export interface MedicalDocumentUploadPayload {
     document_type?: string;
     appointment?: number;
 }
+
+export interface Vaccination {
+    id: number;
+    user: number;
+    vaccine_name: string;
+    date_administered: string;
+    dose_number: number;
+    next_dose_date?: string | null;
+    administered_at?: string | null;
+    batch_number?: string | null;
+    notes?: string | null;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface VaccinationPayload {
+    vaccine_name: string;
+    date_administered: string;
+    dose_number?: number;
+    next_dose_date?: string | null;
+    administered_at?: string | null;
+    batch_number?: string | null;
+    notes?: string | null;
+}

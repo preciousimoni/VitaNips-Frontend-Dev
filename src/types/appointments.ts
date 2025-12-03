@@ -16,6 +16,8 @@ export interface Appointment {
     patient_name?: string;
     patient_email?: string;
     doctor_name?: string;
+    doctor?: string | number;
+    specialty?: string;
     user_insurance?: UserInsurance | null;
     user_insurance_id?: number | null;
     consultation_fee?: string | null;

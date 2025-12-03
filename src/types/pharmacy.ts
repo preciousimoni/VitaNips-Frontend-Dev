@@ -36,7 +36,9 @@ export interface MedicationOrderItem {
     prescription_item: number | null;
     medication?: Medication | null;
     medication_name: string;
+    medication_name_text?: string;
     dosage: string;
+    dosage_text?: string;
     quantity: number;
     price_per_unit: string | null;
     total_price: string | null;
@@ -55,6 +57,13 @@ export interface MedicationOrder {
         phone_number?: string;
     };
     pharmacy: number;
+    pharmacy_details?: {
+        id: number;
+        name: string;
+        address: string;
+        phone_number: string;
+        email?: string | null;
+    } | null;
     prescription: number | null;
     status: 'pending' | 'processing' | 'ready' | 'delivering' | 'completed' | 'cancelled';
     is_delivery: boolean;
@@ -71,6 +80,7 @@ export interface MedicationOrder {
     insurance_claim_generated?: boolean;
     payment_reference?: string | null;
     payment_status?: 'pending' | 'paid' | 'failed' | 'refunded';
+    patient_name?: string;
 }
 
 export interface MedicationOrderUpdatePayload {

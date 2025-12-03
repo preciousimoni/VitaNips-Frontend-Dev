@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosInstance from '../api/axiosInstance';
 import { Notification, NotificationPreferences } from '../types/notification';
+import toast from 'react-hot-toast';
 
 export const useNotifications = () => {
     const queryClient = useQueryClient();

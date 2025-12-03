@@ -45,6 +45,8 @@ export interface ExerciseLog {
     duration: number; // minutes
     calories_burned?: number | null;
     distance?: number | null; // kilometers
+    intensity?: 'low' | 'medium' | 'high' | null;
+    heart_rate_avg?: number | null;
     notes?: string | null;
     created_at: string;
 }
