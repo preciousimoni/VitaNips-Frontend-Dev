@@ -134,7 +134,7 @@ const DoctorDetailPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoadingReviews, setIsLoadingReviews] = useState<boolean>(true);
-  const [errorReviews, setErrorReviews] = useState<string | null>(null);
+  const [_errorReviews, setErrorReviews] = useState<string | null>(null);
 
   const [showBookingModal, setShowBookingModal] = useState<boolean>(false);
   

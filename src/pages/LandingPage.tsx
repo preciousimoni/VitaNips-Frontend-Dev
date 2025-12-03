@@ -25,7 +25,7 @@ import Header from '../components/layout/Header';
 const LandingPage: React.FC = () => {
     const { isAuthenticated } = useAuth();
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [_mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     
     const heroRef = useRef(null);
     const featuresRef = useRef(null);

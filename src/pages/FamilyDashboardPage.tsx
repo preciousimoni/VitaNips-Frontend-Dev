@@ -38,7 +38,7 @@ const FamilyDashboardPage: React.FC = () => {
     const [subscription, setSubscription] = useState<UserSubscription | null>(null);
     const [loading, setLoading] = useState(true);
     const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
-    const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+    const [_showAddMemberModal, setShowAddMemberModal] = useState(false);
 
     useEffect(() => {
         const loadData = async () => {

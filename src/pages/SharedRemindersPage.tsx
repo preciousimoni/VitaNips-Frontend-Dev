@@ -32,7 +32,7 @@ const SharedRemindersPage: React.FC = () => {
     const [subscription, setSubscription] = useState<UserSubscription | null>(null);
     const [loading, setLoading] = useState(true);
     const [sharedReminders, setSharedReminders] = useState<SharedReminder[]>([]);
-    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [_showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
         const loadData = async () => {

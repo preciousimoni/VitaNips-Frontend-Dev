@@ -487,27 +487,31 @@ const VideoCallRoom: React.FC<VideoCallRoomProps> = ({ appointmentId, onCallEnd 
 
         return () => {
             mounted = false;
-            if (roomRef.current) {
-                roomRef.current.disconnect();
+            // Get room reference before disconnecting
+            const currentRoom = roomRef.current;
+            if (currentRoom) {
+                // Detach all video tracks first
+                try {
+                    currentRoom.localParticipant.videoTracks.forEach((publication: any) => {
+                        if (publication.track) {
+                            try {
+                                publication.track.detach();
+                            } catch (e) {
+                                console.warn('Error detaching track during cleanup:', e);
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.warn('Error detaching tracks during cleanup:', e);
+                }
+                // Disconnect room
+                currentRoom.disconnect();
                 roomRef.current = null;
             }
             // Clean up local video safely
             const videoContainer = localVideoRef.current;
             if (videoContainer) {
                 try {
-                    // Detach all video tracks first
-                    const currentRoom: Room | null = roomRef.current;
-                    if (currentRoom) {
-                        currentRoom.localParticipant.videoTracks.forEach((publication: any) => {
-                            if (publication.track) {
-                                try {
-                                    publication.track.detach();
-                                } catch (e) {
-                                    console.warn('Error detaching track during cleanup:', e);
-                                }
-                            }
-                        });
-                    }
                     // Clear container using innerHTML (safer than removeChild)
                     videoContainer.innerHTML = '';
                 } catch (error) {
