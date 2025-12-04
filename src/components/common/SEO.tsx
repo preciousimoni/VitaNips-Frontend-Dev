@@ -13,9 +13,14 @@ export const SEO = ({
   description = 'VitaNips - Your Vitality, Our Priority',
   keywords = 'health, wellness, vitamins, supplements',
   image = '/logo.png',
-  url = 'https://vitanips.com',
+  url = 'https://vitanips.vercel.app/',
 }: SEOProps) => {
   const siteTitle = title === 'VitaNips' ? title : `${title} | VitaNips`;
+  
+  // Ensure image is an absolute URL
+  const absoluteImage = image.startsWith('http') 
+    ? image 
+    : `${url.replace(/\/$/, '')}${image.startsWith('/') ? '' : '/'}${image}`;
 
   return (
     <Helmet>
@@ -28,7 +33,7 @@ export const SEO = ({
       <meta property='og:type' content='website' />
       <meta property='og:title' content={siteTitle} />
       <meta property='og:description' content={description} />
-      <meta property='og:image' content={image} />
+      <meta property='og:image' content={absoluteImage} />
       <meta property='og:url' content={url} />
       <meta property='og:site_name' content='VitaNips' />
 
@@ -36,7 +41,7 @@ export const SEO = ({
       <meta name='twitter:card' content='summary_large_image' />
       <meta name='twitter:title' content={siteTitle} />
       <meta name='twitter:description' content={description} />
-      <meta name='twitter:image' content={image} />
+      <meta name='twitter:image' content={absoluteImage} />
       
       {/* Canonical URL */}
       <link rel='canonical' href={url} />
