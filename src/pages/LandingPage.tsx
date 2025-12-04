@@ -26,22 +26,37 @@ const LandingPage: React.FC = () => {
     const { isAuthenticated } = useAuth();
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
     const [_mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
     
     const heroRef = useRef(null);
     const featuresRef = useRef(null);
     const { scrollYProgress } = useScroll();
-    // const heroInView = useInView(heroRef, { once: false });
-    // const featuresInView = useInView(featuresRef, { once: false });
     
-    const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-    // const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+    // Better viewport settings for mobile - add margin so animations trigger earlier
+    // Using a larger margin on mobile to ensure animations trigger before elements are fully visible
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const viewportSettings = { once: true, margin: isMobile ? '-150px' : '-100px' };
+    
+    const y = prefersReducedMotion ? undefined : useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
 
     useEffect(() => {
+        // Check for reduced motion preference
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        setPrefersReducedMotion(mediaQuery.matches);
+        
+        const handleChange = (e: MediaQueryListEvent) => {
+            setPrefersReducedMotion(e.matches);
+        };
+        
+        mediaQuery.addEventListener('change', handleChange);
+        
         const handleMouseMove = (e: MouseEvent) => {
             setMousePosition({ x: e.clientX, y: e.clientY });
         };
         window.addEventListener('mousemove', handleMouseMove);
+        
         return () => {
+            mediaQuery.removeEventListener('change', handleChange);
             window.removeEventListener('mousemove', handleMouseMove);
         };
     }, []);
@@ -139,15 +154,15 @@ const LandingPage: React.FC = () => {
                 <section ref={heroRef} className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-br from-white via-green-50/30 to-blue-50/30">
                     {/* Animated Background Blobs */}
                     <motion.div 
-                        style={{ y }}
+                        style={prefersReducedMotion || !y ? {} : { y }}
                         className="absolute top-0 right-0 -z-10 w-[600px] h-[600px] bg-gradient-to-br from-primary/20 to-emerald-400/20 rounded-full blur-3xl animate-blob"
                     ></motion.div>
                     <motion.div 
-                        style={{ y: useTransform(scrollYProgress, [0, 1], ['0%', '30%']) }}
+                        style={prefersReducedMotion ? {} : { y: useTransform(scrollYProgress, [0, 1], ['0%', '30%']) }}
                         className="absolute bottom-0 left-0 -z-10 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl animate-blob animation-delay-2000"
                     ></motion.div>
                     <motion.div 
-                        style={{ y: useTransform(scrollYProgress, [0, 1], ['0%', '40%']) }}
+                        style={prefersReducedMotion ? {} : { y: useTransform(scrollYProgress, [0, 1], ['0%', '40%']) }}
                         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[400px] h-[400px] bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-blob animation-delay-4000"
                     ></motion.div>
                     
@@ -194,12 +209,12 @@ const LandingPage: React.FC = () => {
                             <motion.div 
                                 initial={{ opacity: 0, x: -50 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.8, ease: "easeOut" }}
+                                transition={{ duration: prefersReducedMotion ? 0 : 0.8, ease: "easeOut" }}
                             >
                                 <motion.div 
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.2 }}
+                                    transition={{ delay: prefersReducedMotion ? 0 : 0.2, duration: prefersReducedMotion ? 0 : 0.5 }}
                                     className="inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-primary/10 to-emerald-500/10 border border-primary/20 text-primary font-bold text-sm mb-6 shadow-lg shadow-primary/5"
                                 >
                                     <SparklesIcon className="h-5 w-5 mr-2 animate-pulse" />
@@ -213,7 +228,7 @@ const LandingPage: React.FC = () => {
                                 <motion.h1 
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.3 }}
+                                    transition={{ delay: prefersReducedMotion ? 0 : 0.3, duration: prefersReducedMotion ? 0 : 0.6 }}
                                     className="text-5xl lg:text-7xl font-black text-gray-900 leading-tight mb-6"
                                 >
                                     Your Health, <br />
@@ -232,7 +247,7 @@ const LandingPage: React.FC = () => {
                                 <motion.p 
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    transition={{ delay: 0.5 }}
+                                    transition={{ delay: prefersReducedMotion ? 0 : 0.5, duration: prefersReducedMotion ? 0 : 0.6 }}
                                     className="text-xl text-gray-600 mb-8 leading-relaxed max-w-lg"
                                 >
                                     Experience the <span className="font-bold text-primary">future of healthcare</span> management. Connect with top doctors, track your vitals, and manage prescriptions—all in one beautiful, secure app.
@@ -241,7 +256,7 @@ const LandingPage: React.FC = () => {
                                 <motion.div 
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.6 }}
+                                    transition={{ delay: prefersReducedMotion ? 0 : 0.6, duration: prefersReducedMotion ? 0 : 0.6 }}
                                     className="flex flex-col sm:flex-row gap-4"
                                 >
                                     {isAuthenticated ? (
@@ -299,7 +314,7 @@ const LandingPage: React.FC = () => {
                                 <motion.div 
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    transition={{ delay: 0.8 }}
+                                    transition={{ delay: prefersReducedMotion ? 0 : 0.8, duration: prefersReducedMotion ? 0 : 0.6 }}
                                     className="mt-10 flex flex-wrap items-center gap-6 text-sm font-medium text-gray-600"
                                 >
                                     {[
@@ -321,12 +336,12 @@ const LandingPage: React.FC = () => {
                                 </motion.div>
                             </motion.div>
 
-                            <motion.div 
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.8, delay: 0.2 }}
-                                className="relative"
-                            >
+                                <motion.div 
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: prefersReducedMotion ? 0 : 0.8, delay: prefersReducedMotion ? 0 : 0.2 }}
+                                    className="relative"
+                                >
                                 {/* Decorative Gradient Orbs */}
                                 <motion.div
                                     animate={{ 
@@ -346,7 +361,8 @@ const LandingPage: React.FC = () => {
                                 ></motion.div>
                                 
                                 <motion.div 
-                                    whileHover={{ rotate: 0, scale: 1.02 }}
+                                    whileHover={prefersReducedMotion ? {} : { rotate: 0, scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                     className="relative z-10 bg-white rounded-3xl shadow-2xl shadow-primary/20 border border-gray-100 overflow-hidden transform rotate-2 transition-all duration-500"
                                 >
                                     <div className="bg-gradient-to-r from-gray-50 to-gray-100/50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
@@ -391,7 +407,8 @@ const LandingPage: React.FC = () => {
                                             ></motion.div>
                                             <div className="flex items-center relative z-10">
                                                 <motion.div 
-                                                    whileHover={{ scale: 1.1, rotate: 360 }}
+                                                    whileHover={prefersReducedMotion ? {} : { scale: 1.1, rotate: 360 }}
+                                                    whileTap={{ scale: 0.95 }}
                                                     transition={{ duration: 0.5 }}
                                                     className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white shadow-lg"
                                                 >
@@ -418,7 +435,8 @@ const LandingPage: React.FC = () => {
                                             className="flex space-x-4"
                                         >
                                             <motion.div 
-                                                whileHover={{ scale: 1.05, y: -5 }}
+                                                whileHover={prefersReducedMotion ? {} : { scale: 1.05, y: -5 }}
+                                                whileTap={{ scale: 0.98, y: 0 }}
                                                 className="flex-1 bg-gradient-to-br from-red-50 to-pink-50 p-4 rounded-2xl border border-red-100 shadow-sm hover:shadow-md transition-shadow"
                                             >
                                                 <div className="flex justify-between items-start mb-2">
@@ -440,7 +458,8 @@ const LandingPage: React.FC = () => {
                                                 </motion.div>
                                             </motion.div>
                                             <motion.div 
-                                                whileHover={{ scale: 1.05, y: -5 }}
+                                                whileHover={prefersReducedMotion ? {} : { scale: 1.05, y: -5 }}
+                                                whileTap={{ scale: 0.98, y: 0 }}
                                                 className="flex-1 bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-100 shadow-sm hover:shadow-md transition-shadow"
                                             >
                                                 <div className="flex justify-between items-start mb-2">
@@ -467,7 +486,8 @@ const LandingPage: React.FC = () => {
                                         >
                                             <div className="flex items-center">
                                                 <motion.img 
-                                                    whileHover={{ scale: 1.1, rotate: 5 }}
+                                                    whileHover={prefersReducedMotion ? {} : { scale: 1.1, rotate: 5 }}
+                                                    whileTap={{ scale: 0.95 }}
                                                     src="https://i.pravatar.cc/100?img=5" 
                                                     alt="Doc" 
                                                     className="w-10 h-10 rounded-full border-2 border-white shadow-md" 
@@ -525,20 +545,22 @@ const LandingPage: React.FC = () => {
                                     key={index}
                                     initial={{ opacity: 0, y: 30, scale: 0.9 }}
                                     whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: stat.delay, duration: 0.5 }}
-                                    whileHover={{ scale: 1.1, y: -5 }}
+                                    viewport={viewportSettings}
+                                    transition={{ delay: prefersReducedMotion ? 0 : stat.delay, duration: prefersReducedMotion ? 0 : 0.5 }}
+                                    whileHover={prefersReducedMotion ? {} : { scale: 1.1, y: -5 }}
+                                    whileTap={{ scale: 0.95, y: 0 }}
                                     className="text-center px-4 relative group"
                                 >
                                     <motion.div
                                         className="absolute inset-0 bg-white/5 rounded-2xl blur-xl"
-                                        whileHover={{ scale: 1.2 }}
+                                        whileHover={prefersReducedMotion ? {} : { scale: 1.2 }}
+                                        whileTap={{ scale: 0.95 }}
                                     ></motion.div>
                                     <motion.div 
                                         initial={{ scale: 0 }}
                                         whileInView={{ scale: 1 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: stat.delay + 0.2, type: "spring" }}
+                                        viewport={viewportSettings}
+                                        transition={{ delay: prefersReducedMotion ? 0 : stat.delay + 0.2, type: prefersReducedMotion ? "tween" : "spring", duration: prefersReducedMotion ? 0 : undefined }}
                                         className="text-4xl md:text-6xl font-black text-white mb-2 relative"
                                     >
                                         {stat.number}
@@ -548,8 +570,8 @@ const LandingPage: React.FC = () => {
                                         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-white rounded-full"
                                         initial={{ scaleX: 0 }}
                                         whileInView={{ scaleX: 1 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: stat.delay + 0.4 }}
+                                        viewport={viewportSettings}
+                                        transition={{ delay: prefersReducedMotion ? 0 : stat.delay + 0.4, duration: prefersReducedMotion ? 0 : 0.5 }}
                                     ></motion.div>
                                 </motion.div>
                             ))}
@@ -575,7 +597,8 @@ const LandingPage: React.FC = () => {
                         <motion.div 
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
+                            viewport={viewportSettings}
+                            transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
                             className="text-center max-w-3xl mx-auto mb-16"
                         >
                             <motion.div
@@ -599,9 +622,10 @@ const LandingPage: React.FC = () => {
                                     key={index}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: feature.delay, duration: 0.5 }}
-                                    whileHover={{ y: -10, scale: 1.02 }}
+                                    viewport={viewportSettings}
+                                    transition={{ delay: prefersReducedMotion ? 0 : feature.delay, duration: prefersReducedMotion ? 0 : 0.5 }}
+                                    whileHover={prefersReducedMotion ? {} : { y: -10, scale: 1.02 }}
+                                    whileTap={{ scale: 0.98, y: 0 }}
                                     className="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 group relative overflow-hidden"
                                 >
                                     {/* Gradient Overlay on Hover */}
@@ -610,8 +634,9 @@ const LandingPage: React.FC = () => {
                                     ></motion.div>
                                     
                                     <motion.div 
-                                        whileHover={{ rotate: 360, scale: 1.1 }}
-                                        transition={{ duration: 0.6 }}
+                                        whileHover={prefersReducedMotion ? {} : { rotate: 360, scale: 1.1 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
                                         className={`w-16 h-16 rounded-2xl ${feature.color} flex items-center justify-center mb-6 shadow-lg relative z-10`}
                                     >
                                         <feature.icon className="h-8 w-8" />
@@ -623,8 +648,8 @@ const LandingPage: React.FC = () => {
                                     <motion.div
                                         initial={{ scale: 0 }}
                                         whileInView={{ scale: 1 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: feature.delay + 0.3 }}
+                                        viewport={viewportSettings}
+                                        transition={{ delay: prefersReducedMotion ? 0 : feature.delay + 0.3, duration: prefersReducedMotion ? 0 : 0.5 }}
                                         className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-2xl"
                                     ></motion.div>
                                 </motion.div>
@@ -645,12 +670,14 @@ const LandingPage: React.FC = () => {
                             <motion.div
                                 initial={{ opacity: 0, x: -50 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
+                                viewport={viewportSettings}
+                                transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
                             >
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
+                                    viewport={viewportSettings}
+                                    transition={{ duration: prefersReducedMotion ? 0 : 0.5 }}
                                     className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-bold text-sm mb-6"
                                 >
                                     HOW IT WORKS
@@ -664,14 +691,14 @@ const LandingPage: React.FC = () => {
                                             key={index}
                                             initial={{ opacity: 0, x: -30 }}
                                             whileInView={{ opacity: 1, x: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: index * 0.2 }}
-                                            whileHover={{ x: 10 }}
+                                            viewport={viewportSettings}
+                                            transition={{ delay: prefersReducedMotion ? 0 : index * 0.2, duration: prefersReducedMotion ? 0 : 0.5 }}
+                                            whileHover={prefersReducedMotion ? {} : { x: 10 }}
                                             className="flex gap-6 group"
                                         >
                                             <motion.div 
-                                                whileHover={{ scale: 1.1, rotate: 360 }}
-                                                transition={{ duration: 0.6 }}
+                                                whileHover={prefersReducedMotion ? {} : { scale: 1.1, rotate: 360 }}
+                                                transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
                                                 className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 text-white flex items-center justify-center font-black text-xl shadow-xl shadow-primary/20"
                                             >
                                                 {step.number}
@@ -682,8 +709,8 @@ const LandingPage: React.FC = () => {
                                                     <motion.div
                                                         initial={{ scale: 0 }}
                                                         whileInView={{ scale: 1 }}
-                                                        viewport={{ once: true }}
-                                                        transition={{ delay: index * 0.2 + 0.3 }}
+                                                        viewport={viewportSettings}
+                                                        transition={{ delay: prefersReducedMotion ? 0 : index * 0.2 + 0.3, duration: prefersReducedMotion ? 0 : 0.5 }}
                                                         className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center"
                                                     >
                                                         <step.icon className="h-5 w-5 text-primary" />
@@ -697,8 +724,8 @@ const LandingPage: React.FC = () => {
                                 <motion.div 
                                     initial={{ opacity: 0 }}
                                     whileInView={{ opacity: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: 0.8 }}
+                                    viewport={viewportSettings}
+                                    transition={{ delay: prefersReducedMotion ? 0 : 0.8, duration: prefersReducedMotion ? 0 : 0.6 }}
                                     className="mt-12"
                                 >
                                     <Link to="/register" className="inline-flex items-center text-primary font-bold text-lg hover:gap-4 gap-2 transition-all group">
@@ -712,12 +739,13 @@ const LandingPage: React.FC = () => {
                                     </Link>
                                 </motion.div>
                             </motion.div>
-                            <motion.div 
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                className="relative"
-                            >
+                                <motion.div 
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={viewportSettings}
+                                    transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
+                                    className="relative"
+                                >
                                 <motion.div
                                     animate={{ 
                                         scale: [1, 1.2, 1],
@@ -727,7 +755,9 @@ const LandingPage: React.FC = () => {
                                     className="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-500/20 rounded-full blur-3xl"
                                 ></motion.div>
                                 <motion.img 
-                                    whileHover={{ rotate: 0, scale: 1.05 }}
+                                    whileHover={prefersReducedMotion ? {} : { rotate: 0, scale: 1.05 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
                                     src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
                                     alt="App usage" 
                                     className="relative rounded-3xl shadow-2xl border-8 border-white transform -rotate-3 transition-all duration-500"
@@ -802,9 +832,10 @@ const LandingPage: React.FC = () => {
                                     key={index}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: index * 0.1 }}
-                                    whileHover={{ y: -10, scale: 1.02 }}
+                                    viewport={viewportSettings}
+                                    transition={{ delay: prefersReducedMotion ? 0 : index * 0.1, duration: prefersReducedMotion ? 0 : 0.5 }}
+                                    whileHover={prefersReducedMotion ? {} : { y: -10, scale: 1.02 }}
+                                    whileTap={{ scale: 0.98, y: 0 }}
                                     className="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all border border-gray-100 relative overflow-hidden group"
                                 >
                                     <motion.div
@@ -817,8 +848,8 @@ const LandingPage: React.FC = () => {
                                                 key={i}
                                                 initial={{ scale: 0, rotate: -180 }}
                                                 whileInView={{ scale: 1, rotate: 0 }}
-                                                viewport={{ once: true }}
-                                                transition={{ delay: index * 0.1 + i * 0.05 }}
+                                                viewport={viewportSettings}
+                                                transition={{ delay: prefersReducedMotion ? 0 : index * 0.1 + i * 0.05, duration: prefersReducedMotion ? 0 : 0.5 }}
                                             >
                                                 <StarIconSolid className="h-5 w-5 text-yellow-400" />
                                             </motion.div>
@@ -831,7 +862,8 @@ const LandingPage: React.FC = () => {
                                     
                                     <div className="flex items-center gap-4 relative z-10">
                                         <motion.img
-                                            whileHover={{ scale: 1.1, rotate: 5 }}
+                                            whileHover={prefersReducedMotion ? {} : { scale: 1.1, rotate: 5 }}
+                                            whileTap={{ scale: 0.95 }}
                                             src={testimonial.image}
                                             alt={testimonial.name}
                                             className="w-12 h-12 rounded-full border-2 border-primary/20 shadow-md"
@@ -876,7 +908,8 @@ const LandingPage: React.FC = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
+                            viewport={viewportSettings}
+                            transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
                         >
                             <motion.div
                                 initial={{ scale: 0 }}
@@ -942,8 +975,8 @@ const LandingPage: React.FC = () => {
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 whileInView={{ opacity: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 0.6 }}
+                                viewport={viewportSettings}
+                                transition={{ delay: prefersReducedMotion ? 0 : 0.6, duration: prefersReducedMotion ? 0 : 0.6 }}
                                 className="mt-12 flex flex-wrap items-center justify-center gap-8 text-white/80 text-sm"
                             >
                                 {[
@@ -955,8 +988,8 @@ const LandingPage: React.FC = () => {
                                         key={index}
                                         initial={{ opacity: 0, y: 10 }}
                                         whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: 0.7 + index * 0.1 }}
+                                        viewport={viewportSettings}
+                                        transition={{ delay: prefersReducedMotion ? 0 : 0.7 + index * 0.1, duration: prefersReducedMotion ? 0 : 0.5 }}
                                         className="flex items-center gap-2"
                                     >
                                         <item.icon className="h-5 w-5" />
