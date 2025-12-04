@@ -1,4 +1,3 @@
-```
 // src/main.tsx
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -16,4 +15,3 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </HelmetProvider>
   </React.StrictMode>,
 );
-```
