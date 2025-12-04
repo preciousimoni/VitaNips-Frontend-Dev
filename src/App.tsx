@@ -18,6 +18,10 @@ const queryClient = new QueryClient({
   },
 });
 
+import { SEO } from './components/common/SEO';
+
+// ... existing code ...
+
 const AppContent: React.FC = () => {
   // const { isAuthenticated } = useAuth();
   useEffect(() => {
@@ -26,6 +30,7 @@ const AppContent: React.FC = () => {
   }, []);
   return (
       <>
+         <SEO />
          <AppRouter />
           <Toaster position="top-center" reverseOrder={false} />
       </>
