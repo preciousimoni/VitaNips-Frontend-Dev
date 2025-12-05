@@ -22,6 +22,10 @@ import Footer from '../components/layout/Footer';
 
 import Header from '../components/layout/Header';
 
+import testimonial1 from '../assets/images/testimonial-1.png';
+import testimonial2 from '../assets/images/testimonial-2.png';
+import testimonial3 from '../assets/images/testimonial-3.png';
+
 const LandingPage: React.FC = () => {
     const { isAuthenticated } = useAuth();
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -123,21 +127,21 @@ const LandingPage: React.FC = () => {
         {
             name: 'Sarah Johnson',
             role: 'Patient',
-            image: 'https://i.pravatar.cc/100?img=1',
+            image: testimonial1,
             rating: 5,
             text: 'VitaNips has completely transformed how I manage my health. The reminders are a lifesaver!'
         },
         {
             name: 'Michael Chen',
             role: 'Chronic Care Patient',
-            image: 'https://i.pravatar.cc/100?img=3',
+            image: testimonial2,
             rating: 5,
             text: 'Being able to track all my vitals and medications in one place gives me peace of mind.'
         },
         {
             name: 'Dr. Emily Rodriguez',
             role: 'Healthcare Provider',
-            image: 'https://i.pravatar.cc/100?img=5',
+            image: testimonial3,
             rating: 5,
             text: 'As a doctor, I recommend VitaNips to all my patients. It improves compliance significantly.'
         }
