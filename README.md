@@ -1,55 +1,75 @@
-# React + TypeScript + Vite
+# VitaNips Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![VitaNips Landing Page](public/screenshots/landing-hero.png)
 
-Currently, two official plugins are available:
+VitaNips is a comprehensive health management application designed to empower users to take control of their well-being. This frontend repository contains the user interface for the VitaNips platform, built with modern web technologies to ensure a fast, responsive, and accessible experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+VitaNips offers a wide range of features to support your health journey:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+*   **Dashboard**: A centralized hub for your health overview, upcoming appointments, and daily tasks.
+*   **Appointments**: Easy scheduling and management of doctor appointments, including video call integration.
+*   **Health Tracking**: Log and monitor vital stats, sleep, water intake, exercise, and nutrition.
+*   **Medical Records**: Secure storage and access to your medical documents, prescriptions, and vaccination history.
+*   **Doctor Search**: Find and connect with healthcare professionals based on specialty and location.
+*   **Emergency Support**: Quick access to emergency contacts and services.
+*   **Family Health**: Manage health profiles for family members.
+*   **Reminders**: Automated medication and appointment reminders.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 🛠️ Tech Stack
+
+This project is built using a robust and modern technology stack:
+
+*   **Framework**: [React](https://react.dev/) (v19)
+*   **Build Tool**: [Vite](https://vitejs.dev/)
+*   **Language**: [TypeScript](https://www.typescriptlang.org/)
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+*   **State Management & Data Fetching**: [TanStack Query (React Query)](https://tanstack.com/query/latest)
+*   **Routing**: [React Router](https://reactrouter.com/)
+*   **Forms**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+*   **Maps**: [Leaflet](https://leafletjs.com/) / [React Leaflet](https://react-leaflet.js.org/)
+*   **Charts**: [Recharts](https://recharts.org/)
+*   **Authentication**: Firebase Auth
+*   **Internationalization**: i18next
+
+## 📦 Installation & Getting Started
+
+Follow these steps to set up the project locally:
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd VitaNips-Frontend-Dev
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Environment Setup:**
+    Create a `.env` file in the root directory and configure your environment variables (Firebase config, API endpoints, etc.).
+
+4.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:5173` (or the port shown in your terminal).
+
+5.  **Build for production:**
+    ```bash
+    npm run build
+    ```
+
+## 🧪 Testing
+
+Run the test suite to ensure everything is working correctly:
+
+```bash
+npm run test
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📄 License
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
-# VitaNips
+This project is licensed under the MIT License.
