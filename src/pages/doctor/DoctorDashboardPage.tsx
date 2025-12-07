@@ -11,7 +11,8 @@ import {
   VideoCameraIcon,
   SparklesIcon,
   ChartBarIcon,
-  BellAlertIcon
+  BellAlertIcon,
+  BanknotesIcon
 } from '@heroicons/react/24/outline';
 import { 
   AreaChart, 
@@ -780,6 +781,25 @@ const DoctorDashboardPage: React.FC = () => {
                     <span className="font-bold text-gray-900 group-hover:text-purple-700 text-lg">Availability</span>
                   </div>
                   <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-purple-500" />
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ x: 5, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/doctor/bank-details')}
+                  className="w-full flex items-center justify-between p-5 bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 rounded-2xl transition-all group border-2 border-transparent hover:border-emerald-200 shadow-sm hover:shadow-md"
+                >
+                  <div className="flex items-center space-x-4">
+                    <motion.div
+                      whileHover={{ rotate: 360, scale: 1.1 }}
+                      transition={{ duration: 0.6 }}
+                      className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl shadow-lg"
+                    >
+                      <BanknotesIcon className="h-6 w-6 text-white" />
+                    </motion.div>
+                    <span className="font-bold text-gray-900 group-hover:text-emerald-700 text-lg">Bank Details</span>
+                  </div>
+                  <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-emerald-500" />
                 </motion.button>
               </div>
             </motion.div>

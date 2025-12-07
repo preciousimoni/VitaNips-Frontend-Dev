@@ -123,9 +123,9 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
 
   // Pharmacy staff navigation items
   const pharmacyNavItems = [
-    { name: 'Dashboard', href: '/portal/dashboard', icon: ChartBarIcon, shortName: 'Dashboard' },
-    { name: 'Orders', href: '/portal/orders', icon: ShoppingBagIcon, shortName: 'Orders' },
-    { name: 'Inventory', href: '/portal/inventory', icon: DocumentTextIcon, shortName: 'Inventory' },
+    { name: 'Dashboard', href: '/pharmacy/dashboard', icon: ChartBarIcon, shortName: 'Dashboard' },
+    { name: 'Orders', href: '/pharmacy/orders', icon: ShoppingBagIcon, shortName: 'Orders' },
+    { name: 'Inventory', href: '/pharmacy/inventory', icon: DocumentTextIcon, shortName: 'Inventory' },
   ];
 
   const emergencyNavItem = { name: 'Emergency', href: '/emergency', icon: ShieldExclamationIcon, shortName: 'SOS' };

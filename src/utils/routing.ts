@@ -27,7 +27,7 @@ export const getDashboardRoute = (user: User | null): string => {
 
   // Pharmacy staff get pharmacy dashboard
   if (user.is_pharmacy_staff && user.works_at_pharmacy) {
-    return '/portal/dashboard';
+    return '/pharmacy/dashboard';
   }
 
   // Default to patient dashboard

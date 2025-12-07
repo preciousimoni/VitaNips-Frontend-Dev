@@ -238,7 +238,7 @@ const PharmacyOrderDetailPage: React.FC = () => {
 
     return (
         <div>
-            <Link to="/portal/orders" className="inline-flex items-center text-primary hover:underline mb-4">
+            <Link to="/pharmacy/orders" className="inline-flex items-center text-primary hover:underline mb-4">
                 <ArrowLeftIcon className="h-4 w-4 mr-1" /> Back to Orders
             </Link>
             <h1 className="text-2xl font-bold text-gray-800 mb-4">Order Details #{order.id}</h1>

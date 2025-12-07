@@ -109,6 +109,9 @@ export interface SubscriptionStatus {
   plan: 'free' | 'premium' | 'family';
   plan_name?: string;
   expires_at?: string;
+  remaining_free_appointments?: number;
+  total_appointments?: number;
+  free_limit?: number;
 }
 
 /**
@@ -272,3 +275,60 @@ export const cancelPremiumSOS = async (): Promise<{
   return response.data;
 };
 
+
+// ============ PHARMACY SUBSCRIPTION APIs ============
+
+export interface PharmacySubscriptionRecord {
+  id: number;
+  plan: {
+    id: number;
+    name: string;
+    tier: string;
+    description: string;
+    annual_price: string;
+  };
+  status: 'active' | 'cancelled' | 'expired' | 'past_due';
+  current_period_start: string;
+  current_period_end: string;
+  auto_renew: boolean;
+  is_active: boolean;
+}
+
+/**
+ * Get pharmacy subscription
+ */
+export const getPharmacySubscription = async (): Promise<PharmacySubscriptionRecord | null> => {
+  try {
+    const response = await axiosInstance.get<PharmacySubscriptionRecord>(
+      '/payments/subscriptions/pharmacy/'
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.status === 404 || (error.response?.data?.status === 'inactive')) {
+      return null;
+    }
+    throw error;
+  }
+};
+
+/**
+ * Renew pharmacy subscription
+ */
+export interface RenewPharmacySubscriptionResponse {
+  subscription_id: number;
+  plan: string;
+  amount: string;
+  payment_url: string;
+  reference: string;
+}
+
+/**
+ * Renew pharmacy subscription
+ */
+export const renewPharmacySubscription = async (planId: number): Promise<RenewPharmacySubscriptionResponse> => {
+  const response = await axiosInstance.post<RenewPharmacySubscriptionResponse>(
+    '/payments/subscriptions/pharmacy/',
+    { plan_id: planId }
+  );
+  return response.data;
+};

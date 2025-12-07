@@ -23,6 +23,8 @@ import { getUserInsurances } from '../../../api/insurance';
 import { UserInsurance } from '../../../types/insurance';
 import PaymentModal from '../../../components/payment/PaymentModal';
 import UpgradeModal from '../../../components/common/UpgradeModal';
+import { checkSubscriptionStatus, SubscriptionStatus } from '../../../api/payments';
+import { Link } from 'react-router-dom';
 
 interface AppointmentBookingFormProps {
     doctorId: number;
@@ -71,6 +73,8 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
     const [pendingAppointmentId, setPendingAppointmentId] = useState<number | null>(null);
     const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
     const [upgradeModalData, setUpgradeModalData] = useState<{ limit?: number; message?: string } | null>(null);
+    const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null);
+    const [checkingSubscription, setCheckingSubscription] = useState<boolean>(true);
 
     // React Hook Form setup
     const {
@@ -122,6 +126,21 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
         };
         fetchInsurances();
     }, [setValue]);
+
+    // Fetch subscription status
+    useEffect(() => {
+        const fetchSubscription = async () => {
+            try {
+                const status = await checkSubscriptionStatus();
+                setSubscriptionStatus(status);
+            } catch (error) {
+                console.error("Failed to check subscription status:", error);
+            } finally {
+                setCheckingSubscription(false);
+            }
+        };
+        fetchSubscription();
+    }, []);
 
     useEffect(() => {
         if (selectedDate && availability.length > 0) {
@@ -408,6 +427,54 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                 )}
             </div>
 
+            {/* Subscription Status Banner */}
+            {!checkingSubscription && subscriptionStatus && !subscriptionStatus.has_premium && (
+                <div className={`rounded-xl p-4 border ${
+                    (subscriptionStatus.remaining_free_appointments || 0) > 0 
+                        ? 'bg-blue-50 border-blue-100' 
+                        : 'bg-orange-50 border-orange-100'
+                }`}>
+                    <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-lg ${
+                            (subscriptionStatus.remaining_free_appointments || 0) > 0 
+                                ? 'bg-blue-100 text-blue-600' 
+                                : 'bg-orange-100 text-orange-600'
+                        }`}>
+                            <ShieldCheckIcon className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1">
+                            <h4 className={`font-bold text-sm ${
+                                (subscriptionStatus.remaining_free_appointments || 0) > 0 
+                                    ? 'text-blue-900' 
+                                    : 'text-orange-900'
+                            }`}>
+                                {(subscriptionStatus.remaining_free_appointments || 0) > 0 
+                                    ? 'Free Plan Access' 
+                                    : 'Consultation Limit Reached'}
+                            </h4>
+                            <p className={`text-xs mt-1 ${
+                                (subscriptionStatus.remaining_free_appointments || 0) > 0 
+                                    ? 'text-blue-700' 
+                                    : 'text-orange-700'
+                            }`}>
+                                {(subscriptionStatus.remaining_free_appointments || 0) > 0 
+                                    ? `You have ${subscriptionStatus.remaining_free_appointments} free consultation${(subscriptionStatus.remaining_free_appointments || 0) !== 1 ? 's' : ''} remaining.` 
+                                    : 'You have used all your free consultations. Upgrade to Premium for unlimited access.'}
+                            </p>
+                            
+                            {(subscriptionStatus.remaining_free_appointments || 0) === 0 && (
+                                <Link 
+                                    to="/subscription" 
+                                    className="inline-block mt-3 text-xs font-bold text-white bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg transition-colors"
+                                >
+                                    Upgrade Now
+                                </Link>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Error Display */}
             {error && (
                 <motion.div
@@ -663,7 +730,12 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                 </button>
                 <button 
                     type="submit" 
-                    disabled={isSubmitting || !selectedTime || availableSlots.length === 0}
+                    disabled={
+                        isSubmitting || 
+                        !selectedTime || 
+                        availableSlots.length === 0 || 
+                        (!!(!checkingSubscription && subscriptionStatus && !subscriptionStatus.has_premium && (subscriptionStatus.remaining_free_appointments || 0) <= 0))
+                    }
                     className="btn-primary inline-flex items-center px-6 py-2 text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                     {isSubmitting ? (

@@ -152,7 +152,7 @@ const PharmacyOrderListPage: React.FC = () => {
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <motion.button
-                        onClick={() => navigate('/portal/dashboard')}
+                        onClick={() => navigate('/pharmacy/dashboard')}
                         whileHover={{ scale: 1.05, x: -5 }}
                         whileTap={{ scale: 0.95 }}
                         className="inline-flex items-center gap-2 text-white/90 hover:text-white mb-6 font-bold"

@@ -45,6 +45,9 @@ import DoctorDashboardPage from '../pages/doctor/DoctorDashboardPage';
 import DoctorPrescriptionWorkspacePage from '../pages/doctor/DoctorPrescriptionWorkspacePage';
 import ManageAvailabilityPage from '../pages/doctor/ManageAvailabilityPage';
 import DoctorApplicationPage from '../pages/doctor/DoctorApplicationPage';
+import DoctorBankDetailsPage from '../pages/doctor/DoctorBankDetailsPage';
+import PharmacyBankDetailsPage from '../pages/pharmacy/PharmacyBankDetailsPage';
+import PharmacySubscriptionPage from '../pages/pharmacy/PharmacySubscriptionPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import AdminDoctorsPage from '../pages/admin/AdminDoctorsPage';
@@ -107,7 +110,7 @@ const ProtectedRoute: React.FC = () => {
   // Don't redirect pharmacy staff from order detail pages - they should be able to view orders
   // Only redirect if they're trying to access the main dashboard
   if (user?.is_pharmacy_staff && location.pathname === '/dashboard') {
-    return <Navigate to="/portal/dashboard" replace />;
+    return <Navigate to="/pharmacy/dashboard" replace />;
   }
 
   return (
@@ -226,10 +229,12 @@ const AppRouter: React.FC = () => {
         </Route>
 
         <Route element={<PharmacyRoute />}>
-          <Route path="/portal/dashboard" element={<PharmacyDashboardPage />} />
-          <Route path="/portal/orders" element={<PharmacyOrderListPage />} />
-          <Route path="/portal/orders/:orderId" element={<PharmacyOrderDetailPage />} />
-          <Route path="/portal/inventory" element={<PharmacyInventoryPage />} />
+          <Route path="/pharmacy/dashboard" element={<PharmacyDashboardPage />} />
+          <Route path="/pharmacy/orders" element={<PharmacyOrderListPage />} />
+          <Route path="/pharmacy/orders/:orderId" element={<PharmacyOrderDetailPage />} />
+          <Route path="/pharmacy/inventory" element={<PharmacyInventoryPage />} />
+          <Route path="/pharmacy/bank-details" element={<PharmacyBankDetailsPage />} />
+          <Route path="/pharmacy/subscription" element={<PharmacySubscriptionPage />} />
         </Route>
 
         <Route element={<DoctorRoute />}>
@@ -237,6 +242,7 @@ const AppRouter: React.FC = () => {
           <Route path="/doctor/prescriptions" element={<DoctorPrescriptionWorkspacePage />} />
           <Route path="/doctor/availability" element={<ManageAvailabilityPage />} />
           <Route path="/doctor/application" element={<DoctorApplicationPage />} />
+          <Route path="/doctor/bank-details" element={<DoctorBankDetailsPage />} />
         </Route>
 
         <Route element={<AdminRoute />}>

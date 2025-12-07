@@ -13,7 +13,9 @@ import {
   ChartBarIcon,
   TruckIcon,
   CubeIcon,
-  CurrencyDollarIcon
+  CurrencyDollarIcon,
+  BanknotesIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import { 
   AreaChart, 
@@ -227,7 +229,7 @@ const PharmacyDashboardPage: React.FC = () => {
       icon: ExclamationCircleIcon,
       gradient: 'from-orange-500 to-amber-600',
       description: 'Awaiting processing',
-      href: '/portal/orders?status=pending'
+      href: '/pharmacy/orders?status=pending'
     },
     {
       title: 'Processing',
@@ -235,7 +237,7 @@ const PharmacyDashboardPage: React.FC = () => {
       icon: ClockIcon,
       gradient: 'from-amber-500 to-yellow-600',
       description: 'In preparation',
-      href: '/portal/orders?status=processing'
+      href: '/pharmacy/orders?status=processing'
     },
     {
       title: 'Ready for Pickup',
@@ -243,7 +245,7 @@ const PharmacyDashboardPage: React.FC = () => {
       icon: CubeIcon,
       gradient: 'from-blue-500 to-cyan-600',
       description: 'Ready to collect',
-      href: '/portal/orders?status=ready'
+      href: '/pharmacy/orders?status=ready'
     },
     {
       title: 'Out for Delivery',
@@ -251,7 +253,7 @@ const PharmacyDashboardPage: React.FC = () => {
       icon: TruckIcon,
       gradient: 'from-purple-500 to-pink-600',
       description: 'Being delivered',
-      href: '/portal/orders?status=delivering'
+      href: '/pharmacy/orders?status=delivering'
     },
     {
       title: 'Completed Today',
@@ -259,7 +261,7 @@ const PharmacyDashboardPage: React.FC = () => {
       icon: CheckCircleIcon,
       gradient: 'from-emerald-500 to-teal-600',
       description: 'Orders fulfilled',
-      href: '/portal/orders?status=completed'
+      href: '/pharmacy/orders?status=completed'
     },
     {
       title: 'Total Revenue',
@@ -267,7 +269,7 @@ const PharmacyDashboardPage: React.FC = () => {
       icon: CurrencyDollarIcon,
       gradient: 'from-primary to-emerald-600',
       description: 'From completed orders',
-      href: '/portal/orders?status=completed'
+      href: '/pharmacy/orders?status=completed'
     }
   ];
 
@@ -275,23 +277,37 @@ const PharmacyDashboardPage: React.FC = () => {
     {
       icon: ClipboardDocumentListIcon,
       label: 'View All Orders',
-      href: '/portal/orders',
+      href: '/pharmacy/orders',
       color: 'from-primary-500 to-emerald-500',
       description: 'Manage all orders'
     },
     {
       icon: ShoppingBagIcon,
       label: 'Manage Inventory',
-      href: '/portal/inventory',
+      href: '/pharmacy/inventory',
       color: 'from-blue-500 to-cyan-500',
       description: 'Update stock levels'
     },
     {
       icon: ChartBarIcon,
       label: 'View Analytics',
-      href: '/portal/analytics',
+      href: '/pharmacy/analytics',
       color: 'from-purple-500 to-pink-500',
       description: 'Sales & insights'
+    },
+    {
+      icon: BanknotesIcon,
+      label: 'Bank Details',
+      href: '/pharmacy/bank-details',
+      color: 'from-emerald-500 to-teal-500',
+      description: 'Manage payout account'
+    },
+    {
+      icon: ShieldCheckIcon,
+      label: 'Subscription',
+      href: '/pharmacy/subscription',
+      color: 'from-orange-500 to-red-500',
+      description: 'Manage registration'
     }
   ];
 
@@ -524,7 +540,7 @@ const PharmacyDashboardPage: React.FC = () => {
               <p className="text-sm text-gray-600">Latest medication orders</p>
             </div>
             <Link
-              to="/portal/orders"
+              to="/pharmacy/orders"
               className="px-4 py-2 bg-gradient-to-r from-primary to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all flex items-center gap-2"
             >
               View All
@@ -543,7 +559,7 @@ const PharmacyDashboardPage: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 + index * 0.1 }}
                     whileHover={{ y: -2, scale: 1.01 }}
-                    onClick={() => navigate(`/portal/orders/${order.id}`)}
+                    onClick={() => navigate(`/pharmacy/orders/${order.id}`)}
                     className="flex items-center justify-between p-5 bg-gradient-to-r from-gray-50 to-white rounded-2xl border-2 border-gray-100 hover:border-primary/30 transition-all cursor-pointer group"
                   >
                     <div className="flex items-center gap-4 flex-1">
