@@ -58,6 +58,7 @@ import HealthDashboardPage from '../pages/HealthDashboardPage';
 import HealthAnalyticsPage from '../pages/HealthAnalyticsPage';
 import AboutPage from '../pages/AboutPage';
 import HelpCenterPage from '../pages/HelpCenterPage';
+import ContactPage from '../pages/ContactPage';
 import SubscriptionPage from '../pages/SubscriptionPage';
 import PremiumFeaturesPage from '../pages/PremiumFeaturesPage';
 import PremiumFeaturesHubPage from '../pages/PremiumFeaturesHubPage';
@@ -67,6 +68,10 @@ import HealthGoalsPage from '../pages/HealthGoalsPage';
 import WaterLogPage from '../pages/WaterLogPage';
 import CareerPage from '../pages/CareerPage';
 import PaymentCallbackPage from '../pages/PaymentCallbackPage';
+import PrivacyPolicy from '../pages/legal/PrivacyPolicy';
+import TermsOfService from '../pages/legal/TermsOfService';
+import CookiePolicy from '../pages/legal/CookiePolicy';
+import HIPAACompliance from '../pages/legal/HIPAACompliance';
 import toast from 'react-hot-toast';
 
 const LoadingScreen: React.FC = () => (
@@ -96,7 +101,7 @@ const ProtectedRoute: React.FC = () => {
   if (loading) return <LoadingScreen />;
 
   if (!isAuthenticated) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // Don't redirect pharmacy staff from order detail pages - they should be able to view orders
@@ -121,7 +126,7 @@ const PharmacyRoute: React.FC = () => {
   if (loading) return <LoadingScreen />;
 
   if (!isAuthenticated) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (!user?.is_pharmacy_staff) {
@@ -143,7 +148,7 @@ const DoctorRoute: React.FC = () => {
     return <div className="flex justify-center items-center h-screen"><p>Loading Doctor Portal...</p></div>;
   }
   if (!isAuthenticated) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
   
   // Allow access to application page even without doctor profile
@@ -205,8 +210,14 @@ const AppRouter: React.FC = () => {
         <Route path="/" element={<LandingPageRoute />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/help" element={<HelpCenterPage />} />
-        <Route path="/contact" element={<Navigate to="/help" replace />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/careers" element={<CareerPage />} />
+        
+        {/* Legal Pages */}
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
+        <Route path="/hipaa" element={<HIPAACompliance />} />
 
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<LoginPage />} />

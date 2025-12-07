@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import axiosInstance from '../../../api/axiosInstance';
 import { AuthTokens } from '../../../types/auth';
@@ -18,6 +18,7 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [searchParams] = useSearchParams();
   const isDoctorRegistration = searchParams.get('doctor') === 'true';
@@ -67,8 +68,9 @@ const LoginPage: React.FC = () => {
       }
 
       // Redirect to appropriate dashboard based on user role
-      const dashboardRoute = getDashboardRoute(user);
-      navigate(dashboardRoute, { replace: true });
+      // Check if there's a return URL in the location state
+      const from = location.state?.from?.pathname || getDashboardRoute(user);
+      navigate(from, { replace: true });
     } catch (err: unknown) {
       console.error('Login failed:', err);
       setError(apiErrorToMessage(err, 'Login failed. Please check your connection and try again.'));
