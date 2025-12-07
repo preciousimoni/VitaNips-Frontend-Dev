@@ -51,10 +51,12 @@ export const uploadProfilePicture = async (file: File): Promise<User> => {
         const formData = new FormData();
         formData.append('profile_picture', file);
         
+        // Increase timeout for file uploads (60 seconds)
         const response = await axiosInstance.patch<User>('/users/profile/', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
+            timeout: 60000, // 60 seconds for file uploads
         });
         return response.data;
     } catch (error) {

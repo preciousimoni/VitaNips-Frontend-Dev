@@ -227,7 +227,7 @@ const DoctorDashboardPage: React.FC = () => {
           ></motion.div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
@@ -327,7 +327,7 @@ const DoctorDashboardPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-8"
         >
           {/* Pending Prescriptions - Action Required */}
           <motion.div 
@@ -588,54 +588,56 @@ const DoctorDashboardPage: React.FC = () => {
                       viewport={{ once: true }}
                       transition={{ delay: index * 0.1 }}
                       whileHover={{ y: -2, scale: 1.01 }}
-                      className="flex items-center justify-between p-5 rounded-2xl border-2 border-gray-100 hover:border-primary/30 hover:shadow-lg transition-all bg-gradient-to-r from-white to-gray-50/50 group"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 rounded-2xl border-2 border-gray-100 hover:border-primary/30 hover:shadow-lg transition-all bg-gradient-to-r from-white to-gray-50/50 group gap-4"
                     >
                       <div className="flex items-center space-x-4">
                         <motion.div 
                           whileHover={{ scale: 1.1 }}
-                          className="flex flex-col items-center justify-center w-20 h-20 bg-gradient-to-br from-primary/10 to-emerald-500/10 rounded-xl border-2 border-primary/20 text-gray-900"
+                          className="flex flex-col items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary/10 to-emerald-500/10 rounded-xl border-2 border-primary/20 text-gray-900 flex-shrink-0"
                         >
-                          <span className="text-xs font-bold uppercase text-gray-500">
+                          <span className="text-[10px] sm:text-xs font-bold uppercase text-gray-500">
                             {formatTime(apt.start_time).split(' ')[1]}
                           </span>
-                          <span className="text-xl font-black text-primary">
+                          <span className="text-lg sm:text-xl font-black text-primary">
                             {formatTime(apt.start_time).split(' ')[0]}
                           </span>
                         </motion.div>
                         <div>
-                          <h4 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">{apt.patient_name || 'Patient'}</h4>
-                          <p className="text-sm text-gray-600 flex items-center mt-1 font-medium">
-                            <span className="truncate max-w-[200px]">{apt.reason || 'General Consultation'}</span>
+                          <h4 className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">{apt.patient_name || 'Patient'}</h4>
+                          <p className="text-xs sm:text-sm text-gray-600 flex items-center mt-1 font-medium">
+                            <span className="truncate max-w-[150px] sm:max-w-[200px]">{apt.reason || 'General Consultation'}</span>
                           </p>
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-3">
-                        <span className={`px-4 py-2 rounded-full text-xs font-bold border-2 ${getStatusColor(apt.status)}`}>
+                      <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+                        <span className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[10px] sm:text-xs font-bold border-2 ${getStatusColor(apt.status)}`}>
                           {apt.status}
                         </span>
-                        {apt.status === 'confirmed' && (
-                           <motion.button 
-                             whileHover={{ scale: 1.1 }}
-                             whileTap={{ scale: 0.9 }}
-                             onClick={(e) => {
-                               e.stopPropagation();
-                               navigate(`/appointments/${apt.id}/call`);
-                             }}
-                             className="p-3 bg-gradient-to-br from-primary to-emerald-600 text-white rounded-xl hover:shadow-lg transition-all shadow-md"
-                             title="Start Video Call"
-                           >
-                             <VideoCameraIcon className="h-5 w-5" />
-                           </motion.button>
-                        )}
-                        <motion.button 
-                          whileHover={{ scale: 1.1, x: 5 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => navigate(`/appointments/${apt.id}`)}
-                          className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-xl transition-all"
-                        >
-                          <ArrowRightIcon className="h-5 w-5" />
-                        </motion.button>
+                        <div className="flex items-center space-x-2">
+                          {apt.status === 'confirmed' && (
+                             <motion.button 
+                               whileHover={{ scale: 1.1 }}
+                               whileTap={{ scale: 0.9 }}
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 navigate(`/appointments/${apt.id}/call`);
+                               }}
+                               className="p-2 sm:p-3 bg-gradient-to-br from-primary to-emerald-600 text-white rounded-xl hover:shadow-lg transition-all shadow-md"
+                               title="Start Video Call"
+                             >
+                               <VideoCameraIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                             </motion.button>
+                          )}
+                          <motion.button 
+                            whileHover={{ scale: 1.1, x: 5 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => navigate(`/appointments/${apt.id}`)}
+                            className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-xl transition-all"
+                          >
+                            <ArrowRightIcon className="h-5 w-5" />
+                          </motion.button>
+                        </div>
                       </div>
                     </motion.div>
                   ))}

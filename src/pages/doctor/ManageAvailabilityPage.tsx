@@ -194,7 +194,7 @@ const ManageAvailabilityPage: React.FC = () => {
           <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-2000"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
@@ -290,7 +290,7 @@ const ManageAvailabilityPage: React.FC = () => {
                   transition={{ delay: 0.1 * dayIndex }}
                   className="border-2 border-gray-100 rounded-2xl p-6 hover:border-primary/30 transition-all"
                 >
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4 sm:gap-0">
                     <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                       <ClockIcon className="h-5 w-5 text-primary" />
                       {day.label}
@@ -299,7 +299,7 @@ const ManageAvailabilityPage: React.FC = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => addSlot(day.value)}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-xl transition-all"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg hover:shadow-xl transition-all"
                     >
                       <PlusIcon className="h-4 w-4" />
                       Add Time Slot
@@ -324,9 +324,9 @@ const ManageAvailabilityPage: React.FC = () => {
                             key={slotIndex}
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="flex items-center gap-4 p-4 bg-gradient-to-r from-primary/5 to-emerald-500/5 rounded-xl border border-primary/20"
+                            className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gradient-to-r from-primary/5 to-emerald-500/5 rounded-xl border border-primary/20"
                           >
-                            <div className="flex items-center gap-3 flex-1">
+                            <div className="flex flex-row items-center gap-3 flex-1 w-full">
                               <div className="flex-1">
                                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
                                   Start Time
@@ -334,7 +334,7 @@ const ManageAvailabilityPage: React.FC = () => {
                                 <select
                                   value={slot.start_time}
                                   onChange={(e) => updateSlot(globalIndex, 'start_time', e.target.value)}
-                                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary"
+                                  className="w-full px-3 py-2 sm:px-4 sm:py-2 border-2 border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary text-sm sm:text-base"
                                 >
                                   {TIME_SLOTS.map(time => (
                                     <option key={time.value} value={time.value}>{time.label}</option>
@@ -349,7 +349,7 @@ const ManageAvailabilityPage: React.FC = () => {
                                 <select
                                   value={slot.end_time}
                                   onChange={(e) => updateSlot(globalIndex, 'end_time', e.target.value)}
-                                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary"
+                                  className="w-full px-3 py-2 sm:px-4 sm:py-2 border-2 border-gray-200 rounded-xl font-bold text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary text-sm sm:text-base"
                                 >
                                   {TIME_SLOTS.map(time => (
                                     <option key={time.value} value={time.value}>{time.label}</option>
@@ -362,10 +362,11 @@ const ManageAvailabilityPage: React.FC = () => {
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
                               onClick={() => removeSlot(globalIndex)}
-                              className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors"
+                              className="w-full sm:w-auto p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center"
                               title="Remove time slot"
                             >
                               <TrashIcon className="h-5 w-5" />
+                              <span className="sm:hidden ml-2 font-bold">Remove Slot</span>
                             </motion.button>
                           </motion.div>
                         );
@@ -383,9 +384,9 @@ const ManageAvailabilityPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="flex items-center justify-between bg-white rounded-3xl shadow-lg border border-gray-100 p-6"
+          className="flex flex-col sm:flex-row items-center justify-between bg-white rounded-3xl shadow-lg border border-gray-100 p-6 gap-4 sm:gap-0"
         >
-          <div>
+          <div className="text-center sm:text-left">
             <h3 className="text-lg font-bold text-gray-900 mb-1">Save Your Changes</h3>
             <p className="text-sm text-gray-500">Your availability will be updated immediately</p>
           </div>
@@ -394,7 +395,7 @@ const ManageAvailabilityPage: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             onClick={saveAvailability}
             disabled={saving}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-emerald-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-emerald-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? (
               <>
