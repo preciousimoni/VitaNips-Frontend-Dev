@@ -1,13 +1,15 @@
 // src/features/doctor_portal/components/DoctorPrescriptionForm.tsx
 import React, { useState, FormEvent } from 'react';
-import { DoctorPrescriptionPayload, DoctorPrescriptionItemPayload } from '../../../api/doctorPortal'; // Adjust path
+import { DoctorPrescriptionPayload, DoctorPrescriptionItemPayload, PatientVitalsSummary } from '../../../api/doctorPortal'; // Adjust path
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 import toast from 'react-hot-toast';
+import PatientVitalsDisplay from './PatientVitalsDisplay';
 
 interface DoctorPrescriptionFormProps {
     appointmentId: number; // The selected appointment ID
     patientName: string;
     appointmentDate: string;
+    patientVitalsSummary?: PatientVitalsSummary; // Add vitals summary
     onSubmit: (payload: DoctorPrescriptionPayload) => Promise<void>;
     onCancel: () => void;
     isSubmitting: boolean;
@@ -17,6 +19,7 @@ const DoctorPrescriptionForm: React.FC<DoctorPrescriptionFormProps> = ({
     appointmentId,
     patientName,
     appointmentDate,
+    patientVitalsSummary,
     onSubmit,
     onCancel,
     isSubmitting: propIsSubmitting,
@@ -112,6 +115,13 @@ const DoctorPrescriptionForm: React.FC<DoctorPrescriptionFormProps> = ({
             </div>
 
             {error && <pre className="text-red-500 text-sm bg-red-50 p-3 rounded-md whitespace-pre-wrap">{error}</pre>}
+
+            {/* Patient Vitals Section */}
+            {patientVitalsSummary && (
+                <div className="mb-6">
+                    <PatientVitalsDisplay vitalsSummary={patientVitalsSummary} />
+                </div>
+            )}
 
             <div>
                 <label htmlFor="diagnosis" className="block text-sm font-medium text-gray-700">Diagnosis *</label>

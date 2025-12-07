@@ -553,6 +553,7 @@ const DoctorPrescriptionWorkspacePage: React.FC = () => {
                             appointmentId={selectedAppointmentForPrescription.id}
                             patientName={selectedAppointmentForPrescription.patient_name}
                             appointmentDate={selectedAppointmentForPrescription.date}
+                            patientVitalsSummary={selectedAppointmentForPrescription.patient_vitals_summary}
                             onSubmit={handlePrescriptionSubmit}
                             onCancel={handleClosePrescriptionModal}
                             isSubmitting={isSubmittingForm}

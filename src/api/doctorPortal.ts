@@ -2,6 +2,32 @@
 import axiosInstance from './axiosInstance';
 import { PaginatedResponse } from '../types/common';
 import { Prescription as UserPrescription } from '../types/prescriptions'; // User-facing Prescription type
+import { VitalSignLog } from '../types/healthLogs';
+
+// Vitals alert types
+export interface VitalsAlert {
+    type: 'high_bp' | 'low_bp' | 'high_hr' | 'low_hr' | 'fever' | 'hypothermia' | 'low_o2' | 'high_glucose' | 'low_glucose' | 'high_rr' | 'low_rr';
+    severity: 'warning' | 'critical';
+    message: string;
+    value: number | string;
+    field: string;
+}
+
+export interface PatientVitalsSummary {
+    latest_vitals: VitalSignLog | null;
+    has_recent_vitals: boolean;
+    alerts: VitalsAlert[];
+    average_values: {
+        heart_rate?: number;
+        systolic_pressure?: number;
+        diastolic_pressure?: number;
+        temperature?: number;
+        oxygen_saturation?: number;
+        blood_glucose?: number;
+    };
+    vitals_count: number;
+    days_range: number;
+}
 
 // Type for appointments listed for doctors to write prescriptions
 export interface EligibleAppointmentForPrescription {
@@ -15,6 +41,7 @@ export interface EligibleAppointmentForPrescription {
     patient_email: string;
     patient_name: string;
     has_existing_prescription: boolean;
+    patient_vitals_summary?: PatientVitalsSummary;
 }
 
 export interface DoctorPrescriptionItemPayload {
@@ -23,7 +50,6 @@ export interface DoctorPrescriptionItemPayload {
     frequency: string;
     duration: string;
     instructions: string;
-    // medication_id?: number; // Optional if linking to existing medication
 }
 
 export interface DoctorPrescriptionPayload {
@@ -71,6 +97,18 @@ export const getDoctorPrescriptions = async (
     } else {
         response = await axiosInstance.get<PaginatedResponse<UserPrescription>>(endpoint, { params: paramsOrUrl });
     }
+    return response.data;
+};
+
+// Get patient vitals for doctors
+export const getPatientVitals = async (
+    userId: number,
+    days: number = 30
+): Promise<PaginatedResponse<VitalSignLog & { alerts?: VitalsAlert[] }>> => {
+    const response = await axiosInstance.get<PaginatedResponse<VitalSignLog & { alerts?: VitalsAlert[] }>>(
+        `/health/patients/${userId}/vital-signs/`,
+        { params: { days } }
+    );
     return response.data;
 };
 
