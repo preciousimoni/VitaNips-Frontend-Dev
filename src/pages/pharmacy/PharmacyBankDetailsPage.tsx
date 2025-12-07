@@ -25,7 +25,6 @@ const PharmacyBankDetailsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [existingBankDetails, setExistingBankDetails] = useState<BankDetails | null>(null);
   const [verifiedAccountName, setVerifiedAccountName] = useState<string>('');
-  const [isVerifying, setIsVerifying] = useState(false);
   const [bankSearch, setBankSearch] = useState('');
   const [showBankDropdown, setShowBankDropdown] = useState(false);
   const [selectedBank, setSelectedBank] = useState<{code: string, name: string} | null>(null);
@@ -83,7 +82,6 @@ const PharmacyBankDetailsPage: React.FC = () => {
   const verifyAccountName = async () => {
     if (!accountNumber || !accountBank || accountNumber.length !== 10) return;
     
-    setIsVerifying(true);
     setVerifiedAccountName('Verifying...');
     
     try {
@@ -103,8 +101,6 @@ const PharmacyBankDetailsPage: React.FC = () => {
       console.error('Account verification error:', error);
       setVerifiedAccountName('');
       // Don't show error toast for verification - it's optional
-    } finally {
-      setIsVerifying(false);
     }
   };
 
