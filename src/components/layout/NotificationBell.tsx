@@ -18,7 +18,6 @@ const NotificationBell: React.FC = () => {
     const location = useLocation(); // Get current location
     const [unreadCount, setUnreadCount] = useState<number>(0);
     const [notifications, setNotifications] = useState<Notification[]>([]);
-    const [nextPageUrl, setNextPageUrl] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isLoadingCount, setIsLoadingCount] = useState<boolean>(false);
     const [isLoadingList, setIsLoadingList] = useState<boolean>(false);
@@ -50,14 +49,12 @@ const NotificationBell: React.FC = () => {
         setIsLoadingList(true);
         setListError(null);
         setNotifications([]); // Reset on fresh open/fetch
-        setNextPageUrl(null);
         try {
             const response = await getNotifications({ page: 1 });
             if (response && Array.isArray(response.results)) {
                 // Only keep the latest 5 notifications for dropdown
                 const latestNotifications = response.results.slice(0, 5);
                 setNotifications(latestNotifications);
-                setNextPageUrl(null); // Don't allow loading more in dropdown
             } else {
                 setListError("Failed to load notifications.");
             }
