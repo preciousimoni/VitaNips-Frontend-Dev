@@ -22,7 +22,6 @@ const NotificationBell: React.FC = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isLoadingCount, setIsLoadingCount] = useState<boolean>(false);
     const [isLoadingList, setIsLoadingList] = useState<boolean>(false);
-    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
     const [listError, setListError] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -70,29 +69,6 @@ const NotificationBell: React.FC = () => {
         }
     }, [isAuthenticated]);
 
-    // loadMoreNotifications is mostly fine
-    const loadMoreNotifications = async () => {
-        if (!nextPageUrl || isLoadingMore || !isAuthenticated) return;
-        setIsLoadingMore(true);
-        // setListError(null); // Clear previous errors when trying to load more
-        try {
-            const response = await getNotifications(nextPageUrl);
-             if (response && Array.isArray(response.results)) {
-                setNotifications(prev => [...prev, ...response.results]);
-                setNextPageUrl(response.next);
-             } else {
-                 // Optionally set error if load more fails
-                 // setListError("Failed to load more notifications.");
-                 setNextPageUrl(null); // Stop trying if structure is bad
-             }
-        } catch (error) {
-            console.error("Bell: Failed to load more notifications", error);
-            // Optionally set error
-            // setListError("Failed to load more notifications.");
-        } finally {
-            setIsLoadingMore(false);
-        }
-    };
 
     // --- MODIFIED Polling useEffect ---
     useEffect(() => {

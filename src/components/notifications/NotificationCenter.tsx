@@ -19,8 +19,6 @@ const NotificationCenter: React.FC = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [hasMore, setHasMore] = useState(false);
-    const [nextPage, setNextPage] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
 
@@ -51,8 +49,6 @@ const NotificationCenter: React.FC = () => {
             // Only keep the latest 5 notifications for dropdown
             const latestNotifications = (response.results || []).slice(0, 5);
             setNotifications(latestNotifications);
-            setHasMore(false); // Don't show "Load more" in dropdown
-            setNextPage(null);
         } catch (error: any) {
             console.error('Error fetching notifications:', error);
             // Log more details for debugging

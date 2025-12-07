@@ -22,8 +22,7 @@ import {
     ExclamationCircleIcon,
     DocumentTextIcon,
     ArrowTrendingUpIcon,
-    ArrowTrendingDownIcon,
-    ExclamationTriangleIcon
+    ArrowTrendingDownIcon
 } from '@heroicons/react/24/outline';
 
 import { getUserAppointments } from '../api/appointments';
