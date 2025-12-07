@@ -45,7 +45,7 @@ const NotificationBell: React.FC = () => {
         }
     }, [isAuthenticated]); // Removed isLoadingCount from dependencies
 
-    // fetchNotificationsList is mostly fine, depends on isAuthenticated
+    // fetchNotificationsList - only fetch first 5 notifications for dropdown
     const fetchNotificationsList = useCallback(async () => {
         if (!isAuthenticated) return;
         setIsLoadingList(true);
@@ -55,8 +55,10 @@ const NotificationBell: React.FC = () => {
         try {
             const response = await getNotifications({ page: 1 });
             if (response && Array.isArray(response.results)) {
-                setNotifications(response.results);
-                setNextPageUrl(response.next);
+                // Only keep the latest 5 notifications for dropdown
+                const latestNotifications = response.results.slice(0, 5);
+                setNotifications(latestNotifications);
+                setNextPageUrl(null); // Don't allow loading more in dropdown
             } else {
                 setListError("Failed to load notifications.");
             }
@@ -229,12 +231,21 @@ const NotificationBell: React.FC = () => {
             </button>
 
             {isOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-80 sm:w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                    <div className="px-4 py-2 flex justify-between items-center border-b sticky top-0 bg-white">
-                        <h3 className="text-sm font-medium text-gray-900">Notifications</h3>
+                <div 
+                    className="origin-top-right absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 md:w-96 max-w-[calc(100vw-2rem)] sm:max-w-none rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                    style={{ 
+                        left: 'auto',
+                        right: '0',
+                        marginLeft: 'auto',
+                        marginRight: '0'
+                    }}
+                >
+                    <div className="px-3 sm:px-4 py-2 flex justify-between items-center border-b sticky top-0 bg-white">
+                        <h3 className="text-sm sm:text-base font-medium text-gray-900 font-display">Notifications</h3>
                         {notifications.some(n => n.unread) && ( // Show "Mark all as read" only if there are unread items in the current list
-                            <button onClick={handleMarkAllRead} className="text-xs text-blue-600 hover:underline">
-                                Mark all as read
+                            <button onClick={handleMarkAllRead} className="text-xs text-primary hover:text-primary-dark hover:underline whitespace-nowrap ml-2">
+                                <span className="hidden sm:inline">Mark all as read</span>
+                                <span className="sm:hidden">Mark all</span>
                             </button>
                         )}
                     </div>
@@ -246,7 +257,7 @@ const NotificationBell: React.FC = () => {
                         ) : notifications.length === 0 ? (
                             <p className="text-center text-sm text-muted py-4 px-2">You have no notifications.</p>
                         ) : (
-                            notifications.map((n) => (
+                            notifications.slice(0, 5).map((n) => (
                                 <div key={n.id} className={`border-b last:border-b-0 ${n.unread ? 'bg-indigo-50' : 'bg-white'}`}>
                                     <Link
                                         to={n.target_url || '#'} // Default to '#' if no target_url
@@ -260,31 +271,20 @@ const NotificationBell: React.FC = () => {
                                                  setIsOpen(false);
                                             }
                                         }}
-                                        className="block px-4 py-3 hover:bg-gray-100 w-full text-left"
+                                        className="block px-3 sm:px-4 py-3 hover:bg-gray-100 active:bg-gray-200 w-full text-left touch-manipulation"
                                         role="button"
                                         // Prevent navigation if target_url is '#' or empty
                                         {...( (!n.target_url || n.target_url === '#') && { onClickCapture: (e) => e.preventDefault() } )}
                                     >
-                                        <p className={`text-sm ${n.unread ? 'font-semibold text-gray-800' : 'text-gray-600'} break-words`}>
+                                        <p className={`text-sm sm:text-base ${n.unread ? 'font-semibold text-gray-800' : 'text-gray-600'} break-words pr-2`}>
                                             {n.verb}
                                         </p>
-                                        <p className="text-xs text-gray-500 mt-1">
+                                        <p className="text-xs text-gray-500 mt-1.5">
                                             {new Date(n.timestamp).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                                         </p>
                                     </Link>
                                 </div>
                             ))
-                        )}
-                        {nextPageUrl && !isLoadingList && (
-                            <div className="text-center border-t py-2">
-                                <button
-                                    onClick={loadMoreNotifications}
-                                    disabled={isLoadingMore}
-                                    className="text-xs text-blue-600 hover:underline disabled:opacity-50"
-                                >
-                                    {isLoadingMore ? "Loading..." : "Load more"}
-                                </button>
-                            </div>
                         )}
                     </div>
                 </div>

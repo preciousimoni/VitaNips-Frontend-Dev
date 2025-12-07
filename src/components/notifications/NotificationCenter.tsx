@@ -40,21 +40,19 @@ const NotificationCenter: React.FC = () => {
         }
     }, []);
 
-    // Fetch notifications
+    // Fetch notifications - only fetch first 5 notifications for dropdown
     const fetchNotifications = useCallback(async (reset = false) => {
         if (loading) return;
         setLoading(true);
         try {
-            console.log('Fetching notifications, reset:', reset, 'nextPage:', nextPage);
-            const response = await getNotifications(reset ? null : nextPage);
+            console.log('Fetching notifications, reset:', reset);
+            const response = await getNotifications(null); // Always fetch first page
             console.log('Notifications response:', response);
-            if (reset) {
-                setNotifications(response.results || []);
-            } else {
-                setNotifications(prev => [...prev, ...(response.results || [])]);
-            }
-            setHasMore(!!response.next);
-            setNextPage(response.next);
+            // Only keep the latest 5 notifications for dropdown
+            const latestNotifications = (response.results || []).slice(0, 5);
+            setNotifications(latestNotifications);
+            setHasMore(false); // Don't show "Load more" in dropdown
+            setNextPage(null);
         } catch (error: any) {
             console.error('Error fetching notifications:', error);
             // Log more details for debugging
@@ -69,7 +67,7 @@ const NotificationCenter: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [loading, nextPage]);
+    }, [loading]);
 
     // Initial load - only if authenticated
     useEffect(() => {
@@ -196,21 +194,22 @@ const NotificationCenter: React.FC = () => {
             {/* Dropdown */}
             {isOpen && (
                 <div 
-                    className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-[600px] flex flex-col"
+                    className="fixed left-4 right-4 top-[4.5rem] w-auto sm:absolute sm:right-0 sm:left-auto sm:top-full sm:mt-2 sm:w-80 md:w-96 sm:max-w-none bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-[calc(100vh-6rem)] sm:max-h-[600px] flex flex-col"
                     role="dialog"
                     aria-label="Notifications panel"
                     aria-modal="false"
                 >
                     {/* Header */}
-                    <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900" id="notifications-heading">Notifications</h3>
+                    <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 font-display" id="notifications-heading">Notifications</h3>
                         {unreadCount > 0 && (
                             <button
                                 onClick={handleMarkAllRead}
-                                className="text-sm text-primary hover:text-primary-dark font-medium focus:outline-none focus:ring-2 focus:ring-primary rounded px-2 py-1"
+                                className="text-xs sm:text-sm text-primary hover:text-primary-dark font-medium focus:outline-none focus:ring-2 focus:ring-primary rounded px-2 py-1 whitespace-nowrap"
                                 aria-label={`Mark all ${unreadCount} notifications as read`}
                             >
-                                Mark all read
+                                <span className="hidden sm:inline">Mark all read</span>
+                                <span className="sm:hidden">Mark all</span>
                             </button>
                         )}
                     </div>
@@ -229,7 +228,7 @@ const NotificationCenter: React.FC = () => {
                             </div>
                         ) : (
                             <ul className="divide-y divide-gray-200" role="list">
-                                {notifications.map(notification => (
+                                {notifications.slice(0, 5).map(notification => (
                                     <li
                                         key={notification.id}
                                         role="article"
@@ -237,30 +236,30 @@ const NotificationCenter: React.FC = () => {
                                     >
                                         <button
                                             onClick={() => handleNotificationClick(notification)}
-                                            className={`w-full text-left p-4 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary ${
+                                            className={`w-full text-left p-3 sm:p-4 hover:bg-gray-50 active:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary touch-manipulation ${
                                                 notification.unread ? 'bg-blue-50' : ''
                                             }`}
                                             aria-label={`${notification.verb}. ${notification.unread ? 'Unread. ' : ''}Click to ${notification.target_url ? 'view details and ' : ''}mark as read`}
                                         >
-                                            <div className="flex items-start space-x-3">
+                                            <div className="flex items-start gap-2 sm:gap-3">
                                                 {notification.unread && (
                                                     <div 
                                                         className="flex-shrink-0 w-2 h-2 mt-2 bg-blue-500 rounded-full"
                                                         aria-hidden="true"
                                                     ></div>
                                                 )}
-                                                <div className="flex-1 min-w-0">
-                                                    <p className={`text-sm ${notification.unread ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
+                                                <div className="flex-1 min-w-0 pr-2">
+                                                    <p className={`text-sm sm:text-base break-words ${notification.unread ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
                                                         {notification.verb}
                                                     </p>
-                                                    <div className="flex items-center mt-1 space-x-2">
+                                                    <div className="flex items-center flex-wrap gap-1.5 sm:gap-2 mt-1.5 sm:mt-1">
                                                         <span 
-                                                            className={`inline-block px-2 py-0.5 text-xs rounded-full border ${getLevelColor(notification.level)}`}
+                                                            className={`inline-block px-2 py-0.5 text-xs rounded-full border flex-shrink-0 ${getLevelColor(notification.level)}`}
                                                             aria-label={`Notification level: ${notification.level}`}
                                                         >
                                                             {notification.level}
                                                         </span>
-                                                        <span className="text-xs text-gray-500">
+                                                        <span className="text-xs text-gray-500 whitespace-nowrap">
                                                             <time dateTime={notification.timestamp}>
                                                                 {formatRelativeTime(notification.timestamp)}
                                                             </time>
@@ -274,19 +273,6 @@ const NotificationCenter: React.FC = () => {
                             </ul>
                         )}
 
-                        {/* Load More */}
-                        {hasMore && (
-                            <div className="p-4 text-center border-t border-gray-200">
-                                <button
-                                    onClick={() => fetchNotifications(false)}
-                                    disabled={loading}
-                                    className="text-sm text-primary hover:text-primary-dark font-medium disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary rounded px-3 py-1"
-                                    aria-label="Load more notifications"
-                                >
-                                    {loading ? 'Loading...' : 'Load more'}
-                                </button>
-                            </div>
-                        )}
                     </div>
 
                     {/* Footer */}
@@ -296,10 +282,11 @@ const NotificationCenter: React.FC = () => {
                                 setIsOpen(false);
                                 navigate('/notifications');
                             }}
-                            className="w-full text-center text-sm text-primary hover:text-primary-dark font-medium focus:outline-none focus:ring-2 focus:ring-primary rounded py-1"
+                            className="w-full text-center text-xs sm:text-sm text-primary hover:text-primary-dark font-medium focus:outline-none focus:ring-2 focus:ring-primary rounded py-2 active:bg-gray-100 touch-manipulation"
                             aria-label="View all notifications in dedicated page"
                         >
-                            View all notifications
+                            <span className="hidden sm:inline">View all notifications</span>
+                            <span className="sm:hidden">View All</span>
                         </button>
                     </div>
                 </div>

@@ -29,7 +29,6 @@ import testimonial3 from '../assets/images/testimonial-3.png';
 const LandingPage: React.FC = () => {
     const { isAuthenticated } = useAuth();
     const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-    const [_mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
     
     const heroRef = useRef(null);
@@ -41,7 +40,10 @@ const LandingPage: React.FC = () => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const viewportSettings = { once: true, margin: isMobile ? '-150px' : '-100px' };
     
-    const y = prefersReducedMotion ? undefined : useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+    // Always call hooks unconditionally - React Hooks rules
+    const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+    const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+    const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '40%']);
 
     useEffect(() => {
         // Check for reduced motion preference
@@ -54,14 +56,8 @@ const LandingPage: React.FC = () => {
         
         mediaQuery.addEventListener('change', handleChange);
         
-        const handleMouseMove = (e: MouseEvent) => {
-            setMousePosition({ x: e.clientX, y: e.clientY });
-        };
-        window.addEventListener('mousemove', handleMouseMove);
-        
         return () => {
             mediaQuery.removeEventListener('change', handleChange);
-            window.removeEventListener('mousemove', handleMouseMove);
         };
     }, []);
 
@@ -158,15 +154,15 @@ const LandingPage: React.FC = () => {
                 <section ref={heroRef} className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gradient-to-br from-white via-green-50/30 to-blue-50/30">
                     {/* Animated Background Blobs */}
                     <motion.div 
-                        style={prefersReducedMotion || !y ? {} : { y }}
+                        style={prefersReducedMotion ? {} : { y }}
                         className="absolute top-0 right-0 -z-10 w-[600px] h-[600px] bg-gradient-to-br from-primary/20 to-emerald-400/20 rounded-full blur-3xl animate-blob"
                     ></motion.div>
                     <motion.div 
-                        style={prefersReducedMotion ? {} : { y: useTransform(scrollYProgress, [0, 1], ['0%', '30%']) }}
+                        style={prefersReducedMotion ? {} : { y: y2 }}
                         className="absolute bottom-0 left-0 -z-10 w-[500px] h-[500px] bg-gradient-to-tr from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl animate-blob animation-delay-2000"
                     ></motion.div>
                     <motion.div 
-                        style={prefersReducedMotion ? {} : { y: useTransform(scrollYProgress, [0, 1], ['0%', '40%']) }}
+                        style={prefersReducedMotion ? {} : { y: y3 }}
                         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[400px] h-[400px] bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-blob animation-delay-4000"
                     ></motion.div>
                     

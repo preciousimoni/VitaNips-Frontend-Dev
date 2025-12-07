@@ -43,7 +43,8 @@ const ProfilePage: React.FC = () => {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema) as any,
+    // @ts-expect-error - Type compatibility issue between zodResolver and react-hook-form types
+    resolver: zodResolver(profileSchema),
     defaultValues: {
       first_name: '',
       last_name: '',
@@ -330,7 +331,10 @@ const ProfilePage: React.FC = () => {
                             ))}
                         </Tab.List>
                         <Tab.Panels className="p-6">
-                            <form onSubmit={handleSubmit(onSubmit)}>
+                            <form onSubmit={
+                              // @ts-expect-error - Type compatibility issue between handleSubmit and form data types
+                              handleSubmit(onSubmit)
+                            }>
                                 {/* Personal Info Panel */}
                                 <Tab.Panel className="space-y-6 focus:outline-none">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

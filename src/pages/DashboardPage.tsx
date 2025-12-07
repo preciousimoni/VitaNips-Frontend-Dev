@@ -20,7 +20,10 @@ import {
     CubeIcon,
     TruckIcon,
     ExclamationCircleIcon,
-    DocumentTextIcon
+    DocumentTextIcon,
+    ArrowTrendingUpIcon,
+    ArrowTrendingDownIcon,
+    ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 
 import { getUserAppointments } from '../api/appointments';
@@ -29,6 +32,10 @@ import { getVitalSigns } from '../api/healthLogs';
 import { getUnreadNotificationCount } from '../api/notifications';
 import { getUserOrders } from '../api/orders';
 import { getUserPrescriptions } from '../api/prescriptions';
+import VitalSignForm from '../features/health/components/VitalSignForm';
+import Modal from '../components/common/Modal';
+import { createVitalSign } from '../api/healthLogs';
+import { VitalSignPayload } from '../types/healthLogs';
 import { Appointment } from '../types/appointments';
 import { MedicationReminder } from '../types/reminders';
 import { VitalSignLog } from '../types/healthLogs';
@@ -38,6 +45,7 @@ import ErrorMessage from '../components/ui/ErrorMessage';
 // import Spinner from '../components/ui/Spinner';
 import Skeleton from '../components/ui/Skeleton';
 import { formatDate, formatTime } from '../utils/date';
+import toast from 'react-hot-toast';
 
 // Animation variants
 const containerVariants = {
@@ -104,6 +112,39 @@ const QuickActionButton: React.FC<{
     </Link>
 );
 
+// Helper function to determine health status
+const getHealthStatus = (value: number | null | undefined, type: 'bp_systolic' | 'bp_diastolic' | 'heart_rate' | 'temperature'): { status: 'normal' | 'warning' | 'critical', label: string, color: string } => {
+    if (!value) return { status: 'normal', label: '', color: '' };
+    
+    switch (type) {
+        case 'bp_systolic':
+            if (value >= 140) return { status: 'critical', label: 'High', color: 'text-red-600' };
+            if (value >= 120) return { status: 'warning', label: 'Elevated', color: 'text-amber-600' };
+            return { status: 'normal', label: 'Normal', color: 'text-primary' };
+        case 'bp_diastolic':
+            if (value >= 90) return { status: 'critical', label: 'High', color: 'text-red-600' };
+            if (value >= 80) return { status: 'warning', label: 'Elevated', color: 'text-amber-600' };
+            return { status: 'normal', label: 'Normal', color: 'text-primary' };
+        case 'heart_rate':
+            if (value >= 100 || value < 60) return { status: 'warning', label: value >= 100 ? 'High' : 'Low', color: 'text-amber-600' };
+            return { status: 'normal', label: 'Normal', color: 'text-primary' };
+        case 'temperature':
+            if (value >= 38) return { status: 'critical', label: 'Fever', color: 'text-red-600' };
+            if (value >= 37.5) return { status: 'warning', label: 'Elevated', color: 'text-amber-600' };
+            return { status: 'normal', label: 'Normal', color: 'text-primary' };
+        default:
+            return { status: 'normal', label: '', color: '' };
+    }
+};
+
+// Helper function to calculate trend
+const getTrend = (current: number | null | undefined, previous: number | null | undefined): 'up' | 'down' | 'stable' | null => {
+    if (!current || !previous) return null;
+    const diff = current - previous;
+    if (Math.abs(diff) < 2) return 'stable';
+    return diff > 0 ? 'up' : 'down';
+};
+
 const DashboardPage: React.FC = () => {
     const { t } = useTranslation();
     const { user } = useAuth();
@@ -158,6 +199,24 @@ const DashboardPage: React.FC = () => {
 
     const [unreadCount, setUnreadCount] = useState<number>(0);
     const [_notificationsLoading, setNotificationsLoading] = useState<boolean>(true);
+
+    // Quick Vital Sign Logging
+    const [showQuickVitalModal, setShowQuickVitalModal] = useState<boolean>(false);
+    const [isSubmittingVital, setIsSubmittingVital] = useState<boolean>(false);
+
+    const handleQuickVitalSubmit = async (payload: VitalSignPayload) => {
+        setIsSubmittingVital(true);
+        try {
+            await createVitalSign(payload);
+            setShowQuickVitalModal(false);
+            await fetchDashboardData();
+            toast.success('Vitals logged successfully');
+        } catch (err) {
+            toast.error('Failed to log vitals');
+        } finally {
+            setIsSubmittingVital(false);
+        }
+    };
 
     const fetchDashboardData = useCallback(async () => {
         // Fetch Appointments
@@ -603,72 +662,138 @@ const DashboardPage: React.FC = () => {
                         </div>
 
                         {/* Vital Signs */}
-                        <div className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 p-6 md:p-8 border border-gray-100">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-gray-900 flex items-center font-display">
-                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center mr-3 shadow-lg shadow-primary/10">
-                                        <HeartIcon className="h-5 w-5 text-white" />
+                        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg shadow-gray-200/50 p-4 sm:p-6 md:p-8 border border-gray-100">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+                                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center font-display">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center mr-2 sm:mr-3 shadow-lg shadow-primary/10">
+                                        <HeartIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                                     </div>
                                     <span>Recent Vitals</span>
                                 </h2>
-                                <Link 
-                                    to="/health/vitals" 
-                                    className="text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
-                                >
-                                    View All
-                                    <ArrowRightIcon className="h-4 w-4" />
-                                </Link>
+                                <div className="flex items-center gap-2 sm:gap-3">
+                                    <button
+                                        onClick={() => setShowQuickVitalModal(true)}
+                                        className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-primary/20 hover:shadow-lg active:scale-95 sm:hover:scale-105 transition-all duration-200 touch-manipulation"
+                                    >
+                                        <PlusIcon className="h-4 w-4 flex-shrink-0" />
+                                        <span className="hidden sm:inline">Quick Log</span>
+                                        <span className="sm:hidden">Log</span>
+                                    </button>
+                                    <Link 
+                                        to="/health/vitals" 
+                                        className="text-xs sm:text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1 px-2 sm:px-0"
+                                    >
+                                        <span className="hidden sm:inline">View All</span>
+                                        <span className="sm:hidden">All</span>
+                                        <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                    </Link>
+                                </div>
                             </div>
                             
                             {vitalsLoading ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <Skeleton className="h-28 rounded-2xl" />
-                                    <Skeleton className="h-28 rounded-2xl" />
-                                    <Skeleton className="h-28 rounded-2xl" />
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                                    <Skeleton className="h-32 sm:h-28 rounded-2xl" />
+                                    <Skeleton className="h-32 sm:h-28 rounded-2xl" />
+                                    <Skeleton className="h-32 sm:h-28 rounded-2xl" />
                                 </div>
                             ) : vitalsError ? (
                                 <ErrorMessage message={vitalsError} onRetry={fetchDashboardData} />
                             ) : recentVitals.length > 0 ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    {recentVitals.map((vital, index) => (
-                                        <motion.div 
-                                            key={vital.id}
-                                            whileHover={{ scale: 1.02, y: -2 }}
-                                            className={`flex flex-col p-4 rounded-2xl transition-all ${
-                                                index === 0 
-                                                    ? 'bg-gradient-to-br from-rose-50 to-red-50 border-2 border-rose-200 shadow-sm' 
-                                                    : 'bg-gray-50 border border-gray-200 hover:border-gray-300'
-                                            }`}
-                                        >
-                                            <div className="flex items-center justify-between mb-3">
-                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                                                    index === 0 ? 'bg-rose-100 text-rose-600' : 'bg-white text-gray-400'
-                                                }`}>
-                                                    <HeartIcon className="h-5 w-5" />
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                                    {recentVitals.map((vital, index) => {
+                                        const previousVital = index < recentVitals.length - 1 ? recentVitals[index + 1] : null;
+                                        const bpStatus = getHealthStatus(vital.systolic_pressure, 'bp_systolic');
+                                        const hrStatus = getHealthStatus(vital.heart_rate, 'heart_rate');
+                                        const bpTrend = getTrend(vital.systolic_pressure, previousVital?.systolic_pressure);
+                                        const hrTrend = getTrend(vital.heart_rate, previousVital?.heart_rate);
+                                        
+                                        return (
+                                            <motion.div 
+                                                key={vital.id}
+                                                whileHover={{ scale: 1.02, y: -2 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                className={`flex flex-col p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all cursor-pointer touch-manipulation ${
+                                                    index === 0 
+                                                        ? 'bg-gradient-to-br from-rose-50 to-red-50 border-2 border-rose-200 shadow-sm' 
+                                                        : 'bg-gray-50 border border-gray-200 hover:border-gray-300 active:bg-gray-100'
+                                                }`}
+                                                onClick={() => navigate('/health/vitals')}
+                                            >
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                                                        index === 0 ? 'bg-rose-100 text-rose-600' : 'bg-white text-gray-400'
+                                                    }`}>
+                                                        <HeartIcon className="h-5 w-5" />
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        {index === 0 && (
+                                                            <span className="text-xs font-bold text-rose-600 bg-white px-2 py-1 rounded-md shadow-sm">Latest</span>
+                                                        )}
+                                                        {(bpStatus.status === 'critical' || hrStatus.status === 'critical') && index === 0 && (
+                                                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                                {index === 0 && (
-                                                    <span className="text-xs font-bold text-rose-600 bg-white px-2 py-1 rounded-md shadow-sm">Latest</span>
-                                                )}
-                                            </div>
-                                            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">
-                                                {formatDate(vital.date_recorded.split('T')[0])}
-                                            </p>
-                                            <div className="space-y-1.5">
-                                                {vital.systolic_pressure && (
-                                                    <div>
-                                                        <span className="text-lg font-bold text-gray-900">{vital.systolic_pressure}/{vital.diastolic_pressure}</span>
-                                                        <span className="text-xs font-normal text-gray-500 ml-1">mmHg</span>
-                                                    </div>
-                                                )}
-                                                {vital.heart_rate && (
-                                                    <div>
-                                                        <span className="text-lg font-bold text-gray-900">{vital.heart_rate}</span>
-                                                        <span className="text-xs font-normal text-gray-500 ml-1">bpm</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </motion.div>
-                                    ))}
+                                                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">
+                                                    {formatDate(vital.date_recorded.split('T')[0])}
+                                                </p>
+                                                <div className="space-y-2">
+                                                    {vital.systolic_pressure && vital.diastolic_pressure && (
+                                                        <div className="flex items-center justify-between">
+                                                            <div>
+                                                                <span className="text-lg font-bold text-gray-900">{vital.systolic_pressure}/{vital.diastolic_pressure}</span>
+                                                                <span className="text-xs font-normal text-gray-500 ml-1">mmHg</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-1">
+                                                                {bpTrend && (
+                                                                    bpTrend === 'up' ? (
+                                                                        <ArrowTrendingUpIcon className={`h-4 w-4 ${bpStatus.status === 'critical' ? 'text-red-600' : bpStatus.status === 'warning' ? 'text-amber-600' : 'text-primary'}`} />
+                                                                    ) : bpTrend === 'down' ? (
+                                                                        <ArrowTrendingDownIcon className={`h-4 w-4 ${bpStatus.status === 'normal' ? 'text-primary' : 'text-amber-600'}`} />
+                                                                    ) : null
+                                                                )}
+                                                                {bpStatus.status !== 'normal' && (
+                                                                    <span className={`text-xs font-bold ${bpStatus.color}`}>{bpStatus.label}</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {vital.heart_rate && (
+                                                        <div className="flex items-center justify-between">
+                                                            <div>
+                                                                <span className="text-lg font-bold text-gray-900">{vital.heart_rate}</span>
+                                                                <span className="text-xs font-normal text-gray-500 ml-1">bpm</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-1">
+                                                                {hrTrend && (
+                                                                    hrTrend === 'up' ? (
+                                                                        <ArrowTrendingUpIcon className={`h-4 w-4 ${hrStatus.status === 'warning' ? 'text-amber-600' : 'text-primary'}`} />
+                                                                    ) : hrTrend === 'down' ? (
+                                                                        <ArrowTrendingDownIcon className={`h-4 w-4 ${hrStatus.status === 'normal' ? 'text-primary' : 'text-amber-600'}`} />
+                                                                    ) : null
+                                                                )}
+                                                                {hrStatus.status !== 'normal' && (
+                                                                    <span className={`text-xs font-bold ${hrStatus.color}`}>{hrStatus.label}</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {vital.temperature && (
+                                                        <div className="flex items-center justify-between">
+                                                            <div>
+                                                                <span className="text-sm font-bold text-gray-900">{vital.temperature.toFixed(1)}°C</span>
+                                                            </div>
+                                                            {getHealthStatus(vital.temperature, 'temperature').status !== 'normal' && (
+                                                                <span className={`text-xs font-bold ${getHealthStatus(vital.temperature, 'temperature').color}`}>
+                                                                    {getHealthStatus(vital.temperature, 'temperature').label}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    })}
                                 </div>
                             ) : (
                                 <EmptyState
@@ -956,35 +1081,69 @@ const DashboardPage: React.FC = () => {
                         </div>
 
                         {/* Health Log Shortcuts */}
-                        <div className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 p-6 md:p-8 border border-gray-100">
-                            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center font-display">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mr-3 shadow-lg shadow-primary/10">
-                                    <PlusIcon className="h-5 w-5 text-white" />
-                                </div>
-                                Log Health Data
-                            </h2>
+                        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg shadow-gray-200/50 p-4 sm:p-6 md:p-8 border border-gray-100">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+                                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center font-display">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mr-2 sm:mr-3 shadow-lg shadow-primary/10">
+                                        <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                                    </div>
+                                    Log Health Data
+                                </h2>
+                                <Link 
+                                    to="/health" 
+                                    className="text-xs sm:text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1 self-start sm:self-auto"
+                                >
+                                    <span className="hidden sm:inline">View All</span>
+                                    <span className="sm:hidden">All</span>
+                                    <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                </Link>
+                            </div>
                             <div className="space-y-2">
                                 {healthSections.filter(section => section.path !== '/health/vitals').map((section) => (
                                     <Link
                                         key={section.path}
                                         to={section.path}
-                                        className="flex items-center p-4 rounded-xl hover:bg-gray-50 transition-all group border border-transparent hover:border-gray-200"
+                                        className="flex items-center p-3 sm:p-4 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-all group border border-transparent hover:border-gray-200 hover:shadow-sm touch-manipulation"
                                     >
-                                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${section.gradient} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}>
-                                            <section.icon className="h-5 w-5 text-white" />
+                                        <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-br ${section.gradient} flex items-center justify-center shadow-md group-active:scale-95 sm:group-hover:scale-110 transition-transform flex-shrink-0`}>
+                                            <section.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                                         </div>
-                                        <div className="ml-4 flex-1 min-w-0">
-                                            <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors mb-0.5">{section.name}</h4>
-                                            <p className="text-xs text-gray-500 truncate">{section.description}</p>
+                                        <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+                                            <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors mb-0.5 font-display">{section.name}</h4>
+                                            <p className="text-xs text-gray-500 line-clamp-1">{section.description}</p>
                                         </div>
-                                        <ArrowRightIcon className="h-4 w-4 text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
+                                        <ArrowRightIcon className="h-4 w-4 text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
                                     </Link>
                                 ))}
+                            </div>
+                            {/* Quick Action Button */}
+                            <div className="mt-4 pt-4 border-t border-gray-100">
+                                <Link
+                                    to="/health/vitals"
+                                    className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white text-sm font-bold shadow-md shadow-primary/20 active:scale-95 sm:hover:shadow-lg sm:hover:scale-[1.02] transition-all duration-200 touch-manipulation"
+                                >
+                                    <HeartIcon className="h-5 w-5" />
+                                    <span>Log Vital Signs</span>
+                                </Link>
                             </div>
                         </div>
                     </motion.div>
                 </div>
             </motion.div>
+
+            {/* Quick Vital Sign Log Modal */}
+            <Modal 
+                isOpen={showQuickVitalModal} 
+                onClose={() => setShowQuickVitalModal(false)} 
+                title="Quick Log Vital Signs"
+            >
+                <VitalSignForm
+                    initialData={null}
+                    onSubmit={handleQuickVitalSubmit}
+                    onCancel={() => setShowQuickVitalModal(false)}
+                    isSubmitting={isSubmittingVital}
+                />
+            </Modal>
         </div>
     );
 };
