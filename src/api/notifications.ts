@@ -40,7 +40,11 @@ export const getNotifications = async (
         let response;
         if (typeof paramsOrUrl === 'string') {
             const url = new URL(paramsOrUrl);
-            const pathWithQuery = url.pathname + url.search;
+            // Remove /api prefix if present since baseURL already includes it
+            let pathWithQuery = url.pathname + url.search;
+            if (pathWithQuery.startsWith('/api/')) {
+                pathWithQuery = pathWithQuery.substring(4); // Remove '/api'
+            }
             response = await axiosInstance.get<PaginatedResponse<Notification>>(pathWithQuery);
         } else {
             response = await axiosInstance.get<PaginatedResponse<Notification>>(endpoint, { params: paramsOrUrl });
