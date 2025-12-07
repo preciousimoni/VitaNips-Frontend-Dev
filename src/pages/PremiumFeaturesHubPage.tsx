@@ -12,7 +12,6 @@ import {
   ChatBubbleLeftRightIcon,
   CalendarDaysIcon,
   SparklesIcon,
-  CheckCircleIcon,
   ArrowRightIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../contexts/AuthContext';
@@ -56,6 +55,7 @@ const PremiumFeaturesHubPage: React.FC = () => {
 
   const subscriptionTier = subscription?.plan?.tier || 'free';
   const isPremium = subscriptionTier === 'premium' || subscriptionTier === 'family';
+  const isFamily = subscriptionTier === 'family';
 
   const allFeatures: Feature[] = [
     {
@@ -66,7 +66,7 @@ const PremiumFeaturesHubPage: React.FC = () => {
       path: '/health/vitals',
       color: 'text-rose-500',
       gradient: 'from-rose-500 to-red-600',
-      available: true, // Available to all
+      available: true,
     },
     {
       id: 'basic_reminders',
@@ -76,7 +76,7 @@ const PremiumFeaturesHubPage: React.FC = () => {
       path: '/medication-reminders',
       color: 'text-amber-500',
       gradient: 'from-amber-500 to-orange-600',
-      available: true, // Available to all
+      available: true,
     },
     {
       id: '24_7_support',
@@ -146,7 +146,7 @@ const PremiumFeaturesHubPage: React.FC = () => {
       path: '/family/dashboard',
       color: 'text-pink-500',
       gradient: 'from-pink-500 to-rose-600',
-      available: subscriptionTier === 'family',
+      available: isFamily,
     },
     {
       id: 'shared_reminders',
@@ -156,12 +156,9 @@ const PremiumFeaturesHubPage: React.FC = () => {
       path: '/family/reminders',
       color: 'text-violet-500',
       gradient: 'from-violet-500 to-purple-600',
-      available: subscriptionTier === 'family',
+      available: isFamily,
     },
   ];
-
-  const availableFeatures = allFeatures.filter(f => f.available);
-  const premiumOnlyFeatures = allFeatures.filter(f => f.available && !['health_tracking', 'basic_reminders'].includes(f.id));
 
   if (loading) {
     return (
@@ -174,37 +171,34 @@ const PremiumFeaturesHubPage: React.FC = () => {
   }
 
   return (
-    <PageWrapper title="Premium Features Hub">
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 pb-12">
+    <PageWrapper title="Features Hub">
+      <div className="min-h-screen bg-gray-50 pb-12">
         {/* Hero Section */}
-        <div className="relative bg-gradient-to-r from-primary via-emerald-600 to-teal-600 pt-20 pb-16 overflow-hidden">
-          <motion.div
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 0.1, scale: 1 }}
-            className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/medical-icons.png')]"
-          />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 pt-20 pb-24 overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/medical-icons.png')] opacity-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-50/10" />
+          
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center"
             >
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <SparklesIcon className="h-8 w-8 text-yellow-300" />
-                <h1 className="text-4xl md:text-5xl font-black text-white">
-                  Premium Features Hub
-                </h1>
+              <div className="inline-flex items-center justify-center p-3 bg-white/10 backdrop-blur-md rounded-2xl mb-6 border border-white/10">
+                <SparklesIcon className="h-8 w-8 text-yellow-400" />
               </div>
-              <p className="text-xl text-white/90 max-w-2xl mx-auto">
-                {isPremium
-                  ? `Welcome to your ${subscriptionTier === 'family' ? 'Family' : 'Premium'} Plan! Access all your premium features below.`
-                  : 'Upgrade to Premium or Family Plan to unlock advanced features'}
+              <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+                Explore Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400">Capabilities</span>
+              </h1>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+                Discover all the powerful tools available to manage your health journey. 
+                {isPremium ? ' You have full access to our premium suite.' : ' Upgrade to unlock the full potential of VitaNips.'}
               </p>
+
               {subscription && (
-                <div className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
-                  <CheckCircleIcon className="h-5 w-5 text-white" />
-                  <span className="text-white font-semibold">
-                    {subscription.plan?.name || 'Active Plan'}
+                <div className="inline-flex items-center gap-3 px-5 py-2 bg-white/5 rounded-full border border-white/10">
+                  <span className="text-gray-400 text-sm uppercase tracking-wider font-bold">Current Plan:</span>
+                  <span className={`font-bold ${isPremium ? 'text-yellow-400' : 'text-white'}`}>
+                    {subscription.plan?.name || 'Free Plan'}
                   </span>
                 </div>
               )}
@@ -213,104 +207,88 @@ const PremiumFeaturesHubPage: React.FC = () => {
         </div>
 
         {/* Features Grid */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-          {!isPremium && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-2xl p-6"
-            >
-              <div className="flex items-start gap-4">
-                <SparklesIcon className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-1" />
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    Unlock Premium Features
-                  </h3>
-                  <p className="text-gray-700 mb-4">
-                    Upgrade to Premium or Family Plan to access advanced health tracking, analytics, priority booking, and more.
-                  </p>
-                  <Link
-                    to="/subscription"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-emerald-600 text-white font-bold rounded-xl hover:shadow-lg transition-all"
-                  >
-                    View Plans
-                    <ArrowRightIcon className="h-5 w-5" />
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Premium Features Section */}
-          {isPremium && premiumOnlyFeatures.length > 0 && (
-            <div className="mb-12">
-              <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
-                <SparklesIcon className="h-6 w-6 text-primary" />
-                Premium Features
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {premiumOnlyFeatures.map((feature, index) => (
-                  <motion.div
-                    key={feature.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Link
-                      to={feature.path}
-                      className="block h-full bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group"
-                    >
-                      <div className={`bg-gradient-to-br ${feature.gradient} p-6 text-white`}>
-                        <feature.icon className="h-10 w-10 mb-3" />
-                        <h3 className="text-xl font-black mb-2">{feature.name}</h3>
-                        <p className="text-white/90 text-sm">{feature.description}</p>
-                      </div>
-                      <div className="p-6">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-semibold text-gray-600">Access Feature</span>
-                          <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* All Available Features */}
-          <div>
-            <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
-              <CheckCircleIcon className="h-6 w-6 text-green-500" />
-              All Available Features
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {availableFeatures.map((feature, index) => (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {allFeatures.map((feature, index) => {
+              const isLocked = !feature.available;
+              
+              return (
                 <motion.div
                   key={feature.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: (premiumOnlyFeatures.length + index) * 0.05 }}
+                  transition={{ delay: index * 0.05 }}
                 >
                   <Link
-                    to={feature.path}
-                    className="block h-full bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group"
+                    to={isLocked ? '/subscription' : feature.path}
+                    className={`block h-full relative overflow-hidden rounded-3xl transition-all duration-300 group ${
+                      isLocked 
+                        ? 'bg-white border border-gray-200 hover:border-primary/30' 
+                        : 'bg-white border border-gray-100 hover:shadow-xl hover:-translate-y-1'
+                    }`}
                   >
-                    <div className={`bg-gradient-to-br ${feature.gradient} p-6 text-white`}>
-                      <feature.icon className="h-10 w-10 mb-3" />
-                      <h3 className="text-xl font-black mb-2">{feature.name}</h3>
-                      <p className="text-white/90 text-sm">{feature.description}</p>
+                    {/* Card Content */}
+                    <div className="p-8">
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-6">
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
+                          isLocked 
+                            ? 'bg-gray-100 text-gray-400' 
+                            : `bg-gradient-to-br ${feature.gradient} text-white shadow-lg`
+                        }`}>
+                          <feature.icon className="h-7 w-7" />
+                        </div>
+                        
+                        {/* Badges */}
+                        {isLocked ? (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-bold uppercase tracking-wide">
+                            Locked
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-600 text-xs font-bold uppercase tracking-wide">
+                            Active
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className={`text-xl font-bold mb-3 ${isLocked ? 'text-gray-500' : 'text-gray-900'}`}>
+                        {feature.name}
+                      </h3>
+                      <p className={`text-sm leading-relaxed ${isLocked ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {feature.description}
+                      </p>
                     </div>
-                    <div className="p-6">
+
+                    {/* Footer / Action Area */}
+                    <div className={`px-8 py-4 border-t ${
+                      isLocked ? 'bg-gray-50 border-gray-100' : 'bg-white border-gray-50'
+                    }`}>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-gray-600">Access Feature</span>
-                        <ArrowRightIcon className="h-5 w-5 text-gray-400 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                        <span className={`text-sm font-bold ${
+                          isLocked ? 'text-gray-400' : 'text-primary'
+                        }`}>
+                          {isLocked ? 'Upgrade to Unlock' : 'Open Feature'}
+                        </span>
+                        {isLocked ? (
+                          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-gray-500">
+                              <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        ) : (
+                          <ArrowRightIcon className="h-5 w-5 text-primary group-hover:translate-x-1 transition-transform" />
+                        )}
                       </div>
                     </div>
+
+                    {/* Locked Overlay Effect */}
+                    {isLocked && (
+                      <div className="absolute inset-0 bg-white/40 backdrop-blur-[1px] pointer-events-none" />
+                    )}
                   </Link>
                 </motion.div>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>
