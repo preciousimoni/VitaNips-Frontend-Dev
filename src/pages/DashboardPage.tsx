@@ -279,8 +279,20 @@ const DashboardPage: React.FC = () => {
         setVitalsLoading(true);
         setVitalsError(null);
         try {
-            const response = await getVitalSigns({ page: 1, ordering: '-date_recorded' });
-            const recent = response.results.slice(0, 3);
+            const response = await getVitalSigns({ page: 1 });
+            // Sort by date_recorded descending (latest first) on client side
+            const sorted = [...response.results].sort((a, b) => {
+                const dateAStr = a.date_recorded || a.created_at || '';
+                const dateBStr = b.date_recorded || b.created_at || '';
+                if (!dateAStr && !dateBStr) return 0;
+                if (!dateAStr) return 1;
+                if (!dateBStr) return -1;
+                const dateA = new Date(dateAStr).getTime();
+                const dateB = new Date(dateBStr).getTime();
+                if (isNaN(dateA) || isNaN(dateB)) return 0;
+                return dateB - dateA; // Latest first
+            });
+            const recent = sorted.slice(0, 3);
             setRecentVitals(recent);
         } catch (err) {
             console.error("Failed to fetch vitals for dashboard:", err);
@@ -296,10 +308,10 @@ const DashboardPage: React.FC = () => {
             const response = await getUserOrders({ ordering: '-order_date' });
             const orders = (Array.isArray(response) ? response : response.results) || [];
             // Sort by order_date descending (latest first) as fallback
-            // Use order_date first, then created_at as fallback
+            // Use order_date only (MedicationOrder doesn't have created_at)
             const sorted = Array.isArray(orders) ? [...orders].sort((a, b) => {
-                const dateAStr = a.order_date || a.created_at || '';
-                const dateBStr = b.order_date || b.created_at || '';
+                const dateAStr = a.order_date || '';
+                const dateBStr = b.order_date || '';
                 if (!dateAStr && !dateBStr) return 0;
                 if (!dateAStr) return 1; // Put items without dates at the end
                 if (!dateBStr) return -1;
