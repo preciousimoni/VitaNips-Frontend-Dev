@@ -222,21 +222,25 @@ const DashboardPage: React.FC = () => {
         setAppointmentsLoading(true);
         setAppointmentsError(null);
         try {
-            const response = await getUserAppointments({ page: 1, ordering: 'date,start_time' });
+            const response = await getUserAppointments({ page: 1, ordering: '-date,-start_time' });
             const now = new Date();
             const upcoming = response.results.filter(app => {
                 const appDateTime = new Date(`${app.date}T${app.start_time}`);
                 return appDateTime >= now && (app.status === 'scheduled' || app.status === 'confirmed');
             });
             
-            // Sort by date and time to ensure earliest appointment is first
+            // Sort by date and time to ensure earliest upcoming appointment is first (for next appointment)
+            // But keep the list in reverse order (latest first) for display
             const sortedUpcoming = upcoming.sort((a, b) => {
                 const dateTimeA = new Date(`${a.date}T${a.start_time}`).getTime();
                 const dateTimeB = new Date(`${b.date}T${b.start_time}`).getTime();
                 return dateTimeA - dateTimeB;
             });
             
-            setUpcomingAppointments(sortedUpcoming);
+            // Reverse to show latest first in the list
+            const reversedUpcoming = [...sortedUpcoming].reverse();
+            
+            setUpcomingAppointments(reversedUpcoming);
             if (sortedUpcoming.length > 0) {
                 setNextAppointment(sortedUpcoming[0]);
             } else {
@@ -275,7 +279,7 @@ const DashboardPage: React.FC = () => {
         setVitalsLoading(true);
         setVitalsError(null);
         try {
-            const response = await getVitalSigns({ page: 1 });
+            const response = await getVitalSigns({ page: 1, ordering: '-date_recorded' });
             const recent = response.results.slice(0, 3);
             setRecentVitals(recent);
         } catch (err) {
@@ -289,9 +293,22 @@ const DashboardPage: React.FC = () => {
         setOrdersLoading(true);
         setOrdersError(null);
         try {
-            const response = await getUserOrders();
+            const response = await getUserOrders({ ordering: '-order_date' });
             const orders = (Array.isArray(response) ? response : response.results) || [];
-            const recent = Array.isArray(orders) ? orders.slice(0, 5) : [];
+            // Sort by order_date descending (latest first) as fallback
+            // Use order_date first, then created_at as fallback
+            const sorted = Array.isArray(orders) ? [...orders].sort((a, b) => {
+                const dateAStr = a.order_date || a.created_at || '';
+                const dateBStr = b.order_date || b.created_at || '';
+                if (!dateAStr && !dateBStr) return 0;
+                if (!dateAStr) return 1; // Put items without dates at the end
+                if (!dateBStr) return -1;
+                const dateA = new Date(dateAStr).getTime();
+                const dateB = new Date(dateBStr).getTime();
+                if (isNaN(dateA) || isNaN(dateB)) return 0;
+                return dateB - dateA; // Latest first
+            }) : [];
+            const recent = sorted.slice(0, 5);
             setRecentOrders(recent);
         } catch (err) {
             console.error("Failed to fetch orders for dashboard:", err);
@@ -305,7 +322,20 @@ const DashboardPage: React.FC = () => {
         setPrescriptionsError(null);
         try {
             const response = await getUserPrescriptions({ page: 1, ordering: '-date_prescribed' });
-            const recent = response.results.slice(0, 2);
+            // Sort by date_prescribed descending (latest first) as fallback
+            // Use date_prescribed first, then created_at as fallback
+            const sorted = [...response.results].sort((a, b) => {
+                const dateAStr = a.date_prescribed || a.created_at || '';
+                const dateBStr = b.date_prescribed || b.created_at || '';
+                if (!dateAStr && !dateBStr) return 0;
+                if (!dateAStr) return 1; // Put items without dates at the end
+                if (!dateBStr) return -1;
+                const dateA = new Date(dateAStr).getTime();
+                const dateB = new Date(dateBStr).getTime();
+                if (isNaN(dateA) || isNaN(dateB)) return 0;
+                return dateB - dateA; // Latest first
+            });
+            const recent = sorted.slice(0, 2);
             setRecentPrescriptions(recent);
         } catch (err) {
             console.error("Failed to fetch prescriptions for dashboard:", err);

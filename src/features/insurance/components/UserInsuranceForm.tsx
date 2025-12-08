@@ -1,10 +1,11 @@
 // src/features/insurance/components/UserInsuranceForm.tsx
 import React, { useState, useEffect, FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { ShieldCheckIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import Spinner from '../../../components/ui/Spinner';
 import { UserInsurance, UserInsurancePayload, InsurancePlan } from '../../../types/insurance';
-import { getAvailablePlans } from '../../../api/insurance';
+import { getAvailablePlans, verifyInsuranceDetails } from '../../../api/insurance';
+import toast from 'react-hot-toast';
 
 interface UserInsuranceFormProps {
   initialData?: UserInsurance | null;
@@ -31,6 +32,8 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
   const [availablePlans, setAvailablePlans] = useState<InsurancePlan[]>([]);
   const [loadingPlans, setLoadingPlans] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [verificationStatus, setVerificationStatus] = useState<{ valid: boolean; message?: string } | null>(null);
 
   useEffect(() => {
     setLoadingPlans(true);
@@ -90,6 +93,49 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
     }
 
     setFormData((prev) => ({ ...prev, [name]: processedValue }));
+    // Clear verification status when fields change
+    if (name === 'member_id' || name === 'policy_number' || name === 'plan') {
+      setVerificationStatus(null);
+    }
+  };
+
+  const handleVerify = async () => {
+    if (!formData.plan || !formData.member_id || !formData.policy_number) {
+      toast.error('Please fill in Plan, Member ID, and Policy Number before verifying.');
+      return;
+    }
+
+    setIsVerifying(true);
+    setVerificationStatus(null);
+    setError(null);
+
+    try {
+      const result = await verifyInsuranceDetails({
+        plan_id: formData.plan as number,
+        member_id: formData.member_id,
+        policy_number: formData.policy_number,
+      });
+
+      setVerificationStatus({
+        valid: result.valid,
+        message: result.message || result.error,
+      });
+
+      if (result.valid) {
+        toast.success(result.message || 'Insurance details verified successfully!');
+      } else {
+        toast.error(result.error || result.message || 'Verification failed. Please check your details.');
+      }
+    } catch (err: any) {
+      const errorMsg = err?.response?.data?.error || err?.message || 'Failed to verify insurance details.';
+      setVerificationStatus({
+        valid: false,
+        message: errorMsg,
+      });
+      toast.error(errorMsg);
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -215,6 +261,64 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
             placeholder="Enter your policy number"
           />
         </div>
+
+        {/* Verification Section */}
+        {formData.plan && formData.member_id && formData.policy_number && (
+          <div>
+            <motion.button
+              type="button"
+              onClick={handleVerify}
+              disabled={isVerifying || !formData.plan || !formData.member_id || !formData.policy_number}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-semibold hover:from-primary-dark hover:to-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 border-primary-200"
+            >
+              {isVerifying ? (
+                <>
+                  <Spinner size="sm" color="text-white" />
+                  <span>Verifying...</span>
+                </>
+              ) : (
+                <>
+                  <ShieldCheckIcon className="h-5 w-5" />
+                  <span>Verify Member ID & Policy Number</span>
+                </>
+              )}
+            </motion.button>
+
+            {verificationStatus && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`mt-3 p-4 rounded-xl border-2 ${
+                  verificationStatus.valid
+                    ? 'bg-emerald-50 border-emerald-200'
+                    : 'bg-red-50 border-red-200'
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  {verificationStatus.valid ? (
+                    <CheckCircleIcon className="h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+                  ) : (
+                    <XCircleIcon className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  )}
+                  <div className="flex-1">
+                    <p className={`text-sm font-semibold ${
+                      verificationStatus.valid ? 'text-emerald-800' : 'text-red-800'
+                    }`}>
+                      {verificationStatus.valid ? 'Verification Successful' : 'Verification Failed'}
+                    </p>
+                    {verificationStatus.message && (
+                      <p className={`text-xs mt-1 ${
+                        verificationStatus.valid ? 'text-emerald-700' : 'text-red-700'
+                      }`}>
+                        {verificationStatus.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        )}
 
         {/* Group Number */}
         <div>

@@ -3,6 +3,7 @@ import React from 'react';
 import { UserInsurance } from '../../../types/insurance';
 import Modal from '../../../components/common/Modal'; // Your existing Modal component
 import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface DigitalInsuranceCardModalProps {
     isOpen: boolean;
@@ -16,11 +17,18 @@ const formatDate = (dateStr: string | null | undefined) => {
 };
 
 const DigitalInsuranceCardModal: React.FC<DigitalInsuranceCardModalProps> = ({ isOpen, onClose, insurance }) => {
+    const { user } = useAuth();
+    
     if (!insurance || !insurance.plan) return null; // Or a loading/error state if fetched async
 
     const provider = insurance.plan.provider;
     const plan = insurance.plan;
     const placeholderLogo = '/default-provider-logo.png'; // Path to your placeholder
+    
+    // Get user's full name
+    const memberName = user?.first_name && user?.last_name
+        ? `${user.first_name} ${user.last_name}`
+        : user?.username || 'N/A';
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Digital Insurance Card">
@@ -43,8 +51,7 @@ const DigitalInsuranceCardModal: React.FC<DigitalInsuranceCardModalProps> = ({ i
                         <div>
                             <p className="text-xs opacity-80 tracking-wider">MEMBER NAME</p>
                             <p className="text-lg font-medium">
-                                {/* Assuming user name is not directly on UserInsurance, you'd fetch/pass it or use placeholder */}
-                                [User Full Name Here]
+                                {memberName}
                             </p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">

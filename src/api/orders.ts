@@ -29,9 +29,9 @@ export const createOrderFromPrescription = async (
 import { PaginatedResponse } from './../types/common';
 import { MedicationOrder } from './../types/pharmacy';
 
-export const getUserOrders = async (): Promise<PaginatedResponse<MedicationOrder> | MedicationOrder[]> => {
+export const getUserOrders = async (params?: { ordering?: string }): Promise<PaginatedResponse<MedicationOrder> | MedicationOrder[]> => {
     try {
-        const response = await axiosInstance.get('/pharmacy/orders/');
+        const response = await axiosInstance.get('/pharmacy/orders/', { params });
         // Handle both paginated and non-paginated responses
         if (response.data.results) {
             return response.data; // Paginated response

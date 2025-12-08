@@ -75,3 +75,32 @@ export const deleteUserInsurance = async (id: number): Promise<void> => {
         throw error;
     }
 };
+
+export interface VerifyInsuranceDetailsPayload {
+    plan_id: number;
+    member_id: string;
+    policy_number: string;
+}
+
+export interface VerifyInsuranceDetailsResponse {
+    valid: boolean;
+    message?: string;
+    error?: string;
+    provider?: string;
+    plan?: string;
+    note?: string;
+}
+
+export const verifyInsuranceDetails = async (payload: VerifyInsuranceDetailsPayload): Promise<VerifyInsuranceDetailsResponse> => {
+    try {
+        const response = await axiosInstance.post<VerifyInsuranceDetailsResponse>('/insurance/verify/', payload);
+        return response.data;
+    } catch (error: any) {
+        console.error('Failed to verify insurance details:', error);
+        // Return error response from API if available
+        if (error.response?.data) {
+            return error.response.data;
+        }
+        throw error;
+    }
+};

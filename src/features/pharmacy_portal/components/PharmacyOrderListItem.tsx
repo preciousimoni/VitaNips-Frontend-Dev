@@ -101,7 +101,7 @@ const PharmacyOrderListItem: React.FC<PharmacyOrderListItemProps> = ({ order }) 
             ></motion.div>
 
             <Link
-                to={`/portal/orders/${order.id}`}
+                to={`/pharmacy/orders/${order.id}`}
                 className="relative block p-6 pl-10 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-3xl group"
             >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">

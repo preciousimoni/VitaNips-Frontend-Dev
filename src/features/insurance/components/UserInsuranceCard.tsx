@@ -110,13 +110,9 @@ const UserInsuranceCard: React.FC<UserInsuranceCardProps> = ({
                   onError={(e) => (e.currentTarget.src = placeholderLogo)}
                 />
                 {insurance.is_primary && (
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute -top-1 -right-1"
-                  >
+                  <div className="absolute -top-1 -right-1">
                     <ShieldCheckIcon className="h-6 w-6 text-primary-500" />
-                  </motion.div>
+                  </div>
                 )}
               </motion.div>
               <div className="flex-1">
