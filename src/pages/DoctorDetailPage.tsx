@@ -75,7 +75,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ doctorId, onSubmitSuccess }) =>
   };
   
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-8 rounded-[2rem] border-2 border-primary-900/10 mt-12 relative overflow-hidden">
+    <form onSubmit={handleSubmit} className="bg-white p-8 rounded-[2.5rem] border-4 border-black mt-12 relative overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
       <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-bl-full -mr-10 -mt-10 pointer-events-none"></div>
       
       <h4 className="text-2xl font-black text-primary-900 mb-6 font-display">Write a Review</h4>
@@ -97,14 +97,14 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ doctorId, onSubmitSuccess }) =>
         <label htmlFor="comment" className="block text-sm font-bold text-gray-500 uppercase tracking-widest mb-3">Your Experience</label>
         <textarea id="comment" value={comment} onChange={(e) => setComment(e.target.value)}
           rows={4} 
-          className="w-full rounded-2xl border-2 border-primary-900/10 bg-cream-50 shadow-inner focus:border-primary-900 focus:ring-0 resize-none p-5 text-lg font-medium text-primary-900 placeholder:text-gray-400/70" 
+          className="w-full rounded-2xl border-2 border-black bg-cream-50 focus:border-black focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all resize-none p-5 text-lg font-bold text-black placeholder:text-gray-500" 
           placeholder="Share your experience with this doctor..." 
         />
       </div>
       
       <button 
         type="submit" 
-        className="px-10 py-4 bg-primary-900 text-white font-black text-lg rounded-2xl hover:bg-accent transition-all disabled:opacity-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]" 
+        className="px-10 py-4 bg-black text-white font-black text-lg rounded-2xl hover:bg-gray-800 border-4 border-black transition-all disabled:opacity-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px]" 
         disabled={isSubmitting || rating === 0}
       >
         {isSubmitting ? 'Submitting...' : 'Submit Review'}
@@ -277,7 +277,7 @@ const DoctorDetailPage: React.FC = () => {
             <div className="lg:col-span-8 space-y-8">
                 
                 {/* Hero / Profile Card */}
-                <div className="bg-primary-900 rounded-[3rem] p-8 md:p-12 relative overflow-hidden shadow-2xl">
+                <div className="bg-primary-900 rounded-[3rem] p-8 md:p-12 relative overflow-hidden shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] border-4 border-black">
                     {/* Decorative Elements */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full -mr-20 -mt-20"></div>
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-10 -mb-10"></div>
@@ -285,16 +285,16 @@ const DoctorDetailPage: React.FC = () => {
                     <div className="relative z-10 flex flex-col md:flex-row items-start gap-8 md:gap-12">
                         {/* Image Frame */}
                         <div className="relative group shrink-0 mx-auto md:mx-0">
-                            <div className="absolute inset-0 bg-accent rounded-[2rem] rotate-6 group-hover:rotate-3 transition-transform duration-300"></div>
-                            <div className="relative h-56 w-56 md:h-64 md:w-64 bg-white p-2 rounded-[2rem] shadow-xl rotate-[-3deg] group-hover:rotate-0 transition-transform duration-300">
+                            <div className="absolute inset-0 bg-yellow-400 rounded-[2rem] rotate-6 border-4 border-black group-hover:rotate-3 transition-transform duration-300"></div>
+                            <div className="relative h-56 w-56 md:h-64 md:w-64 bg-white p-2 rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black rotate-[-3deg] group-hover:rotate-0 transition-transform duration-300">
                                 <SmartImage
                                     src={doctor.profile_picture || placeholderImage}
                                     placeholderSrc={placeholderImage}
                                     alt={doctor.full_name}
-                                    className="h-full w-full object-cover rounded-[1.8rem] border-2 border-gray-100"
+                                    className="h-full w-full object-cover rounded-[1.5rem] border-2 border-black"
                                 />
                                 {doctor.is_verified && (
-                                    <div className="absolute -bottom-4 -right-4 bg-white rounded-full p-2 shadow-lg border-2 border-primary-900/5">
+                                    <div className="absolute -bottom-4 -right-4 bg-white rounded-full p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black">
                                         <CheckBadgeIcon className="h-10 w-10 text-blue-500" />
                                     </div>
                                 )}
@@ -305,7 +305,7 @@ const DoctorDetailPage: React.FC = () => {
                         <div className="flex-1 text-center md:text-left text-white">
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-4">
                                 {doctor.specialties.map((spec, idx) => (
-                                    <span key={idx} className="px-4 py-1.5 bg-white/10 text-white font-bold rounded-xl text-sm border border-white/20 hover:bg-white hover:text-primary-900 transition-colors cursor-default">
+                                    <span key={idx} className="px-4 py-1.5 bg-black/20 text-white font-bold rounded-xl text-sm border-2 border-black/20 hover:bg-white hover:text-black hover:border-white transition-colors cursor-default">
                                         {spec.name}
                                     </span>
                                 ))}
@@ -330,14 +330,14 @@ const DoctorDetailPage: React.FC = () => {
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                                 <button 
                                     onClick={() => setShowBookingModal(true)}
-                                    className="px-8 py-3 bg-white text-primary-900 font-black rounded-xl hover:bg-accent hover:text-white hover:scale-105 transition-all shadow-[0_10px_20px_-5px_rgba(0,0,0,0.3)] flex items-center"
+                                    className="px-8 py-3 bg-white text-black font-black rounded-xl border-4 border-transparent hover:border-black hover:scale-105 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center"
                                 >
                                     <UserPlusIcon className="h-5 w-5 mr-2" />
                                     Book Now
                                 </button>
                                 <button 
                                     onClick={() => setIsFavorite(!isFavorite)}
-                                    className="p-3 rounded-xl bg-white/10 text-white hover:bg-white hover:text-red-500 transition-all border border-white/20"
+                                    className="p-3 rounded-xl bg-black/20 text-white hover:bg-white hover:text-red-500 transition-all border-2 border-black/20 hover:border-white"
                                 >
                                     {isFavorite ? <HeartIcon className="h-6 w-6 text-red-500" /> : <HeartIconOutline className="h-6 w-6" />}
                                 </button>
@@ -347,9 +347,9 @@ const DoctorDetailPage: React.FC = () => {
                 </div>
 
                 {/* About Section */}
-                <div className="bg-white rounded-[2rem] p-8 md:p-10 border-2 border-primary-900/10 shadow-sm relative overflow-hidden">
+                <div className="bg-white rounded-[2.5rem] p-8 md:p-10 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden">
                     <h3 className="text-2xl font-black text-primary-900 mb-6 font-display flex items-center">
-                        <span className="bg-accent w-8 h-8 rounded-lg mr-3 flex items-center justify-center text-white">
+                        <span className="bg-yellow-400 w-10 h-10 rounded-xl mr-3 flex items-center justify-center text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </span>
                         About Dr. {doctor.last_name}
@@ -360,9 +360,9 @@ const DoctorDetailPage: React.FC = () => {
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-cream-50 p-6 rounded-2xl border-2 border-primary-900/5">
+                        <div className="bg-cream-50 p-6 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div className="flex items-center mb-4">
-                                <div className="p-2 bg-white rounded-xl shadow-sm mr-3 border border-gray-100">
+                                <div className="p-2 bg-white rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mr-3 border-2 border-black">
                                     <AcademicCapIcon className="h-6 w-6 text-primary-900" />
                                 </div>
                                 <h4 className="font-bold text-gray-900 text-lg">Education</h4>
@@ -370,7 +370,7 @@ const DoctorDetailPage: React.FC = () => {
                             <p className="text-gray-600 font-medium">
                                 {doctor.education || 'Medical Degree Verified'}
                             </p>
-                            <div className="mt-4 pt-4 border-t-2 border-primary-900/5 flex justify-between items-center">
+                            <div className="mt-4 pt-4 border-t-2 border-black flex justify-between items-center">
                                 <span className="text-sm text-gray-500 font-bold uppercase tracking-wide">Experience</span>
                                 <span className="font-black text-white bg-primary-900 px-3 py-1 rounded-lg">
                                     {doctor.years_of_experience} Years
@@ -378,9 +378,9 @@ const DoctorDetailPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-cream-50 p-6 rounded-2xl border-2 border-primary-900/5">
+                        <div className="bg-cream-50 p-6 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div className="flex items-center mb-4">
-                                <div className="p-2 bg-white rounded-xl shadow-sm mr-3 border border-gray-100">
+                                <div className="p-2 bg-white rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mr-3 border-2 border-black">
                                     <LanguageIcon className="h-6 w-6 text-primary-900" />
                                 </div>
                                 <h4 className="font-bold text-gray-900 text-lg">Languages</h4>
@@ -388,7 +388,7 @@ const DoctorDetailPage: React.FC = () => {
                             <div className="flex flex-wrap gap-2">
                                 {doctor.languages_spoken ? (
                                     doctor.languages_spoken.split(',').map((lang, idx) => (
-                                        <span key={idx} className="px-4 py-1.5 bg-white border-2 border-primary-900/5 rounded-xl text-sm font-bold text-gray-700">
+                                        <span key={idx} className="px-4 py-1.5 bg-white border-2 border-black rounded-xl text-sm font-bold text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                             {lang.trim()}
                                         </span>
                                     ))
@@ -401,16 +401,16 @@ const DoctorDetailPage: React.FC = () => {
                 </div>
 
                 {/* Reviews Section */}
-                <div className="bg-white rounded-[2rem] shadow-sm border-2 border-primary-900/10 p-8 md:p-10">
+                <div className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-8 md:p-10">
                     <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
                         <h3 className="text-2xl font-black text-primary-900 font-display flex items-center">
-                            <span className="bg-accent w-8 h-8 rounded-lg mr-3 flex items-center justify-center text-white">
+                            <span className="bg-yellow-400 w-10 h-10 rounded-xl mr-3 flex items-center justify-center text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                                 <ChatBubbleLeftRightIcon className="h-5 w-5" />
                             </span>
                             Patient Reviews
                         </h3>
                         {reviewsTotalCount > 0 && (
-                            <span className="bg-primary-900 text-white text-sm font-bold px-4 py-1.5 rounded-xl shadow-md transform rotate-2">
+                            <span className="bg-black text-white text-sm font-bold px-4 py-1.5 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black transform rotate-2">
                                 {reviewsTotalCount} Verified
                             </span>
                         )}
@@ -423,7 +423,7 @@ const DoctorDetailPage: React.FC = () => {
                             {reviews.length > 0 ? (
                                 reviews.map(review => <ReviewCard key={review.id} review={review} />)
                             ) : (
-                                <div className="text-center py-16 bg-cream-50 rounded-[2rem] border-2 border-dashed border-gray-300/50">
+                                <div className="text-center py-16 bg-cream-50 rounded-[2rem] border-4 border-dashed border-black">
                                     <StarIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                                     <p className="text-primary-900 font-bold text-lg">No reviews yet</p>
                                     <p className="text-gray-500 mt-1 font-medium">Be the first to share your experience with Dr. {doctor.last_name}</p>
@@ -431,11 +431,11 @@ const DoctorDetailPage: React.FC = () => {
                             )}
 
                             {reviewsNextPageUrl && (
-                                <div className="text-center pt-8 border-t-2 border-primary-900/5">
+                                <div className="text-center pt-8 border-t-4 border-black">
                                     <button 
                                         onClick={loadMoreReviews} 
                                         disabled={isLoadingMoreReviews}
-                                        className="text-primary-900 hover:text-white font-bold text-sm px-8 py-3 bg-white border-2 border-primary-900 hover:bg-primary-900 rounded-xl transition-all"
+                                        className="text-black hover:text-white font-bold text-sm px-8 py-3 bg-white border-2 border-black hover:bg-black rounded-xl transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                                     >
                                         {isLoadingMoreReviews ? 'Loading...' : 'Read More Reviews'}
                                     </button>
@@ -454,18 +454,18 @@ const DoctorDetailPage: React.FC = () => {
             <div className="lg:col-span-4">
                 <div className="sticky top-8 space-y-6">
                     {/* Booking Card */}
-                    <div className="bg-white rounded-[2.5rem] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] border-4 border-white ring-1 ring-gray-100 p-6 overflow-hidden relative">
+                    <div className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-6 overflow-hidden relative">
                         {/* Header */}
                         <div className="text-center mb-6">
                              <p className="text-sm text-gray-500 font-bold uppercase tracking-widest mb-1">Consultation Fee</p>
-                             <div className="inline-block bg-cream-100 px-6 py-2 rounded-2xl border-2 border-primary-900/5">
+                             <div className="inline-block bg-cream-100 px-6 py-2 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                                 <span className="text-2xl font-black text-primary-900">
                                     {doctor.consultation_fee ? `₦${parseFloat(doctor.consultation_fee).toLocaleString()}` : 'Contact'}
                                 </span>
                              </div>
                         </div>
 
-                        <div className="bg-primary-900 rounded-[2rem] p-6 text-white relative overflow-hidden mb-6">
+                        <div className="bg-primary-900 rounded-[2rem] p-6 text-white relative overflow-hidden mb-6 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                             
                             <h3 className="font-bold text-lg mb-6 flex items-center relative z-10 border-b border-white/10 pb-4">
@@ -481,7 +481,7 @@ const DoctorDetailPage: React.FC = () => {
                         <div className="space-y-4 relative z-10">
                             <button 
                                 onClick={() => setShowBookingModal(true)}
-                                className="w-full py-4 bg-accent text-white font-black text-lg rounded-2xl hover:bg-accent-hover shadow-lg hover:shadow-accent/40 hover:-translate-y-1 transition-all flex items-center justify-center uppercase tracking-wider"
+                                className="w-full py-4 bg-yellow-400 text-black font-black text-lg rounded-2xl border-4 border-black hover:bg-yellow-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center justify-center uppercase tracking-wider"
                             >
                                 Book Appointment
                             </button>
@@ -501,14 +501,14 @@ const DoctorDetailPage: React.FC = () => {
 
                     {/* Trust Badges */}
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-blue-50/50 p-4 rounded-3xl text-center border-2 border-transparent hover:border-blue-100 transition-colors">
-                            <div className="bg-white w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-sm text-blue-500">
+                        <div className="bg-blue-100 p-4 rounded-3xl text-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <div className="bg-white w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black text-blue-900">
                                 <CheckBadgeIcon className="h-6 w-6" />
                             </div>
                             <p className="text-xs font-black text-blue-900 uppercase">Verified</p>
                         </div>
-                        <div className="bg-green-50/50 p-4 rounded-3xl text-center border-2 border-transparent hover:border-green-100 transition-colors">
-                            <div className="bg-white w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-sm text-green-500">
+                        <div className="bg-green-100 p-4 rounded-3xl text-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <div className="bg-white w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-2 border-black text-green-900">
                                 <CurrencyDollarIcon className="h-6 w-6" />
                             </div>
                             <p className="text-xs font-black text-green-900 uppercase">Secure</p>

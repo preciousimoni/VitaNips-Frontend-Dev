@@ -36,10 +36,10 @@ const PharmacyInventoryPage: React.FC = () => {
     // const { user } = useAuth();
     
     // All hooks must be called before any conditional returns
-    const { scrollYProgress } = useScroll();
-    const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-    const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-    const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '40%']);
+    // const { scrollYProgress } = useScroll();
+    // const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+    // const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+    // const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '40%']);
 
     const [inventory, setInventory] = useState<PharmacyInventory[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
@@ -189,54 +189,33 @@ const PharmacyInventoryPage: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 pb-12">
+        <div className="min-h-screen bg-cream-50 pb-24">
             {/* Hero Header Section */}
-            <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="relative bg-gradient-to-r from-primary via-emerald-600 to-teal-600 pt-20 pb-24 sm:pt-24 sm:pb-32 overflow-hidden"
-            >
-                {/* Animated Blobs */}
-                <motion.div
-                    style={{ y }}
-                    className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                ></motion.div>
-                <motion.div
-                    style={{ y: y2 }}
-                    className="absolute bottom-0 right-0 w-80 h-80 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                ></motion.div>
-                <motion.div
-                    style={{ y: y3 }}
-                    className="absolute top-1/2 left-1/2 w-72 h-72 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                ></motion.div>
+            <div className="relative bg-primary-900 border-b-4 border-black shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] rounded-b-[3rem] overflow-hidden">
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#FDFBF7_1px,transparent_1px)] [background-size:20px_20px]"></div>
 
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
                     <motion.button
                         onClick={() => navigate('/pharmacy/dashboard')}
                         whileHover={{ scale: 1.05, x: -5 }}
                         whileTap={{ scale: 0.95 }}
                         className="inline-flex items-center gap-2 text-white/90 hover:text-white mb-6 font-bold"
                     >
-                        <ArrowLeftIcon className="h-5 w-5" />
+                        <ArrowLeftIcon className="h-5 w-5 stroke-[3]" />
                         Back to Dashboard
                     </motion.button>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="inline-flex items-center px-5 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-bold uppercase tracking-wider mb-6"
-                    >
+                    <div className="inline-flex items-center px-4 py-1.5 rounded-xl bg-green-400 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black font-black text-xs uppercase tracking-wider mb-6">
                         <SparklesIcon className="h-4 w-4 mr-2" />
                         INVENTORY MANAGEMENT
-                    </motion.div>
+                    </div>
 
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div>
-                            <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 font-display tracking-tight leading-tight">
                                 Pharmacy Inventory
                             </h1>
-                            <p className="text-lg text-white/90">
+                            <p className="text-lg md:text-xl text-cream-50/90 font-medium">
                                 Manage your medication stock levels and pricing
                             </p>
                             {totalCount > 0 && (
@@ -244,55 +223,48 @@ const PharmacyInventoryPage: React.FC = () => {
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 0.4 }}
-                                    className="flex items-center gap-2 mt-4 text-sm text-white/80 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 w-fit"
+                                    className="flex items-center gap-2 mt-4 text-black text-sm bg-white px-4 py-2 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-fit font-bold"
                                 >
-                                    <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
-                                    <span className="font-bold">{totalCount}</span> Items in Inventory
+                                    <div className="h-3 w-3 bg-green-500 rounded-full animate-pulse border border-black"></div>
+                                    <span className="font-black">{totalCount}</span> Items in Inventory
                                 </motion.div>
                             )}
                         </div>
                     </div>
                 </div>
-
-                {/* Bottom Wave */}
-                <div className="absolute bottom-0 left-0 right-0">
-                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
-                    </svg>
-                </div>
-            </motion.div>
+            </div>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 relative z-10">
                 {/* Search and Filters */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="mb-6"
+                    className="mb-8"
                 >
-                    <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-6">
-                        <div className="flex flex-col md:flex-row gap-4 mb-4">
+                    <div className="bg-white rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-6 md:p-8">
+                        <div className="flex flex-col md:flex-row gap-4 mb-6">
                             {/* Search Bar */}
                             <div className="flex-1 relative">
-                                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-black" />
                                 <input
                                     type="text"
                                     placeholder="Search by medication name..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    className="w-full pl-12 pr-4 py-4 bg-cream-50 border-2 border-black rounded-xl focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-black placeholder:text-gray-500 text-lg"
                                 />
                             </div>
 
                             {/* Add Button */}
                             <motion.button
                                 onClick={handleAddClick}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-6 py-3 bg-gradient-to-r from-primary to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all flex items-center justify-center gap-2 shadow-lg"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="px-6 py-4 bg-black text-white font-black rounded-xl border-4 border-transparent hover:bg-gray-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-lg"
                             >
-                                <PlusIcon className="h-5 w-5" />
+                                <PlusIcon className="h-6 w-6 stroke-[3]" />
                                 Add Item
                             </motion.button>
                         </div>
@@ -300,24 +272,24 @@ const PharmacyInventoryPage: React.FC = () => {
                         {/* Stock Filter Tabs */}
                         <div>
                             <div className="flex items-center gap-2 mb-3">
-                                <FunnelIcon className="h-5 w-5 text-gray-600" />
-                                <p className="text-sm font-bold text-gray-700 uppercase tracking-wider">Filter by Stock Status</p>
+                                <FunnelIcon className="h-5 w-5 text-black" />
+                                <p className="text-sm font-black text-black uppercase tracking-wider">Filter by Stock Status</p>
                             </div>
                             <div className="flex flex-wrap gap-3">
                                 {[
-                                    { value: 'all', label: 'All Items', color: 'from-gray-500 to-gray-600' },
-                                    { value: 'in_stock', label: 'In Stock', color: 'from-emerald-500 to-teal-600' },
-                                    { value: 'out_of_stock', label: 'Out of Stock', color: 'from-red-500 to-rose-600' }
+                                    { value: 'all', label: 'All Items', activeClass: 'bg-black text-white border-black' },
+                                    { value: 'in_stock', label: 'In Stock', activeClass: 'bg-emerald-500 text-white border-black' },
+                                    { value: 'out_of_stock', label: 'Out of Stock', activeClass: 'bg-red-500 text-white border-black' }
                                 ].map((filter) => (
                                     <motion.button
                                         key={filter.value}
                                         onClick={() => setStockFilter(filter.value as any)}
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                                        className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
                                             stockFilter === filter.value
-                                                ? `bg-gradient-to-r ${filter.color} text-white shadow-lg`
-                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                ? `${filter.activeClass} hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-none`
+                                                : 'bg-white text-black hover:bg-gray-100'
                                         }`}
                                     >
                                         {filter.label}
@@ -336,7 +308,7 @@ const PharmacyInventoryPage: React.FC = () => {
                         className="space-y-4"
                     >
                         {[...Array(5)].map((_, i) => (
-                            <div key={i} className="bg-white rounded-3xl p-6 shadow-lg border-2 border-gray-100">
+                            <div key={i} className="bg-white rounded-[2rem] p-6 shadow-none border-4 border-black/10">
                                 <Skeleton className="h-32 w-full rounded-2xl" />
                             </div>
                         ))}
@@ -345,7 +317,7 @@ const PharmacyInventoryPage: React.FC = () => {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-white rounded-3xl p-8 shadow-xl border-2 border-red-100"
+                        className="bg-white rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black"
                     >
                         <ErrorMessage message={error} onRetry={fetchInventory} />
                     </motion.div>
@@ -366,95 +338,72 @@ const PharmacyInventoryPage: React.FC = () => {
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, scale: 0.95 }}
                                             transition={{ delay: index * 0.05 }}
-                                            whileHover={{ y: -5, scale: 1.02 }}
-                                            className="bg-white rounded-3xl p-6 shadow-xl border-2 border-gray-100 hover:border-primary/30 transition-all relative overflow-hidden group"
+                                            whileHover={{ y: -5 }}
+                                            className="bg-white rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all relative overflow-hidden group"
                                         >
-                                            {/* Status accent line */}
-                                            <div className={`absolute left-0 top-0 bottom-0 w-2 ${
-                                                item.in_stock 
-                                                    ? 'bg-gradient-to-b from-emerald-500 to-teal-500' 
-                                                    : 'bg-gradient-to-b from-red-500 to-rose-500'
-                                            }`}></div>
-
-                                            {/* Rotating gradient blob */}
-                                            <motion.div
-                                                className={`absolute top-0 right-0 w-32 h-32 ${
-                                                    item.in_stock 
-                                                        ? 'bg-gradient-to-br from-emerald-500/10 to-teal-500/10' 
-                                                        : 'bg-gradient-to-br from-red-500/10 to-rose-500/10'
-                                                } rounded-full blur-3xl`}
-                                                animate={{ rotate: [0, 360], scale: [1, 1.2, 1] }}
-                                                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                                            ></motion.div>
-
                                             <div className="relative z-10">
                                                 <div className="flex items-start justify-between mb-4">
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-3 mb-2">
-                                                            <div className={`p-2 rounded-xl ${
+                                                            <div className={`p-2 rounded-xl border-2 border-black ${
                                                                 item.in_stock 
-                                                                    ? 'bg-gradient-to-br from-emerald-500/20 to-teal-500/20' 
-                                                                    : 'bg-gradient-to-br from-red-500/20 to-rose-500/20'
+                                                                    ? 'bg-emerald-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]' 
+                                                                    : 'bg-red-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                                                             }`}>
-                                                                <BeakerIcon className={`h-6 w-6 ${
-                                                                    item.in_stock ? 'text-emerald-600' : 'text-red-600'
+                                                                <BeakerIcon className={`h-6 w-6 stroke-[2.5] ${
+                                                                    item.in_stock ? 'text-emerald-900' : 'text-red-900'
                                                                 }`} />
                                                             </div>
                                                             <div>
-                                                                <h3 className="text-lg font-black text-gray-900 mb-1">
+                                                                <h3 className="text-xl font-black text-black mb-0.5 leading-tight">
                                                                     {item.medication.name}
                                                                 </h3>
                                                                 {item.medication.generic_name && (
-                                                                    <p className="text-xs text-gray-600">
+                                                                    <p className="text-xs text-gray-600 font-bold uppercase tracking-wide">
                                                                         {item.medication.generic_name}
                                                                     </p>
                                                                 )}
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${
-                                                        item.in_stock
-                                                            ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
-                                                            : 'bg-red-100 text-red-800 border-red-200'
-                                                    }`}>
-                                                        {item.in_stock ? 'IN STOCK' : 'OUT OF STOCK'}
-                                                    </div>
                                                 </div>
 
-                                                <div className="space-y-3 mb-4">
-                                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                                                        <span className="text-sm font-semibold text-gray-600">Quantity</span>
-                                                        <span className="text-lg font-black text-gray-900">{item.quantity}</span>
+                                                <div className="space-y-3 mb-6">
+                                                    <div className="flex items-center justify-between p-3 bg-cream-50 rounded-xl border-2 border-black/10">
+                                                        <span className="text-sm font-bold text-gray-600 uppercase tracking-widest">Quantity</span>
+                                                        <span className={`text-xl font-black ${item.quantity === 0 ? 'text-red-600' : 'text-black'}`}>
+                                                            {item.quantity}
+                                                        </span>
                                                     </div>
-                                                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-primary/10 to-emerald-500/10 rounded-xl border border-primary/20">
-                                                        <span className="text-sm font-semibold text-gray-600 flex items-center gap-1">
-                                                            <CurrencyDollarIcon className="h-4 w-4" />
+                                                    <div className="flex items-center justify-between p-3 bg-white rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                                        <span className="text-sm font-black text-black flex items-center gap-1 uppercase tracking-widest">
+                                                            <CurrencyDollarIcon className="h-4 w-4 stroke-[2.5]" />
                                                             Price
                                                         </span>
-                                                        <span className="text-lg font-black text-primary">₦{parseFloat(item.price).toLocaleString()}</span>
+                                                        <span className="text-xl font-black text-black">₦{parseFloat(item.price).toLocaleString()}</span>
                                                     </div>
-                                                    <div className="text-xs text-gray-500">
+                                                    <div className="text-xs text-gray-500 font-bold text-right pt-2 border-t-2 border-gray-100">
                                                         Last updated: {formatDate(item.last_updated)}
                                                     </div>
                                                 </div>
 
-                                                <div className="flex gap-2 pt-4 border-t border-gray-200">
+                                                <div className="flex gap-3 pt-4 border-t-4 border-black">
                                                     <motion.button
                                                         onClick={() => handleEditClick(item)}
-                                                        whileHover={{ scale: 1.05 }}
-                                                        whileTap={{ scale: 0.95 }}
-                                                        className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                                                        whileHover={{ scale: 1.02 }}
+                                                        whileTap={{ scale: 0.98 }}
+                                                        className="flex-1 px-4 py-2.5 bg-white text-black font-black rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-50 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-sm"
                                                     >
-                                                        <PencilIcon className="h-4 w-4" />
+                                                        <PencilIcon className="h-4 w-4 stroke-[2.5]" />
                                                         Edit
                                                     </motion.button>
                                                     <motion.button
                                                         onClick={() => handleDeleteClick(item)}
-                                                        whileHover={{ scale: 1.05 }}
-                                                        whileTap={{ scale: 0.95 }}
-                                                        className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-500 text-white font-bold rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                                                        whileHover={{ scale: 1.02 }}
+                                                        whileTap={{ scale: 0.98 }}
+                                                        className="px-4 py-2.5 bg-red-100 text-red-900 font-black rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-200 transition-all flex items-center justify-center gap-2"
                                                     >
-                                                        <TrashIcon className="h-4 w-4" />
+                                                        <TrashIcon className="h-4 w-4 stroke-[2.5]" />
                                                     </motion.button>
                                                 </div>
                                             </div>
@@ -467,13 +416,13 @@ const PharmacyInventoryPage: React.FC = () => {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3 }}
-                                className="bg-white rounded-3xl p-12 shadow-xl border-2 border-gray-100 text-center"
+                                className="bg-white rounded-[2.5rem] p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black text-center"
                             >
-                                <CubeIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                                <h3 className="text-xl font-black text-gray-900 mb-2">
+                                <CubeIcon className="h-16 w-16 text-black/20 mx-auto mb-4 stroke-2" />
+                                <h3 className="text-2xl font-black text-black mb-2 font-display">
                                     {searchQuery || stockFilter !== 'all' ? 'No matching items' : 'No inventory items yet'}
                                 </h3>
-                                <p className="text-gray-600 mb-6">
+                                <p className="text-black font-medium mb-8">
                                     {searchQuery || stockFilter !== 'all' 
                                         ? 'Try adjusting your search or filter criteria.'
                                         : 'Start by adding your first medication to inventory.'}
@@ -483,9 +432,9 @@ const PharmacyInventoryPage: React.FC = () => {
                                         onClick={handleAddClick}
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="px-6 py-3 bg-gradient-to-r from-primary to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all inline-flex items-center gap-2"
+                                        className="px-8 py-4 bg-black text-white font-black rounded-xl border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all inline-flex items-center gap-2 text-lg uppercase tracking-wide"
                                     >
-                                        <PlusIcon className="h-5 w-5" />
+                                        <PlusIcon className="h-6 w-6 stroke-[3]" />
                                         Add First Item
                                     </motion.button>
                                 )}
@@ -516,7 +465,7 @@ const PharmacyInventoryPage: React.FC = () => {
                                 <select
                                     value={formData.medication_id}
                                     onChange={(e) => setFormData({ ...formData, medication_id: parseInt(e.target.value) })}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    className="w-full px-4 py-3 bg-cream-50 border-2 border-black rounded-xl focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-black"
                                     required
                                 >
                                     <option value={0}>Select a medication...</option>
@@ -532,7 +481,7 @@ const PharmacyInventoryPage: React.FC = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">
+                            <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">
                                 Quantity *
                             </label>
                             <input
@@ -540,12 +489,12 @@ const PharmacyInventoryPage: React.FC = () => {
                                 min="0"
                                 value={formData.quantity}
                                 onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) || 0 })}
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                className="w-full px-4 py-3 bg-cream-50 border-2 border-black rounded-xl focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-black"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">
+                            <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">
                                 Price (₦) *
                             </label>
                             <input
@@ -554,7 +503,7 @@ const PharmacyInventoryPage: React.FC = () => {
                                 step="0.01"
                                 value={formData.price}
                                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                className="w-full px-4 py-3 bg-cream-50 border-2 border-black rounded-xl focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-black"
                                 required
                             />
                         </div>
@@ -572,20 +521,20 @@ const PharmacyInventoryPage: React.FC = () => {
                         </label>
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-4 border-t">
+                    <div className="flex justify-end gap-3 pt-6 border-t-2 border-gray-100">
                         <button
                             type="button"
                             onClick={() => {
                                 setShowAddModal(false);
                                 setEditingItem(null);
                             }}
-                            className="px-6 py-2 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all"
+                            className="px-6 py-3 border-2 border-black text-black font-bold rounded-xl hover:bg-gray-50 transition-all uppercase tracking-wide text-sm"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-6 py-2 bg-gradient-to-r from-primary to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all"
+                            className="px-6 py-3 bg-black text-white font-bold rounded-xl border-4 border-transparent hover:border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all uppercase tracking-wide text-sm"
                         >
                             {editingItem ? 'Update' : 'Add'} Item
                         </button>
@@ -600,20 +549,21 @@ const PharmacyInventoryPage: React.FC = () => {
                 title="Delete Inventory Item"
             >
                 <div className="space-y-4">
-                    <p className="text-gray-700">
-                        Are you sure you want to delete <strong>{deletingItem?.medication.name}</strong> from inventory? This action cannot be undone.
+                    <p className="text-black font-medium text-lg">
+                        Are you sure you want to delete <strong className="text-red-600">{deletingItem?.medication.name}</strong> from inventory? This action cannot be undone.
                     </p>
-                    <div className="flex justify-end gap-3 pt-4 border-t">
+                    <div className="flex justify-end gap-3 pt-6 border-t-2 border-gray-100">
                         <button
                             onClick={() => setDeletingItem(null)}
-                            className="px-6 py-2 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all"
+                            className="px-6 py-3 border-2 border-black text-black font-bold rounded-xl hover:bg-gray-50 transition-all uppercase tracking-wide text-sm"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={handleConfirmDelete}
-                            className="px-6 py-2 bg-gradient-to-r from-red-500 to-rose-500 text-white font-bold rounded-xl hover:shadow-xl transition-all"
+                            className="px-6 py-3 bg-red-600 text-white font-bold rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-2 uppercase tracking-wide text-sm"
                         >
+                            <TrashIcon className="h-4 w-4 stroke-[3]" />
                             Delete
                         </button>
                     </div>

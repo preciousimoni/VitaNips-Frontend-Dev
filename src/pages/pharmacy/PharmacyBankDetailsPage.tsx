@@ -151,13 +151,13 @@ const PharmacyBankDetailsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-cream-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto">
         <button 
           onClick={() => navigate(-1)}
-          className="flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-white text-black font-bold rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all mb-8 w-fit"
         >
-          <ArrowLeftIcon className="h-5 w-5 mr-2" />
+          <ArrowLeftIcon className="h-5 w-5 stroke-[3]" />
           Back to Dashboard
         </button>
 
@@ -166,36 +166,37 @@ const PharmacyBankDetailsPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl shadow-xl overflow-hidden mb-8 border-2 border-emerald-100"
+            className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden mb-8 border-4 border-black"
           >
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-600 p-6 text-white text-center">
-              <div className="mx-auto bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center mb-3 backdrop-blur-sm">
-                <CheckCircleIcon className="h-8 w-8 text-white" />
+            <div className="bg-emerald-600 border-b-4 border-black p-8 text-white text-center relative overflow-hidden">
+               <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+              <div className="relative z-10 mx-auto bg-black w-20 h-20 rounded-2xl flex items-center justify-center mb-4 border-2 border-white/20 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]">
+                <CheckCircleIcon className="h-10 w-10 text-emerald-400 stroke-[2]" />
               </div>
-              <h3 className="text-xl font-black mb-1">Bank Account Linked</h3>
-              <p className="text-white/80 text-sm">Your payout account is active</p>
+              <h3 className="text-2xl font-black mb-1 font-display tracking-wide uppercase">Bank Linked</h3>
+              <p className="text-emerald-100 font-bold text-sm bg-black/20 inline-block px-3 py-1 rounded-lg">Your payout account is active</p>
             </div>
 
-            <div className="p-6 space-y-4">
-              <div>
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Bank Name</p>
-                <p className="text-lg font-black text-gray-900">{existingBankDetails.bank_name}</p>
+            <div className="p-8 space-y-6">
+              <div className="bg-cream-50 p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                <p className="text-xs text-black font-black uppercase tracking-wider mb-1">Bank Name</p>
+                <p className="text-xl font-black text-black">{existingBankDetails.bank_name}</p>
               </div>
               
               {existingBankDetails.account_name && (
-                <div>
-                  <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Account Name</p>
-                  <p className="text-lg font-black text-gray-900">{existingBankDetails.account_name}</p>
+                <div className="bg-cream-50 p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                  <p className="text-xs text-black font-black uppercase tracking-wider mb-1">Account Name</p>
+                  <p className="text-xl font-black text-black">{existingBankDetails.account_name}</p>
                 </div>
               )}
               
-              <div>
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Account Number</p>
-                <p className="text-lg font-black text-gray-900">{existingBankDetails.account_number}</p>
+              <div className="bg-cream-50 p-4 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                <p className="text-xs text-black font-black uppercase tracking-wider mb-1">Account Number</p>
+                <p className="text-xl font-black text-black font-mono tracking-widest">{existingBankDetails.account_number}</p>
               </div>
 
-              <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 mt-4">
-                <p className="text-xs text-emerald-800">
+              <div className="bg-black text-white rounded-xl p-4 mt-4 border-2 border-gray-800">
+                <p className="text-xs font-medium">
                   <strong>Note:</strong> To update your bank details, please contact support or submit a new account below.
                 </p>
               </div>
@@ -204,19 +205,21 @@ const PharmacyBankDetailsPage: React.FC = () => {
         )}
 
         {/* Bank Details Form */}
+        {/* Bank Details Form */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl shadow-xl overflow-hidden"
+          className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden border-4 border-black"
         >
-          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-8 text-white text-center">
-            <div className="mx-auto bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm">
-              <BanknotesIcon className="h-8 w-8 text-white" />
+          <div className="bg-primary-900 border-b-4 border-black p-8 text-white text-center relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            <div className="relative z-10 mx-auto bg-white/10 w-20 h-20 rounded-2xl flex items-center justify-center mb-4 border-2 border-white/20 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <BanknotesIcon className="h-10 w-10 text-white" />
             </div>
-            <h2 className="text-2xl font-black mb-2">
-              {existingBankDetails ? 'Update Bank Account' : 'Pharmacy Bank Account'}
+            <h2 className="text-2xl font-black mb-2 font-display uppercase tracking-wide">
+              {existingBankDetails ? 'Update Account' : 'Pharmacy Bank'}
             </h2>
-            <p className="text-white/80 text-sm">
+            <p className="text-white/80 text-sm font-medium">
               Link your pharmacy's bank account to receive payments for medication orders.
             </p>
           </div>
@@ -225,20 +228,20 @@ const PharmacyBankDetailsPage: React.FC = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Searchable Bank Select */}
               <div ref={dropdownRef}>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
+                <label className="block text-sm font-black text-black uppercase tracking-wide mb-2">
                   Select Bank
                 </label>
                 <div className="relative">
                   <div
                     onClick={() => setShowBankDropdown(!showBankDropdown)}
-                    className="w-full rounded-xl border-gray-200 border shadow-sm focus:border-primary focus:ring-primary py-3 pl-10 pr-10 cursor-pointer bg-white flex items-center justify-between"
+                    className="w-full rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] py-4 pl-12 pr-10 cursor-pointer bg-cream-50 hover:bg-white flex items-center justify-between transition-colors"
                   >
-                    <span className={selectedBank ? 'text-gray-900' : 'text-gray-400'}>
+                    <span className={selectedBank ? 'text-black font-bold text-lg' : 'text-gray-500 font-medium'}>
                       {selectedBank ? selectedBank.name : 'Select a bank...'}
                     </span>
-                    <BuildingLibraryIcon className="h-5 w-5 text-gray-400" />
+                    <BuildingLibraryIcon className="h-6 w-6 text-black" />
                   </div>
-                  <BuildingLibraryIcon className="h-5 w-5 text-gray-400 absolute left-3 top-3.5 pointer-events-none" />
+                  <BuildingLibraryIcon className="h-6 w-6 text-black absolute left-4 top-4 pointer-events-none" />
                   
                   <AnimatePresence>
                     {showBankDropdown && (
@@ -246,18 +249,18 @@ const PharmacyBankDetailsPage: React.FC = () => {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-80 overflow-hidden"
+                        className="absolute z-50 w-full mt-2 bg-white border-4 border-black rounded-xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-h-80 overflow-hidden"
                       >
                         {/* Search Input */}
-                        <div className="p-3 border-b border-gray-200 sticky top-0 bg-white">
+                        <div className="p-3 border-b-2 border-black sticky top-0 bg-cream-50 z-10">
                           <div className="relative">
-                            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
+                            <MagnifyingGlassIcon className="h-5 w-5 text-black absolute left-3 top-2.5 stroke-[2.5]" />
                             <input
                               type="text"
                               placeholder="Search banks..."
                               value={bankSearch}
                               onChange={(e) => setBankSearch(e.target.value)}
-                              className="w-full pl-10 pr-8 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                              className="w-full pl-10 pr-8 py-2 bg-white border-2 border-black rounded-lg focus:outline-none focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-bold placeholder:text-gray-400"
                               onClick={(e) => e.stopPropagation()}
                             />
                             {bankSearch && (
@@ -310,7 +313,7 @@ const PharmacyBankDetailsPage: React.FC = () => {
 
               {/* Account Number */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
+                <label className="block text-sm font-black text-black uppercase tracking-wide mb-2">
                   Account Number
                 </label>
                 <input
@@ -325,7 +328,7 @@ const PharmacyBankDetailsPage: React.FC = () => {
                   inputMode="numeric"
                   maxLength={10}
                   placeholder="0123456789"
-                  className="w-full rounded-xl border-gray-200 shadow-sm focus:border-primary focus:ring-primary py-3 px-4"
+                  className="w-full rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:border-black focus:ring-0 py-4 px-6 text-xl font-bold tracking-widest bg-cream-50 placeholder:text-gray-400 transition-all"
                 />
                 {errors.account_number && (
                   <p className="mt-1 text-sm text-red-600">{errors.account_number.message}</p>
@@ -333,36 +336,38 @@ const PharmacyBankDetailsPage: React.FC = () => {
                 
                 {/* Account Name Display */}
                 {verifiedAccountName && verifiedAccountName !== 'Verifying...' && (
-                  <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-2">
-                    <CheckCircleIcon className="h-5 w-5 text-emerald-600 flex-shrink-0" />
+                  <div className="mt-4 p-4 bg-emerald-100 border-2 border-black rounded-xl flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <div className="bg-emerald-500 rounded-full p-1 border-2 border-black text-white">
+                      <CheckCircleIcon className="h-5 w-5" />
+                    </div>
                     <div>
-                      <p className="text-xs text-emerald-700 font-bold">Account Name</p>
-                      <p className="text-sm text-emerald-900 font-black">{verifiedAccountName}</p>
+                      <p className="text-xs text-emerald-900 font-bold uppercase tracking-wider">Account Name</p>
+                      <p className="text-lg text-black font-black">{verifiedAccountName}</p>
                     </div>
                   </div>
                 )}
                 
                 {verifiedAccountName === 'Verifying...' && (
-                  <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-xs text-blue-700">Verifying account details...</p>
+                  <div className="mt-3 p-3 bg-blue-50 border-2 border-blue-200 rounded-xl flex items-center gap-2">
+                    <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                    <p className="text-xs text-blue-800 font-bold">Verifying account details...</p>
                   </div>
                 )}
               </div>
 
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
-                <div className="p-1 bg-blue-100 rounded-full flex-shrink-0 mt-0.5">
-                  <BanknotesIcon className="h-4 w-4 text-blue-600" />
+              <div className="bg-cream-100 border-2 border-black rounded-xl p-4 flex items-start gap-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-dashed">
+                <div className="p-1 bg-black rounded-full flex-shrink-0 mt-0.5">
+                  <BanknotesIcon className="h-4 w-4 text-white" />
                 </div>
-                <p className="text-xs text-blue-800 leading-relaxed">
-                  <strong>Note:</strong> We use Flutterwave for secure split payments. 
-                  Earnings from medication sales (minus platform commission) will be automatically settled to this account.
+                <p className="text-xs text-black font-bold leading-relaxed">
+                  <strong>Secure Payments:</strong> We use Flutterwave for secure split payments. Earnings will be automatically settled to this account.
                 </p>
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting || !selectedBank}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="w-full flex justify-center py-4 px-4 border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-sm font-black text-white bg-black hover:bg-gray-800 hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all uppercase tracking-wide"
               >
                 {isSubmitting ? (
                   <span className="flex items-center">

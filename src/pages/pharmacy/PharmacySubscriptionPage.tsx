@@ -84,27 +84,28 @@ const PharmacySubscriptionPage: React.FC = () => {
   const isActive = subscription?.status === 'active' && subscription?.is_active;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-cream-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <button 
           onClick={() => navigate(-1)}
-          className="flex items-center text-gray-600 hover:text-gray-900 mb-8 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-white text-black font-bold rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all mb-8 w-fit"
         >
-          <ArrowLeftIcon className="h-5 w-5 mr-2" />
+          <ArrowLeftIcon className="h-5 w-5 stroke-[3]" />
           Back to Dashboard
         </button>
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl shadow-xl overflow-hidden"
+          className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden border-4 border-black"
         >
-          <div className={`p-8 text-white text-center ${isActive ? 'bg-gradient-to-r from-emerald-500 to-teal-600' : 'bg-gradient-to-r from-orange-500 to-red-600'}`}>
-            <div className="mx-auto bg-white/20 w-20 h-20 rounded-full flex items-center justify-center mb-4 backdrop-blur-sm shadow-lg">
-              <ShieldCheckIcon className="h-10 w-10 text-white" />
+          <div className={`p-8 text-white text-center border-b-4 border-black relative overflow-hidden ${isActive ? 'bg-emerald-600' : 'bg-orange-600'}`}>
+             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            <div className="relative z-10 mx-auto bg-black w-24 h-24 rounded-2xl flex items-center justify-center mb-4 border-2 border-white/20 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] transform rotate-3">
+              <ShieldCheckIcon className={`h-12 w-12 ${isActive ? 'text-emerald-400' : 'text-orange-400'}`} />
             </div>
-            <h2 className="text-3xl font-black mb-2">Pharmacy Registration</h2>
-            <p className="text-white/90 text-lg font-medium">
+            <h2 className="relative z-10 text-3xl font-black mb-2 font-display uppercase tracking-wide text-white drop-shadow-md">Pharmacy Registration</h2>
+            <p className="relative z-10 text-white font-bold text-lg bg-black/20 inline-block px-4 py-1 rounded-lg backdrop-blur-sm border border-white/10">
               {isActive ? 'Your pharmacy is fully registered and active.' : 'Your registration is inactive or expired.'}
             </p>
           </div>
@@ -112,105 +113,129 @@ const PharmacySubscriptionPage: React.FC = () => {
           <div className="p-8 md:p-12">
             {isActive ? (
               <div className="space-y-8">
-                <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 flex items-start gap-4">
-                  <CheckCircleIcon className="h-8 w-8 text-emerald-500 flex-shrink-0" />
+                <div className="bg-emerald-100 border-2 border-black rounded-2xl p-6 flex items-start gap-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="bg-emerald-500 rounded-xl p-2 border-2 border-black text-white shrink-0">
+                    <CheckCircleIcon className="h-8 w-8" />
+                  </div>
                   <div>
-                    <h3 className="text-xl font-bold text-emerald-900 mb-2">Active Subscription</h3>
-                    <p className="text-emerald-700">
+                    <h3 className="text-xl font-black text-black mb-2 uppercase tracking-wide">Active Subscription</h3>
+                    <p className="text-emerald-900 font-bold">
                       You have full access to receive orders and manage your inventory.
                     </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                    <p className="text-sm text-gray-500 font-bold uppercase tracking-wider mb-1">Plan</p>
-                    <p className="text-xl font-black text-gray-900">{subscription?.plan?.name || 'Standard Plan'}</p>
+                  <div className="p-6 bg-cream-50 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                    <p className="text-xs text-black font-black uppercase tracking-wider mb-2 opacity-70">Plan</p>
+                    <p className="text-2xl font-black text-black font-display tracking-tight">{subscription?.plan?.name || 'Standard Plan'}</p>
                   </div>
-                  <div className="p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                    <p className="text-sm text-gray-500 font-bold uppercase tracking-wider mb-1">Expires On</p>
-                    <p className="text-xl font-black text-gray-900">{formatDate(subscription?.current_period_end)}</p>
+                  <div className="p-6 bg-cream-50 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                    <p className="text-xs text-black font-black uppercase tracking-wider mb-2 opacity-70">Expires On</p>
+                    <p className="text-2xl font-black text-black font-display tracking-tight">{formatDate(subscription?.current_period_end)}</p>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="space-y-8">
-                <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 flex items-start gap-4">
-                  <ExclamationTriangleIcon className="h-8 w-8 text-orange-500 flex-shrink-0" />
+                <div className="bg-orange-100 border-2 border-black rounded-2xl p-6 flex items-start gap-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="bg-orange-500 rounded-xl p-2 border-2 border-black text-white shrink-0">
+                    <ExclamationTriangleIcon className="h-8 w-8" />
+                  </div>
                   <div>
-                    <h3 className="text-xl font-bold text-orange-900 mb-2">Action Required</h3>
-                    <p className="text-orange-700">
+                    <h3 className="text-xl font-black text-black mb-2 uppercase tracking-wide">Action Required</h3>
+                    <p className="text-orange-900 font-bold">
                       Your pharmacy registration is inactive. You cannot receive new orders until you renew your subscription.
                     </p>
                   </div>
                 </div>
 
-                <div className="bg-white border-2 border-gray-100 rounded-2xl p-6 hover:border-primary/30 transition-all shadow-sm">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-black text-gray-900">Standard Registration</h3>
-                    <span className="text-2xl font-black text-primary">₦50,000<span className="text-sm text-gray-500 font-medium">/year</span></span>
+                <div className="bg-white border-4 border-black rounded-[2rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden">
+                   <div className="absolute top-0 right-0 p-4 opacity-5">
+                      <ShieldCheckIcon className="w-64 h-64 text-black transform rotate-12 translate-x-12 -translate-y-12" />
+                   </div>
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 relative z-10">
+                    <h3 className="text-3xl font-black text-black font-display uppercase tracking-tight">Standard Registration</h3>
+                    <div className="bg-black text-white px-4 py-2 rounded-xl transform -rotate-2 border-2 border-gray-800 shadow-lg">
+                        <span className="text-3xl font-black">₦50,000</span>
+                        <span className="text-sm font-bold text-gray-300 ml-1">/year</span>
+                    </div>
                   </div>
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center text-gray-600">
-                      <CheckCircleIcon className="h-5 w-5 text-emerald-500 mr-3" />
+                  
+                  <ul className="space-y-4 mb-8 bg-cream-50 p-6 rounded-2xl border-2 border-black relative z-10">
+                    <li className="flex items-center text-black font-bold">
+                      <div className="bg-emerald-500 rounded-full p-0.5 mr-3 border-2 border-black text-white">
+                        <CheckCircleIcon className="h-4 w-4" />
+                      </div>
                       Unlimited Medication Orders
                     </li>
-                    <li className="flex items-center text-gray-600">
-                      <CheckCircleIcon className="h-5 w-5 text-emerald-500 mr-3" />
+                    <li className="flex items-center text-black font-bold">
+                      <div className="bg-emerald-500 rounded-full p-0.5 mr-3 border-2 border-black text-white">
+                         <CheckCircleIcon className="h-4 w-4" />
+                      </div>
                       Inventory Management System
                     </li>
-                    <li className="flex items-center text-gray-600">
-                      <CheckCircleIcon className="h-5 w-5 text-emerald-500 mr-3" />
+                    <li className="flex items-center text-black font-bold">
+                      <div className="bg-emerald-500 rounded-full p-0.5 mr-3 border-2 border-black text-white">
+                         <CheckCircleIcon className="h-4 w-4" />
+                      </div>
                       Verified Pharmacy Badge
                     </li>
-                    <li className="flex items-center text-gray-600">
-                      <CheckCircleIcon className="h-5 w-5 text-emerald-500 mr-3" />
+                    <li className="flex items-center text-black font-bold">
+                       <div className="bg-emerald-500 rounded-full p-0.5 mr-3 border-2 border-black text-white">
+                        <CheckCircleIcon className="h-4 w-4" />
+                       </div>
                       Priority Support
                     </li>
                   </ul>
                   
                   {/* Activate Button for Already Paid Users */}
-                  <button
-                    onClick={handleActivate}
-                    disabled={activating}
-                    className="w-full py-4 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed mb-3"
-                  >
-                    {activating ? (
-                      <>
-                        <Spinner size="sm" className="mr-3 text-white" />
-                        Activating...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircleIcon className="h-6 w-6 mr-2" />
-                        Activate Paid Subscription
-                      </>
-                    )}
-                  </button>
-                  <p className="text-center text-xs text-emerald-700 mb-4 bg-emerald-50 p-2 rounded-lg">
-                    Already paid? Click above to activate your subscription.
-                  </p>
-                  
-                  <button
-                    onClick={handleRenew}
-                    disabled={renewing}
-                    className="w-full py-4 px-6 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {renewing ? (
-                      <>
-                        <Spinner size="sm" className="mr-3 text-white" />
-                        Processing Payment...
-                      </>
-                    ) : (
-                      <>
-                        <CreditCardIcon className="h-6 w-6 mr-2" />
-                        Pay & Renew Subscription
-                      </>
-                    )}
-                  </button>
-                  <p className="text-center text-xs text-gray-500 mt-4">
-                    Secure payment via Flutterwave. Your subscription will be active immediately after payment.
-                  </p>
+                  <div className="relative z-10 space-y-4">
+                      <button
+                        onClick={handleActivate}
+                        disabled={activating}
+                        className="w-full py-4 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-wide rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none mb-3"
+                      >
+                        {activating ? (
+                          <>
+                            <Spinner size="sm" className="mr-3 text-white" />
+                            Activating...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircleIcon className="h-6 w-6 mr-2 stroke-[2.5]" />
+                            Activate Paid Subscription
+                          </>
+                        )}
+                      </button>
+                      
+                      <div className="text-center font-bold text-xs text-emerald-800 bg-emerald-100 p-2 rounded-lg border border-emerald-300 mx-auto w-fit">
+                        Already paid? Click above to activate your subscription.
+                      </div>
+                      
+                      <div className="border-t-2 border-dashed border-black my-6"></div>
+
+                      <button
+                        onClick={handleRenew}
+                        disabled={renewing}
+                        className="w-full py-4 px-6 bg-black hover:bg-gray-800 text-white font-black uppercase tracking-wide rounded-xl border-2 border-gray-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[-2px] transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+                      >
+                        {renewing ? (
+                          <>
+                            <Spinner size="sm" className="mr-3 text-white" />
+                            Processing Payment...
+                          </>
+                        ) : (
+                          <>
+                            <CreditCardIcon className="h-6 w-6 mr-2 stroke-[2.5]" />
+                            Pay & Renew Subscription
+                          </>
+                        )}
+                      </button>
+                      <p className="text-center text-xs font-bold text-gray-500 mt-4 uppercase tracking-wide">
+                        Secure payment via Flutterwave. Active immediately.
+                      </p>
+                  </div>
                 </div>
               </div>
             )}

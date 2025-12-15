@@ -31,10 +31,10 @@ const PharmacyOrderListPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     
     // All hooks must be called before any conditional returns
-    const { scrollYProgress } = useScroll();
-    const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-    const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-    const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '40%']);
+    // const { scrollYProgress } = useScroll();
+    // const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+    // const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+    // const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '40%']);
 
     const [orders, setOrders] = useState<MedicationOrder[]>([]);
     const [nextPageUrl, setNextPageUrl] = useState<string | null>(null);
@@ -129,54 +129,33 @@ const PharmacyOrderListPage: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 pb-12">
+        <div className="min-h-screen bg-cream-50 pb-24">
             {/* Hero Header Section */}
-            <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="relative bg-gradient-to-r from-primary via-emerald-600 to-teal-600 pt-20 pb-24 sm:pt-24 sm:pb-32 overflow-hidden"
-            >
-                {/* Animated Blobs */}
-                <motion.div
-                    style={{ y }}
-                    className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                ></motion.div>
-                <motion.div
-                    style={{ y: y2 }}
-                    className="absolute bottom-0 right-0 w-80 h-80 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                ></motion.div>
-                <motion.div
-                    style={{ y: y3 }}
-                    className="absolute top-1/2 left-1/2 w-72 h-72 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                ></motion.div>
+            <div className="relative bg-primary-900 border-b-4 border-black shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] rounded-b-[3rem] overflow-hidden">
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#FDFBF7_1px,transparent_1px)] [background-size:20px_20px]"></div>
 
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
                     <motion.button
                         onClick={() => navigate('/pharmacy/dashboard')}
                         whileHover={{ scale: 1.05, x: -5 }}
                         whileTap={{ scale: 0.95 }}
                         className="inline-flex items-center gap-2 text-white/90 hover:text-white mb-6 font-bold"
                     >
-                        <ArrowLeftIcon className="h-5 w-5" />
+                        <ArrowLeftIcon className="h-5 w-5 stroke-[3]" />
                         Back to Dashboard
                     </motion.button>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="inline-flex items-center px-5 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-bold uppercase tracking-wider mb-6"
-                    >
+                    <div className="inline-flex items-center px-4 py-1.5 rounded-xl bg-orange-400 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black font-black text-xs uppercase tracking-wider mb-6">
                         <SparklesIcon className="h-4 w-4 mr-2" />
                         ORDER MANAGEMENT
-                    </motion.div>
+                    </div>
 
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div>
-                            <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 font-display tracking-tight leading-tight">
                                 Medication Orders
                             </h1>
-                            <p className="text-lg text-white/90">
+                            <p className="text-lg md:text-xl text-cream-50/90 font-medium">
                                 Manage and track all prescription orders
                             </p>
                             {totalCount > 0 && (
@@ -184,44 +163,37 @@ const PharmacyOrderListPage: React.FC = () => {
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 0.4 }}
-                                    className="flex items-center gap-2 mt-4 text-sm text-white/80 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 w-fit"
+                                    className="flex items-center gap-2 mt-4 text-black text-sm bg-white px-4 py-2 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-fit font-bold"
                                 >
-                                    <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse"></div>
-                                    <span className="font-bold">{totalCount}</span> Total Orders
+                                    <div className="h-3 w-3 bg-green-500 rounded-full animate-pulse border border-black"></div>
+                                    <span className="font-black">{totalCount}</span> Total Orders
                                 </motion.div>
                             )}
                         </div>
                     </div>
                 </div>
-
-                {/* Bottom Wave */}
-                <div className="absolute bottom-0 left-0 right-0">
-                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
-                    </svg>
-                </div>
-            </motion.div>
+            </div>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 relative z-10">
                 {/* Search and Filters */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="mb-6"
+                    className="mb-8"
                 >
-                    <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-6">
+                    <div className="bg-white rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-6 md:p-8">
                         {/* Search Bar */}
                         <div className="mb-6">
                             <div className="relative">
-                                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-black" />
                                 <input
                                     type="text"
                                     placeholder="Search by order ID, patient name, or prescription ID..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    className="w-full pl-12 pr-4 py-4 bg-cream-50 border-2 border-black rounded-xl focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-black placeholder:text-gray-500 text-lg"
                                 />
                             </div>
                         </div>
@@ -229,8 +201,8 @@ const PharmacyOrderListPage: React.FC = () => {
                         {/* Status Filter Tabs */}
                         <div>
                             <div className="flex items-center gap-2 mb-3">
-                                <FunnelIcon className="h-5 w-5 text-gray-600" />
-                                <p className="text-sm font-bold text-gray-700 uppercase tracking-wider">Filter by Status</p>
+                                <FunnelIcon className="h-5 w-5 text-black" />
+                                <p className="text-sm font-black text-black uppercase tracking-wider">Filter by Status</p>
                             </div>
                             <div className="flex flex-wrap gap-3">
                                 {ORDER_STATUS_CHOICES.map((status) => (
@@ -239,10 +211,10 @@ const PharmacyOrderListPage: React.FC = () => {
                                         onClick={() => handleFilterChange(status.value)}
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                                        className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
                                             statusFilter === status.value
-                                                ? `bg-gradient-to-r ${status.color} text-white shadow-lg`
-                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                ? 'bg-black text-white hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-none'
+                                                : 'bg-white text-black hover:bg-gray-100'
                                         }`}
                                     >
                                         {status.label}
@@ -280,7 +252,7 @@ const PharmacyOrderListPage: React.FC = () => {
                             <motion.div
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="mb-4 p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-700 font-semibold"
+                                className="mb-4 p-4 bg-red-50 border-2 border-black rounded-xl text-red-900 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                             >
                                 {error}
                             </motion.div>
@@ -322,13 +294,13 @@ const PharmacyOrderListPage: React.FC = () => {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3 }}
-                                className="bg-white rounded-3xl p-12 shadow-xl border-2 border-gray-100 text-center"
+                                className="bg-white rounded-[2.5rem] p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black text-center"
                             >
-                                <ClipboardDocumentListIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                                <h3 className="text-xl font-black text-gray-900 mb-2">
+                                <ClipboardDocumentListIcon className="h-16 w-16 text-black/20 mx-auto mb-4 stroke-2" />
+                                <h3 className="text-2xl font-black text-black mb-2 font-display">
                                     {searchQuery || statusFilter ? 'No matching orders' : 'No orders yet'}
                                 </h3>
-                                <p className="text-gray-600">
+                                <p className="text-black font-medium">
                                     {searchQuery || statusFilter 
                                         ? 'Try adjusting your search or filter criteria.'
                                         : 'Orders will appear here when they come in.'}
