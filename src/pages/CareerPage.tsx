@@ -1,22 +1,16 @@
 import React, { useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { 
     BriefcaseIcon,
     MapPinIcon,
-    ClockIcon,
     SparklesIcon,
-    RocketLaunchIcon,
     HeartIcon,
     ArrowRightIcon,
-    CheckCircleIcon,
-    BuildingOfficeIcon
+    CheckCircleIcon
 } from '@heroicons/react/24/outline';
 
 const CareerPage: React.FC = () => {
-    const { scrollYProgress } = useScroll();
-    const y = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
     const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
 
     const departments = [

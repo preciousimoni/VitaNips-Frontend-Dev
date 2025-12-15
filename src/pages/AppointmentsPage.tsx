@@ -117,46 +117,30 @@ const AppointmentsPage: React.FC = () => {
         switch (status) {
             case 'confirmed':
                 return (
-                    <motion.span 
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white flex items-center shadow-md"
-                    >
+                    <span className="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wide bg-green-400 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center">
                         <CheckCircleIcon className="w-4 h-4 mr-1.5"/> Confirmed
-                    </motion.span>
+                    </span>
                 );
             case 'scheduled':
                 return (
-                    <motion.span 
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-500 to-cyan-500 text-white flex items-center shadow-md"
-                    >
+                    <span className="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wide bg-blue-400 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center">
                         <CalendarDaysIcon className="w-4 h-4 mr-1.5"/> Scheduled
-                    </motion.span>
+                    </span>
                 );
             case 'completed':
                 return (
-                    <motion.span 
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-gray-500 to-gray-600 text-white flex items-center shadow-md"
-                    >
+                    <span className="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wide bg-gray-400 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center">
                         <CheckCircleIcon className="w-4 h-4 mr-1.5"/> Completed
-                    </motion.span>
+                    </span>
                 );
             case 'cancelled':
                 return (
-                    <motion.span 
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-red-500 to-pink-500 text-white flex items-center shadow-md"
-                    >
+                    <span className="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wide bg-red-500 text-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex items-center">
                         <XCircleIcon className="w-4 h-4 mr-1.5"/> Cancelled
-                    </motion.span>
+                    </span>
                 );
             default:
-                return <span className="px-3 py-1.5 rounded-xl text-xs font-bold bg-gray-100 text-gray-600 shadow-sm">{status}</span>;
+                return <span className="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-100 text-gray-600 border border-gray-300">{status}</span>;
         }
     };
 
@@ -183,7 +167,7 @@ const AppointmentsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 pb-12">
+        <div className="min-h-screen bg-cream-50 pb-12 font-sans">
             {/* Hero Header Section */}
             <motion.div 
                 initial={{ opacity: 0, y: -20 }}

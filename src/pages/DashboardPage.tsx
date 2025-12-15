@@ -20,9 +20,7 @@ import {
     CubeIcon,
     TruckIcon,
     ExclamationCircleIcon,
-    DocumentTextIcon,
-    ArrowTrendingUpIcon,
-    ArrowTrendingDownIcon
+    DocumentTextIcon
 } from '@heroicons/react/24/outline';
 
 import { getUserAppointments } from '../api/appointments';
@@ -710,9 +708,6 @@ const DashboardPage: React.FC = () => {
                                     {recentVitals.map((vital, index) => {
                                         const previousVital = index < recentVitals.length - 1 ? recentVitals[index + 1] : null;
                                         const bpStatus = getHealthStatus(vital.systolic_pressure, 'bp_systolic');
-                                        const hrStatus = getHealthStatus(vital.heart_rate, 'heart_rate');
-                                        const bpTrend = getTrend(vital.systolic_pressure, previousVital?.systolic_pressure);
-                                        const hrTrend = getTrend(vital.heart_rate, previousVital?.heart_rate);
                                         
                                         return (
                                             <motion.div 

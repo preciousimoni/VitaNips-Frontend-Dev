@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MagnifyingGlassIcon, MapPinIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { getDoctors } from '../api/doctors';
 import { Doctor } from '../types/doctors';
 import DoctorCard from '../features/doctors/components/DoctorCard';
@@ -10,7 +10,6 @@ import Skeleton from '../components/ui/Skeleton';
 const DoctorListPage: React.FC = () => {
     const [doctors, setDoctors] = useState<Doctor[]>([]);
     const [nextPageUrl, setNextPageUrl] = useState<string | null>(null);
-    const [totalCount, setTotalCount] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -35,7 +34,6 @@ const DoctorListPage: React.FC = () => {
         setError(null);
         setDoctors([]);
         setNextPageUrl(null);
-        setTotalCount(0);
 
         try {
             const params: { search?: string } = {};
@@ -47,7 +45,6 @@ const DoctorListPage: React.FC = () => {
             if (response && Array.isArray(response.results)) {
                 setDoctors(response.results);
                 setNextPageUrl(response.next);
-                setTotalCount(response.count);
             } else {
                 console.warn("Received unexpected response structure:", response);
                 setError("Received invalid data from server.");

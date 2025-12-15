@@ -13,7 +13,6 @@ import EmergencyContactListItem from '../features/user/components/EmergencyConta
 import EmergencyContactForm from '../features/user/components/EmergencyContactForm';
 import Modal from '../components/common/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
-import HealthHeader from '../features/health/components/HealthHeader';
 import Skeleton from '../components/ui/Skeleton';
 import toast from 'react-hot-toast';
 import { triggerSOS } from '../api/emergency';
