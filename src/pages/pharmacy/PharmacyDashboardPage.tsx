@@ -1,7 +1,7 @@
 // src/pages/pharmacy/PharmacyDashboardPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   ShoppingBagIcon,
   ClipboardDocumentListIcon,
@@ -70,10 +70,6 @@ const PharmacyDashboardPage: React.FC = () => {
   const [recentOrders, setRecentOrders] = useState<MedicationOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-  const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-  const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '40%']);
 
   useEffect(() => {
     fetchDashboardData();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
     PlusIcon, 
     DocumentTextIcon, 
@@ -141,9 +141,6 @@ const PrescriptionHistoryCard: React.FC<{ pres: UserPrescription }> = ({ pres })
 
 const DoctorPrescriptionWorkspacePage: React.FC = () => {
     const navigate = useNavigate();
-    const { scrollYProgress } = useScroll();
-    const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-    const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
     
     const [eligibleAppointments, setEligibleAppointments] = useState<EligibleAppointmentForPrescription[]>([]);
     const [writtenPrescriptions, setWrittenPrescriptions] = useState<UserPrescription[]>([]);

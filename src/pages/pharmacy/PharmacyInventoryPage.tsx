@@ -1,6 +1,6 @@
 // src/pages/pharmacy/PharmacyInventoryPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
     CubeIcon,
     SparklesIcon,

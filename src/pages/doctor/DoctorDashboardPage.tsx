@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   CalendarIcon, 
   ClipboardDocumentListIcon, 
@@ -84,10 +84,6 @@ const DoctorDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-  const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-  const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '40%']);
 
   useEffect(() => {
     fetchDashboardData();
@@ -174,23 +170,6 @@ const DoctorDashboardPage: React.FC = () => {
       setError('Failed to load dashboard data. Please try again.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'confirmed':
-        return 'bg-primary-light/20 text-primary-dark border-primary-light/30';
-      case 'scheduled':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'pending':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -599,10 +578,10 @@ const DoctorDashboardPage: React.FC = () => {
                 </motion.button>
 
                 <motion.button
-                  whileHover={{ x: 5, shadow: "6px 6px 0px 0px rgba(0,0,0,1)" }}
+                  whileHover={{ x: 5 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/doctor/availability')}
-                  className="w-full flex items-center justify-between p-4 bg-white hover:bg-purple-50 rounded-2xl transition-all group border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  className="w-full flex items-center justify-between p-4 bg-white hover:bg-purple-50 rounded-2xl transition-all group border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
                 >
                   <div className="flex items-center space-x-4">
                     <div className="p-2 bg-purple-200 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
@@ -614,10 +593,10 @@ const DoctorDashboardPage: React.FC = () => {
                 </motion.button>
 
                 <motion.button
-                  whileHover={{ x: 5, shadow: "6px 6px 0px 0px rgba(0,0,0,1)" }}
+                  whileHover={{ x: 5 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/doctor/bank-details')}
-                  className="w-full flex items-center justify-between p-4 bg-white hover:bg-emerald-50 rounded-2xl transition-all group border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  className="w-full flex items-center justify-between p-4 bg-white hover:bg-emerald-50 rounded-2xl transition-all group border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
                 >
                   <div className="flex items-center space-x-4">
                     <div className="p-2 bg-emerald-200 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
