@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { 
     EnvelopeIcon, 
-    PhoneIcon, 
     MapPinIcon, 
     PaperAirplaneIcon,
-    ChatBubbleLeftRightIcon
+    ChatBubbleBottomCenterTextIcon
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -28,187 +26,139 @@ const ContactPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        
-        // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        toast.success("Message sent successfully! We'll get back to you soon.");
+        toast.success("Message sent! We'll reply shortly.");
         setFormData({ name: '', email: '', subject: '', message: '' });
         setIsSubmitting(false);
     };
 
     return (
-        <div className="min-h-screen bg-white flex flex-col">
-            <Header />
+        <div className="min-h-screen bg-[#FDFBF7] flex flex-col font-sans">
+            <Header variant="landing" />
             
-            <main className="flex-grow">
-                {/* Hero Section */}
-                <section className="relative py-20 bg-gradient-to-br from-primary via-emerald-600 to-teal-600 overflow-hidden">
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white"
-                    >
-                        <h1 className="text-4xl md:text-6xl font-black mb-6">Get in Touch</h1>
-                        <p className="text-xl text-white/90 max-w-2xl mx-auto">
-                            Have questions or feedback? We'd love to hear from you. Our team is here to help.
+            <main className="flex-grow pt-28 pb-20 px-4">
+                <div className="max-w-7xl mx-auto">
+                    {/* Page Header */}
+                    <div className="text-center mb-16">
+                        <h1 className="text-6xl md:text-8xl font-display text-primary-900 mb-6">
+                            Say <span className="text-primary-600 italic">Hello.</span>
+                        </h1>
+                        <p className="text-xl text-primary-900/60 max-w-xl mx-auto">
+                            Got a question about your health, our platform, or just want to chat? We're all ears.
                         </p>
-                    </motion.div>
-                    
-                    {/* Decorative circles */}
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-                </section>
+                    </div>
 
-                <section className="py-16 lg:py-24 bg-gray-50">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
-                            {/* Contact Info */}
-                            <motion.div 
-                                initial={{ opacity: 0, x: -30 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.2 }}
-                            >
-                                <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-bold text-sm mb-6">
-                                    <ChatBubbleLeftRightIcon className="h-4 w-4 mr-2" />
-                                    CONTACT US
-                                </div>
-                                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                                    Let's Start a Conversation
-                                </h2>
-                                <p className="text-lg text-gray-600 mb-12 leading-relaxed">
-                                    Whether you're curious about features, a free trial, or even press—we're ready to answer any and all questions.
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+                        {/* Info Cards Side */}
+                        <div className="lg:col-span-5 flex flex-col gap-6">
+                            {/* Card 1: Chat */}
+                            <div className="bg-primary-900 text-white rounded-[2.5rem] p-10 relative overflow-hidden group">
+                                {/* Removed blur effect */}
+                                <ChatBubbleBottomCenterTextIcon className="w-12 h-12 text-accent mb-6" />
+                                <h3 className="text-3xl font-display mb-2">Live Chat</h3>
+                                <p className="text-white/70 mb-8">Available 24/7 for urgent medical queries.</p>
+                                <button className="px-6 py-3 bg-white/10 rounded-xl font-bold hover:bg-white/20 transition-colors w-full text-left flex justify-between items-center group-hover:pl-8">
+                                    Start Chat <span className="text-accent">→</span>
+                                </button>
+                            </div>
+
+                            {/* Card 2: Email */}
+                            <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
+                                <EnvelopeIcon className="w-12 h-12 text-primary-900 mb-6" />
+                                <h3 className="text-3xl font-display text-primary-900 mb-2">Email Us</h3>
+                                <p className="text-gray-500 mb-4">For partnerships & general inquiries.</p>
+                                <a href="mailto:hello@vitanips.com" className="text-xl font-bold text-primary-600 border-b-2 border-accent hover:text-primary-900">
+                                    hello@vitanips.com
+                                </a>
+                            </div>
+
+                             {/* Card 3: Office */}
+                             <div className="bg-[#e9f5db] rounded-[2.5rem] p-10">
+                                <MapPinIcon className="w-12 h-12 text-primary-900 mb-6" />
+                                <h3 className="text-3xl font-display text-primary-900 mb-2">Visit Us</h3>
+                                <p className="text-primary-900/70 text-lg leading-relaxed">
+                                    123 Health Street,<br/>
+                                    Victoria Island, Lagos.<br/>
+                                    Nigeria.
                                 </p>
+                            </div>
+                        </div>
 
-                                <div className="space-y-8">
-                                    {[
-                                        {
-                                            icon: EnvelopeIcon,
-                                            title: "Email Us",
-                                            content: "support@vitanips.com",
-                                            sub: "We'll respond within 24 hours",
-                                            color: "bg-blue-100 text-blue-600"
-                                        },
-                                        {
-                                            icon: PhoneIcon,
-                                            title: "Call Us",
-                                            content: "+234 (0) 123 4567",
-                                            sub: "Mon-Fri from 9am to 6pm WAT",
-                                            color: "bg-green-100 text-green-600"
-                                        },
-                                        {
-                                            icon: MapPinIcon,
-                                            title: "Visit Us",
-                                            content: "123 Health Street, Victoria Island",
-                                            sub: "Lagos, Nigeria",
-                                            color: "bg-purple-100 text-purple-600"
-                                        }
-                                    ].map((item, idx) => (
-                                        <div key={idx} className="flex items-start gap-6 group">
-                                            <div className={`w-14 h-14 rounded-2xl ${item.color} flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 transition-transform`}>
-                                                <item.icon className="h-7 w-7" />
-                                            </div>
-                                            <div>
-                                                <h3 className="text-xl font-bold text-gray-900 mb-1">{item.title}</h3>
-                                                <p className="text-lg font-medium text-gray-900">{item.content}</p>
-                                                <p className="text-sm text-gray-500">{item.sub}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </motion.div>
-
-                            {/* Contact Form */}
-                            <motion.div 
-                                initial={{ opacity: 0, x: 30 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.4 }}
-                                className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100"
-                            >
-                                <h3 className="text-2xl font-bold text-gray-900 mb-8">Send us a message</h3>
+                        {/* Form Side */}
+                        <div className="lg:col-span-7">
+                            <div className="bg-white rounded-[3rem] p-8 md:p-16 shadow-xl shadow-primary-900/5">
+                                <h2 className="text-4xl font-display text-primary-900 mb-8">Send a Message</h2>
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold text-primary-900 uppercase tracking-wider">Name</label>
                                             <input
                                                 type="text"
-                                                id="name"
                                                 name="name"
-                                                required
                                                 value={formData.name}
                                                 onChange={handleChange}
-                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
-                                                placeholder="John Doe"
+                                                required
+                                                className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:bg-white focus:border-primary-900 outline-none transition-all font-medium text-lg"
+                                                placeholder="Your name"
                                             />
                                         </div>
-                                        <div>
-                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold text-primary-900 uppercase tracking-wider">Email</label>
                                             <input
                                                 type="email"
-                                                id="email"
                                                 name="email"
-                                                required
                                                 value={formData.email}
                                                 onChange={handleChange}
-                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
-                                                placeholder="john@example.com"
+                                                required
+                                                className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:bg-white focus:border-primary-900 outline-none transition-all font-medium text-lg"
+                                                placeholder="you@email.com"
                                             />
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-primary-900 uppercase tracking-wider">Subject</label>
                                         <select
-                                            id="subject"
                                             name="subject"
-                                            required
                                             value={formData.subject}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none bg-white"
+                                            required
+                                            className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:bg-white focus:border-primary-900 outline-none transition-all font-medium text-lg appearance-none cursor-pointer"
                                         >
-                                            <option value="">Select a topic</option>
-                                            <option value="general">General Inquiry</option>
+                                            <option value="">Select a topic...</option>
                                             <option value="support">Technical Support</option>
-                                            <option value="billing">Billing & Subscription</option>
-                                            <option value="partnership">Partnership Opportunities</option>
+                                            <option value="partnership">Partnership</option>
+                                            <option value="other">Other</option>
                                         </select>
                                     </div>
 
-                                    <div>
-                                        <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-primary-900 uppercase tracking-wider">Message</label>
                                         <textarea
-                                            id="message"
                                             name="message"
-                                            required
-                                            rows={5}
                                             value={formData.message}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none resize-none"
-                                            placeholder="How can we help you?"
+                                            required
+                                            rows={6}
+                                            className="w-full px-6 py-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:bg-white focus:border-primary-900 outline-none transition-all font-medium text-lg resize-none"
+                                            placeholder="How can we help?"
                                         ></textarea>
                                     </div>
 
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="w-full flex items-center justify-center px-8 py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all disabled:opacity-70 disabled:cursor-not-allowed group"
+                                        className="w-full py-5 bg-primary-900 text-white rounded-2xl font-bold text-xl hover:bg-primary-800 transition-all flex items-center justify-center gap-3"
                                     >
-                                        {isSubmitting ? (
-                                            'Sending...'
-                                        ) : (
-                                            <>
-                                                Send Message
-                                                <PaperAirplaneIcon className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                                            </>
-                                        )}
+                                        {isSubmitting ? 'Sending...' : 'Send Message'}
+                                        {!isSubmitting && <PaperAirplaneIcon className="w-6 h-6" />}
                                     </button>
                                 </form>
-                            </motion.div>
+                            </div>
                         </div>
                     </div>
-                </section>
+                </div>
             </main>
-            
             <Footer />
         </div>
     );
