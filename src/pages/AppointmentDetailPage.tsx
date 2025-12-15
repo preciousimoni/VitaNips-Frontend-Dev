@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     ArrowLeftIcon, CalendarIcon, ClockIcon, VideoCameraIcon, BuildingOfficeIcon,
     CheckCircleIcon, XCircleIcon, InformationCircleIcon, TrashIcon, UserIcon,
@@ -34,11 +34,6 @@ const getStatusInfo = (status: Appointment['status']): { text: string; color: st
 const AppointmentDetailPage: React.FC = () => {
     const { appointmentId } = useParams<{ appointmentId: string }>();
     const navigate = useNavigate();
-    
-    // All hooks must be called before any conditional returns
-    const { scrollYProgress } = useScroll();
-    const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-    const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
 
     const { user } = useAuth();
     const isDoctor = user?.is_doctor || false;

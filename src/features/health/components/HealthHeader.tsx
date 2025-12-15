@@ -8,8 +8,8 @@ interface HealthHeaderProps {
     subtitle: string;
     icon: React.ElementType;
     gradientFrom: string;
-    gradientTo: string;
-    shadowColor: string;
+    gradientTo?: string;
+    shadowColor?: string;
     actionButton?: React.ReactNode;
 }
 
@@ -18,8 +18,6 @@ const HealthHeader: React.FC<HealthHeaderProps> = ({
     subtitle,
     icon: Icon,
     gradientFrom,
-    gradientTo,
-    shadowColor,
     actionButton,
 }) => {
     return (

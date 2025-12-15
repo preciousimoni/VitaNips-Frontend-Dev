@@ -1,7 +1,6 @@
 // src/pages/PrescriptionsPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useScroll, useTransform } from 'framer-motion';
 import { getUserPrescriptions } from '../api/prescriptions';
 import { Prescription } from '../types/prescriptions';
 import PrescriptionListItem from '../features/prescriptions/components/PrescriptionListItem';
@@ -12,19 +11,12 @@ import ErrorMessage from '../components/ui/ErrorMessage';
 import { 
     DocumentTextIcon, 
     SparklesIcon, 
-    ClipboardDocumentListIcon,
     MagnifyingGlassIcon,
     ArrowLeftIcon
 } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 
 const PrescriptionsPage: React.FC = () => {
-    // All hooks must be called before any conditional returns
-    const { scrollYProgress } = useScroll();
-    const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-    const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-    const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '40%']);
-
     const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(true);
