@@ -280,8 +280,8 @@ const AdminDashboard: React.FC = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.4 + index * 0.1 }}
-                                whileHover={{ y: -5, shadow: "8px 8px 0px 0px rgba(0,0,0,1)" }}
-                                className={`relative bg-white rounded-[2rem] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-6 overflow-hidden group ${
+                                whileHover={{ y: -5 }}
+                                className={`relative bg-white rounded-[2rem] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-6 overflow-hidden group ${
                                     stat.link ? 'cursor-pointer' : 'cursor-default transition-all'
                                 }`}
                                 onClick={() => stat.link && navigate(stat.link)}
@@ -333,9 +333,9 @@ const AdminDashboard: React.FC = () => {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.6 + index * 0.05 }}
-                                    whileHover={{ y: -4, x: 2, shadow: extendedLink.shadowColor || 'shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]' }}
+                                    whileHover={{ y: -4, x: 2 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className={`flex items-start space-x-4 p-5 bg-white rounded-2xl transition-all group border-4 ${extendedLink.borderColor || 'border-black'} shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer`}
+                                    className={`flex items-start space-x-4 p-5 bg-white rounded-2xl transition-all group border-4 ${extendedLink.borderColor || 'border-black'} shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] cursor-pointer`}
                                 >
                                     <div className={`p-3 bg-gradient-to-br ${link.gradient} rounded-xl border-2 border-black shadow-sm flex-shrink-0`}>
                                         <Icon className="h-6 w-6 text-white" />

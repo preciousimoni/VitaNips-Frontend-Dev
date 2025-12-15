@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  ArrowLeftIcon, CalendarDaysIcon, ClockIcon, UserIcon,
+  ArrowLeftIcon, CalendarDaysIcon, ClockIcon,
   VideoCameraIcon, BuildingOfficeIcon, CheckCircleIcon,
   XCircleIcon, ExclamationCircleIcon,
-  PhoneIcon, EnvelopeIcon, MapPinIcon, BanknotesIcon,
+  EnvelopeIcon, BanknotesIcon,
   ShieldCheckIcon, ClipboardDocumentCheckIcon
 } from '@heroicons/react/24/outline';
 import { getAdminAppointmentDetails } from '../../api/admin';
@@ -208,7 +208,7 @@ const AdminAppointmentDetailPage: React.FC = () => {
                              <ShieldCheckIcon className="h-8 w-8 text-blue-600" />
                              <div>
                                 <p className="font-black text-blue-900 uppercase tracking-wide">Insurance Applied</p>
-                                <p className="font-bold text-blue-700">{appointment.user_insurance.insurance_provider_name}</p>
+                                <p className="font-bold text-blue-700">{appointment.user_insurance.plan.provider.name}</p>
                                 <p className="text-sm text-blue-600">Policy: {appointment.user_insurance.policy_number}</p>
                              </div>
                           </div>

@@ -257,7 +257,7 @@ const AdminAppointmentsPage: React.FC = () => {
             </div>
           ) : (
             <div className="divide-y-2 divide-black">
-              {appointments.map((appointment, index) => {
+              {appointments.map((appointment) => {
                 const statusInfo = getStatusInfo(appointment.status);
                 const StatusIcon = statusInfo.icon;
                 const appointmentDate = parseISO(appointment.date);

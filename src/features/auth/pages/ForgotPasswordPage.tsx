@@ -8,7 +8,6 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import FormInput from '../../../components/forms/FormInput';
 import Spinner from '../../../components/ui/Spinner';
 import { toast } from 'react-hot-toast';
-import axiosInstance from '../../../api/axiosInstance';
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Please enter a valid email address.'),
@@ -28,7 +27,7 @@ const ForgotPasswordPage: React.FC = () => {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = async (values: ForgotPasswordFormData) => {
+  const onSubmit = async () => {
     setIsLoading(true);
     try {
       // Assuming endpoint exists or mocking it for UI demonstration
