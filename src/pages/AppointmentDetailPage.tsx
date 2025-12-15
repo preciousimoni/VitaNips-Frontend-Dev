@@ -213,26 +213,14 @@ const AppointmentDetailPage: React.FC = () => {
     const { text: statusText, icon: StatusIcon } = getStatusInfo(appointment.status);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
+        <div className="min-h-screen bg-cream-50 pb-12 font-sans">
             {/* Hero Header */}
             <motion.div 
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative bg-gradient-to-br from-primary via-emerald-600 to-teal-600 overflow-hidden mb-8"
+                className="relative bg-primary-900 overflow-hidden mb-8 rounded-b-[3rem] border-b-4 border-l-4 border-r-4 border-black shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] mx-4 mt-4 md:mx-6"
             >
-                {/* Animated Background Elements */}
-                <div className="absolute inset-0 opacity-10">
-                    <motion.div 
-                        style={{ y }}
-                        className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob"
-                    ></motion.div>
-                    <motion.div 
-                        style={{ y: y2 }}
-                        className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-2000"
-                    ></motion.div>
-                </div>
-
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+                <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-16">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -242,7 +230,7 @@ const AppointmentDetailPage: React.FC = () => {
                             onClick={() => navigate('/appointments')}
                             whileHover={{ scale: 1.05, x: -5 }}
                             whileTap={{ scale: 0.95 }}
-                            className="inline-flex items-center gap-2 text-white/90 hover:text-white mb-6 font-bold"
+                            className="inline-flex items-center gap-2 text-black bg-white px-4 py-2 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all font-bold mb-8"
                         >
                             <ArrowLeftIcon className="h-5 w-5" />
                             Back to Appointments
@@ -252,7 +240,7 @@ const AppointmentDetailPage: React.FC = () => {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.3 }}
-                            className="inline-flex items-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white font-bold text-sm mb-4"
+                            className="inline-flex items-center px-4 py-2 rounded-full bg-yellow-400 border-2 border-black text-black font-black text-sm mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                         >
                             <SparklesIcon className="h-4 w-4 mr-2" />
                             APPOINTMENT DETAILS
@@ -260,19 +248,13 @@ const AppointmentDetailPage: React.FC = () => {
 
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                             <div>
-                                <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
-                                    Appointment{' '}
-                                    <span className="relative inline-block">
+                                <h1 className="text-4xl md:text-6xl font-black text-white mb-2 font-display uppercase tracking-tight flex flex-col md:flex-row md:items-center gap-2 md:gap-4 drop-shadow-md">
+                                    Appointment
+                                    <span className="relative inline-block text-yellow-400">
                                         #{appointment.id}
-                                        <motion.span
-                                            initial={{ scaleX: 0 }}
-                                            animate={{ scaleX: 1 }}
-                                            transition={{ delay: 0.8, duration: 0.8 }}
-                                            className="absolute -bottom-2 left-0 right-0 h-3 bg-yellow-400/30"
-                                        ></motion.span>
                                     </span>
                                 </h1>
-                                <p className="text-lg text-white/90">
+                                <p className="text-xl text-white/90 font-bold border-l-4 border-yellow-400 pl-4 mt-4">
                                     {formatDate(appointment.date)} • {formatTime(appointment.start_time)}
                                 </p>
                             </div>
@@ -281,11 +263,11 @@ const AppointmentDetailPage: React.FC = () => {
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.4 }}
-                                className={`inline-flex items-center px-6 py-3 rounded-2xl font-bold text-sm shadow-lg border-2 ${
-                                    appointment.status === 'confirmed' ? 'bg-white/20 backdrop-blur-sm border-white/30 text-white' :
-                                    appointment.status === 'completed' ? 'bg-white/20 backdrop-blur-sm border-white/30 text-white' :
-                                    appointment.status === 'cancelled' ? 'bg-red-500/20 backdrop-blur-sm border-red-300/30 text-white' :
-                                    'bg-white/20 backdrop-blur-sm border-white/30 text-white'
+                                className={`inline-flex items-center px-6 py-3 rounded-xl font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black uppercase tracking-wide ${
+                                    appointment.status === 'confirmed' ? 'bg-green-400 text-black' :
+                                    appointment.status === 'completed' ? 'bg-gray-400 text-black' :
+                                    appointment.status === 'cancelled' ? 'bg-red-500 text-white' :
+                                    'bg-white text-black'
                                 }`}
                             >
                                 <StatusIcon className="h-6 w-6 mr-2" />
@@ -294,59 +276,41 @@ const AppointmentDetailPage: React.FC = () => {
                         </div>
                     </motion.div>
                 </div>
-
-                {/* Bottom Wave */}
-                <div className="absolute bottom-0 left-0 right-0">
-                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
-                    </svg>
-                            </div>
             </motion.div>
 
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            <div className="max-w-5xl mx-auto px-6 md:px-12 pb-12">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 overflow-hidden border border-gray-100"
+                    className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden border-4 border-black"
                 >
 
-                    <div className="p-8 sm:p-10 space-y-8">
+                    <div className="p-8 sm:p-10 space-y-10">
                         {/* Doctor Info Card */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4 }}
-                            whileHover={{ scale: 1.02, y: -2 }}
-                            className="bg-gradient-to-br from-primary/5 to-emerald-500/5 rounded-3xl p-6 border-2 border-primary/20 relative overflow-hidden group"
+                            whileHover={{ scale: 1.01 }}
+                            className="bg-primary-50 rounded-[2rem] p-6 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden group"
                         >
-                            <motion.div
-                                animate={{ 
-                                    scale: [1, 1.2, 1],
-                                    rotate: [0, 90, 0]
-                                }}
-                                transition={{ duration: 10, repeat: Infinity }}
-                                className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl"
-                            ></motion.div>
-                            
                             <div className="flex items-center space-x-6 relative z-10">
                                 <motion.div
-                                    whileHover={{ rotate: 360, scale: 1.1 }}
-                                    transition={{ duration: 0.6 }}
-                                    className="h-16 w-16 bg-gradient-to-br from-primary to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg"
+                                    whileHover={{ rotate: 12, scale: 1.1 }}
+                                    className="h-20 w-20 bg-white rounded-2xl flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                                 >
-                                    <UserIcon className="h-8 w-8 text-white" />
+                                    <UserIcon className="h-10 w-10 text-black" />
                                 </motion.div>
                                 <div className="flex-1">
-                                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Healthcare Provider</p>
+                                    <p className="text-xs font-black text-black uppercase tracking-widest mb-1 bg-yellow-400 inline-block px-2 py-0.5 rounded-md border border-black">Healthcare Provider</p>
                                     <Link 
                                         to={`/doctors/${appointment.doctor}`} 
-                                        className="text-2xl font-black text-gray-900 hover:text-primary transition-colors inline-flex items-center gap-2 group/link"
+                                        className="text-3xl font-black text-black hover:underline decoration-4 decoration-primary-900 underline-offset-4 transition-all block font-display uppercase tracking-tight"
                                     >
                                         {appointment.doctor_name || `Dr. ID ${appointment.doctor}`}
-                                        <ArrowLeftIcon className="h-5 w-5 rotate-180 text-primary opacity-0 group-hover/link:opacity-100 transition-opacity" />
                                     </Link>
-                        </div>
+                                </div>
                             </div>
                         </motion.div>
 
@@ -357,28 +321,32 @@ const AppointmentDetailPage: React.FC = () => {
                                     icon: CalendarIcon,
                                     label: 'Date',
                                     value: formatDate(appointment.date),
-                                    gradient: 'from-blue-500 to-cyan-500',
+                                    bgColor: 'bg-blue-100',
+                                    iconColor: 'bg-blue-500',
                                     delay: 0.1
                                 },
                                 {
                                     icon: ClockIcon,
                                     label: 'Time',
                                     value: `${formatTime(appointment.start_time)} - ${formatTime(appointment.end_time)}`,
-                                    gradient: 'from-emerald-500 to-teal-500',
+                                    bgColor: 'bg-green-100',
+                                    iconColor: 'bg-green-500',
                                     delay: 0.2
                                 },
                                 {
                                     icon: appointment.appointment_type === 'virtual' ? VideoCameraIcon : BuildingOfficeIcon,
                                     label: 'Consultation Type',
                                     value: appointment.appointment_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                                    gradient: appointment.appointment_type === 'virtual' ? 'from-purple-500 to-pink-500' : 'from-teal-500 to-cyan-500',
+                                    bgColor: appointment.appointment_type === 'virtual' ? 'bg-purple-100' : 'bg-teal-100',
+                                    iconColor: appointment.appointment_type === 'virtual' ? 'bg-purple-500' : 'bg-teal-500',
                                     delay: 0.3
                                 },
                                 ...(appointment.appointment_type !== 'virtual' ? [{
                                     icon: MapPinIcon,
                                     label: 'Location',
                                     value: 'Medical Center',
-                                    gradient: 'from-red-500 to-rose-500',
+                                    bgColor: 'bg-red-100',
+                                    iconColor: 'bg-red-500',
                                     delay: 0.4
                                 }] : [])
                             ].map((item, index) => (
@@ -387,19 +355,15 @@ const AppointmentDetailPage: React.FC = () => {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: item.delay }}
-                                    whileHover={{ y: -5, scale: 1.02 }}
-                                    className="flex items-start p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-white border-2 border-gray-100 hover:border-primary/30 transition-all shadow-sm hover:shadow-lg group"
+                                    whileHover={{ y: -4, boxShadow: "6px 6px 0px 0px rgba(0,0,0,1)" }}
+                                    className={`flex items-center p-6 rounded-2xl ${item.bgColor} border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all`}
                                 >
-                                    <motion.div
-                                        whileHover={{ rotate: 360, scale: 1.1 }}
-                                        transition={{ duration: 0.6 }}
-                                        className={`h-12 w-12 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-lg mr-4 flex-shrink-0`}
-                                    >
-                                        <item.icon className="h-6 w-6 text-white" />
-                                    </motion.div>
+                                    <div className={`h-14 w-14 rounded-xl ${item.iconColor} flex items-center justify-center border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] mr-5 flex-shrink-0`}>
+                                        <item.icon className="h-7 w-7 text-white" />
+                                    </div>
                                     <div className="flex-1">
-                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">{item.label}</p>
-                                        <p className="text-xl font-black text-gray-900 group-hover:text-primary transition-colors">{item.value}</p>
+                                        <p className="text-xs font-black text-black uppercase tracking-widest mb-1 opacity-70">{item.label}</p>
+                                        <p className="text-xl font-black text-black">{item.value}</p>
                                     </div>
                                 </motion.div>
                             ))}
@@ -411,29 +375,29 @@ const AppointmentDetailPage: React.FC = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.45 }}
-                                className="bg-gradient-to-br from-teal-50 to-primary-50 rounded-3xl p-6 border-2 border-teal-200 shadow-lg"
+                                className="bg-teal-50 rounded-[2rem] p-8 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
                             >
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="p-3 bg-gradient-to-br from-teal-500 to-primary-500 rounded-xl">
-                                        <ShieldCheckIcon className="h-6 w-6 text-white" />
+                                <div className="flex items-center gap-4 mb-6 pb-4 border-b-4 border-black/10">
+                                    <div className="p-3 bg-teal-500 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                        <ShieldCheckIcon className="h-8 w-8 text-white" />
                                     </div>
-                                    <h3 className="text-2xl font-black text-gray-900">Insurance Coverage</h3>
+                                    <h3 className="text-2xl font-black text-black uppercase font-display">Insurance Coverage</h3>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="bg-white rounded-xl p-4 border-2 border-gray-100">
-                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Insurance Plan</p>
-                                        <p className="text-lg font-bold text-gray-900">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="bg-white rounded-xl p-5 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                        <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Insurance Plan</p>
+                                        <p className="text-lg font-black text-black">
                                             {appointment.user_insurance.plan.provider.name}
                                         </p>
-                                        <p className="text-sm text-gray-600">
+                                        <p className="text-sm font-bold text-gray-600">
                                             {appointment.user_insurance.plan.name} ({appointment.user_insurance.plan.plan_type})
                                         </p>
                                     </div>
                                     {appointment.consultation_fee && (
                                         <>
-                                            <div className="bg-white rounded-xl p-4 border-2 border-gray-100">
-                                                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Consultation Fee</p>
-                                                <p className="text-lg font-bold text-gray-900">
+                                            <div className="bg-white rounded-xl p-5 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                                <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Consultation Fee</p>
+                                                <p className="text-lg font-black text-black">
                                                     ₦{parseFloat(appointment.consultation_fee).toLocaleString(undefined, {
                                                         minimumFractionDigits: 2,
                                                         maximumFractionDigits: 2,
@@ -441,12 +405,12 @@ const AppointmentDetailPage: React.FC = () => {
                                                 </p>
                                             </div>
                                             {appointment.insurance_covered_amount && (
-                                                <div className="bg-green-50 rounded-xl p-4 border-2 border-green-200">
-                                                    <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                                <div className="bg-green-100 rounded-xl p-5 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                                    <p className="text-xs font-black text-green-800 uppercase tracking-widest mb-2 flex items-center gap-1">
                                                         <CheckCircleIcon className="h-3.5 w-3.5" />
                                                         Covered by Insurance
                                                     </p>
-                                                    <p className="text-lg font-bold text-green-700">
+                                                    <p className="text-lg font-black text-green-900">
                                                         ₦{parseFloat(appointment.insurance_covered_amount).toLocaleString(undefined, {
                                                             minimumFractionDigits: 2,
                                                             maximumFractionDigits: 2,
@@ -455,12 +419,12 @@ const AppointmentDetailPage: React.FC = () => {
                                                 </div>
                                             )}
                                             {appointment.patient_copay && (
-                                                <div className="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
-                                                    <p className="text-xs font-bold text-blue-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                                <div className="bg-blue-100 rounded-xl p-5 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                                    <p className="text-xs font-black text-blue-800 uppercase tracking-widest mb-2 flex items-center gap-1">
                                                         <BanknotesIcon className="h-3.5 w-3.5" />
                                                         Your Out-of-Pocket
                                                     </p>
-                                                    <p className="text-lg font-bold text-blue-700">
+                                                    <p className="text-lg font-black text-blue-900">
                                                         ₦{parseFloat(appointment.patient_copay).toLocaleString(undefined, {
                                                             minimumFractionDigits: 2,
                                                             maximumFractionDigits: 2,
@@ -472,9 +436,9 @@ const AppointmentDetailPage: React.FC = () => {
                                     )}
                                 </div>
                                 {appointment.insurance_claim_generated && (
-                                    <div className="mt-4 p-3 bg-primary-100 rounded-xl border border-primary-300">
-                                        <p className="text-sm text-primary-800 font-semibold flex items-center gap-2">
-                                            <CheckCircleIcon className="h-5 w-5" />
+                                    <div className="mt-6 p-4 bg-primary-100 rounded-xl border-4 border-black flex items-center gap-3">
+                                        <CheckCircleIcon className="h-6 w-6 text-primary-900" />
+                                        <p className="text-sm text-primary-900 font-bold uppercase tracking-wide">
                                             Insurance claim has been automatically generated
                                         </p>
                                     </div>
@@ -483,36 +447,36 @@ const AppointmentDetailPage: React.FC = () => {
                         )}
 
                         {/* Reason & Notes */}
-                        <div className="space-y-6">
+                        <div className="space-y-8">
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.5 }}
                             >
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="p-2 bg-gradient-to-br from-primary to-emerald-600 rounded-xl">
-                                        <InformationCircleIcon className="h-5 w-5 text-white" />
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="p-3 bg-primary-900 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                        <InformationCircleIcon className="h-6 w-6 text-white" />
                                     </div>
-                                    <h3 className="text-2xl font-black text-gray-900">Reason for Visit</h3>
-                    </div>
-                                <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 p-6 rounded-2xl border-2 border-gray-200 text-gray-700 leading-relaxed text-lg">
+                                    <h3 className="text-2xl font-black text-black font-display uppercase">Reason for Visit</h3>
+                                </div>
+                                <div className="bg-white p-6 rounded-2xl border-4 border-black text-black font-medium leading-relaxed text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                                     {appointment.reason || <span className="italic text-gray-400">Not specified</span>}
-                    </div>
+                                </div>
                             </motion.div>
                             
-                    {appointment.notes && (
+                            {appointment.notes && (
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.6 }}
                                 >
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="p-2 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl">
-                                            <CheckCircleIcon className="h-5 w-5 text-white" />
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="p-3 bg-blue-500 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                            <CheckCircleIcon className="h-6 w-6 text-white" />
                                         </div>
-                                        <h3 className="text-2xl font-black text-gray-900">Doctor's Notes</h3>
+                                        <h3 className="text-2xl font-black text-black font-display uppercase">Doctor's Notes</h3>
                                     </div>
-                                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-2xl border-2 border-blue-200 text-blue-900 leading-relaxed whitespace-pre-wrap text-lg shadow-sm">
+                                    <div className="bg-blue-50 p-6 rounded-2xl border-4 border-black text-blue-900 font-medium leading-relaxed whitespace-pre-wrap text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                                         {appointment.notes}
                                     </div>
                                 </motion.div>
@@ -524,14 +488,9 @@ const AppointmentDetailPage: React.FC = () => {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.7 }}
-                                className="bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl p-6 flex items-center text-orange-900 font-bold shadow-lg"
+                                className="bg-amber-100 border-4 border-black rounded-2xl p-6 flex items-center text-black font-bold shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
                             >
-                                <motion.div
-                                    animate={{ scale: [1, 1.2, 1] }}
-                                    transition={{ duration: 2, repeat: Infinity }}
-                                >
-                                    <InformationCircleIcon className="h-6 w-6 mr-4 text-orange-600" />
-                                </motion.div>
+                                <InformationCircleIcon className="h-8 w-8 mr-4 text-black" />
                                 <p className="text-lg">A follow-up is recommended for this appointment.</p>
                             </motion.div>
                         )}
@@ -542,35 +501,22 @@ const AppointmentDetailPage: React.FC = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.7 }}
-                                className="bg-gradient-to-r from-purple-50 via-indigo-50 to-pink-50 rounded-3xl p-8 border-2 border-purple-200 relative overflow-hidden"
+                                className="bg-purple-100 rounded-[2rem] p-8 border-4 border-black relative overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
                             >
-                                <motion.div
-                                    animate={{ 
-                                        scale: [1, 1.2, 1],
-                                        rotate: [0, 90, 0]
-                                    }}
-                                    transition={{ duration: 10, repeat: Infinity }}
-                                    className="absolute top-0 right-0 w-32 h-32 bg-purple-200/30 rounded-full blur-3xl"
-                                ></motion.div>
-                                
                                 <div className="flex items-start gap-6 relative z-10">
-                                    <motion.div
-                                        animate={{ scale: [1, 1.1, 1] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                        className="p-4 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl shadow-lg flex-shrink-0"
-                                    >
+                                    <div className="p-4 bg-purple-500 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-shrink-0">
                                         <ClipboardDocumentCheckIcon className="h-8 w-8 text-white" />
-                                    </motion.div>
+                                    </div>
                                     <div className="flex-1">
-                                        <h3 className="text-2xl font-black text-gray-900 mb-2">Ready to Write Prescription</h3>
-                                        <p className="text-gray-700 leading-relaxed mb-4 text-lg">
+                                        <h3 className="text-2xl font-black text-black mb-2 font-display uppercase">Ready to Write Prescription</h3>
+                                        <p className="text-black font-bold leading-relaxed mb-6 text-lg">
                                             This appointment has been completed. You can now write a prescription for the patient.
                                         </p>
                                         <motion.button
                                             onClick={() => setShowPrescriptionModal(true)}
-                                            whileHover={{ scale: 1.05, y: -2 }}
+                                            whileHover={{ scale: 1.02, y: -2 }}
                                             whileTap={{ scale: 0.95 }}
-                                            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center gap-2"
+                                            className="px-8 py-4 bg-black text-white font-black rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.5)] transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] flex items-center gap-2 uppercase tracking-wide border-2 border-white"
                                         >
                                             <ClipboardDocumentCheckIcon className="h-5 w-5" />
                                             Write Prescription Now
@@ -586,116 +532,93 @@ const AppointmentDetailPage: React.FC = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.8 }}
-                                className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 border-2 border-purple-200 relative overflow-hidden"
+                                className="bg-purple-50 rounded-[2rem] p-8 border-4 border-black relative overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
                             >
-                                <motion.div
-                                    animate={{ 
-                                        scale: [1, 1.2, 1],
-                                        rotate: [0, 90, 0]
-                                    }}
-                                    transition={{ duration: 10, repeat: Infinity }}
-                                    className="absolute top-0 right-0 w-32 h-32 bg-purple-200/30 rounded-full blur-3xl"
-                                ></motion.div>
-                                
                                 <div className="flex items-start gap-6 relative z-10">
-                                    <motion.div
-                                        animate={{ scale: [1, 1.1, 1] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                        className="p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-lg flex-shrink-0"
-                                    >
+                                    <div className="p-4 bg-purple-500 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-shrink-0">
                                         <VideoCameraIcon className="h-8 w-8 text-white" />
-                                    </motion.div>
+                                    </div>
                                     <div className="flex-1">
-                                        <h3 className="text-2xl font-black text-gray-900 mb-3">Virtual Consultation</h3>
-                                        <p className="text-gray-700 leading-relaxed mb-4 text-lg">
+                                        <h3 className="text-2xl font-black text-black mb-3 font-display uppercase">Virtual Consultation</h3>
+                                        <p className="text-black font-bold leading-relaxed mb-6 text-lg">
                                             This is a virtual appointment. You can join the video call 15 minutes before the scheduled time. Make sure you have a stable internet connection and a quiet environment.
                                         </p>
                                         {canJoinCall && (
-                                            <div className="flex items-center gap-3 px-4 py-2 bg-green-100 rounded-xl border border-green-300 w-fit">
-                                                <motion.div
-                                                    animate={{ scale: [1, 1.2, 1] }}
-                                                    transition={{ duration: 2, repeat: Infinity }}
-                                                    className="h-3 w-3 bg-green-500 rounded-full"
-                                                ></motion.div>
-                                                <span className="text-green-800 font-bold">You can join now!</span>
+                                            <div className="flex items-center gap-3 px-6 py-3 bg-green-300 rounded-xl border-4 border-black w-fit shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                                <div className="h-3 w-3 bg-black rounded-full animate-pulse"></div>
+                                                <span className="text-black font-black uppercase tracking-wide">You can join now!</span>
                                             </div>
                                         )}
                                     </div>
                                 </div>
                             </motion.div>
                         )}
-                </div>
+                    </div>
 
                     {/* Actions Footer */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.8 }}
-                        className="bg-gradient-to-br from-gray-50 to-white p-8 border-t-2 border-gray-200 flex flex-wrap gap-4 justify-end"
+                        className="bg-gray-50 p-8 border-t-4 border-black flex flex-wrap gap-4 justify-end"
                     >
                         {canMarkAsCompleted && (
                             <motion.button
-                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileHover={{ scale: 1.02, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={handleMarkAsCompleted}
                                 disabled={isMarkingCompleted}
-                                className="px-10 py-5 bg-gradient-to-r from-primary to-emerald-600 text-white font-black text-lg rounded-2xl hover:shadow-2xl transition-all disabled:opacity-50 flex items-center shadow-xl border-4 border-white/20"
+                                className="px-8 py-4 bg-green-500 text-black font-black text-lg rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50 flex items-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black uppercase tracking-wide"
                             >
-                                <motion.div
-                                    animate={isMarkingCompleted ? { rotate: 360 } : {}}
-                                    transition={{ duration: 1, repeat: isMarkingCompleted ? Infinity : 0, ease: "linear" }}
-                                >
-                                    <CheckCircleIcon className="h-6 w-6 mr-3" />
-                                </motion.div>
-                                {isMarkingCompleted ? 'Marking as Completed...' : '✓ Mark Consultation as Completed'}
+                                {isMarkingCompleted ? 'Marking...' : '✓ Mark as Completed'}
                             </motion.button>
                         )}
 
                         {appointment.status === 'completed' && isDoctor && (
                             <motion.button
-                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileHover={{ scale: 1.02, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setShowPrescriptionModal(true)}
-                                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center"
+                                className="px-8 py-4 bg-purple-500 text-white font-black rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black flex items-center uppercase tracking-wide"
                             >
                                 <ClipboardDocumentCheckIcon className="h-5 w-5 mr-2" />
                                 Write Prescription
                             </motion.button>
                         )}
 
-                    {canCancel && (
+                        {canCancel && (
                             <motion.button
-                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileHover={{ scale: 1.02, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={handleCancel} 
                                 disabled={isCancelling} 
-                                className="px-8 py-4 border-2 border-red-300 text-red-600 font-bold rounded-xl hover:bg-red-50 transition-all disabled:opacity-50 flex items-center shadow-lg hover:shadow-xl"
+                                className="px-8 py-4 bg-white text-red-600 font-black rounded-xl hover:bg-red-50 border-4 border-red-500 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50 flex items-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] uppercase tracking-wide"
                             >
                                 <TrashIcon className="h-5 w-5 mr-2" />
                                 {isCancelling ? 'Cancelling...' : 'Cancel Appointment'}
                             </motion.button>
                         )}
                         
-                    {showScheduleFollowUp && (
+                        {showScheduleFollowUp && (
                             <motion.button
-                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileHover={{ scale: 1.02, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
-                            onClick={handleScheduleFollowUp}
-                                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center"
-                        >
-                            <ArrowPathIcon className="h-5 w-5 mr-2" />
-                            Schedule Follow-up
+                                onClick={handleScheduleFollowUp}
+                                className="px-8 py-4 bg-blue-500 text-white font-black rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black flex items-center uppercase tracking-wide"
+                            >
+                                <ArrowPathIcon className="h-5 w-5 mr-2" />
+                                Schedule Follow-up
                             </motion.button>
                         )}
 
                         {canJoinCall && (
                             <motion.div
-                                whileHover={{ scale: 1.05, y: -2 }}
+                                whileHover={{ scale: 1.02, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
                             >
                                 <Link 
                                     to={`/appointments/${appointment.id}/call`} 
-                                    className="px-10 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all shadow-lg flex items-center"
+                                    className="px-10 py-4 bg-green-500 text-black font-black rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black flex items-center uppercase tracking-wide"
                                 >
                                     <VideoCameraIcon className="h-6 w-6 mr-2" />
                                     Join Virtual Call

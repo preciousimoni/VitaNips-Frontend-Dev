@@ -140,9 +140,9 @@ const VitalsLogPage: React.FC = () => {
                 actionButton={
                     <button 
                         onClick={handleAddClick} 
-                        className="btn bg-gray-900 hover:bg-gray-800 text-white shadow-lg shadow-gray-900/20 border-none rounded-xl px-5 py-3 flex items-center transition-all hover:scale-105 active:scale-95"
+                        className="btn bg-black text-white border-4 border-black/20 hover:border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] rounded-2xl px-6 py-4 flex items-center transition-all hover:scale-105 active:scale-95 font-bold uppercase tracking-wide"
                     >
-                        <PlusIcon className="h-5 w-5 mr-2" />
+                        <PlusIcon className="h-6 w-6 mr-2" />
                         Log Vitals
                     </button>
                 }
@@ -166,7 +166,7 @@ const VitalsLogPage: React.FC = () => {
 
             {/* Quick Stats Row */}
             {!isLoading && logs.length > 0 && latestLog && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-10">
                     <HealthStatCard 
                         label="Last Heart Rate" 
                         value={latestLog.heart_rate || '—'} 
@@ -203,43 +203,43 @@ const VitalsLogPage: React.FC = () => {
             )}
 
             {/* Main Content Area */}
-            <div className="bg-white rounded-3xl shadow-xl shadow-gray-100/50 border border-gray-100 overflow-hidden min-h-[400px] relative">
-                {/* Background Decoration */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-rose-50 rounded-full blur-3xl opacity-50 pointer-events-none -mr-16 -mt-16"></div>
-
+            <div className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black overflow-hidden min-h-[400px] relative">
+                
                 {isLoading && logs.length === 0 && (
-                    <div className="p-6 space-y-6">
-                        <Skeleton className="h-24 rounded-2xl" />
-                        <Skeleton className="h-24 rounded-2xl" />
-                        <Skeleton className="h-24 rounded-2xl" />
+                    <div className="p-8 space-y-6">
+                        <Skeleton className="h-32 rounded-3xl" />
+                        <Skeleton className="h-32 rounded-3xl" />
+                        <Skeleton className="h-32 rounded-3xl" />
                     </div>
                 )}
 
                 {error && (
                     <div className="p-12 text-center">
-                        <div className="bg-red-50 text-red-600 px-6 py-4 rounded-2xl inline-block font-medium">
+                        <div className="bg-red-100 text-red-700 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-8 py-6 rounded-2xl inline-block font-bold">
                             {error}
                         </div>
                     </div>
                 )}
 
                 {!isLoading && !error && logs.length === 0 && (
-                    <EmptyState 
-                        icon={HeartIcon}
-                        title="No vitals recorded"
-                        description="Start tracking your health by logging your first vital signs entry."
-                        actionLabel="Log Vitals Now"
-                        onAction={handleAddClick}
-                    />
+                    <div className="p-12">
+                        <EmptyState 
+                            icon={HeartIcon}
+                            title="No vitals recorded"
+                            description="Start tracking your health by logging your first vital signs entry."
+                            actionLabel="Log Vitals Now"
+                            onAction={handleAddClick}
+                        />
+                    </div>
                 )}
 
                 {logs.length > 0 && (
                     <div className="relative z-10">
-                        <div className="px-6 py-5 border-b border-gray-50 flex justify-between items-center bg-white/80 backdrop-blur-sm sticky top-0 z-20">
-                            <h3 className="font-bold text-gray-900">History</h3>
-                            <span className="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded-md">{totalCount} Records</span>
+                        <div className="px-8 py-6 border-b-4 border-black flex justify-between items-center bg-yellow-50 sticky top-0 z-20">
+                            <h3 className="font-black text-2xl text-black uppercase tracking-tight">History</h3>
+                            <span className="text-xs font-black text-black bg-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] px-3 py-1.5 rounded-lg">{totalCount} RECORDS</span>
                         </div>
-                        <div className="divide-y divide-gray-50">
+                        <div className="divide-y-2 divide-gray-100">
                             <AnimatePresence>
                                 {logs.map((log, index) => (
                                     <motion.div
@@ -247,9 +247,9 @@ const VitalsLogPage: React.FC = () => {
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
-                                        className="hover:bg-gray-50/80 transition-colors"
+                                        className="hover:bg-gray-50/50 transition-colors"
                                     >
-                                        <div className="p-5">
+                                        <div className="p-6 md:p-8">
                                             <VitalSignLogListItem
                                                 log={log}
                                                 onEdit={handleEditClick}
@@ -264,10 +264,10 @@ const VitalsLogPage: React.FC = () => {
                 )}
 
                 {nextPageUrl && !isLoadingMore && (
-                    <div className="p-8 border-t border-gray-50 text-center bg-gray-50/30">
+                    <div className="p-8 border-t-4 border-black text-center bg-gray-50">
                         <button
                             onClick={() => fetchLogs(nextPageUrl, false)}
-                            className="btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 shadow-sm px-6 py-2.5 rounded-xl text-sm font-medium transition-all"
+                            className="btn bg-white border-2 border-black text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-0.5 px-8 py-3 rounded-xl text-sm font-bold transition-all uppercase tracking-wide"
                         >
                             Load Older Records
                         </button>
@@ -275,16 +275,16 @@ const VitalsLogPage: React.FC = () => {
                 )}
 
                 {isLoadingMore && (
-                    <div className="p-8 text-center text-gray-500 text-sm">
+                    <div className="p-8 text-center text-black font-bold text-sm bg-gray-50 border-t-4 border-black">
                         <Spinner size="sm" className="inline-block mr-2" /> Loading more entries...
                     </div>
                 )}
             </div>
             
             {!isLoading && !nextPageUrl && totalCount > 0 && logs.length === totalCount && (
-                <p className="text-center text-gray-300 text-xs mt-8 font-medium uppercase tracking-widest">
-                    End of History
-                </p>
+                <div className="flex justify-center mt-12">
+                   <div className="h-2 w-24 bg-gray-200 rounded-full"></div>
+                </div>
             )}
         </div>
     );

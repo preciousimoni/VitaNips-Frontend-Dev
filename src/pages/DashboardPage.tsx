@@ -134,14 +134,6 @@ const getHealthStatus = (value: number | null | undefined, type: 'bp_systolic' |
     }
 };
 
-// Helper function to calculate trend
-const getTrend = (current: number | null | undefined, previous: number | null | undefined): 'up' | 'down' | 'stable' | null => {
-    if (!current || !previous) return null;
-    const diff = current - previous;
-    if (Math.abs(diff) < 2) return 'stable';
-    return diff > 0 ? 'up' : 'down';
-};
-
 const DashboardPage: React.FC = () => {
     const { t } = useTranslation();
     const { user } = useAuth();
@@ -706,7 +698,6 @@ const DashboardPage: React.FC = () => {
                             ) : recentVitals.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     {recentVitals.map((vital, index) => {
-                                        const previousVital = index < recentVitals.length - 1 ? recentVitals[index + 1] : null;
                                         const bpStatus = getHealthStatus(vital.systolic_pressure, 'bp_systolic');
                                         
                                         return (

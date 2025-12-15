@@ -262,48 +262,35 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-12">
+    <div className="min-h-screen bg-cream-50 pb-12">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 pt-20 pb-20 md:pb-32 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/medical-icons.png')] opacity-5" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900/50" />
-        
-        {/* Animated Background Blobs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <motion.div 
-                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-                transition={{ duration: 8, repeat: Infinity }}
-                className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl -mr-20 -mt-20"
-            />
-            <motion.div 
-                animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.4, 0.2] }}
-                transition={{ duration: 10, repeat: Infinity, delay: 1 }}
-                className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl -ml-20 -mb-20"
-            />
-        </div>
+      <div className="bg-primary-900 pt-20 pb-24 md:pb-32 rounded-b-[3rem] border-b-4 border-black shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden">
+        {/* Pattern Overlay */}
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#FDFBF7_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col md:flex-row items-center md:items-end gap-6"
+                className="flex flex-col md:flex-row items-center md:items-end gap-8"
             >
                 {/* Avatar */}
                 <div className="relative group">
                     <motion.div 
-                        whileHover={{ scale: 1.05 }}
-                        className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-white bg-white shadow-2xl overflow-hidden flex items-center justify-center relative z-10"
+                        whileHover={{ scale: 1.05, rotate: -2 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden flex items-center justify-center relative z-10"
                     >
                         {user?.profile_picture ? (
                             <img src={user.profile_picture} alt="Profile" className="h-full w-full object-cover" />
                         ) : (
-                            <div className="h-full w-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                            <div className="h-full w-full bg-cream-50 flex items-center justify-center">
                                 <UserCircleIcon className="h-24 w-24 text-gray-400" />
                             </div>
                         )}
                         {isUploadingPicture && (
                             <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center z-20">
-                                <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent"></div>
+                                <div className="animate-spin rounded-full h-8 w-8 border-4 border-white border-t-transparent"></div>
                             </div>
                         )}
                     </motion.div>
@@ -319,7 +306,7 @@ const ProfilePage: React.FC = () => {
                         whileTap={{ scale: 0.9 }}
                         onClick={handleProfilePictureClick}
                         disabled={isUploadingPicture}
-                        className="absolute bottom-2 right-2 z-20 p-2.5 bg-white rounded-full shadow-lg border border-gray-100 text-gray-600 hover:text-primary hover:border-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="absolute bottom-0 right-0 z-20 p-3 bg-yellow-400 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black text-black hover:-translate-y-1 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Change profile picture"
                         aria-label="Change profile picture"
                     >
@@ -329,23 +316,25 @@ const ProfilePage: React.FC = () => {
 
                 {/* Info */}
                 <div className="flex-1 pb-2 text-center md:text-left">
-                    <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
-                        <h1 className="text-3xl md:text-4xl font-black text-white">{user?.first_name} {user?.last_name}</h1>
-                        <CheckBadgeIcon className="h-6 w-6 text-blue-400" title="Verified User" />
+                    <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                        <h1 className="text-4xl md:text-5xl font-black text-white font-display tracking-tight">{user?.first_name} {user?.last_name}</h1>
+                        <div className="bg-blue-400 p-1 rounded-full border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <CheckBadgeIcon className="h-5 w-5 text-white" title="Verified User" />
+                        </div>
                     </div>
-                    <p className="text-gray-300 font-medium text-lg mb-4">@{user?.username}</p>
+                    <p className="text-yellow-400 font-bold text-xl mb-6 font-display">@{user?.username}</p>
                     <div className="flex flex-wrap justify-center md:justify-start gap-3 text-sm">
-                        <span className="flex items-center px-3 py-1 rounded-full bg-white/10 text-white backdrop-blur-sm border border-white/10">
-                            <EnvelopeIcon className="h-4 w-4 mr-2 text-gray-300" /> {user?.email}
+                        <span className="flex items-center px-4 py-2 rounded-xl bg-white text-black font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform">
+                            <EnvelopeIcon className="h-4 w-4 mr-2" /> {user?.email}
                         </span>
                         {user?.phone_number && (
-                            <span className="flex items-center px-3 py-1 rounded-full bg-white/10 text-white backdrop-blur-sm border border-white/10">
-                                <PhoneIcon className="h-4 w-4 mr-2 text-gray-300" /> {user.phone_number}
+                            <span className="flex items-center px-4 py-2 rounded-xl bg-white text-black font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform">
+                                <PhoneIcon className="h-4 w-4 mr-2" /> {user.phone_number}
                             </span>
                         )}
                         {user?.address && (
-                            <span className="flex items-center px-3 py-1 rounded-full bg-white/10 text-white backdrop-blur-sm border border-white/10">
-                                <MapPinIcon className="h-4 w-4 mr-2 text-gray-300" /> {user.address}
+                            <span className="flex items-center px-4 py-2 rounded-xl bg-white text-black font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform">
+                                <MapPinIcon className="h-4 w-4 mr-2" /> {user.address}
                             </span>
                         )}
                     </div>
@@ -354,17 +343,17 @@ const ProfilePage: React.FC = () => {
                 {/* Actions */}
                 <div className="pb-4 w-full md:w-auto">
                     <motion.button 
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.02, rotate: 1 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => setIsEditing(!isEditing)}
-                        className={`w-full md:w-auto px-6 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 ${
+                        className={`w-full md:w-auto px-8 py-4 rounded-xl font-black text-lg border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center gap-2 ${
                             isEditing 
-                            ? 'bg-white text-gray-900 hover:bg-gray-50' 
-                            : 'bg-gradient-to-r from-primary to-emerald-600 text-white hover:shadow-primary/30'
+                            ? 'bg-red-500 text-white hover:bg-red-600 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1' 
+                            : 'bg-yellow-400 text-black hover:bg-yellow-500 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1'
                         }`}
                     >
-                        <PencilSquareIcon className="h-5 w-5" />
-                        {isEditing ? 'Cancel Editing' : 'Edit Profile'}
+                        <PencilSquareIcon className="h-6 w-6" />
+                        {isEditing ? 'CANCEL EDITING' : 'EDIT PROFILE'}
                     </motion.button>
                 </div>
             </motion.div>
@@ -374,36 +363,35 @@ const ProfilePage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Sidebar - Quick Stats */}
-            <div className="lg:col-span-1 space-y-6">
+            <div className="lg:col-span-1 space-y-8">
                 <motion.div 
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 p-6 overflow-hidden relative"
+                    className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-8 relative overflow-hidden"
                 >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full -mr-16 -mt-16 opacity-50" />
-                    <h3 className="font-black text-gray-900 mb-6 flex items-center relative z-10">
-                        <div className="p-2 bg-red-100 rounded-lg mr-3">
-                            <HeartIcon className="h-5 w-5 text-red-600" />
+                    <h3 className="text-2xl font-black text-black font-display uppercase tracking-tight mb-8 flex items-center relative z-10">
+                        <div className="p-3 bg-red-100 rounded-xl border-2 border-black mr-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <HeartIcon className="h-6 w-6 text-red-600" />
                         </div>
                         Health Summary
                     </h3>
                     <div className="space-y-4 relative z-10">
-                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                            <span className="text-sm font-medium text-gray-500">Blood Group</span>
-                            <span className="font-bold text-gray-900">{user?.blood_group || 'N/A'}</span>
+                        <div className="flex justify-between items-center p-4 bg-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform">
+                            <span className="text-sm font-black text-gray-500 uppercase tracking-wide">Blood Group</span>
+                            <span className="text-xl font-black text-black">{user?.blood_group || 'N/A'}</span>
                         </div>
-                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                            <span className="text-sm font-medium text-gray-500">Genotype</span>
-                            <span className="font-bold text-gray-900">{user?.genotype || 'N/A'}</span>
+                        <div className="flex justify-between items-center p-4 bg-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform">
+                            <span className="text-sm font-black text-gray-500 uppercase tracking-wide">Genotype</span>
+                            <span className="text-xl font-black text-black">{user?.genotype || 'N/A'}</span>
                         </div>
-                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                            <span className="text-sm font-medium text-gray-500">Weight</span>
-                            <span className="font-bold text-gray-900">{user?.weight ? `${user.weight} kg` : 'N/A'}</span>
+                        <div className="flex justify-between items-center p-4 bg-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform">
+                            <span className="text-sm font-black text-gray-500 uppercase tracking-wide">Weight</span>
+                            <span className="text-xl font-black text-black">{user?.weight ? `${user.weight} kg` : 'N/A'}</span>
                         </div>
-                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                            <span className="text-sm font-medium text-gray-500">Height</span>
-                            <span className="font-bold text-gray-900">{user?.height ? `${user.height} cm` : 'N/A'}</span>
+                        <div className="flex justify-between items-center p-4 bg-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform">
+                            <span className="text-sm font-black text-gray-500 uppercase tracking-wide">Height</span>
+                            <span className="text-xl font-black text-black">{user?.height ? `${user.height} cm` : 'N/A'}</span>
                         </div>
                     </div>
                 </motion.div>
@@ -412,26 +400,26 @@ const ProfilePage: React.FC = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 p-6"
+                    className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-8"
                 >
-                    <h3 className="font-black text-gray-900 mb-6 flex items-center">
-                        <div className="p-2 bg-indigo-100 rounded-lg mr-3">
-                            <ShieldCheckIcon className="h-5 w-5 text-indigo-600" />
+                    <h3 className="text-2xl font-black text-black font-display uppercase tracking-tight mb-8 flex items-center">
+                        <div className="p-3 bg-indigo-100 rounded-xl border-2 border-black mr-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <ShieldCheckIcon className="h-6 w-6 text-indigo-600" />
                         </div>
                         Quick Links
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                         <Link 
                             to="/emergency-contacts"
-                            className="flex items-center justify-between p-4 bg-orange-50 border border-orange-100 rounded-2xl hover:bg-orange-100 transition-all group"
+                            className="flex items-center justify-between p-5 bg-orange-50 border-2 border-black rounded-2xl hover:bg-orange-100 transition-all group shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1"
                         >
                             <div className="flex items-center">
-                                <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center shadow-sm mr-3">
-                                    <LifebuoyIcon className="h-5 w-5 text-orange-600" />
+                                <div className="h-12 w-12 bg-white rounded-xl border-2 border-black flex items-center justify-center mr-4">
+                                    <LifebuoyIcon className="h-6 w-6 text-orange-600" />
                                 </div>
                                 <div>
-                                    <p className="font-bold text-gray-900 text-sm">Emergency Contacts</p>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="font-black text-black uppercase tracking-wide text-sm">Emergency Contacts</p>
+                                    <p className="text-xs font-bold text-gray-600 mt-1">
                                         {emergencyContacts.length > 0 
                                             ? `${emergencyContacts.length} contact${emergencyContacts.length !== 1 ? 's' : ''}`
                                             : 'Add contacts'
@@ -439,22 +427,22 @@ const ProfilePage: React.FC = () => {
                                     </p>
                                 </div>
                             </div>
-                            <ArrowRightIcon className="h-4 w-4 text-gray-400 group-hover:text-orange-600 transition-colors" />
+                            <ArrowRightIcon className="h-5 w-5 text-black transform group-hover:translate-x-1 transition-transform" />
                         </Link>
                         <Link 
                             to="/insurance"
-                            className="flex items-center justify-between p-4 bg-blue-50 border border-blue-100 rounded-2xl hover:bg-blue-100 transition-all group"
+                            className="flex items-center justify-between p-5 bg-blue-50 border-2 border-black rounded-2xl hover:bg-blue-100 transition-all group shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1"
                         >
                             <div className="flex items-center">
-                                <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center shadow-sm mr-3">
-                                    <ShieldCheckIcon className="h-5 w-5 text-blue-600" />
+                                <div className="h-12 w-12 bg-white rounded-xl border-2 border-black flex items-center justify-center mr-4">
+                                    <ShieldCheckIcon className="h-6 w-6 text-blue-600" />
                                 </div>
                                 <div>
-                                    <p className="font-bold text-gray-900 text-sm">Insurance</p>
-                                    <p className="text-xs text-gray-500">Manage coverage</p>
+                                    <p className="font-black text-black uppercase tracking-wide text-sm">Insurance</p>
+                                    <p className="text-xs font-bold text-gray-600 mt-1">Manage coverage</p>
                                 </div>
                             </div>
-                            <ArrowRightIcon className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                            <ArrowRightIcon className="h-5 w-5 text-black transform group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>
                 </motion.div>
@@ -463,17 +451,19 @@ const ProfilePage: React.FC = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 }}
-                    className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl shadow-xl p-6 text-white relative overflow-hidden"
+                    className="bg-primary-900 rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-8 relative overflow-hidden"
                 >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl" />
-                    <h3 className="font-bold text-lg mb-2 flex items-center relative z-10">
-                        <SparklesIcon className="h-5 w-5 mr-2 text-yellow-300" />
+                    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#FFF_2px,transparent_2px)] [background-size:24px_24px]"></div>
+                    <h3 className="text-xl font-black text-white font-display uppercase tracking-tight mb-4 flex items-center relative z-10">
+                        <SparklesIcon className="h-6 w-6 mr-3 text-yellow-400" />
                         Account Status
                     </h3>
-                    <p className="text-indigo-100 text-sm mb-6 relative z-10">Your account is fully verified and active. You have full access to all standard features.</p>
-                    <div className="flex items-center gap-2 text-xs font-bold bg-white/20 backdrop-blur-sm p-3 rounded-xl inline-flex relative z-10">
-                        <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
-                        Active Member
+                    <p className="text-white/90 text-sm font-bold mb-6 relative z-10 leading-relaxed border-l-4 border-yellow-400 pl-4">
+                        Your account is fully verified and active. You have full access to all standard features.
+                    </p>
+                    <div className="flex items-center gap-3 text-sm font-black text-black bg-yellow-400 px-4 py-3 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] inline-flex relative z-10">
+                        <div className="h-3 w-3 bg-green-500 rounded-full border border-black animate-pulse"></div>
+                        ACTIVE MEMBER
                     </div>
                 </motion.div>
             </div>
@@ -484,19 +474,19 @@ const ProfilePage: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden"
+                    className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black overflow-hidden"
                 >
                     <Tab.Group selectedIndex={selectedTab} onChange={handleTabChange}>
-                        <Tab.List className="flex border-b border-gray-100 bg-gray-50/50 overflow-x-auto p-2 gap-2">
+                        <Tab.List className="flex border-b-4 border-black bg-gray-50 overflow-x-auto p-4 gap-4">
                             {['Personal Information', 'Medical Details', 'Emergency Contacts', 'Account'].map((category) => (
                                 <Tab
                                     key={category}
                                     className={({ selected }) =>
                                         classNames(
-                                            'flex-shrink-0 px-4 py-3 text-sm font-bold rounded-xl focus:outline-none transition-all',
+                                            'flex-shrink-0 px-6 py-3 text-sm font-black uppercase tracking-wide rounded-xl border-2 border-black transition-all outline-none',
                                             selected
-                                                ? 'bg-white text-primary shadow-md'
-                                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50'
+                                                ? 'bg-primary-900 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-y-1'
+                                                : 'bg-white text-black hover:bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5'
                                         )
                                     }
                                 >
@@ -504,15 +494,15 @@ const ProfilePage: React.FC = () => {
                                 </Tab>
                             ))}
                         </Tab.List>
-                        <Tab.Panels className="p-6 md:p-8">
+                        <Tab.Panels className="p-8 md:p-10">
                             <form onSubmit={
                               // @ts-expect-error - Type compatibility issue between handleSubmit and form data types
                               handleSubmit(onSubmit)
                             }>
                                 <AnimatePresence mode="wait">
                                     {/* Personal Info Panel */}
-                                    <Tab.Panel key="Personal Information" as={motion.div} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6 focus:outline-none">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <Tab.Panel key="Personal Information" as={motion.div} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8 focus:outline-none">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <FormInput
                                                 name="first_name"
                                                 label="First Name"
@@ -555,8 +545,8 @@ const ProfilePage: React.FC = () => {
                                     </Tab.Panel>
 
                                     {/* Medical Details Panel */}
-                                    <Tab.Panel key="Medical Details" as={motion.div} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6 focus:outline-none">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <Tab.Panel key="Medical Details" as={motion.div} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8 focus:outline-none">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <FormInput
                                                 name="blood_group"
                                                 label="Blood Group"
@@ -590,31 +580,31 @@ const ProfilePage: React.FC = () => {
                                                 disabled={!isEditing || isSubmitting}
                                             />
                                             <div className="md:col-span-2">
-                                                <label className="block text-sm font-bold text-gray-700 mb-2">Allergies</label>
+                                                <label className="block text-sm font-black text-black uppercase tracking-wide mb-3">Allergies</label>
                                                 <textarea 
                                                     {...register('allergies')}
                                                     disabled={!isEditing || isSubmitting}
-                                                    className="w-full rounded-xl border-gray-200 shadow-sm focus:border-primary focus:ring-primary disabled:bg-gray-50 disabled:text-gray-500 transition-all"
+                                                    className="w-full rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:ring-0 focus:border-black focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-0.5 transition-all p-4 disabled:bg-gray-100 disabled:text-gray-500 font-bold"
                                                     rows={3}
                                                     placeholder="List any known allergies..."
                                                 />
                                             </div>
                                             <div className="md:col-span-2">
-                                                <label className="block text-sm font-bold text-gray-700 mb-2">Chronic Conditions</label>
+                                                <label className="block text-sm font-black text-black uppercase tracking-wide mb-3">Chronic Conditions</label>
                                                 <textarea 
                                                     {...register('chronic_conditions')}
                                                     disabled={!isEditing || isSubmitting}
-                                                    className="w-full rounded-xl border-gray-200 shadow-sm focus:border-primary focus:ring-primary disabled:bg-gray-50 disabled:text-gray-500 transition-all"
+                                                    className="w-full rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:ring-0 focus:border-black focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-0.5 transition-all p-4 disabled:bg-gray-100 disabled:text-gray-500 font-bold"
                                                     rows={3}
                                                     placeholder="List any chronic conditions..."
                                                 />
                                             </div>
                                             <div className="md:col-span-2">
-                                                <label className="block text-sm font-bold text-gray-700 mb-2">Medical History Summary</label>
+                                                <label className="block text-sm font-black text-black uppercase tracking-wide mb-3">Medical History Summary</label>
                                                 <textarea 
                                                     {...register('medical_history_summary')}
                                                     disabled={!isEditing || isSubmitting}
-                                                    className="w-full rounded-xl border-gray-200 shadow-sm focus:border-primary focus:ring-primary disabled:bg-gray-50 disabled:text-gray-500 transition-all"
+                                                    className="w-full rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:ring-0 focus:border-black focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-0.5 transition-all p-4 disabled:bg-gray-100 disabled:text-gray-500 font-bold"
                                                     rows={4}
                                                     placeholder="Brief summary of medical history..."
                                                 />
@@ -623,66 +613,66 @@ const ProfilePage: React.FC = () => {
                                     </Tab.Panel>
 
                                     {/* Emergency Contacts Panel */}
-                                    <Tab.Panel key="Emergency Contacts" as={motion.div} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6 focus:outline-none">
-                                        <div className="flex items-center justify-between mb-6">
+                                    <Tab.Panel key="Emergency Contacts" as={motion.div} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8 focus:outline-none">
+                                        <div className="flex items-center justify-between mb-8">
                                             <div>
-                                                <h3 className="text-xl font-black text-gray-900">Emergency Contacts</h3>
-                                                <p className="text-sm text-gray-500 mt-1">Manage your emergency contact information</p>
+                                                <h3 className="text-2xl font-black text-black font-display uppercase tracking-tight">Emergency Contacts</h3>
+                                                <p className="text-base font-bold text-gray-600 mt-2">Manage your emergency contact information</p>
                                             </div>
                                             <Link 
                                                 to="/emergency-contacts"
-                                                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg hover:shadow-orange-500/30"
+                                                className="inline-flex items-center px-6 py-3 bg-red-500 text-white text-sm font-black uppercase tracking-wide rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all"
                                             >
-                                                <PlusIcon className="h-4 w-4 mr-2" />
+                                                <PlusIcon className="h-5 w-5 mr-2" />
                                                 Add New Contact
                                             </Link>
                                         </div>
 
                                         {loadingContacts ? (
                                             <div className="text-center py-12">
-                                                <p className="text-gray-500">Loading emergency contacts...</p>
+                                                <p className="font-bold text-gray-500">Loading emergency contacts...</p>
                                             </div>
                                         ) : emergencyContacts.length > 0 ? (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                 {emergencyContacts.map((contact) => (
                                                     <motion.div 
-                                                        whileHover={{ y: -2 }}
+                                                        whileHover={{ scale: 1.02, rotate: 1 }}
                                                         key={contact.id} 
-                                                        className="p-5 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-200 group"
+                                                        className="p-6 bg-white border-2 border-black rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all group"
                                                     >
-                                                        <div className="flex items-start justify-between mb-4">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-orange-500/30">
+                                                        <div className="flex items-start justify-between mb-6">
+                                                            <div className="flex items-center gap-4">
+                                                                <div className="h-14 w-14 rounded-xl border-2 border-black bg-orange-100 flex items-center justify-center text-orange-900 font-black text-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                                                     {contact.name?.charAt(0).toUpperCase() || '?'}
                                                                 </div>
                                                                 <div>
-                                                                    <h4 className="font-bold text-gray-900">{contact.name || 'Unnamed Contact'}</h4>
-                                                                    <p className="text-sm text-gray-500 capitalize font-medium">{contact.relationship || 'Contact'}</p>
+                                                                    <h4 className="text-lg font-black text-black uppercase">{contact.name || 'Unnamed Contact'}</h4>
+                                                                    <p className="text-sm text-gray-600 font-bold uppercase tracking-wide">{contact.relationship || 'Contact'}</p>
                                                                 </div>
                                                             </div>
                                                             {contact.is_primary && (
-                                                                <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs rounded-full font-bold uppercase tracking-wide">
+                                                                <span className="px-3 py-1 bg-yellow-400 text-black border-2 border-black text-xs rounded-lg font-black uppercase tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                                                     Primary
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <div className="space-y-3 pt-2 border-t border-gray-50">
+                                                        <div className="space-y-3 pt-4 border-t-2 border-black border-dashed">
                                                             {contact.phone_number && (
-                                                                <div className="flex items-center text-sm text-gray-600">
-                                                                    <div className="p-1.5 bg-gray-50 rounded-lg mr-2 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
+                                                                <div className="flex items-center text-sm font-bold text-gray-700">
+                                                                    <div className="p-2 bg-gray-100 rounded-lg border-2 border-black mr-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                                                         <PhoneIcon className="h-4 w-4" />
                                                                     </div>
-                                                                    <a href={`tel:${contact.phone_number}`} className="hover:text-orange-600 font-medium truncate transition-colors">
+                                                                    <a href={`tel:${contact.phone_number}`} className="hover:text-primary transition-colors">
                                                                         {contact.phone_number}
                                                                     </a>
                                                                 </div>
                                                             )}
                                                             {contact.email && (
-                                                                <div className="flex items-center text-sm text-gray-600">
-                                                                    <div className="p-1.5 bg-gray-50 rounded-lg mr-2 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
+                                                                <div className="flex items-center text-sm font-bold text-gray-700">
+                                                                    <div className="p-2 bg-gray-100 rounded-lg border-2 border-black mr-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                                                         <EnvelopeIcon className="h-4 w-4" />
                                                                     </div>
-                                                                    <a href={`mailto:${contact.email}`} className="hover:text-orange-600 font-medium truncate transition-colors">
+                                                                    <a href={`mailto:${contact.email}`} className="hover:text-primary transition-colors">
                                                                         {contact.email}
                                                                     </a>
                                                                 </div>
@@ -692,30 +682,30 @@ const ProfilePage: React.FC = () => {
                                                 ))}
                                             </div>
                                         ) : (
-                                            <div className="text-center py-12 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-                                                <div className="h-16 w-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                                                    <LifebuoyIcon className="h-8 w-8 text-gray-300" />
+                                            <div className="text-center py-16 bg-white rounded-3xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                                                <div className="h-20 w-20 bg-gray-100 rounded-2xl border-2 border-black flex items-center justify-center mx-auto mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                                    <LifebuoyIcon className="h-10 w-10 text-gray-400" />
                                                 </div>
-                                                <h4 className="text-lg font-bold text-gray-900 mb-2">No Emergency Contacts Yet</h4>
-                                                <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
+                                                <h4 className="text-2xl font-black text-black mb-3 font-display uppercase">No Emergency Contacts Yet</h4>
+                                                <p className="text-gray-600 font-bold mb-8 max-w-md mx-auto">
                                                     Add emergency contacts so we can reach them quickly in case of an emergency.
                                                 </p>
                                                 <Link 
                                                     to="/emergency-contacts"
-                                                    className="inline-flex items-center px-6 py-3 bg-white border border-gray-200 hover:border-orange-500 hover:text-orange-600 text-gray-700 font-bold rounded-xl transition-all shadow-sm hover:shadow-md"
+                                                    className="inline-flex items-center px-8 py-4 bg-white border-2 border-black text-black font-black uppercase tracking-wide rounded-xl transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1"
                                                 >
-                                                    <PlusIcon className="h-5 w-5 mr-2" />
+                                                    <PlusIcon className="h-6 w-6 mr-2" />
                                                     Add Your First Contact
                                                 </Link>
                                             </div>
                                         )}
 
-                                        <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-2xl">
-                                            <div className="flex items-start gap-3">
-                                                <LifebuoyIcon className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                                                <div className="text-sm text-blue-800">
-                                                    <p className="font-bold mb-1">Why add emergency contacts?</p>
-                                                    <p className="text-blue-700/80 leading-relaxed">
+                                        <div className="mt-8 p-6 bg-blue-100 border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                            <div className="flex items-start gap-4">
+                                                <LifebuoyIcon className="h-8 w-8 text-blue-900 mt-0.5 flex-shrink-0" />
+                                                <div className="text-sm text-blue-900">
+                                                    <p className="font-black uppercase tracking-wide mb-2 text-lg">Why add emergency contacts?</p>
+                                                    <p className="font-bold leading-relaxed opacity-90">
                                                         In case of a medical emergency, we'll notify your emergency contacts with your location and status. 
                                                         Mark one as "Primary" for priority notifications.
                                                     </p>
@@ -725,15 +715,14 @@ const ProfilePage: React.FC = () => {
                                     </Tab.Panel>
 
                                     {/* Account Panel */}
-                                    <Tab.Panel key="Account" as={motion.div} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6 focus:outline-none">
-                                        <div className="p-6 bg-yellow-50 border border-yellow-100 rounded-2xl text-yellow-800">
-                                            <strong className="block mb-2 text-lg font-bold flex items-center gap-2">
-                                                <ShieldCheckIcon className="h-5 w-5" />
+                                    <Tab.Panel key="Account" as={motion.div} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8 focus:outline-none">
+                                        <div className="p-8 bg-yellow-100 border-2 border-black rounded-2xl text-yellow-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                            <strong className="block mb-4 text-xl font-black uppercase tracking-tight flex items-center gap-3">
+                                                <ShieldCheckIcon className="h-8 w-8" />
                                                 Account Security
                                             </strong>
-                                            <p className="text-yellow-700/80">Change password and security settings functionality coming soon.</p>
+                                            <p className="font-bold opacity-90 text-lg">Change password and security settings functionality coming soon.</p>
                                         </div>
-                                        {/* Add notification toggles here later */}
                                     </Tab.Panel>
                                 </AnimatePresence>
 
@@ -741,7 +730,7 @@ const ProfilePage: React.FC = () => {
                                     <motion.div 
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        className="mt-8 flex justify-end gap-4 pt-6 border-t border-gray-100"
+                                        className="mt-10 flex justify-end gap-6 pt-8 border-t-4 border-black border-dashed"
                                     >
                                         <button 
                                             type="button"
@@ -749,18 +738,18 @@ const ProfilePage: React.FC = () => {
                                                 reset();
                                                 setIsEditing(false);
                                             }}
-                                            className="px-6 py-3 text-sm font-bold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                                            className="px-8 py-4 text-base font-black uppercase tracking-wide text-black bg-white border-2 border-black rounded-xl hover:bg-gray-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all"
                                         >
                                             Cancel
                                         </button>
                                         <button 
                                             type="submit"
                                             disabled={isSubmitting}
-                                            className="px-8 py-3 text-sm font-bold text-white bg-gradient-to-r from-primary to-emerald-600 rounded-xl hover:shadow-lg hover:shadow-primary/30 disabled:opacity-50 flex items-center gap-2 transition-all"
+                                            className="px-10 py-4 text-base font-black uppercase tracking-wide text-white bg-primary-900 border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 transition-all"
                                         >
                                             {isSubmitting ? (
                                                 <>
-                                                    <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                                                    <span className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
                                                     Saving...
                                                 </>
                                             ) : (

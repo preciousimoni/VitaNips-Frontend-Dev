@@ -84,55 +84,25 @@ const PrescriptionsPage: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 pb-12">
+        <div className="min-h-screen bg-cream-50 pb-12 font-sans">
             {/* Hero Header Section */}
             <motion.div 
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative bg-gradient-to-r from-primary via-emerald-600 to-teal-600 pt-20 pb-24 sm:pt-24 sm:pb-32 overflow-hidden"
+                className="relative bg-primary-900 pt-20 pb-24 sm:pt-24 sm:pb-32 overflow-hidden rounded-b-[3rem] border-b-4 border-l-4 border-r-4 border-black shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] mx-4 mt-4 md:mx-6"
             >
-                {/* Animated Blobs */}
-                <motion.div
-                    style={{ y }}
-                    className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                ></motion.div>
-                <motion.div
-                    style={{ y: y2 }}
-                    className="absolute bottom-0 right-0 w-80 h-80 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                ></motion.div>
-                <motion.div
-                    style={{ y: y3 }}
-                    className="absolute top-1/2 left-1/2 w-72 h-72 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                ></motion.div>
-
-                {/* Floating Icon Cards - Hidden on Mobile */}
-                <motion.div
-                    className="hidden md:block absolute top-1/4 left-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg"
-                    animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
-                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-                >
-                    <ClipboardDocumentListIcon className="h-8 w-8 text-white" />
-                </motion.div>
-                <motion.div
-                    className="hidden md:block absolute bottom-1/4 right-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg"
-                    animate={{ y: [0, 10, 0], rotate: [0, -5, 0] }}
-                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut", delay: 1 }}
-                >
-                    <DocumentTextIcon className="h-8 w-8 text-white" />
-                </motion.div>
-
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
                     {/* Back Button */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="mb-4 md:mb-6"
+                        className="mb-8"
                     >
                         <Link 
                             to="/dashboard" 
-                            className="inline-flex items-center text-white/90 hover:text-white font-bold transition-colors group text-sm md:text-base"
+                            className="inline-flex items-center text-black bg-white px-5 py-2.5 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all font-bold group"
                         >
-                            <ArrowLeftIcon className="h-4 w-4 md:h-5 md:w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+                            <ArrowLeftIcon className="h-5 w-5 mr-2" />
                             Back to Dashboard
                         </Link>
                     </motion.div>
@@ -141,18 +111,19 @@ const PrescriptionsPage: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="inline-flex items-center px-4 py-1.5 md:px-5 md:py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-xs md:text-sm font-bold uppercase tracking-wider mb-4 md:mb-6"
+                        className="inline-flex items-center px-5 py-2 rounded-full bg-yellow-400 border-2 border-black text-black text-sm font-black uppercase tracking-wider mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     >
-                        <SparklesIcon className="h-3 w-3 md:h-4 md:w-4 mr-2" />
+                        <SparklesIcon className="h-4 w-4 mr-2" />
                         YOUR PRESCRIPTIONS
                     </motion.div>
 
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div>
-                            <h1 className="text-3xl md:text-5xl font-black text-white mb-2">
-                                Medical Prescriptions
+                            <h1 className="text-4xl md:text-6xl font-black text-white mb-4 font-display uppercase tracking-tight drop-shadow-md">
+                                Medical
+                                <span className="block md:inline md:ml-4 text-emerald-300">Prescriptions</span>
                             </h1>
-                            <p className="text-base md:text-lg text-white/90 max-w-xl">
+                            <p className="text-xl text-white/90 max-w-xl font-bold border-l-4 border-yellow-400 pl-4">
                                 View, manage, and forward your prescriptions to pharmacies
                             </p>
                             {totalCount > 0 && (
@@ -160,46 +131,38 @@ const PrescriptionsPage: React.FC = () => {
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 0.4 }}
-                                    className="flex items-center gap-2 mt-4 text-xs md:text-sm text-white/80 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20 w-fit"
+                                    className="flex items-center gap-3 mt-6 text-sm text-black bg-white px-5 py-2.5 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-fit font-bold"
                                 >
-                                    <div className="h-1.5 w-1.5 md:h-2 md:w-2 bg-green-400 rounded-full animate-pulse"></div>
-                                    <span className="font-bold">{totalCount}</span> {totalCount === 1 ? 'Prescription' : 'Prescriptions'} on Record
+                                    <div className="h-2.5 w-2.5 bg-green-500 rounded-full border border-black animate-pulse"></div>
+                                    <span>{totalCount} {totalCount === 1 ? 'Prescription' : 'Prescriptions'} on Record</span>
                                 </motion.div>
                             )}
                         </div>
                     </div>
                 </div>
-
-                {/* Bottom Wave */}
-                <div className="absolute bottom-0 left-0 right-0">
-                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
-                    </svg>
-                </div>
             </motion.div>
 
             {/* Main Content */}
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
+            <div className="max-w-5xl mx-auto px-6 md:px-12 -mt-16 relative z-10">
                 {/* Search Bar */}
                 {!isLoading && !error && prescriptions.length > 0 && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="mb-6"
+                        className="mb-10"
                     >
                         <div className="relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-emerald-500/20 rounded-2xl blur-xl"></div>
-                            <div className="relative bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-4">
-                                <div className="flex items-center gap-3">
+                            <div className="relative bg-white rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-4 md:p-5">
+                                <div className="flex items-center gap-4">
                                     <div className="flex-1 relative">
-                                        <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                        <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-black" />
                                         <input
                                             type="text"
                                             placeholder="Search by diagnosis, medication, or notes..."
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                            className="w-full pl-12 pr-4 py-3 bg-gray-100 border-2 border-black rounded-xl focus:outline-none focus:ring-0 focus:bg-white transition-all font-bold placeholder-gray-500 text-black shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.1)]"
                                         />
                                     </div>
                                     {searchQuery && (
@@ -207,20 +170,22 @@ const PrescriptionsPage: React.FC = () => {
                                             initial={{ opacity: 0, scale: 0.8 }}
                                             animate={{ opacity: 1, scale: 1 }}
                                             onClick={() => setSearchQuery('')}
-                                            className="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors font-medium text-gray-700"
+                                            className="px-6 py-3 bg-red-100 hover:bg-red-200 rounded-xl transition-colors font-black text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                                         >
                                             Clear
                                         </motion.button>
                                     )}
                                 </div>
                                 {searchQuery && (
-                                    <motion.p
+                                    <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        className="mt-3 text-sm text-gray-600"
+                                        className="mt-4 px-2"
                                     >
-                                        Found {filteredPrescriptions.length} {filteredPrescriptions.length === 1 ? 'prescription' : 'prescriptions'}
-                                    </motion.p>
+                                        <p className="text-sm font-bold text-black bg-yellow-300 inline-block px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                            Found {filteredPrescriptions.length} {filteredPrescriptions.length === 1 ? 'prescription' : 'prescriptions'}
+                                        </p>
+                                    </motion.div>
                                 )}
                             </div>
                         </div>
@@ -231,7 +196,7 @@ const PrescriptionsPage: React.FC = () => {
                     <motion.div 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="space-y-4"
+                        className="space-y-6"
                     >
                         {[...Array(4)].map((_, i) => (
                             <motion.div
@@ -239,9 +204,9 @@ const PrescriptionsPage: React.FC = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-white rounded-3xl p-6 shadow-lg border-2 border-gray-100"
+                                className="bg-white rounded-[2rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black"
                             >
-                                <Skeleton className="h-32 w-full rounded-2xl" />
+                                <Skeleton className="h-32 w-full rounded-2xl bg-gray-200" />
                             </motion.div>
                         ))}
                     </motion.div>
@@ -249,18 +214,18 @@ const PrescriptionsPage: React.FC = () => {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-white rounded-3xl p-8 shadow-xl border-2 border-red-100"
+                        className="bg-red-50 rounded-[2rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black"
                     >
                         <ErrorMessage message={error} onRetry={loadPrescriptions} />
                     </motion.div>
                 ) : (
-                     <>
+                     <div className="space-y-6">
                         {filteredPrescriptions.length > 0 ? (
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.3 }}
-                                className="space-y-4"
+                                className="space-y-6"
                             >
                                 <AnimatePresence mode="popLayout">
                                     {filteredPrescriptions.map((presc, index) => (
@@ -299,7 +264,7 @@ const PrescriptionsPage: React.FC = () => {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3 }}
-                                className="bg-white rounded-3xl p-12 shadow-xl border-2 border-gray-100"
+                                className="bg-white rounded-[2.5rem] p-12 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black text-center"
                             >
                                 <EmptyState
                                     icon={DocumentTextIcon}
@@ -308,7 +273,7 @@ const PrescriptionsPage: React.FC = () => {
                                 />
                             </motion.div>
                         )}
-                     </>
+                     </div>
                 )}
             </div>
         </div>

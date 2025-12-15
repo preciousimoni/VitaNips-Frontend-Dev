@@ -24,8 +24,8 @@ const HealthHeader: React.FC<HealthHeaderProps> = ({
 }) => {
     return (
         <div className="mb-8">
-            <Link to="/dashboard" className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors hover:-translate-x-1 duration-200">
-                <ArrowLeftIcon className="h-4 w-4 mr-1" /> Back to Dashboard
+            <Link to="/dashboard" className="inline-flex items-center px-4 py-2 bg-white text-black font-bold rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all mb-8 group">
+                <ArrowLeftIcon className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
             </Link>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <motion.div 
@@ -34,12 +34,12 @@ const HealthHeader: React.FC<HealthHeaderProps> = ({
                     transition={{ duration: 0.5 }}
                     className="flex items-center"
                 >
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gradientFrom} ${gradientTo} flex items-center justify-center shadow-lg ${shadowColor} mr-5 transform hover:scale-105 transition-transform duration-300`}>
-                        <Icon className="h-8 w-8 text-white" />
+                    <div className={`w-20 h-20 rounded-2xl bg-${gradientFrom.replace('from-', '')} flex items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mr-6`}>
+                        <Icon className="h-10 w-10 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 font-display tracking-tight">{title}</h1>
-                        <p className="text-base text-gray-500 mt-1 font-medium">{subtitle}</p>
+                        <h1 className="text-4xl font-black text-black font-display uppercase tracking-tight">{title}</h1>
+                        <p className="text-lg text-gray-700 mt-1 font-bold">{subtitle}</p>
                     </div>
                 </motion.div>
                 {actionButton && (

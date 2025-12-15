@@ -216,38 +216,33 @@ const MedicationRemindersPage: React.FC = () => {
 
     return (
         <PageWrapper title="Medication Reminders">
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50/30 pb-12">
+            <div className="min-h-screen bg-cream-50 pb-12">
                 {/* Hero Section */}
-                <div className="relative bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 pt-20 pb-24 overflow-hidden">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 1.1 }}
-                        animate={{ opacity: 0.1, scale: 1 }}
-                        className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/medical-icons.png')]"
-                    />
-                    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+                <div className="bg-primary-900 rounded-b-[3rem] border-b-4 border-l-4 border-r-4 border-black shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] mb-12 relative overflow-hidden mx-4 mt-4">
+                    <div className="relative max-w-7xl mx-auto px-6 py-16">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+                            className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8"
                         >
                             <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                                        <BellAlertIcon className="h-8 w-8 text-white" />
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="p-4 bg-yellow-400 border-4 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                        <BellAlertIcon className="h-8 w-8 text-black" />
                                     </div>
-                                    <h1 className="text-4xl md:text-5xl font-black text-white">
-                                        Medication Reminders
+                                    <h1 className="text-5xl md:text-6xl font-black text-white font-display uppercase tracking-tight">
+                                        Medication <span className="text-yellow-400 block md:inline">Reminders</span>
                                     </h1>
                                 </div>
-                                <p className="text-xl text-white/90 max-w-2xl">
+                                <p className="text-xl text-white/90 max-w-2xl font-bold ml-1">
                                     Never miss a dose. Set up reminders to stay on track with your medications.
                                 </p>
                             </div>
                             <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                                 onClick={handleAddClick}
-                                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-amber-600 font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all relative z-10"
+                                className="inline-flex items-center gap-3 px-8 py-4 bg-white text-black font-black text-lg rounded-xl border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all uppercase tracking-wide"
                             >
                                 <PlusIcon className="h-6 w-6" />
                                 Add Reminder
@@ -257,101 +252,93 @@ const MedicationRemindersPage: React.FC = () => {
                 </div>
 
                 {/* Statistics Cards */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-20">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+                            className="bg-white rounded-[2rem] p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
                         >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600">Total Reminders</p>
-                                    <p className="text-3xl font-black text-gray-900 mt-2">{stats.total}</p>
-                                </div>
-                                <div className="p-3 bg-amber-100 rounded-xl">
-                                    <BellAlertIcon className="h-6 w-6 text-amber-600" />
+                            <div className="flex items-center justify-between mb-4">
+                                <p className="text-sm font-black text-gray-500 uppercase tracking-wider">Total Reminders</p>
+                                <div className="p-2 bg-yellow-100 rounded-lg border-2 border-black">
+                                    <BellAlertIcon className="h-5 w-5 text-black" />
                                 </div>
                             </div>
+                            <p className="text-4xl font-black text-black font-display">{stats.total}</p>
                         </motion.div>
 
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+                            className="bg-white rounded-[2rem] p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
                         >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600">Active</p>
-                                    <p className="text-3xl font-black text-green-600 mt-2">{stats.active}</p>
-                                </div>
-                                <div className="p-3 bg-green-100 rounded-xl">
-                                    <CheckCircleIcon className="h-6 w-6 text-green-600" />
+                            <div className="flex items-center justify-between mb-4">
+                                <p className="text-sm font-black text-gray-500 uppercase tracking-wider">Active</p>
+                                <div className="p-2 bg-green-100 rounded-lg border-2 border-black">
+                                    <CheckCircleIcon className="h-5 w-5 text-black" />
                                 </div>
                             </div>
+                            <p className="text-4xl font-black text-black font-display">{stats.active}</p>
                         </motion.div>
 
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+                            className="bg-white rounded-[2rem] p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
                         >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600">Inactive</p>
-                                    <p className="text-3xl font-black text-gray-500 mt-2">{stats.inactive}</p>
-                                </div>
-                                <div className="p-3 bg-gray-100 rounded-xl">
-                                    <BellSlashIcon className="h-6 w-6 text-gray-500" />
+                            <div className="flex items-center justify-between mb-4">
+                                <p className="text-sm font-black text-gray-500 uppercase tracking-wider">Inactive</p>
+                                <div className="p-2 bg-gray-100 rounded-lg border-2 border-black">
+                                    <BellSlashIcon className="h-5 w-5 text-black" />
                                 </div>
                             </div>
+                            <p className="text-4xl font-black text-black font-display">{stats.inactive}</p>
                         </motion.div>
 
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4 }}
-                            className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100"
+                            className="bg-white rounded-[2rem] p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
                         >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600">Today's Reminders</p>
-                                    <p className="text-3xl font-black text-blue-600 mt-2">{stats.today}</p>
-                                </div>
-                                <div className="p-3 bg-blue-100 rounded-xl">
-                                    <ClockIcon className="h-6 w-6 text-blue-600" />
+                            <div className="flex items-center justify-between mb-4">
+                                <p className="text-sm font-black text-gray-500 uppercase tracking-wider">Today's Reminders</p>
+                                <div className="p-2 bg-blue-100 rounded-lg border-2 border-black">
+                                    <ClockIcon className="h-5 w-5 text-black" />
                                 </div>
                             </div>
+                            <p className="text-4xl font-black text-black font-display">{stats.today}</p>
                         </motion.div>
                     </div>
 
                     {/* Search and Filter Bar */}
-                    <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
+                    <div className="bg-white rounded-2xl p-4 mb-12 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                         <div className="flex flex-col md:flex-row gap-4">
                             <div className="flex-1 relative">
-                                <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-black" />
                                 <input
                                     type="text"
-                                    placeholder="Search reminders by medication, dosage, or notes..."
+                                    placeholder="Search reminders..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                                    className="w-full pl-12 pr-4 py-3 bg-gray-100 border-2 border-transparent focus:border-black focus:bg-white rounded-xl focus:ring-0 transition-all font-bold placeholder-gray-500 text-black text-lg"
                                 />
                             </div>
-                            <div className="flex items-center gap-2">
-                                <FunnelIcon className="h-5 w-5 text-gray-400" />
-                                <div className="flex bg-gray-100 rounded-xl p-1">
+                            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+                                <FunnelIcon className="h-6 w-6 text-black" />
+                                <div className="flex bg-gray-100 rounded-xl p-1.5 border-2 border-transparent">
                                     {(['all', 'active', 'inactive'] as const).map((filter) => (
                                         <button
                                             key={filter}
                                             onClick={() => setFilterActive(filter)}
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                            className={`px-6 py-2 rounded-lg text-sm font-black uppercase tracking-wider transition-all border-2 ${
                                                 filterActive === filter
-                                                    ? 'bg-white text-amber-600 shadow-sm'
-                                                    : 'text-gray-600 hover:text-gray-900'
+                                                    ? 'bg-white text-black border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                                                    : 'text-gray-500 border-transparent hover:text-black'
                                             }`}
                                         >
                                             {filter.charAt(0).toUpperCase() + filter.slice(1)}
@@ -367,9 +354,9 @@ const MedicationRemindersPage: React.FC = () => {
                         <motion.div
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4"
+                            className="mb-8 bg-red-100 border-4 border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                         >
-                            <p className="text-red-700 text-sm">{error}</p>
+                            <p className="text-red-900 font-bold">{error}</p>
                         </motion.div>
                     )}
 
@@ -385,28 +372,28 @@ const MedicationRemindersPage: React.FC = () => {
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="text-center py-20 bg-white rounded-2xl shadow-lg border border-gray-100"
+                            className="text-center py-20 bg-white rounded-[2.5rem] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] px-6"
                         >
                             <div className="max-w-md mx-auto">
-                                <div className="p-4 bg-amber-100 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-                                    <BellAlertIcon className="h-12 w-12 text-amber-600" />
+                                <div className="p-6 bg-yellow-400 border-4 border-black rounded-full w-28 h-28 mx-auto mb-8 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                    <BellAlertIcon className="h-12 w-12 text-black" />
                                 </div>
-                                <h3 className="text-2xl font-black text-gray-900 mb-2">
+                                <h3 className="text-3xl font-black text-black mb-4 font-display uppercase">
                                     {searchQuery || filterActive !== 'all' ? 'No Reminders Found' : 'No Reminders Yet'}
                                 </h3>
-                                <p className="text-gray-600 mb-8">
+                                <p className="text-xl text-gray-500 font-bold mb-8">
                                     {searchQuery || filterActive !== 'all'
                                         ? 'Try adjusting your search or filter criteria.'
                                         : 'Stay on track with your medications by adding a reminder.'}
                                 </p>
                                 {(!searchQuery && filterActive === 'all') && (
                                     <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
                                         onClick={handleAddClick}
-                                        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                                        className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-black text-lg rounded-xl border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all uppercase tracking-wide"
                                     >
-                                        <PlusIcon className="h-5 w-5" />
+                                        <PlusIcon className="h-6 w-6" />
                                         Add Your First Reminder
                                     </motion.button>
                                 )}
@@ -421,7 +408,7 @@ const MedicationRemindersPage: React.FC = () => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="space-y-4"
+                                className="space-y-6"
                             >
                                 {filteredReminders.map((reminder, index) => (
                                     <motion.div
@@ -444,25 +431,25 @@ const MedicationRemindersPage: React.FC = () => {
 
                     {/* Load More */}
                     {nextPageUrl && !isLoadingMore && (
-                        <div className="mt-8 text-center">
+                        <div className="mt-12 text-center">
                             <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                                 onClick={() => fetchReminders(nextPageUrl, false)}
-                                className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                                className="px-8 py-4 bg-white text-black font-black text-lg rounded-xl border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all uppercase tracking-wide"
                             >
                                 Load More Reminders
                             </motion.button>
                         </div>
                     )}
                     {isLoadingMore && (
-                        <div className="mt-8 text-center">
+                        <div className="mt-12 text-center">
                             <Spinner size="md" />
-                            <p className="text-gray-600 mt-4 text-sm">Loading more reminders...</p>
+                            <p className="text-gray-600 mt-4 font-bold">Loading more reminders...</p>
                         </div>
                     )}
                     {!isLoading && !nextPageUrl && totalCount > 0 && reminders.length === totalCount && (
-                        <p className="text-center text-gray-500 text-sm mt-8">
+                        <p className="text-center text-gray-500 font-bold mt-12 pb-8">
                             All {totalCount} reminder{totalCount !== 1 ? 's' : ''} loaded.
                         </p>
                     )}

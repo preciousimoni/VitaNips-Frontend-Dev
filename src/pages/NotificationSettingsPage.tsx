@@ -93,25 +93,27 @@ const NotificationSettingsPage: React.FC = () => {
     onChange: () => void;
     icon: React.ReactNode;
   }> = ({ label, description, enabled, onChange, icon }) => (
-    <div className="flex items-start justify-between p-4 bg-white rounded-lg border border-gray-200 hover:border-primary transition-colors">
-      <div className="flex items-start space-x-3 flex-1">
-        <div className="mt-0.5">{icon}</div>
+    <div className="flex items-start justify-between p-5 bg-white rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-all duration-200 group">
+      <div className="flex items-start space-x-4 flex-1">
+        <div className="mt-1 p-2 bg-cream-50 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:bg-yellow-100 transition-colors">
+            {icon}
+        </div>
         <div className="flex-1">
-          <h4 className="font-medium text-gray-900">{label}</h4>
-          <p className="text-sm text-gray-600 mt-0.5">{description}</p>
+          <h4 className="font-black text-lg text-black">{label}</h4>
+          <p className="text-sm font-bold text-gray-600 mt-1 leading-relaxed">{description}</p>
         </div>
       </div>
       <button
         onClick={onChange}
-        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-          enabled ? 'bg-primary' : 'bg-gray-200'
+        className={`relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-black transition-colors duration-200 ease-in-out focus:outline-none ${
+          enabled ? 'bg-primary-900' : 'bg-gray-200'
         }`}
         role="switch"
         aria-checked={enabled}
       >
         <span
-          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-            enabled ? 'translate-x-5' : 'translate-x-0'
+          className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white border-2 border-black shadow-sm ring-0 transition duration-200 ease-in-out mt-[2px] ml-[2px] ${
+            enabled ? 'translate-x-6' : 'translate-x-0'
           }`}
         />
       </button>
@@ -119,137 +121,169 @@ const NotificationSettingsPage: React.FC = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-          <BellIcon className="h-8 w-8 text-primary" />
-          Notification Settings
-        </h1>
-        <p className="mt-2 text-gray-600">
-          Choose how you want to receive notifications about appointments, prescriptions, and more.
-        </p>
-      </div>
+    <div className="min-h-screen bg-cream-50 pb-24 pt-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="mb-8 text-center md:text-left">
+          <h1 className="text-4xl md:text-5xl font-black text-primary-900 flex items-center justify-center md:justify-start gap-4 font-display tracking-tight">
+            <div className="p-3 bg-yellow-400 rounded-2xl border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <BellIcon className="h-10 w-10 text-black" />
+            </div>
+            Notification Settings
+          </h1>
+          <p className="mt-4 text-xl font-bold text-gray-700 max-w-2xl">
+            Choose how you want to receive notifications about appointments, prescriptions, and more.
+          </p>
+        </div>
 
-      {/* Email Notifications Section */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <EnvelopeIcon className="h-6 w-6 text-gray-700" />
-          <h2 className="text-xl font-semibold text-gray-900">Email Notifications</h2>
-        </div>
-        <div className="space-y-3">
-          <NotificationToggle
-            label="Appointment Confirmations"
-            description="Get notified when your appointment is confirmed"
-            enabled={preferences.notify_appointment_confirmation_email}
-            onChange={() => handleToggle('notify_appointment_confirmation_email')}
-            icon={<CheckCircleIcon className="h-5 w-5 text-green-600" />}
-          />
-          <NotificationToggle
-            label="Appointment Cancellations"
-            description="Get notified when an appointment is cancelled"
-            enabled={preferences.notify_appointment_cancellation_email}
-            onChange={() => handleToggle('notify_appointment_cancellation_email')}
-            icon={<CheckCircleIcon className="h-5 w-5 text-red-600" />}
-          />
-          <NotificationToggle
-            label="Appointment Reminders"
-            description="Receive reminders 24 hours and 1 hour before appointments"
-            enabled={preferences.notify_appointment_reminder_email}
-            onChange={() => handleToggle('notify_appointment_reminder_email')}
-            icon={<BellIcon className="h-5 w-5 text-blue-600" />}
-          />
-          <NotificationToggle
-            label="Prescription Updates"
-            description="Get notified about new prescriptions and updates"
-            enabled={preferences.notify_prescription_update_email}
-            onChange={() => handleToggle('notify_prescription_update_email')}
-            icon={<CheckCircleIcon className="h-5 w-5 text-purple-600" />}
-          />
-          <NotificationToggle
-            label="Medication Refill Reminders"
-            description="Receive reminders when it's time to refill your medications"
-            enabled={preferences.notify_refill_reminder_email}
-            onChange={() => handleToggle('notify_refill_reminder_email')}
-            icon={<BellIcon className="h-5 w-5 text-orange-600" />}
-          />
-          <NotificationToggle
-            label="Order Updates"
-            description="Track your medication orders from pharmacies"
-            enabled={preferences.notify_order_update_email}
-            onChange={() => handleToggle('notify_order_update_email')}
-            icon={<CheckCircleIcon className="h-5 w-5 text-indigo-600" />}
-          />
-          <NotificationToggle
-            label="General Updates"
-            description="Stay informed about VitaNips features and updates"
-            enabled={preferences.notify_general_updates_email}
-            onChange={() => handleToggle('notify_general_updates_email')}
-            icon={<EnvelopeIcon className="h-5 w-5 text-gray-600" />}
-          />
-        </div>
-      </div>
-
-      {/* SMS Notifications Section */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <DevicePhoneMobileIcon className="h-6 w-6 text-gray-700" />
-          <h2 className="text-xl font-semibold text-gray-900">SMS Notifications</h2>
-        </div>
-        {user?.phone_number ? (
-          <div className="space-y-3">
-            <NotificationToggle
-              label="Appointment Reminder SMS"
-              description={`Send text reminders to ${user.phone_number}`}
-              enabled={preferences.notify_appointment_reminder_sms}
-              onChange={() => handleToggle('notify_appointment_reminder_sms')}
-              icon={<DevicePhoneMobileIcon className="h-5 w-5 text-blue-600" />}
-            />
+        {/* Email Notifications Section */}
+        <div className="bg-white rounded-[2.5rem] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 md:p-8 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full -mr-32 -mt-32 opacity-50 pointer-events-none"></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-4 mb-8">
+                <div className="p-2 bg-green-100 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <EnvelopeIcon className="h-6 w-6 text-green-800" />
+                </div>
+                <h2 className="text-2xl font-black text-black font-display uppercase tracking-wide">Email Notifications</h2>
+            </div>
+            <div className="space-y-4">
+                <NotificationToggle
+                label="Appointment Confirmations"
+                description="Get notified when your appointment is confirmed"
+                enabled={preferences.notify_appointment_confirmation_email}
+                onChange={() => handleToggle('notify_appointment_confirmation_email')}
+                icon={<CheckCircleIcon className="h-6 w-6 text-green-600" />}
+                />
+                <NotificationToggle
+                label="Appointment Cancellations"
+                description="Get notified when an appointment is cancelled"
+                enabled={preferences.notify_appointment_cancellation_email}
+                onChange={() => handleToggle('notify_appointment_cancellation_email')}
+                icon={<CheckCircleIcon className="h-6 w-6 text-red-600" />}
+                />
+                <NotificationToggle
+                label="Appointment Reminders"
+                description="Receive reminders 24 hours and 1 hour before appointments"
+                enabled={preferences.notify_appointment_reminder_email}
+                onChange={() => handleToggle('notify_appointment_reminder_email')}
+                icon={<BellIcon className="h-6 w-6 text-blue-600" />}
+                />
+                <NotificationToggle
+                label="Prescription Updates"
+                description="Get notified about new prescriptions and updates"
+                enabled={preferences.notify_prescription_update_email}
+                onChange={() => handleToggle('notify_prescription_update_email')}
+                icon={<CheckCircleIcon className="h-6 w-6 text-purple-600" />}
+                />
+                <NotificationToggle
+                label="Medication Refill Reminders"
+                description="Receive reminders when it's time to refill your medications"
+                enabled={preferences.notify_refill_reminder_email}
+                onChange={() => handleToggle('notify_refill_reminder_email')}
+                icon={<BellIcon className="h-6 w-6 text-orange-600" />}
+                />
+                <NotificationToggle
+                label="Order Updates"
+                description="Track your medication orders from pharmacies"
+                enabled={preferences.notify_order_update_email}
+                onChange={() => handleToggle('notify_order_update_email')}
+                icon={<CheckCircleIcon className="h-6 w-6 text-indigo-600" />}
+                />
+                <NotificationToggle
+                label="General Updates"
+                description="Stay informed about VitaNips features and updates"
+                enabled={preferences.notify_general_updates_email}
+                onChange={() => handleToggle('notify_general_updates_email')}
+                icon={<EnvelopeIcon className="h-6 w-6 text-gray-600" />}
+                />
+            </div>
           </div>
-        ) : (
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">
-              Add a phone number to your profile to enable SMS notifications.
+        </div>
+
+        {/* SMS Notifications Section */}
+        <div className="bg-white rounded-[2.5rem] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 md:p-8 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-50 rounded-full -mr-32 -mt-32 opacity-50 pointer-events-none"></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-4 mb-8">
+                <div className="p-2 bg-yellow-100 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <DevicePhoneMobileIcon className="h-6 w-6 text-yellow-800" />
+                </div>
+                <h2 className="text-2xl font-black text-black font-display uppercase tracking-wide">SMS Notifications</h2>
+            </div>
+            {user?.phone_number ? (
+                <div className="space-y-4">
+                <NotificationToggle
+                    label="Appointment Reminder SMS"
+                    description={`Send text reminders to ${user.phone_number}`}
+                    enabled={preferences.notify_appointment_reminder_sms}
+                    onChange={() => handleToggle('notify_appointment_reminder_sms')}
+                    icon={<DevicePhoneMobileIcon className="h-6 w-6 text-blue-600" />}
+                />
+                </div>
+            ) : (
+                <div className="p-6 bg-yellow-50 border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <p className="text-base font-bold text-yellow-900 flex items-center">
+                    <span className="text-2xl mr-2">⚠️</span>
+                    Add a phone number to your profile to enable SMS notifications.
+                </p>
+                </div>
+            )}
+          </div>
+        </div>
+
+        {/* Push Notifications Section */}
+        <div className="bg-white rounded-[2.5rem] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 md:p-8 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full -mr-32 -mt-32 opacity-50 pointer-events-none"></div>
+          <div className="relative z-10">
+             <div className="flex items-center gap-4 mb-8">
+                <div className="p-2 bg-blue-100 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <BellIcon className="h-6 w-6 text-blue-800" />
+                </div>
+                <h2 className="text-2xl font-black text-black font-display uppercase tracking-wide">Push Notifications</h2>
+            </div>
+            <div className="space-y-4">
+                <NotificationToggle
+                label="Appointment Reminder Push"
+                description="Receive push notifications for appointment reminders"
+                enabled={preferences.notify_appointment_reminder_push}
+                onChange={() => handleToggle('notify_appointment_reminder_push')}
+                icon={<BellIcon className="h-6 w-6 text-primary" />}
+                />
+            </div>
+            <div className="mt-6 p-6 bg-blue-50 border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <p className="text-base font-bold text-blue-900 flex items-start">
+                    <span className="text-2xl mr-3">ℹ️</span>
+                    Push notifications require enabling browser notifications for VitaNips.
+                </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Save Button */}
+        <div className={`fixed bottom-0 left-0 right-0 p-6 bg-white border-t-4 border-black shadow-[0px_-4px_10px_rgba(0,0,0,0.1)] transition-transform duration-300 z-50 ${hasChanges ? 'translate-y-0' : 'translate-y-full'}`}>
+          <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+            <p className="text-lg font-black text-gray-900 hidden sm:block">
+              You have unsaved changes
             </p>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="w-full sm:w-auto px-8 py-3 bg-primary-900 text-white font-black text-lg uppercase tracking-wide border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {isSaving ? (
+                  <>
+                    <span className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
+                    Saving...
+                  </>
+              ) : (
+                  'Save Preferences'
+              )}
+            </button>
           </div>
-        )}
-      </div>
+        </div>
+        
+        {/* Spacer for fixed bottom bar */}
+        <div className="h-20"></div>
 
-      {/* Push Notifications Section */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <BellIcon className="h-6 w-6 text-gray-700" />
-          <h2 className="text-xl font-semibold text-gray-900">Push Notifications</h2>
-        </div>
-        <div className="space-y-3">
-          <NotificationToggle
-            label="Appointment Reminder Push"
-            description="Receive push notifications for appointment reminders"
-            enabled={preferences.notify_appointment_reminder_push}
-            onChange={() => handleToggle('notify_appointment_reminder_push')}
-            icon={<BellIcon className="h-5 w-5 text-primary" />}
-          />
-        </div>
-        <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
-            Push notifications require enabling browser notifications for VitaNips.
-          </p>
-        </div>
-      </div>
-
-      {/* Save Button */}
-      <div className="sticky bottom-4 bg-white p-4 rounded-lg border border-gray-200 shadow-lg">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            {hasChanges ? 'You have unsaved changes' : 'All changes saved'}
-          </p>
-          <button
-            onClick={handleSave}
-            disabled={isSaving || !hasChanges}
-            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSaving ? 'Saving...' : 'Save Preferences'}
-          </button>
-        </div>
       </div>
     </div>
   );

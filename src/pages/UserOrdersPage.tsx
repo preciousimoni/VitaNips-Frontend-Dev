@@ -3,17 +3,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-    CubeIcon,
-    SparklesIcon,
+    CalendarDaysIcon,
+    CurrencyDollarIcon,
+    BuildingStorefrontIcon,
     MagnifyingGlassIcon,
-    ArrowLeftIcon,
-    ClockIcon,
+    CubeIcon,
     CheckCircleIcon,
+    ClockIcon,
     ExclamationCircleIcon,
     TruckIcon,
-    BuildingStorefrontIcon,
-    CalendarDaysIcon,
-    CurrencyDollarIcon
+    SparklesIcon
 } from '@heroicons/react/24/outline';
 import { getUserOrders } from '../api/orders';
 import { MedicationOrder } from '../types/pharmacy';
@@ -138,99 +137,65 @@ const UserOrdersPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 pb-12">
+        <div className="min-h-screen bg-cream-50 pb-12">
             {/* Hero Header Section */}
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="relative bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 pt-20 pb-24 sm:pt-24 sm:pb-32 overflow-hidden"
-            >
-                {/* Animated Blobs */}
-                <motion.div
-                    className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                    animate={{ x: [-100, 200], y: [-50, 100], rotate: [0, 360] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                ></motion.div>
-                <motion.div
-                    className="absolute bottom-0 right-0 w-80 h-80 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                    animate={{ x: [100, -200], y: [50, -100], rotate: [360, 0] }}
-                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                ></motion.div>
+            <div className="bg-primary-900 rounded-b-[3rem] border-b-4 border-black shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] pt-20 pb-24 sm:pt-24 sm:pb-32 relative overflow-hidden">
+                {/* Pattern Overlay */}
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#FDFBF7_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
-                {/* Floating Icon Cards */}
-                <motion.div
-                    className="absolute top-1/4 left-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg"
-                    animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
-                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-                >
-                    <CubeIcon className="h-8 w-8 text-white" />
-                </motion.div>
 
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="inline-flex items-center px-5 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-bold uppercase tracking-wider mb-6"
+                        className="inline-flex items-center px-4 py-2 rounded-xl bg-yellow-400 border-2 border-black text-black text-sm font-black uppercase tracking-wider mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     >
                         <SparklesIcon className="h-4 w-4 mr-2" />
                         MY ORDERS
                     </motion.div>
 
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                        <div>
-                            <Link
-                                to="/dashboard"
-                                className="inline-flex items-center text-white/80 hover:text-white mb-4 transition-colors"
-                            >
-                                <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                                Back to Dashboard
-                            </Link>
-                            <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
-                                Medication Orders
-                            </h1>
-                            <p className="text-lg text-white/90">Track your prescription orders and deliveries</p>
-                        </div>
+                    <h1 className="text-5xl md:text-7xl font-black text-white mb-6 font-display tracking-tight">
+                        Medication Orders
+                    </h1>
+                    
+                    <p className="text-xl text-white/90 font-bold max-w-2xl mx-auto mb-8">
+                        Track your prescription orders and deliveries.
+                    </p>
 
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.4 }}
-                            className="inline-flex items-center px-6 py-3 rounded-2xl font-bold text-sm shadow-lg border-2 bg-white/20 backdrop-blur-sm border-white/30 text-white"
-                        >
-                            <CubeIcon className="h-6 w-6 mr-2" />
-                            {orders.length} Total Orders
-                        </motion.div>
-                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="inline-flex items-center px-6 py-3 rounded-xl font-bold text-lg border-2 border-black bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                        <CubeIcon className="h-6 w-6 mr-2" />
+                        {orders.length} Total Orders
+                    </motion.div>
                 </div>
+            </div>
 
-                {/* Bottom Wave */}
-                <div className="absolute bottom-0 left-0 right-0">
-                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
-                    </svg>
-                </div>
-            </motion.div>
+
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
                 {/* Search and Filter Bar */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-gray-100 p-6 mb-8"
+                    className="bg-white rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-6 mb-12"
                 >
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Search */}
                         <div className="flex-1 relative">
-                            <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-black" />
                             <input
                                 type="text"
                                 placeholder="Search by order ID, pharmacy, or prescription..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-sm"
+                                className="w-full pl-12 pr-4 py-4 bg-gray-100 rounded-xl border-2 border-transparent focus:border-black focus:bg-white transition-all outline-none font-bold text-lg placeholder-gray-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                             />
                         </div>
                     </div>
@@ -241,28 +206,26 @@ const UserOrdersPage: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
-                    className="flex space-x-2 border-b border-gray-200 mb-8 overflow-x-auto"
+                    className="flex flex-wrap gap-3 mb-12 justify-center"
                 >
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`
-                                relative py-3 px-4 text-sm font-semibold transition-colors duration-200 whitespace-nowrap
-                                ${activeTab === tab.id ? 'text-primary-700' : 'text-gray-500 hover:text-gray-700'}
+                                relative py-3 px-6 text-sm font-black uppercase tracking-wide rounded-xl border-2 border-black transition-all
+                                ${activeTab === tab.id 
+                                    ? 'bg-primary-900 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] -translate-y-1' 
+                                    : 'bg-white text-black hover:bg-gray-50 hover:-translate-y-0.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'}
                             `}
                         >
                             {tab.label}
                             {tab.count !== undefined && tab.count > 0 && (
-                                <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-primary-600 rounded-full">
+                                <span className={`ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-black leading-none rounded-lg border border-black ${
+                                    activeTab === tab.id ? 'bg-white text-black' : 'bg-primary-100 text-primary-900'
+                                }`}>
                                     {tab.count}
                                 </span>
-                            )}
-                            {activeTab === tab.id && (
-                                <motion.span
-                                    layoutId="order-tab-underline"
-                                    className="absolute bottom-0 left-0 right-0 h-1 bg-primary-500 rounded-t-md"
-                                />
                             )}
                         </button>
                     ))}
@@ -281,19 +244,21 @@ const UserOrdersPage: React.FC = () => {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-center py-16 bg-white rounded-3xl shadow-lg border border-gray-100"
+                        className="text-center py-20 bg-white rounded-[2.5rem] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
                     >
-                        <CubeIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-                        <h3 className="mt-2 text-2xl font-bold text-gray-900">No Orders Found</h3>
-                        <p className="mt-2 text-gray-600 max-w-md mx-auto">
+                        <div className="bg-gray-100 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-6 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <CubeIcon className="h-12 w-12 text-gray-400" />
+                        </div>
+                        <h3 className="mt-2 text-3xl font-black text-black font-display uppercase">No Orders Found</h3>
+                        <p className="mt-4 text-lg text-gray-600 font-bold max-w-lg mx-auto">
                             {searchQuery || activeTab !== 'all'
-                                ? "Try adjusting your search or filters"
-                                : "You haven't placed any orders yet. Forward a prescription to a pharmacy to get started."}
+                                ? "Try adjusting your search or filters to find what you're looking for."
+                                : "You haven't placed any orders yet. It gets easier once you start!"}
                         </p>
                         {!searchQuery && activeTab === 'all' && (
                             <Link
                                 to="/prescriptions"
-                                className="mt-6 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-gradient-to-r from-primary to-emerald-600 hover:shadow-lg transition-all"
+                                className="mt-8 inline-flex items-center px-8 py-4 border-4 border-black text-lg font-black uppercase tracking-wide rounded-xl text-white bg-primary-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all"
                             >
                                 View Prescriptions
                             </Link>
@@ -325,63 +290,64 @@ const UserOrdersPage: React.FC = () => {
                                         hidden: { opacity: 0, y: 20 },
                                         visible: { opacity: 1, y: 0 },
                                     }}
-                                    whileHover={{ y: -3, boxShadow: "0 8px 16px rgba(0,0,0,0.08)" }}
-                                    className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all"
+                                    whileHover={{ scale: 1.01, rotate: 0.5 }}
+                                    className="bg-white rounded-2xl border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden transition-all group"
                                 >
                                     <Link
                                         to={`/orders/${order.id}`}
-                                        className="block p-6"
+                                        className="block p-6 md:p-8"
                                     >
-                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                            <div className="flex items-start gap-4 flex-1">
-                                                <div className={`p-3 rounded-xl ${statusInfo.color} border-2 flex-shrink-0`}>
-                                                    <StatusIcon className="h-6 w-6" />
+                                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                            <div className="flex items-start gap-6 flex-1">
+                                                <div className={`p-4 rounded-xl ${statusInfo.color} border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex-shrink-0 bg-white`}>
+                                                    <StatusIcon className="h-8 w-8" />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-3 mb-2">
-                                                        <h3 className="text-lg font-black text-gray-900">
+                                                    <div className="flex items-center gap-3 mb-2 flex-wrap">
+                                                        <h3 className="text-2xl font-black text-black font-display uppercase bg-yellow-300 px-3 py-1 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block transform -rotate-1 group-hover:rotate-0 transition-transform">
                                                             Order #{order.id}
                                                         </h3>
-                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${statusInfo.color} border`}>
+                                                        <span className={`px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider border-2 border-black ${statusInfo.color.replace('text-', 'bg-').replace('800', '200')}`}>
                                                             {statusInfo.label}
                                                         </span>
                                                     </div>
-                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-gray-600">
+                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-base font-bold text-gray-700">
                                                         {order.pharmacy_details && (
                                                             <div className="flex items-center gap-2">
-                                                                <BuildingStorefrontIcon className="h-4 w-4 text-gray-400" />
-                                                                <span className="font-medium">{order.pharmacy_details.name}</span>
+                                                                <BuildingStorefrontIcon className="h-5 w-5 text-black" />
+                                                                <span>{order.pharmacy_details.name}</span>
                                                             </div>
                                                         )}
                                                         {order.order_date && (
                                                             <div className="flex items-center gap-2">
-                                                                <CalendarDaysIcon className="h-4 w-4 text-gray-400" />
+                                                                <CalendarDaysIcon className="h-5 w-5 text-black" />
                                                                 <span>{formatDate(order.order_date, 'MMM dd, yyyy')}</span>
                                                             </div>
                                                         )}
                                                         {order.total_amount && (
                                                             <div className="flex items-center gap-2">
-                                                                <CurrencyDollarIcon className="h-4 w-4 text-gray-400" />
-                                                                <span className="font-semibold text-gray-900">
+                                                                <CurrencyDollarIcon className="h-5 w-5 text-black" />
+                                                                <span className="font-black text-black bg-green-200 px-2 py-0.5 rounded border border-black">
                                                                     ₦{parseFloat(order.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                                 </span>
                                                             </div>
                                                         )}
                                                     </div>
                                                     {order.items && order.items.length > 0 && (
-                                                        <div className="mt-2 text-xs text-gray-500">
-                                                            {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                                                        <div className="mt-3 text-sm font-bold text-gray-500 flex items-center">
+                                                            <div className="w-2 h-2 rounded-full bg-black mr-2"></div>
+                                                            {order.items.length} item{order.items.length !== 1 ? 's' : ''} in this order
                                                         </div>
                                                     )}
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-3">
                                                 {order.is_delivery ? (
-                                                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                                    <span className="px-4 py-2 rounded-xl text-sm font-black uppercase tracking-wide bg-blue-100 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                                         Delivery
                                                     </span>
                                                 ) : (
-                                                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-700 border border-gray-200">
+                                                    <span className="px-4 py-2 rounded-xl text-sm font-black uppercase tracking-wide bg-gray-100 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                                         Pickup
                                                     </span>
                                                 )}

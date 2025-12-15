@@ -511,51 +511,40 @@ const UserOrderDetailPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 pb-12">
             {/* Hero Header */}
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="relative bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 pt-20 pb-24 sm:pt-24 sm:pb-32 overflow-hidden"
-            >
-                <motion.div
-                    className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                    animate={{ x: [-100, 200], y: [-50, 100], rotate: [0, 360] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                ></motion.div>
-                <motion.div
-                    className="absolute bottom-0 right-0 w-80 h-80 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-                    animate={{ x: [100, -200], y: [50, -100], rotate: [360, 0] }}
-                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                ></motion.div>
+            <div className="bg-primary-900 rounded-b-[3rem] border-b-4 border-black shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] pt-20 pb-24 sm:pt-24 sm:pb-32 relative overflow-hidden">
+                {/* Pattern Overlay */}
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#FDFBF7_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <Link
                         to="/orders"
-                        className="inline-flex items-center text-white/80 hover:text-white mb-4 transition-colors"
+                        className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors font-bold text-lg"
                     >
-                        <ArrowLeftIcon className="h-5 w-5 mr-2" />
+                        <ArrowLeftIcon className="h-6 w-6 mr-2" />
                         Back to Orders
                     </Link>
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="inline-flex items-center px-5 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-bold uppercase tracking-wider mb-6"
-                    >
-                        <SparklesIcon className="h-4 w-4 mr-2" />
-                        ORDER #{order.id}
-                    </motion.div>
-                    <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
-                        Medication Order Details
-                    </h1>
-                    <p className="text-lg text-white/90">Track your medication order status and payment.</p>
+                    
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                        <div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                                className="inline-flex items-center px-4 py-2 rounded-xl bg-yellow-400 border-2 border-black text-black text-sm font-black uppercase tracking-wider mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                            >
+                                <SparklesIcon className="h-4 w-4 mr-2" />
+                                ORDER #{order.id}
+                            </motion.div>
+                            <h1 className="text-4xl md:text-6xl font-black text-white mb-4 font-display tracking-tight leading-tight">
+                                Medication Order<br/>Details
+                            </h1>
+                            <p className="text-xl text-white/90 font-bold max-w-2xl">
+                                Track your medication order status and payment.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-
-                <div className="absolute bottom-0 left-0 right-0">
-                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50" />
-                    </svg>
-                </div>
-            </motion.div>
+            </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -565,38 +554,40 @@ const UserOrderDetailPage: React.FC = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100"
+                            className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 border-4 border-black group"
                         >
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-4">
-                                    <div className={`p-4 rounded-2xl ${statusInfo.bgColor} border-2 ${statusInfo.borderColor}`}>
-                                        <StatusIcon className={`h-8 w-8 ${statusInfo.color}`} />
+                            <div className="flex items-center justify-between mb-8">
+                                <div className="flex items-center gap-6">
+                                    <div className={`p-5 rounded-2xl ${statusInfo.bgColor} border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2 group-hover:rotate-0 transition-transform`}>
+                                        <StatusIcon className={`h-10 w-10 ${statusInfo.color.replace('text-', 'text-black ')}`} />
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-black text-gray-900">Order Status</h3>
-                                        <p className={`text-lg font-bold ${statusInfo.color}`}>{statusInfo.label}</p>
+                                        <h3 className="text-3xl font-black text-black font-display uppercase tracking-tight">Order Status</h3>
+                                        <span className={`inline-block mt-2 px-4 py-1.5 rounded-lg text-sm font-black uppercase tracking-wider border-2 border-black ${statusInfo.bgColor} text-black`}>
+                                            {statusInfo.label}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                             {/* Confirm Pickup Button - Show only when order is ready and not a delivery order */}
                             {order.status === 'ready' && !order.is_delivery && (
-                                <div className="mt-6 pt-6 border-t-2 border-gray-200">
-                                    <div className="bg-blue-50 rounded-2xl p-6 border-2 border-blue-200">
+                                <div className="mt-8 pt-8 border-t-4 border-black border-dashed">
+                                    <div className="bg-blue-50 rounded-2xl p-6 border-2 border-black">
                                         <div className="flex items-start gap-4 mb-4">
-                                            <div className="p-3 bg-blue-100 rounded-xl">
-                                                <CheckCircleIcon className="h-6 w-6 text-blue-600" />
+                                            <div className="p-3 bg-blue-100 rounded-xl border-2 border-black">
+                                                <CheckCircleIcon className="h-6 w-6 text-black" />
                                             </div>
                                             <div className="flex-1">
-                                                <h4 className="text-lg font-black text-gray-900 mb-2">Ready for Pickup</h4>
-                                                <p className="text-sm text-gray-700 mb-4">
+                                                <h4 className="text-xl font-black text-black font-display uppercase mb-2">Ready for Pickup</h4>
+                                                <p className="text-base text-gray-700 font-bold mb-6">
                                                     Your order is ready! Please pick it up from the pharmacy and confirm when you've received it.
                                                 </p>
                                                 <motion.button
-                                                    whileHover={{ scale: 1.02 }}
-                                                    whileTap={{ scale: 0.98 }}
+                                                    whileHover={{ scale: 1.02, y: -2 }}
+                                                    whileTap={{ scale: 0.98, y: 0 }}
                                                     onClick={handleConfirmPickup}
                                                     disabled={isConfirmingPickup}
-                                                    className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-black rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                                    className="w-full py-4 bg-blue-500 text-white border-2 border-black rounded-xl font-black uppercase tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                                 >
                                                     {isConfirmingPickup ? (
                                                         <>
@@ -605,7 +596,7 @@ const UserOrderDetailPage: React.FC = () => {
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <CheckCircleIcon className="h-5 w-5" />
+                                                            <CheckCircleIcon className="h-6 w-6" />
                                                             Confirm Pickup
                                                         </>
                                                     )}
@@ -623,15 +614,15 @@ const UserOrderDetailPage: React.FC = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 }}
-                                className="bg-gradient-to-br from-orange-50 to-red-50 rounded-3xl shadow-xl shadow-gray-200/50 p-8 border-2 border-orange-200"
+                                className="bg-orange-50 rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 border-4 border-black"
                             >
-                                <div className="flex items-start gap-4 mb-6">
-                                    <div className="p-4 bg-orange-100 rounded-2xl">
-                                        <ExclamationCircleIcon className="h-8 w-8 text-orange-600" />
+                                <div className="flex items-start gap-6 mb-6">
+                                    <div className="p-4 bg-orange-200 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                        <ExclamationCircleIcon className="h-8 w-8 text-black" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-2xl font-black text-gray-900 mb-2">Payment Required</h3>
-                                        <p className="text-gray-700 mb-4">
+                                        <h3 className="text-2xl font-black text-black font-display uppercase tracking-tight mb-2">Payment Required</h3>
+                                        <p className="text-gray-800 font-bold mb-6 text-lg">
                                             Complete payment to proceed with your order.
                                         </p>
 
@@ -769,10 +760,10 @@ const UserOrderDetailPage: React.FC = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 }}
-                                className={`rounded-3xl shadow-xl shadow-gray-200/50 p-8 border-2 ${
-                                    order.payment_status === 'paid' ? 'bg-green-50 border-green-200' : 
-                                    order.payment_status === 'failed' ? 'bg-red-50 border-red-200' : 
-                                    'bg-yellow-50 border-yellow-200'
+                                className={`rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 border-4 border-black ${
+                                    order.payment_status === 'paid' ? 'bg-green-50' : 
+                                    order.payment_status === 'failed' ? 'bg-red-50' : 
+                                    'bg-yellow-50'
                                 }`}
                             >
                                 <div className="flex items-center gap-4">
@@ -891,23 +882,25 @@ const UserOrderDetailPage: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4 }}
-                            className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100"
+                            className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 border-4 border-black"
                         >
-                            <h3 className="text-2xl font-black text-gray-900 mb-6">Order Items</h3>
+                            <h3 className="text-3xl font-black text-black font-display uppercase tracking-tight mb-8">Order Items</h3>
                             <div className="space-y-4">
                                 {order.items?.map((item) => (
-                                    <div key={item.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                    <div key={item.id} className="p-6 bg-white rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-transform">
                                         <div className="flex justify-between items-start">
                                             <div>
-                                                <p className="font-bold text-gray-900">{item.medication_name_text || 'Medication'}</p>
-                                                <p className="text-sm text-gray-600">{item.dosage_text || 'Dosage not specified'}</p>
-                                                <p className="text-sm text-gray-500 mt-1">Quantity: {item.quantity}</p>
+                                                <p className="text-xl font-black text-black font-display uppercase">{item.medication_name_text || 'Medication'}</p>
+                                                <p className="text-base text-gray-700 font-bold mt-1">{item.dosage_text || 'Dosage not specified'}</p>
+                                                <div className="inline-block mt-2 px-3 py-1 bg-gray-100 rounded-lg border-2 border-black text-xs font-black uppercase">
+                                                    Quantity: {item.quantity}
+                                                </div>
                                             </div>
                                             {item.price_per_unit && (
                                                 <div className="text-right">
-                                                    <p className="text-sm text-gray-600">₦{parseFloat(item.price_per_unit).toLocaleString()} each</p>
+                                                    <p className="text-sm font-bold text-gray-500 mb-1">₦{parseFloat(item.price_per_unit).toLocaleString()} each</p>
                                                     {item.total_price && (
-                                                        <p className="font-bold text-gray-900">₦{parseFloat(item.total_price).toLocaleString()}</p>
+                                                        <p className="text-xl font-black text-black">₦{parseFloat(item.total_price).toLocaleString()}</p>
                                                     )}
                                                 </div>
                                             )}
@@ -916,10 +909,10 @@ const UserOrderDetailPage: React.FC = () => {
                                 ))}
                             </div>
                             {order.total_amount && (
-                                <div className="mt-6 pt-6 border-t-2 border-gray-200">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-xl font-bold text-gray-700">Total Amount:</span>
-                                        <span className="text-3xl font-black text-primary">
+                                <div className="mt-8 pt-8 border-t-4 border-black border-dashed">
+                                    <div className="flex justify-between items-center bg-gray-50 p-6 rounded-2xl border-2 border-black">
+                                        <span className="text-xl font-black text-black uppercase">Total Amount:</span>
+                                        <span className="text-4xl font-black text-primary-900">
                                             ₦{parseFloat(order.total_amount).toLocaleString()}
                                         </span>
                                     </div>
@@ -935,32 +928,32 @@ const UserOrderDetailPage: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5 }}
-                            className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100"
+                            className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 border-4 border-black"
                         >
-                            <h3 className="text-xl font-black text-gray-900 mb-6">Order Information</h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-sm text-gray-600">Order Date</p>
-                                    <p className="font-bold text-gray-900">{formatDate(order.order_date)}</p>
+                            <h3 className="text-2xl font-black text-black font-display uppercase tracking-tight mb-6">Order Information</h3>
+                            <div className="space-y-6">
+                                <div className="bg-gray-50 p-4 rounded-xl border-2 border-black">
+                                    <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">Order Date</p>
+                                    <p className="text-lg font-black text-black">{formatDate(order.order_date)}</p>
                                 </div>
                                 {order.pharmacy_details && (
-                                    <div>
-                                        <p className="text-sm text-gray-600">Pharmacy</p>
-                                        <p className="font-bold text-gray-900">{order.pharmacy_details.name}</p>
+                                    <div className="bg-gray-50 p-4 rounded-xl border-2 border-black">
+                                        <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">Pharmacy</p>
+                                        <p className="text-lg font-black text-black">{order.pharmacy_details.name}</p>
                                         {order.pharmacy_details.address && (
-                                            <p className="text-sm text-gray-600 mt-1">{order.pharmacy_details.address}</p>
+                                            <p className="text-sm font-bold text-gray-600 mt-2 border-t-2 border-dashed border-gray-300 pt-2">{order.pharmacy_details.address}</p>
                                         )}
                                     </div>
                                 )}
                                 {order.pickup_or_delivery_date && (
-                                    <div>
-                                        <p className="text-sm text-gray-600">Pickup/Delivery Date</p>
-                                        <p className="font-bold text-gray-900">{formatDate(order.pickup_or_delivery_date)}</p>
+                                    <div className="bg-gray-50 p-4 rounded-xl border-2 border-black">
+                                        <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">Pickup/Delivery Date</p>
+                                        <p className="text-lg font-black text-black">{formatDate(order.pickup_or_delivery_date)}</p>
                                     </div>
                                 )}
-                                <div>
-                                    <p className="text-sm text-gray-600">Delivery Type</p>
-                                    <p className="font-bold text-gray-900">{order.is_delivery ? 'Home Delivery' : 'Pickup'}</p>
+                                <div className="bg-gray-50 p-4 rounded-xl border-2 border-black">
+                                    <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">Delivery Type</p>
+                                    <p className="text-lg font-black text-black">{order.is_delivery ? 'Home Delivery' : 'Pickup'}</p>
                                 </div>
                             </div>
                         </motion.div>
@@ -971,31 +964,36 @@ const UserOrderDetailPage: React.FC = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.6 }}
-                                className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-3xl shadow-xl shadow-gray-200/50 p-8 border-2 border-teal-200"
+                                className="bg-teal-50 rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 border-4 border-black"
                             >
-                                <div className="flex items-center gap-3 mb-4">
-                                    <ShieldCheckIcon className="h-6 w-6 text-teal-600" />
-                                    <h3 className="text-xl font-black text-gray-900">Insurance Coverage</h3>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="p-3 bg-teal-100 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                        <ShieldCheckIcon className="h-6 w-6 text-black" />
+                                    </div>
+                                    <h3 className="text-xl font-black text-black font-display uppercase">Insurance Coverage</h3>
                                 </div>
-                                <div className="space-y-3">
-                                    <div>
-                                        <p className="text-sm text-gray-600">Insurance Plan</p>
-                                        <p className="font-bold text-gray-900">
-                                            {order.user_insurance.plan.provider.name} - {order.user_insurance.plan.name}
+                                <div className="space-y-4">
+                                    <div className="bg-white p-4 rounded-xl border-2 border-black">
+                                        <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">Insurance Plan</p>
+                                        <p className="text-base font-black text-black leading-tight">
+                                            {order.user_insurance.plan.provider.name}
+                                        </p>
+                                        <p className="text-sm font-bold text-gray-600 mt-1">
+                                            {order.user_insurance.plan.name}
                                         </p>
                                     </div>
                                     {order.insurance_covered_amount && (
-                                        <div>
-                                            <p className="text-sm text-gray-600">Covered Amount</p>
-                                            <p className="font-bold text-green-700">
+                                        <div className="bg-green-100 p-4 rounded-xl border-2 border-black">
+                                            <p className="text-xs font-black text-green-800 uppercase tracking-widest mb-1">Covered Amount</p>
+                                            <p className="text-2xl font-black text-green-900">
                                                 ₦{parseFloat(order.insurance_covered_amount).toLocaleString()}
                                             </p>
                                         </div>
                                     )}
                                     {order.patient_copay && (
-                                        <div>
-                                            <p className="text-sm text-gray-600">Your Copay</p>
-                                            <p className="font-bold text-blue-700">
+                                        <div className="bg-blue-100 p-4 rounded-xl border-2 border-black">
+                                            <p className="text-xs font-black text-blue-800 uppercase tracking-widest mb-1">Your Copay</p>
+                                            <p className="text-2xl font-black text-blue-900">
                                                 ₦{parseFloat(order.patient_copay).toLocaleString()}
                                             </p>
                                         </div>

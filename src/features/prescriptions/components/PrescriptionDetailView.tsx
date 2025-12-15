@@ -129,61 +129,61 @@ const PrescriptionDetailView: React.FC<PrescriptionDetailViewProps> = ({ prescri
             <motion.div 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-primary/5 via-emerald-50/30 to-teal-50/30 p-6 border-2 border-primary/20 rounded-b-3xl -mt-3 pt-8 shadow-xl"
+                className="bg-teal-50 border-x-4 border-b-4 border-black rounded-b-[2.5rem] p-8 -mt-4 pt-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mx-4 md:mx-6 mb-8 relative z-0"
             >
                 {/* Status Messages */}
                 {orderStatus?.success && (
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="mb-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 text-green-800 border-2 border-green-300 rounded-2xl flex items-start gap-3 shadow-lg"
+                        className="mb-8 p-6 bg-green-100 text-green-900 border-4 border-black rounded-2xl flex items-start gap-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     >
-                        <div className="p-2 bg-green-100 rounded-xl">
-                            <CheckCircleIcon className="h-6 w-6 text-green-600" />
+                        <div className="p-2 bg-green-500 rounded-xl border-2 border-black flex-shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <CheckCircleIcon className="h-6 w-6 text-white" />
                         </div>
-                        <p className="text-sm font-semibold flex-1">{orderStatus.success}</p>
+                        <p className="text-base font-bold flex-1">{orderStatus.success}</p>
                     </motion.div>
                 )}
                 {orderStatus?.error && (
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="mb-4 p-4 bg-gradient-to-r from-red-50 to-pink-50 text-red-800 border-2 border-red-300 rounded-2xl flex items-start gap-3 shadow-lg"
+                        className="mb-8 p-6 bg-red-100 text-red-900 border-4 border-black rounded-2xl flex items-start gap-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                     >
-                        <div className="p-2 bg-red-100 rounded-xl">
-                            <ExclamationCircleIcon className="h-6 w-6 text-red-600" />
+                        <div className="p-2 bg-red-500 rounded-xl border-2 border-black flex-shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <ExclamationCircleIcon className="h-6 w-6 text-white" />
                         </div>
-                        <p className="text-sm font-semibold flex-1">{orderStatus.error}</p>
+                        <p className="text-base font-bold flex-1">{orderStatus.error}</p>
                     </motion.div>
                 )}
 
                 {/* Diagnosis & Notes Section */}
-                <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-4">
-                        <div className="p-2 bg-gradient-to-br from-primary/20 to-emerald-500/20 rounded-xl">
-                            <SparklesIcon className="h-5 w-5 text-primary" />
+                <div className="mb-10">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 bg-purple-400 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <SparklesIcon className="h-5 w-5 text-black" />
                         </div>
-                        <h4 className="font-black text-gray-900 text-lg">Diagnosis & Notes</h4>
+                        <h4 className="font-black text-black text-xl font-display uppercase">Diagnosis & Notes</h4>
                     </div>
-                    <div className="bg-white rounded-2xl p-5 border-2 border-gray-100 shadow-sm">
-                        <div className="mb-4">
-                            <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">Diagnosis</p>
-                            <p className="text-base font-semibold text-gray-900 leading-relaxed">{prescription.diagnosis}</p>
+                    <div className="bg-white rounded-2xl p-6 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        <div className="mb-6">
+                            <p className="text-xs font-black text-black uppercase tracking-widest mb-2 bg-yellow-400 inline-block px-2 py-0.5 rounded border border-black">Diagnosis</p>
+                            <p className="text-lg font-bold text-black leading-relaxed">{prescription.diagnosis}</p>
                         </div>
                         {prescription.notes && (
-                            <div className="mb-4 pt-4 border-t border-gray-200">
-                                <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">Additional Notes</p>
-                                <p className="text-sm text-gray-700 leading-relaxed">{prescription.notes}</p>
+                            <div className="mb-6 pt-6 border-t-4 border-black/10">
+                                <p className="text-xs font-black text-black uppercase tracking-widest mb-2 bg-blue-200 inline-block px-2 py-0.5 rounded border border-black">Additional Notes</p>
+                                <p className="text-base text-black font-medium leading-relaxed">{prescription.notes}</p>
                             </div>
                         )}
-                        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-gray-200">
-                            <div className="flex items-center gap-2 text-xs text-gray-600">
-                                <CalendarDaysIcon className="h-4 w-4 text-primary" />
-                                <span className="font-semibold">Prescribed:</span> {formatDate(prescription.date_prescribed)}
+                        <div className="flex flex-wrap items-center gap-4 pt-6 border-t-4 border-black/10">
+                            <div className="flex items-center gap-2 text-sm text-black font-bold">
+                                <CalendarDaysIcon className="h-5 w-5" />
+                                <span>Prescribed: {formatDate(prescription.date_prescribed)}</span>
                             </div>
                             <Link 
                                 to={`/appointments/${prescription.appointment}`} 
-                                className="text-xs text-primary hover:text-emerald-600 font-bold underline flex items-center gap-1 transition-colors"
+                                className="text-sm text-black hover:text-black font-black underline decoration-2 underline-offset-4 flex items-center gap-1 transition-all hover:bg-yellow-300 px-2 rounded"
                             >
                                 <UserIcon className="h-4 w-4" />
                                 View Associated Appointment
@@ -194,53 +194,53 @@ const PrescriptionDetailView: React.FC<PrescriptionDetailViewProps> = ({ prescri
 
                 {/* Medications Section */}
                 <div>
-                    <div className="flex items-center gap-2 mb-4">
-                        <div className="p-2 bg-gradient-to-br from-primary/20 to-emerald-500/20 rounded-xl">
-                            <BeakerIcon className="h-5 w-5 text-primary" />
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="p-3 bg-blue-400 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <BeakerIcon className="h-5 w-5 text-black" />
                         </div>
-                        <h4 className="font-black text-gray-900 text-lg">Medications Prescribed</h4>
+                        <h4 className="font-black text-black text-xl font-display uppercase">Medications Prescribed</h4>
                         {prescription.items && prescription.items.length > 0 && (
-                            <span className="ml-auto text-xs font-bold text-white bg-gradient-to-r from-primary to-emerald-500 px-3 py-1 rounded-full">
+                            <span className="ml-auto text-xs font-black text-black bg-white border-2 border-black px-3 py-1.5 rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                 {prescription.items.length} {prescription.items.length === 1 ? 'Item' : 'Items'}
                             </span>
                         )}
                     </div>
                     {prescription.items && prescription.items.length > 0 ? (
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                             {prescription.items.map((item, index) => (
                                 <motion.div
                                     key={item.id}
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: index * 0.1 }}
-                                    className="bg-white rounded-2xl p-5 border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all hover:border-primary/30"
+                                    className="bg-white rounded-2xl p-6 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
                                 >
-                                    <div className="flex justify-between items-start gap-4">
+                                    <div className="flex justify-between items-start gap-6">
                                         <div className="flex-1">
-                                            <div className="flex items-center gap-3 mb-3">
-                                                <div className="w-1 h-12 bg-gradient-to-b from-primary to-emerald-500 rounded-full"></div>
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div className="w-2 h-16 bg-black rounded-full"></div>
                                                 <div>
-                                                    <h5 className="font-black text-gray-900 text-lg mb-1">{item.medication_name}</h5>
-                                                    <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                                                        <span className="flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-lg font-semibold">
-                                                            <TagIcon className="h-4 w-4 text-primary" />
+                                                    <h5 className="font-black text-black text-xl mb-2">{item.medication_name}</h5>
+                                                    <div className="flex flex-wrap items-center gap-3 text-sm font-bold text-black">
+                                                        <span className="flex items-center gap-1 bg-gray-100 border-2 border-black px-3 py-1.5 rounded-lg">
+                                                            <TagIcon className="h-4 w-4" />
                                                             {item.dosage}
                                                         </span>
-                                                        <span className="flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-lg font-semibold">
+                                                        <span className="flex items-center gap-1 bg-gray-100 border-2 border-black px-3 py-1.5 rounded-lg">
                                                             {item.frequency}
                                                         </span>
-                                                        <span className="flex items-center gap-1 bg-gray-50 px-3 py-1.5 rounded-lg font-semibold">
+                                                        <span className="flex items-center gap-1 bg-gray-100 border-2 border-black px-3 py-1.5 rounded-lg">
                                                             {item.duration}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="ml-4 bg-gradient-to-r from-primary/5 to-emerald-50/50 rounded-xl p-3 border border-primary/10">
-                                                <p className="text-xs font-bold text-primary uppercase tracking-wider mb-1 flex items-center gap-1">
+                                            <div className="ml-6 bg-teal-100 rounded-xl p-4 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                                <p className="text-xs font-black text-black uppercase tracking-widest mb-1 flex items-center gap-1">
                                                     <InformationCircleIcon className="h-3 w-3" />
                                                     Instructions
                                                 </p>
-                                                <p className="text-sm text-gray-700 font-medium">{item.instructions}</p>
+                                                <p className="text-sm text-black font-bold">{item.instructions}</p>
                                             </div>
                                         </div>
                                         {item.medication_id && (
@@ -248,10 +248,10 @@ const PrescriptionDetailView: React.FC<PrescriptionDetailViewProps> = ({ prescri
                                                 onClick={() => handleViewMedicationInfo(item)}
                                                 whileHover={{ scale: 1.1, rotate: 5 }}
                                                 whileTap={{ scale: 0.95 }}
-                                                className="p-3 bg-gradient-to-br from-primary/10 to-emerald-500/10 hover:from-primary/20 hover:to-emerald-500/20 text-primary rounded-xl border border-primary/20 transition-all flex-shrink-0"
+                                                className="p-3 bg-white hover:bg-yellow-300 text-black rounded-xl border-2 border-black transition-all flex-shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                                                 title={`View details for ${item.medication_name}`}
                                             >
-                                                <EyeIcon className="h-5 w-5" />
+                                                <EyeIcon className="h-6 w-6" />
                                             </motion.button>
                                         )}
                                     </div>
@@ -259,27 +259,29 @@ const PrescriptionDetailView: React.FC<PrescriptionDetailViewProps> = ({ prescri
                             ))}
                         </div>
                     ) : (
-                        <div className="bg-white rounded-2xl p-8 border-2 border-gray-100 text-center">
-                            <BeakerIcon className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                            <p className="text-sm text-gray-500 font-semibold">No specific medications listed for this prescription.</p>
+                        <div className="bg-white rounded-2xl p-8 border-4 border-black text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            <div className="p-4 bg-gray-100 rounded-full w-fit mx-auto border-2 border-black mb-4">
+                                <BeakerIcon className="h-8 w-8 text-gray-500" />
+                            </div>
+                            <p className="text-base text-gray-600 font-bold">No specific medications listed for this prescription.</p>
                         </div>
                     )}
                 </div>
 
                 {/* Action Button */}
-                <div className="mt-6 pt-6 border-t-2 border-gray-200">
+                <div className="mt-8 pt-8 border-t-4 border-black/10">
                     <motion.button
                         onClick={handleOpenPharmacyModal}
                         disabled={isOrdering || !!orderStatus?.success || !prescription.items || prescription.items.length === 0}
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-500 text-white font-black py-4 px-6 rounded-2xl shadow-lg hover:shadow-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3"
+                        className="w-full bg-black text-white font-black py-5 px-6 rounded-2xl shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.5)] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3 uppercase tracking-wider text-lg border-4 border-white/20"
                     >
-                        <ForwardIcon className="h-5 w-5" />
+                        <ForwardIcon className="h-6 w-6" />
                         {isOrdering ? 'Sending to Pharmacy...' : (orderStatus?.success ? '✓ Sent to Pharmacy' : 'Send to Pharmacy')}
                     </motion.button>
                     {(!prescription.items || prescription.items.length === 0) && (
-                        <p className="text-xs text-red-500 mt-3 text-center font-semibold">⚠ Cannot send: Prescription has no items.</p>
+                        <p className="text-xs text-red-600 mt-4 text-center font-black bg-red-100 border-2 border-black p-2 rounded-lg inline-block w-full">⚠ Cannot send: Prescription has no items.</p>
                     )}
                 </div>
             </motion.div>

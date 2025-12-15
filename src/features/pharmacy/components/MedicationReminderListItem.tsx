@@ -67,16 +67,20 @@ const MedicationReminderListItem: React.FC<MedicationReminderListItemProps> = ({
     return (
         <motion.div
             whileHover={{ scale: 1.01 }}
-            className={`relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden ${
+            className={`relative bg-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] border-4 border-black transition-all duration-300 overflow-visible mt-2 ${
                 isActive 
-                    ? 'border-l-4 border-amber-500' 
-                    : 'border-l-4 border-gray-300 opacity-75'
+                    ? '' 
+                    : 'opacity-90'
             }`}
         >
             {/* Active Status Indicator */}
-            {isActive && (
-                <div className="absolute top-0 right-0 w-0 h-0 border-l-[40px] border-l-transparent border-t-[40px] border-t-amber-500">
-                    <CheckCircleIcon className="absolute -top-8 right-1 h-4 w-4 text-white" />
+            {isActive ? (
+                <div className="absolute -top-4 -right-4 bg-green-500 text-white p-2 rounded-full border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] z-10">
+                    <CheckCircleIcon className="h-6 w-6" />
+                </div>
+            ) : (
+                <div className="absolute -top-4 -right-4 bg-gray-400 text-white p-2 rounded-full border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] z-10">
+                    <BellSlashIcon className="h-6 w-6" />
                 </div>
             )}
 
@@ -84,61 +88,64 @@ const MedicationReminderListItem: React.FC<MedicationReminderListItemProps> = ({
                 <div className="flex flex-col lg:flex-row gap-6">
                     {/* Main Content */}
                     <div className="flex-1">
-                        <div className="flex items-start gap-4 mb-4">
-                            <div className={`p-3 rounded-xl flex-shrink-0 ${
+                        <div className="flex items-start gap-5 mb-4">
+                            <div className={`w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
                                 isActive 
-                                    ? 'bg-amber-100' 
-                                    : 'bg-gray-100'
+                                    ? 'bg-yellow-400' 
+                                    : 'bg-gray-200'
                             }`}>
-                                {isActive ? (
-                                    <BellAlertIcon className={`h-6 w-6 ${isActive ? 'text-amber-600' : 'text-gray-500'}`} />
-                                ) : (
-                                    <BellSlashIcon className="h-6 w-6 text-gray-500" />
-                                )}
+                                <BellAlertIcon className={`h-8 w-8 text-black`} />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <h3 className={`text-xl font-black ${isActive ? 'text-gray-900' : 'text-gray-500'}`}>
+                                <div className="flex flex-wrap items-center gap-3 mb-2">
+                                    <h3 className="text-2xl font-black text-black font-display uppercase">
                                         {reminder.medication_display?.name || 'Medication N/A'}
                                     </h3>
-                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                    <span className={`px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider border-2 border-black ${
                                         isActive
-                                            ? 'bg-green-100 text-green-700'
-                                            : 'bg-gray-100 text-gray-600'
+                                            ? 'bg-green-400 text-black'
+                                            : 'bg-gray-200 text-gray-600'
                                     }`}>
                                         {isActive ? 'Active' : 'Inactive'}
                                     </span>
                                 </div>
                                 
-                                {/* Dosage */}
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="text-sm font-semibold text-gray-700">Dosage:</span>
-                                    <span className="text-sm text-gray-900 font-medium bg-amber-50 px-3 py-1 rounded-lg">
-                                        {reminder.dosage}
+                                {/* Dosage with Sticker Look */}
+                                <div className="inline-block bg-blue-100 px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] mb-4">
+                                    <span className="text-sm font-black text-black">
+                                        Dosage: {reminder.dosage}
                                     </span>
                                 </div>
 
-                                {/* Time and Frequency */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <ClockIcon className="h-5 w-5 text-amber-600 flex-shrink-0" />
-                                        <span className="text-gray-600">Time:</span>
-                                        <span className="font-semibold text-gray-900">
-                                            {formatTimeDisplay(reminder.time_of_day)}
-                                        </span>
+                                {/* Time and Frequency Grid */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5 bg-gray-50 p-4 rounded-xl border-2 border-black/10">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-1.5 bg-white rounded-lg border-2 border-black">
+                                            <ClockIcon className="h-5 w-5 text-black" />
+                                        </div>
+                                        <div>
+                                            <span className="text-xs font-bold text-gray-500 uppercase block">Time</span>
+                                            <span className="font-black text-black text-lg leading-none">
+                                                {formatTimeDisplay(reminder.time_of_day)}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <CalendarIcon className="h-5 w-5 text-amber-600 flex-shrink-0" />
-                                        <span className="text-gray-600">Frequency:</span>
-                                        <span className="font-semibold text-gray-900">
-                                            {getFrequencyLabel(reminder.frequency, reminder.custom_frequency)}
-                                        </span>
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-1.5 bg-white rounded-lg border-2 border-black">
+                                            <CalendarIcon className="h-5 w-5 text-black" />
+                                        </div>
+                                        <div>
+                                            <span className="text-xs font-bold text-gray-500 uppercase block">Frequency</span>
+                                            <span className="font-black text-black text-lg leading-none">
+                                                {getFrequencyLabel(reminder.frequency, reminder.custom_frequency)}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Date Range */}
-                                <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                                    <CalendarIcon className="h-4 w-4 text-gray-400" />
+                                <div className="flex items-center gap-2 text-sm font-bold text-gray-600 mb-2">
+                                    <span className="w-2 h-2 rounded-full bg-black"></span>
                                     <span>
                                         From {formatDateDisplay(reminder.start_date)}
                                         {reminder.end_date ? ` to ${formatDateDisplay(reminder.end_date)}` : ' (Ongoing)'}
@@ -147,18 +154,18 @@ const MedicationReminderListItem: React.FC<MedicationReminderListItemProps> = ({
 
                                 {/* Notes */}
                                 {reminder.notes && (
-                                    <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                        <div className="flex items-start gap-2">
-                                            <InformationCircleIcon className="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                                            <p className="text-sm text-gray-700">{reminder.notes}</p>
+                                    <div className="mt-4 p-4 bg-yellow-50 rounded-xl border-l-4 border-black">
+                                        <div className="flex items-start gap-3">
+                                            <InformationCircleIcon className="h-6 w-6 text-black flex-shrink-0 mt-0.5" />
+                                            <p className="text-sm font-bold text-gray-800 italic">"{reminder.notes}"</p>
                                         </div>
                                     </div>
                                 )}
 
                                 {/* Prescription Link */}
                                 {reminder.prescription_item_id && (
-                                    <div className="mt-2 text-xs text-gray-500">
-                                        Linked to Prescription Item #{reminder.prescription_item_id}
+                                    <div className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-primary px-2 py-1 bg-primary/10 rounded-lg">
+                                        <span>Linked to Prescription Item #{reminder.prescription_item_id}</span>
                                     </div>
                                 )}
                             </div>
@@ -166,43 +173,51 @@ const MedicationReminderListItem: React.FC<MedicationReminderListItemProps> = ({
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex lg:flex-col items-center lg:items-end gap-3 lg:border-l lg:border-gray-200 lg:pl-6">
+                    <div className="flex lg:flex-col items-center lg:items-start justify-end gap-3 lg:border-l-4 lg:border-gray-100 lg:pl-6 pt-4 lg:pt-0 border-t-2 lg:border-t-0 border-gray-100">
                         <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
+                            whileHover={{ scale: 1.05, x: 2 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => onToggleActive(reminder.id, !reminder.is_active)}
-                            className={`p-3 rounded-xl transition-all ${
+                            className={`w-full lg:w-auto p-3 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center gap-2 font-bold ${
                                 isActive 
-                                    ? 'bg-amber-100 text-amber-600 hover:bg-amber-200' 
-                                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                    ? 'bg-amber-100 text-black hover:bg-amber-200' 
+                                    : 'bg-green-100 text-black hover:bg-green-200'
                             }`}
-                            title={isActive ? "Deactivate Reminder" : "Activate Reminder"}
+                            title={isActive ? "Deactivate" : "Activate"}
                         >
                             {isActive ? (
-                                <BellAlertIcon className="h-5 w-5" />
+                                <>
+                                    <BellSlashIcon className="h-5 w-5" />
+                                    <span className="lg:hidden">Deactivate</span>
+                                </>
                             ) : (
-                                <BellSlashIcon className="h-5 w-5" />
+                                <>
+                                    <BellAlertIcon className="h-5 w-5" />
+                                    <span className="lg:hidden">Activate</span>
+                                </>
                             )}
                         </motion.button>
                         
                         <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
+                            whileHover={{ scale: 1.05, x: 2 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => onEdit(reminder)}
-                            className="p-3 rounded-xl bg-blue-100 text-blue-600 hover:bg-blue-200 transition-all"
-                            title="Edit Reminder"
+                            className="w-full lg:w-auto p-3 rounded-xl bg-blue-100 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-blue-200 transition-all flex items-center justify-center gap-2 font-bold"
+                            title="Edit"
                         >
                             <PencilSquareIcon className="h-5 w-5" />
+                            <span className="lg:hidden">Edit</span>
                         </motion.button>
                         
                         <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
+                            whileHover={{ scale: 1.05, x: 2 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => onDelete(reminder.id)}
-                            className="p-3 rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition-all"
-                            title="Delete Reminder"
+                            className="w-full lg:w-auto p-3 rounded-xl bg-red-100 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-200 transition-all flex items-center justify-center gap-2 font-bold"
+                            title="Delete"
                         >
                             <TrashIcon className="h-5 w-5" />
+                            <span className="lg:hidden">Delete</span>
                         </motion.button>
                     </div>
                 </div>

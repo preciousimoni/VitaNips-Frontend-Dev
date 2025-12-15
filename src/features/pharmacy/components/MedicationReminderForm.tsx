@@ -2,14 +2,13 @@
 
 import React, { useState, useEffect, FormEvent } from 'react';
 import { MedicationReminder, MedicationReminderPayload, ReminderFrequency } from '../../../types/reminders';
-import { formatTime } from '../../../utils';
+
 import toast from 'react-hot-toast';
 import { 
     ClockIcon, 
     EllipsisHorizontalIcon, 
     ExclamationTriangleIcon,
-    CheckCircleIcon,
-    InformationCircleIcon
+    CheckCircleIcon
 } from '@heroicons/react/24/outline';
 
 interface MedicationReminderFormProps {
@@ -199,23 +198,23 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             {/* Header */}
-            <div className="border-b border-gray-200 pb-4">
-                <h3 className="text-xl font-semibold text-gray-800 flex items-center">
-                    <EllipsisHorizontalIcon className="h-6 w-6 mr-2 text-primary" />
-                    {initialData ? 'Edit Medication Reminder' : 'Add New Medication Reminder'}
+            <div className="border-b-4 border-black pb-4">
+                <h3 className="text-2xl font-black text-black font-display uppercase tracking-tight flex items-center">
+                    <EllipsisHorizontalIcon className="h-8 w-8 mr-3 text-black" />
+                    {initialData ? 'Edit Reminder' : 'New Reminder'}
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-lg text-gray-600 font-bold mt-2">
                     Set up reminders to help you take your medications on time.
                 </p>
             </div>
 
             {/* Error Display */}
             {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="bg-red-100 border-4 border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                     <div className="flex items-center">
-                        <ExclamationTriangleIcon className="h-5 w-5 text-red-400 mr-2" />
-                        <div className="text-sm text-red-700">
-                            <p className="font-medium">Error</p>
+                        <ExclamationTriangleIcon className="h-6 w-6 text-black mr-2" />
+                        <div className="text-sm text-red-900 font-bold">
+                            <p className="font-black">Error</p>
                             <p className="mt-1">{error}</p>
                         </div>
                     </div>
@@ -223,9 +222,9 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
             )}
 
             {/* Medication Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label htmlFor="medication_name_input" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="medication_name_input" className="block text-sm font-black text-black uppercase tracking-wider mb-2">
                         Medication Name *
                     </label>
                     <input 
@@ -235,16 +234,16 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
                         required 
                         value={formData.medication_name_input} 
                         onChange={handleChange} 
-                        className={`input-field ${validationErrors.medication_name_input ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                        className={`w-full p-4 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-1 transition-all outline-none font-bold text-lg placeholder-gray-400 ${validationErrors.medication_name_input ? 'border-red-500 bg-red-50' : ''}`}
                         placeholder="e.g., Lisinopril 10mg" 
                     />
                     {validationErrors.medication_name_input && (
-                        <p className="text-red-600 text-sm mt-1">{validationErrors.medication_name_input}</p>
+                        <p className="text-red-600 font-bold text-sm mt-1">{validationErrors.medication_name_input}</p>
                     )}
                 </div>
 
                 <div>
-                    <label htmlFor="dosage" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="dosage" className="block text-sm font-black text-black uppercase tracking-wider mb-2">
                         Dosage *
                     </label>
                     <input 
@@ -254,19 +253,19 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
                         required 
                         value={formData.dosage} 
                         onChange={handleChange} 
-                        className={`input-field ${validationErrors.dosage ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                        placeholder="e.g., 1 tablet, 2 puffs" 
+                        className={`w-full p-4 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-1 transition-all outline-none font-bold text-lg placeholder-gray-400 ${validationErrors.dosage ? 'border-red-500 bg-red-50' : ''}`}
+                        placeholder="e.g., 1 tablet" 
                     />
                     {validationErrors.dosage && (
-                        <p className="text-red-600 text-sm mt-1">{validationErrors.dosage}</p>
+                        <p className="text-red-600 font-bold text-sm mt-1">{validationErrors.dosage}</p>
                     )}
                 </div>
             </div>
 
             {/* Schedule Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label htmlFor="start_date" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="start_date" className="block text-sm font-black text-black uppercase tracking-wider mb-2">
                         Start Date *
                     </label>
                     <input 
@@ -276,15 +275,15 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
                         required 
                         value={formData.start_date} 
                         onChange={handleChange} 
-                        className={`input-field ${validationErrors.start_date ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                        className={`w-full p-4 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-1 transition-all outline-none font-bold text-lg text-gray-700 ${validationErrors.start_date ? 'border-red-500 bg-red-50' : ''}`}
                     />
                     {validationErrors.start_date && (
-                        <p className="text-red-600 text-sm mt-1">{validationErrors.start_date}</p>
+                        <p className="text-red-600 font-bold text-sm mt-1">{validationErrors.start_date}</p>
                     )}
                 </div>
 
                 <div>
-                    <label htmlFor="end_date" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="end_date" className="block text-sm font-black text-black uppercase tracking-wider mb-2">
                         End Date (Optional)
                     </label>
                     <input 
@@ -294,19 +293,18 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
                         value={formData.end_date || ''} 
                         onChange={handleChange} 
                         min={formData.start_date}
-                        className={`input-field ${validationErrors.end_date ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                        className={`w-full p-4 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-1 transition-all outline-none font-bold text-lg text-gray-700 ${validationErrors.end_date ? 'border-red-500 bg-red-50' : ''}`}
                     />
                     {validationErrors.end_date && (
-                        <p className="text-red-600 text-sm mt-1">{validationErrors.end_date}</p>
+                        <p className="text-red-600 font-bold text-sm mt-1">{validationErrors.end_date}</p>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">Leave empty for ongoing reminders</p>
                 </div>
             </div>
 
             {/* Time and Frequency */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label htmlFor="time_of_day" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="time_of_day" className="block text-sm font-black text-black uppercase tracking-wider mb-2">
                         Time of Day *
                     </label>
                     <div className="relative">
@@ -317,32 +315,34 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
                             required 
                             value={formData.time_of_day} 
                             onChange={handleChange} 
-                            className="input-field"
+                            className="w-full p-4 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-1 transition-all outline-none font-bold text-lg text-gray-700"
                         />
-                        <ClockIcon className="h-5 w-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+                        <ClockIcon className="h-6 w-6 text-black absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none" />
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                        Reminder will be sent at {formatTime(formData.time_of_day)}
-                    </p>
                 </div>
 
                 <div>
-                    <label htmlFor="frequency" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="frequency" className="block text-sm font-black text-black uppercase tracking-wider mb-2">
                         Frequency *
                     </label>
-                    <select 
-                        name="frequency" 
-                        id="frequency" 
-                        required 
-                        value={formData.frequency} 
-                        onChange={handleChange} 
-                        className="input-field"
-                    >
-                        {FREQUENCY_OPTIONS.map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                    </select>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <div className="relative">
+                        <select 
+                            name="frequency" 
+                            id="frequency" 
+                            required 
+                            value={formData.frequency} 
+                            onChange={handleChange} 
+                            className="w-full p-4 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-1 transition-all outline-none font-bold text-lg appearance-none text-gray-700"
+                        >
+                            {FREQUENCY_OPTIONS.map(opt => (
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-black">
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                    <p className="text-xs font-bold text-gray-500 mt-2 ml-1">
                         {getFrequencyDescription(formData.frequency)}
                     </p>
                 </div>
@@ -350,8 +350,8 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
 
             {/* Custom Frequency */}
             {formData.frequency === 'custom' && (
-                <div>
-                    <label htmlFor="custom_frequency" className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="bg-blue-50 p-4 rounded-xl border-2 border-black">
+                    <label htmlFor="custom_frequency" className="block text-sm font-black text-black uppercase tracking-wider mb-2">
                         Custom Frequency Details *
                     </label>
                     <input 
@@ -361,31 +361,18 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
                         required={formData.frequency === 'custom'} 
                         value={formData.custom_frequency || ''} 
                         onChange={handleChange} 
-                        className={`input-field ${validationErrors.custom_frequency ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                        className={`w-full p-4 bg-white border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-0.5 transition-all outline-none font-bold text-lg placeholder-gray-400 ${validationErrors.custom_frequency ? 'border-red-500 bg-red-50' : ''}`}
                         placeholder="e.g., Every 3 days" 
                     />
                     {validationErrors.custom_frequency && (
-                        <p className="text-red-600 text-sm mt-1">{validationErrors.custom_frequency}</p>
+                        <p className="text-red-600 font-bold text-sm mt-1">{validationErrors.custom_frequency}</p>
                     )}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
-                        <div className="flex items-start">
-                            <InformationCircleIcon className="h-5 w-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0" />
-                            <div className="text-sm text-blue-700">
-                                <p className="font-medium">Examples:</p>
-                                <ul className="mt-1 space-y-1">
-                                    <li>• "Every 2 days"</li>
-                                    <li>• "Every 12 hours"</li>
-                                    <li>• "Mon,Wed,Fri"</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             )}
 
             {/* Prescription Link */}
             <div>
-                <label htmlFor="prescription_item_id" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="prescription_item_id" className="block text-sm font-black text-black uppercase tracking-wider mb-2">
                     Link to Prescription Item ID (Optional)
                 </label>
                 <input 
@@ -394,17 +381,14 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
                     id="prescription_item_id" 
                     value={formData.prescription_item_id || ''} 
                     onChange={handleChange} 
-                    className="input-field"
+                    className="w-full p-4 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-1 transition-all outline-none font-bold text-lg placeholder-gray-400"
                     placeholder="Enter ID if known" 
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                    Link this reminder to a specific prescription item for better tracking
-                </p>
             </div>
 
             {/* Notes */}
             <div>
-                <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="notes" className="block text-sm font-black text-black uppercase tracking-wider mb-2">
                     Notes (Optional)
                 </label>
                 <textarea 
@@ -413,35 +397,32 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
                     rows={3} 
                     value={formData.notes || ''} 
                     onChange={handleChange} 
-                    className={`input-field ${validationErrors.notes ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    placeholder="e.g., Take with food, after breakfast, avoid dairy products"
+                    className={`w-full p-4 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-1 transition-all outline-none font-bold text-lg placeholder-gray-400 ${validationErrors.notes ? 'border-red-500 bg-red-50' : ''}`}
+                    placeholder="e.g., Take with food..."
                 />
                 {validationErrors.notes && (
-                    <p className="text-red-600 text-sm mt-1">{validationErrors.notes}</p>
+                    <p className="text-red-600 font-bold text-sm mt-1">{validationErrors.notes}</p>
                 )}
-                <p className="text-xs text-gray-500 mt-1">
-                    {formData.notes?.length || 0}/500 characters
-                </p>
             </div>
 
             {/* Active Status */}
-            <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-black/10">
                 <input
                     type="checkbox"
                     name="is_active"
                     id="is_active"
                     checked={formData.is_active}
                     onChange={handleChange}
-                    className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
+                    className="h-6 w-6 text-black border-2 border-black rounded focus:ring-0 cursor-pointer"
                 />
-                <label htmlFor="is_active" className="ml-3 block text-sm font-medium text-gray-700">
-                    Reminder Active
+                <label htmlFor="is_active" className="ml-3 block text-base font-bold text-black cursor-pointer select-none">
+                    Wait for it... Reminder Active?
                 </label>
                 <div className="ml-auto">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider border-2 border-black ${
                         formData.is_active 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-gray-100 text-gray-800'
+                            ? 'bg-green-400 text-black' 
+                            : 'bg-gray-200 text-gray-500'
                     }`}>
                         {formData.is_active ? 'Active' : 'Inactive'}
                     </span>
@@ -449,29 +430,29 @@ const MedicationReminderForm: React.FC<MedicationReminderFormProps> = ({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-6 mt-4 border-t-4 border-black">
                 <button 
                     type="button" 
                     onClick={onCancel} 
                     disabled={isFormSubmitting || propIsSubmitting}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    className="px-6 py-3 border-4 border-black rounded-xl text-black font-black uppercase tracking-wide bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50"
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
                     disabled={isFormSubmitting || propIsSubmitting}
-                    className="btn-primary inline-flex items-center px-6 py-2 text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="px-8 py-3 bg-primary text-white border-4 border-black rounded-xl font-black uppercase tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50 flex items-center"
                 >
                     {isFormSubmitting || propIsSubmitting ? (
                         <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-4 border-white mr-3"></div>
                             Saving...
                         </>
                     ) : (
                         <>
-                            <CheckCircleIcon className="h-4 w-4 mr-2" />
-                            {initialData ? 'Update Reminder' : 'Create Reminder'}
+                            <CheckCircleIcon className="h-6 w-6 mr-2" />
+                            {initialData ? 'Update' : 'Create'}
                         </>
                     )}
                 </button>
