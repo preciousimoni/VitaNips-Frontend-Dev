@@ -255,9 +255,6 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
                      <a href="#features" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
                       Features
                     </a>
-                    <a href="#testimonials" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
-                      Testimonials
-                    </a>
                     <Link to="/dashboard" className="px-5 py-2.5 bg-primary/10 text-primary hover:bg-primary/20 rounded-full font-bold text-sm transition-colors">
                       Go to Dashboard
                     </Link>
@@ -411,12 +408,6 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
                 <div className="hidden md:flex items-center space-x-6">
                   <a href="#features" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
                     Features
-                  </a>
-                  <a href="#testimonials" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
-                    Testimonials
-                  </a>
-                  <a href="#pricing" className="text-sm font-medium text-gray-600 hover:text-primary transition-colors">
-                    Pricing
                   </a>
                 </div>
                 <div className="flex items-center space-x-3">

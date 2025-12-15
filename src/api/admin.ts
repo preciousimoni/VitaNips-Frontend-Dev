@@ -191,6 +191,20 @@ export const getAdminPharmacies = async (filters?: {
   return response.data;
 };
 
+
+
+// Create new pharmacy
+export const createAdminPharmacy = async (data: Partial<AdminPharmacy>): Promise<AdminPharmacy> => {
+  const response = await axiosInstance.post('/admin/pharmacies/create/', data);
+  return response.data;
+};
+
+// Create new user
+export const createAdminUser = async (data: any): Promise<AdminUser> => {
+  const response = await axiosInstance.post('/admin/users/create/', data);
+  return response.data;
+};
+
 // Update pharmacy status
 export const updateAdminPharmacy = async (
   pharmacyId: number,

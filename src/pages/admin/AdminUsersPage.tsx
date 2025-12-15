@@ -14,8 +14,11 @@ import {
   UserCircleIcon,
   EnvelopeIcon,
   CalendarIcon,
+  PlusIcon,
+  XMarkIcon,
+  BuildingStorefrontIcon
 } from '@heroicons/react/24/outline';
-import { getAdminUsers, updateAdminUser, AdminUser } from '../../api/admin';
+import { getAdminUsers, updateAdminUser, createAdminUser, getAdminPharmacies, AdminUser, AdminPharmacy } from '../../api/admin';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 
@@ -25,6 +28,61 @@ const AdminUsersPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'doctor' | 'pharmacy' | 'patient'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  
+  // Add User State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pharmacies, setPharmacies] = useState<AdminPharmacy[]>([]);
+  const [newUser, setNewUser] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    username: '',
+    password: '',
+    role: 'patient', // 'patient', 'admin', 'pharmacy'
+    pharmacy_id: ''
+  });
+
+  useEffect(() => {
+    if (newUser.role === 'pharmacy') {
+        fetchPharmacies();
+    }
+  }, [newUser.role]);
+
+  const fetchPharmacies = async () => {
+    try {
+        const data = await getAdminPharmacies({ is_active: true });
+        setPharmacies(data.results);
+    } catch (error) {
+        console.error("Failed to load pharmacies", error);
+    }
+  };
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+        setIsSubmitting(true);
+        await createAdminUser(newUser);
+        toast.success('User created successfully');
+        setIsModalOpen(false);
+        setNewUser({
+            first_name: '',
+            last_name: '',
+            email: '',
+            username: '',
+            password: '',
+            role: 'patient',
+            pharmacy_id: ''
+        });
+        fetchUsers();
+    } catch (error: any) {
+        console.error(error);
+        const msg = error.response?.data?.error || 'Failed to create user';
+        toast.error(msg);
+    } finally {
+        setIsSubmitting(false);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -137,18 +195,185 @@ const AdminUsersPage: React.FC = () => {
               <p className="text-xl text-white/90 font-bold max-w-2xl mt-4">Manage all users in the VitaNips platform</p>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 }}
-              className="inline-flex items-center px-6 py-3 rounded-2xl font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black bg-blue-400 text-black hover:bg-blue-300 transition-colors cursor-default"
-            >
-              <UserIcon className="h-6 w-6 mr-2" />
-              {users.length} {users.length === 1 ? 'User' : 'Users'}
-            </motion.div>
+              <div className="flex gap-4">
+                 <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="inline-flex items-center px-6 py-3 rounded-2xl font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black bg-yellow-400 text-black hover:bg-yellow-300 transition-colors"
+                  >
+                    <PlusIcon className="h-6 w-6 mr-2 stroke-[3]" />
+                    ADD USER
+                  </button>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="inline-flex items-center px-6 py-3 rounded-2xl font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black bg-blue-400 text-black hover:bg-blue-300 transition-colors cursor-default"
+                  >
+                    <UserIcon className="h-6 w-6 mr-2" />
+                    {users.length} {users.length === 1 ? 'User' : 'Users'}
+                  </motion.div>
+              </div>
           </div>
         </div>
       </motion.div>
+
+      {/* Add User Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+           <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-[2rem] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]"
+          >
+            <div className="p-6 border-b-4 border-black bg-primary-900 flex justify-between items-center text-white">
+              <h2 className="text-2xl font-black uppercase tracking-wide flex items-center gap-3">
+                <PlusIcon className="h-8 w-8" />
+                Add New User
+              </h2>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="p-8 overflow-y-auto">
+               <form onSubmit={handleCreateUser} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-black uppercase tracking-wider text-gray-700">First Name</label>
+                        <input 
+                          type="text" 
+                          required
+                          className="w-full px-4 py-3 rounded-xl border-2 border-black focus:outline-none focus:ring-4 focus:ring-primary-900/20 font-bold"
+                          value={newUser.first_name}
+                          onChange={e => setNewUser({...newUser, first_name: e.target.value})}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-black uppercase tracking-wider text-gray-700">Last Name</label>
+                        <input 
+                          type="text" 
+                          required
+                          className="w-full px-4 py-3 rounded-xl border-2 border-black focus:outline-none focus:ring-4 focus:ring-primary-900/20 font-bold"
+                          value={newUser.last_name}
+                          onChange={e => setNewUser({...newUser, last_name: e.target.value})}
+                        />
+                      </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-black uppercase tracking-wider text-gray-700">Username</label>
+                        <input 
+                          type="text" 
+                          required
+                          className="w-full px-4 py-3 rounded-xl border-2 border-black focus:outline-none focus:ring-4 focus:ring-primary-900/20 font-bold"
+                          value={newUser.username}
+                          onChange={e => setNewUser({...newUser, username: e.target.value})}
+                        />
+                      </div>
+                       <div className="space-y-2">
+                        <label className="text-sm font-black uppercase tracking-wider text-gray-700">Email</label>
+                        <input 
+                          type="email" 
+                          required
+                          className="w-full px-4 py-3 rounded-xl border-2 border-black focus:outline-none focus:ring-4 focus:ring-primary-900/20 font-bold"
+                          value={newUser.email}
+                          onChange={e => setNewUser({...newUser, email: e.target.value})}
+                        />
+                      </div>
+                  </div>
+
+                   <div className="space-y-2">
+                        <label className="text-sm font-black uppercase tracking-wider text-gray-700">Password</label>
+                        <input 
+                          type="password" 
+                          required
+                          className="w-full px-4 py-3 rounded-xl border-2 border-black focus:outline-none focus:ring-4 focus:ring-primary-900/20 font-bold"
+                          value={newUser.password}
+                          onChange={e => setNewUser({...newUser, password: e.target.value})}
+                        />
+                   </div>
+
+                   <div className="space-y-2">
+                        <label className="text-sm font-black uppercase tracking-wider text-gray-700">Role</label>
+                        <div className="grid grid-cols-3 gap-4">
+                            {['patient', 'admin', 'pharmacy'].map((role) => (
+                                <label key={role} className={`
+                                    flex items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all font-bold uppercase
+                                    ${newUser.role === role 
+                                        ? 'bg-primary-900 text-white border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' 
+                                        : 'bg-white border-gray-200 text-gray-500 hover:border-black'}
+                                `}>
+                                    <input 
+                                        type="radio" 
+                                        name="role"
+                                        value={role}
+                                        checked={newUser.role === role}
+                                        onChange={e => setNewUser({...newUser, role: e.target.value})}
+                                        className="hidden"
+                                    />
+                                    {role}
+                                </label>
+                            ))}
+                        </div>
+                   </div>
+
+                   {newUser.role === 'pharmacy' && (
+                       <div className="space-y-2 bg-purple-50 p-4 rounded-xl border-2 border-purple-200">
+                            <label className="text-sm font-black uppercase tracking-wider text-purple-900 flex items-center gap-2">
+                                <BuildingStorefrontIcon className="h-5 w-5" />
+                                Select Pharmacy
+                            </label>
+                            <select
+                                required
+                                value={newUser.pharmacy_id}
+                                onChange={e => setNewUser({...newUser, pharmacy_id: e.target.value})}
+                                className="w-full px-4 py-3 rounded-xl border-2 border-purple-900 focus:outline-none focus:ring-4 focus:ring-purple-900/20 font-bold bg-white"
+                            >
+                                <option value="">Select a pharmacy...</option>
+                                {pharmacies.map(p => (
+                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                ))}
+                            </select>
+                            <p className="text-xs font-bold text-purple-700">This user will have access to manage this pharmacy's portal.</p>
+                       </div>
+                   )}
+
+                  <div className="pt-4 border-t-2 border-gray-100 flex gap-4">
+                      <button 
+                        type="button" 
+                        onClick={() => setIsModalOpen(false)}
+                        className="flex-1 py-4 font-black uppercase tracking-wider border-2 border-black rounded-xl hover:bg-gray-100 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        type="submit" 
+                        disabled={isSubmitting}
+                        className="flex-1 py-4 bg-yellow-400 text-black font-black uppercase tracking-wider border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Spinner size="sm" color="border-black" />
+                            <span>Creating...</span>
+                          </>
+                        ) : (
+                          <>
+                            <PlusIcon className="h-5 w-5 stroke-[3]" />
+                            Create User
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+               </form>
+            </div>
+           </motion.div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">

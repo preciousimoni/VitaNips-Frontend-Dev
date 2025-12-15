@@ -6,31 +6,29 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 const RegisterPage: React.FC = () => {
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-gray-50">
+    <div className="min-h-screen grid lg:grid-cols-2 bg-[#FDFBF7]">
       {/* Left hero panel */}
-      <div className="hidden lg:flex relative overflow-hidden bg-gray-900 items-center justify-center order-2">
+      <div className="hidden lg:flex relative overflow-hidden bg-primary-900 items-center justify-center order-2">
          {/* Decorative background elements */}
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1932&q=80')] bg-cover bg-center opacity-20 mix-blend-overlay" />
-        <div className="absolute inset-0 bg-gradient-to-bl from-teal-900/90 via-gray-900/95 to-black/90" />
+        <div className="absolute inset-0 bg-primary-900/90" />
         
         {/* Animated shapes */}
         <motion.div 
             animate={{ 
                 scale: [1, 1.2, 1],
                 rotate: [0, -90, 0],
-                opacity: [0.3, 0.5, 0.3]
             }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-24 -left-24 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl"
+            className="absolute -bottom-24 -left-24 w-96 h-96 bg-accent rounded-full blur-3xl opacity-10"
         />
         <motion.div 
             animate={{ 
                 scale: [1, 1.3, 1],
                 rotate: [0, 60, 0],
-                opacity: [0.2, 0.4, 0.2]
             }}
             transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-32 -right-32 w-[30rem] h-[30rem] bg-primary-500/10 rounded-full blur-3xl"
+            className="absolute -top-32 -right-32 w-[30rem] h-[30rem] bg-accent/20 rounded-full blur-3xl opacity-10"
         />
 
         <div className="relative z-10 text-center px-12 max-w-2xl">
@@ -39,22 +37,21 @@ const RegisterPage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
             >
-                <img src="/logo.png" alt="VitaNips" className="mx-auto h-24 drop-shadow-2xl mb-8" />
-                <h1 className="text-5xl font-bold text-white tracking-tight mb-6 font-display">
-                    Start Your Journey
+                <img src="/logo.png" alt="VitaNips" className="mx-auto h-24 drop-shadow-lg mb-8" />
+                <h1 className="text-6xl font-display font-medium text-white tracking-tight mb-6">
+                    Join the Future.
                 </h1>
-                <p className="text-xl text-gray-300 leading-relaxed">
-                    Join thousands of users taking control of their health. Create your secure account today and experience the future of healthcare management.
+                <p className="text-xl text-white/80 font-light leading-relaxed max-w-lg mx-auto">
+                    Create your account today and experience healthcare without the hassle.
                 </p>
                 
-                 <div className="mt-10 flex justify-center space-x-4">
-                    <div className="flex -space-x-2 overflow-hidden">
-                        <img className="inline-block h-10 w-10 rounded-full ring-2 ring-gray-900" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
-                        <img className="inline-block h-10 w-10 rounded-full ring-2 ring-gray-900" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
-                        <img className="inline-block h-10 w-10 rounded-full ring-2 ring-gray-900" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt=""/>
-                        <img className="inline-block h-10 w-10 rounded-full ring-2 ring-gray-900" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+                 <div className="mt-12 flex justify-center space-x-6 items-center bg-white/10 p-4 rounded-full border border-white/10 backdrop-blur-sm">
+                    <div className="flex -space-x-4">
+                        <img className="inline-block h-10 w-10 rounded-full border-2 border-primary-900" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+                        <img className="inline-block h-10 w-10 rounded-full border-2 border-primary-800" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt=""/>
+                        <img className="inline-block h-10 w-10 rounded-full border-2 border-primary-700" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt=""/>
                     </div>
-                    <p className="text-gray-400 text-sm flex items-center">Join 10,000+ others</p>
+                    <p className="text-white font-medium text-sm flex items-center">Join 10,000+ others</p>
                  </div>
             </motion.div>
         </div>
@@ -62,8 +59,10 @@ const RegisterPage: React.FC = () => {
 
       {/* Right form panel */}
       <div className="flex flex-col items-center justify-center p-6 lg:p-12 relative order-1">
-        <Link to="/" className="absolute top-8 left-8 text-gray-500 hover:text-gray-900 flex items-center transition-colors">
-            <ArrowLeftIcon className="h-4 w-4 mr-2" />
+        <Link to="/" className="absolute top-8 left-8 text-gray-600 hover:text-primary-900 flex items-center transition-colors font-medium text-sm gap-2">
+            <div className="p-2 bg-white rounded-full shadow-sm border border-gray-100 group-hover:border-primary-200 transition-colors">
+                <ArrowLeftIcon className="h-4 w-4" />
+            </div>
             Back to Home
         </Link>
 
@@ -77,23 +76,25 @@ const RegisterPage: React.FC = () => {
              <Link to="/" className="inline-block lg:hidden mb-6">
                  <img className="h-12 w-auto" src="/logo.png" alt="VitaNips Logo" />
              </Link>
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight font-display">
+            <h2 className="text-4xl font-display font-medium text-gray-900 mb-3">
               Create an account
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Already have an account? <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500 hover:underline">Log in</Link>
+            <p className="text-gray-500 text-lg">
+              Already have an account? <Link to="/login" className="text-primary-700 font-medium hover:text-primary-900 underline decoration-1 underline-offset-4">Log in</Link>
             </p>
-            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-              <p className="text-sm text-blue-900">
-                <strong>Are you a doctor?</strong> After registering, you'll be able to submit your doctor application with your credentials, license information, and hospital details. Our admin team will review and verify your application.
+            <div className="mt-6 p-4 bg-primary-50 text-primary-900 rounded-2xl border border-primary-100/50">
+              <p className="text-sm font-medium text-left">
+                <strong>Are you a doctor?</strong> Register here first, then complete your professional application to join our network.
               </p>
             </div>
           </div>
 
-          <RegisterForm />
+          <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100">
+             <RegisterForm />
+          </div>
 
-          <div className="mt-8 text-center text-xs text-gray-500 max-w-xs mx-auto">
-            By clicking "Register" you agree to our <a href="#" className="text-primary-600 hover:underline">Terms of Service</a> and <a href="#" className="text-primary-600 hover:underline">Privacy Policy</a>.
+          <div className="mt-8 text-center text-xs font-medium text-gray-400 max-w-xs mx-auto">
+            By clicking "Register" you agree to our <a href="#" className="text-gray-600 hover:text-primary-900 hover:underline">Terms of Service</a> and <a href="#" className="text-gray-600 hover:text-primary-900 hover:underline">Privacy Policy</a>.
           </div>
         </motion.div>
       </div>

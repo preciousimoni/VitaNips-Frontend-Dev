@@ -26,15 +26,34 @@ const LoginPage: React.FC = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   });
 
+  // Handle Remember Me on mount
+  React.useEffect(() => {
+    const savedEmail = localStorage.getItem('remembered_email');
+    if (savedEmail) {
+      setValue('email', savedEmail);
+      // document.getElementById('remember-me')?.setAttribute('checked', 'true'); // optional UI sync
+    }
+  }, [setValue]);
+
   const onSubmit = async (values: LoginFormData) => {
     setError(null);
     setIsLoading(true);
+    
+    // Handle Remember Me
+    const rememberMeCheckbox = document.getElementById('remember-me') as HTMLInputElement;
+    if (rememberMeCheckbox?.checked) {
+        localStorage.setItem('remembered_email', values.email);
+    } else {
+        localStorage.removeItem('remembered_email');
+    }
+
     try {
       const response = await axiosInstance.post<AuthTokens>('/token/', values);
       const { access, refresh } = response.data;
@@ -80,31 +99,29 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-gray-50">
+    <div className="min-h-screen grid lg:grid-cols-2 bg-[#FDFBF7]">
       {/* Left hero panel */}
-      <div className="hidden lg:flex relative overflow-hidden bg-gray-900 items-center justify-center">
+      <div className="hidden lg:flex relative overflow-hidden bg-primary-900 items-center justify-center">
          {/* Decorative background elements */}
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center opacity-20 mix-blend-overlay" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/90 via-gray-900/95 to-black/90" />
+        <div className="absolute inset-0 bg-primary-900/90" />
         
         {/* Animated shapes */}
         <motion.div 
             animate={{ 
                 scale: [1, 1.2, 1],
                 rotate: [0, 90, 0],
-                opacity: [0.3, 0.5, 0.3]
             }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-24 -left-24 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl"
+            className="absolute -top-24 -left-24 w-96 h-96 bg-accent rounded-full blur-3xl opacity-10"
         />
         <motion.div 
             animate={{ 
                 scale: [1, 1.3, 1],
                 rotate: [0, -60, 0],
-                opacity: [0.2, 0.4, 0.2]
             }}
             transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-32 -right-32 w-[30rem] h-[30rem] bg-teal-500/10 rounded-full blur-3xl"
+            className="absolute -bottom-32 -right-32 w-[30rem] h-[30rem] bg-accent/20 rounded-full blur-3xl opacity-10"
         />
 
         <div className="relative z-10 text-center px-12 max-w-2xl">
@@ -113,27 +130,19 @@ const LoginPage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
             >
-                <img src="/logo.png" alt="VitaNips" className="mx-auto h-24 drop-shadow-2xl mb-8" />
-                <h1 className="text-5xl font-bold text-white tracking-tight mb-6 font-display">
-                    Welcome Back
+                <img src="/logo.png" alt="VitaNips" className="mx-auto h-24 drop-shadow-lg mb-8" />
+                <h1 className="text-6xl font-display font-medium text-white tracking-tight mb-6">
+                    Welcome Back.
                 </h1>
-                <p className="text-xl text-gray-300 leading-relaxed">
-                    Access your comprehensive health dashboard. Manage appointments, prescriptions, and consultations securely.
+                <p className="text-xl text-white/80 font-light leading-relaxed max-w-lg mx-auto">
+                    Your health, simplified. Access your dashboard to manage appointments and consultations.
                 </p>
                 
-                <div className="mt-12 grid grid-cols-3 gap-6 text-center">
-                    <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-                        <h3 className="text-2xl font-bold text-primary-400 mb-1">24/7</h3>
-                        <p className="text-sm text-gray-400">Access</p>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-                        <h3 className="text-2xl font-bold text-primary-400 mb-1">100%</h3>
-                        <p className="text-sm text-gray-400">Secure</p>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-                        <h3 className="text-2xl font-bold text-primary-400 mb-1">Fast</h3>
-                        <p className="text-sm text-gray-400">Response</p>
-                    </div>
+                <div className="mt-12 flex justify-center gap-4">
+                     <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full backdrop-blur-sm border border-white/10">
+                        <div className="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
+                        <span className="text-white text-sm font-medium">System Online</span>
+                     </div>
                 </div>
             </motion.div>
         </div>
@@ -141,8 +150,10 @@ const LoginPage: React.FC = () => {
 
       {/* Right form panel */}
       <div className="flex flex-col items-center justify-center p-6 lg:p-12 relative">
-        <Link to="/" className="absolute top-8 left-8 text-gray-500 hover:text-gray-900 flex items-center transition-colors">
-            <ArrowLeftIcon className="h-4 w-4 mr-2" />
+        <Link to="/" className="absolute top-8 left-8 text-gray-600 hover:text-primary-900 flex items-center transition-colors font-medium text-sm gap-2">
+            <div className="p-2 bg-white rounded-full shadow-sm border border-gray-100 group-hover:border-primary-200 transition-colors">
+                <ArrowLeftIcon className="h-4 w-4" />
+            </div>
             Back to Home
         </Link>
 
@@ -156,42 +167,32 @@ const LoginPage: React.FC = () => {
              <Link to="/" className="inline-block lg:hidden mb-6">
                  <img className="h-12 w-auto" src="/logo.png" alt="VitaNips Logo" />
              </Link>
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight font-display">
-              Sign in to your account
+            <h2 className="text-4xl font-display font-medium text-gray-900 mb-3">
+              Sign in
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Or <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500 hover:underline">start your health journey today</Link>
+            <p className="text-gray-500 text-lg">
+              New here? <Link to="/register" className="text-primary-700 font-medium hover:text-primary-900 underline decoration-1 underline-offset-4">Create an account</Link>
             </p>
             {isDoctorRegistration && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl"
+                className="mt-6 p-4 bg-blue-50 text-blue-800 rounded-2xl text-sm font-medium border border-blue-100"
               >
-                <p className="text-sm text-blue-900">
-                  <strong>Doctor Registration:</strong> After logging in, you'll be redirected to submit your doctor application.
-                </p>
+                <strong>Doctor Registration:</strong> Please login to continue your application.
               </motion.div>
             )}
           </div>
 
-          <div className="bg-white py-8 px-4 shadow-xl shadow-gray-200/50 sm:rounded-2xl sm:px-10 border border-gray-100">
+          <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100">
             {error && (
               <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-md"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mb-6 bg-red-50 text-red-700 p-4 rounded-xl text-sm flex items-center gap-3"
               >
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm text-red-700">{error}</p>
-                  </div>
-                </div>
+                 <div className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+                 {error}
               </motion.div>
             )}
 
@@ -205,7 +206,7 @@ const LoginPage: React.FC = () => {
                 disabled={isLoading}
                 placeholder="you@example.com"
                 autoComplete="email"
-                className="rounded-lg"
+                className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-gray-100 focus:bg-white focus:border-primary-300 focus:ring-4 focus:ring-primary-50 transition-all font-medium text-gray-900 placeholder:text-gray-400"
               />
 
               <div className="relative">
@@ -218,12 +219,12 @@ const LoginPage: React.FC = () => {
                   placeholder="••••••••"
                   autoComplete="current-password"
                   disabled={isLoading}
-                  className="rounded-lg"
+                   className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-gray-100 focus:bg-white focus:border-primary-300 focus:ring-4 focus:ring-primary-50 transition-all font-medium text-gray-900 placeholder:text-gray-400"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute top-[38px] right-3 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
+                  className="absolute top-[46px] right-5 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? (
@@ -234,46 +235,40 @@ const LoginPage: React.FC = () => {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mt-2 px-1">
                 <div className="flex items-center">
                   <input
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded transition-colors"
+                    defaultChecked={!!localStorage.getItem('remembered_email')}
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600 font-medium">
                     Remember me
                   </label>
                 </div>
 
                 <div className="text-sm">
-                  <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
-                    Forgot your password?
-                  </a>
+                  <Link to="/forgot-password" className="text-gray-500 hover:text-primary-700 font-medium transition-colors">
+                    Forgot password?
+                  </Link>
                 </div>
               </div>
 
-              <div>
+              <div className="pt-2">
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.01]"
+                  className="w-full flex justify-center py-4 px-6 rounded-full shadow-lg shadow-primary-900/20 text-lg font-bold text-white bg-primary-900 hover:bg-primary-800 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-primary-100 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                 >
-                  {isLoading ? <Spinner size="sm" color="white" /> : 'Sign in'}
+                  {isLoading ? <Spinner size="sm" color="text-white" /> : 'Sign In'}
                 </button>
               </div>
             </form>
 
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Protected by industry standard encryption</span>
-                </div>
-              </div>
+            <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+               <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Secure Health Portal</p>
             </div>
           </div>
         </motion.div>

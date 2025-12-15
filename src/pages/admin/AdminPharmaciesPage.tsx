@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   CheckCircleIcon,
+  CheckBadgeIcon,
   XCircleIcon,
   MagnifyingGlassIcon,
   SparklesIcon,
@@ -15,8 +16,10 @@ import {
   MapPinIcon,
   ClockIcon,
   TruckIcon,
+  PlusIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
-import { getAdminPharmacies, updateAdminPharmacy, AdminPharmacy } from '../../api/admin';
+import { getAdminPharmacies, updateAdminPharmacy, createAdminPharmacy, AdminPharmacy } from '../../api/admin';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 
@@ -26,6 +29,20 @@ const AdminPharmaciesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // New Pharmacy Form State
+  const [newPharmacy, setNewPharmacy] = useState({
+    name: '',
+    address: '',
+    phone_number: '',
+    email: '',
+    operating_hours: '',
+    is_24_hours: false,
+    offers_delivery: false,
+    is_active: true
+  });
 
   useEffect(() => {
     fetchPharmacies();
@@ -60,50 +77,58 @@ const AdminPharmaciesPage: React.FC = () => {
       setLoading(true);
       const data = await getAdminPharmacies();
       setPharmacies(data.results);
-    } catch {
+    } catch (error) {
+      console.error('Failed to fetch pharmacies:', error);
       toast.error('Failed to load pharmacies');
     } finally {
       setLoading(false);
     }
   };
 
-  const filterPharmacies = () => {
-    let filtered = [...pharmacies];
-
-    // Search filter
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(searchLower) ||
-        p.address.toLowerCase().includes(searchLower) ||
-        p.email?.toLowerCase().includes(searchLower) ||
-        p.phone_number.includes(search)
-      );
-    }
-
-    // Status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(p => 
-        statusFilter === 'active' ? p.is_active : !p.is_active
-      );
-    }
-
-    setFilteredPharmacies(filtered);
-  };
-
-  const toggleStatus = async (pharmacy: AdminPharmacy) => {
+  const handleToggleStatus = async (pharmacyId: number, currentStatus: boolean) => {
     try {
-      await updateAdminPharmacy(pharmacy.id, { is_active: !pharmacy.is_active });
-      toast.success(`Pharmacy ${pharmacy.is_active ? 'deactivated' : 'activated'}`);
+      await updateAdminPharmacy(pharmacyId, { is_active: !currentStatus });
+      toast.success(`Pharmacy ${!currentStatus ? 'activated' : 'deactivated'} successfully`);
       fetchPharmacies();
-    } catch {
+    } catch (error) {
+      console.error('Failed to update pharmacy:', error);
       toast.error('Failed to update pharmacy');
     }
   };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      filterPharmacies();
+      // filtering runs on change
+    }
+  };
+
+  const handleCreatePharmacy = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsSubmitting(true);
+      await createAdminPharmacy(newPharmacy);
+      toast.success('Pharmacy added successfully!');
+      setIsModalOpen(false);
+      
+      // Reset form
+      setNewPharmacy({
+        name: '',
+        address: '',
+        phone_number: '',
+        email: '',
+        operating_hours: '',
+        is_24_hours: false,
+        offers_delivery: false,
+        is_active: true
+      });
+      
+      fetchPharmacies();
+    } catch (error: any) {
+      console.error('Failed to create pharmacy:', error);
+      const errorMsg = error.response?.data ? JSON.stringify(error.response.data) : 'Failed to create pharmacy';
+      toast.error(`Error: ${errorMsg}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -112,6 +137,159 @@ const AdminPharmaciesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-cream-50">
+      
+      {/* Add Pharmacy Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-[2rem] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]"
+          >
+            <div className="p-6 border-b-4 border-black bg-primary-900 flex justify-between items-center text-white">
+              <h2 className="text-2xl font-black uppercase tracking-wide flex items-center gap-3">
+                <PlusIcon className="h-8 w-8" />
+                Add New Pharmacy
+              </h2>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="p-8 overflow-y-auto">
+              <form onSubmit={handleCreatePharmacy} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-black uppercase tracking-wider text-gray-700">Pharmacy Name</label>
+                    <input 
+                      type="text" 
+                      required
+                      className="w-full px-4 py-3 rounded-xl border-2 border-black focus:outline-none focus:ring-4 focus:ring-primary-900/20 font-bold"
+                      placeholder="e.g. HealthPlus Pharmacy"
+                      value={newPharmacy.name}
+                      onChange={e => setNewPharmacy({...newPharmacy, name: e.target.value})}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-black uppercase tracking-wider text-gray-700">Email Address</label>
+                    <input 
+                      type="email" 
+                      required
+                      className="w-full px-4 py-3 rounded-xl border-2 border-black focus:outline-none focus:ring-4 focus:ring-primary-900/20 font-bold"
+                      placeholder="contact@pharmacy.com"
+                      value={newPharmacy.email}
+                      onChange={e => setNewPharmacy({...newPharmacy, email: e.target.value})}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-black uppercase tracking-wider text-gray-700">Phone Number</label>
+                    <input 
+                      type="tel" 
+                      required
+                      className="w-full px-4 py-3 rounded-xl border-2 border-black focus:outline-none focus:ring-4 focus:ring-primary-900/20 font-bold"
+                      placeholder="+234..."
+                      value={newPharmacy.phone_number}
+                      onChange={e => setNewPharmacy({...newPharmacy, phone_number: e.target.value})}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-black uppercase tracking-wider text-gray-700">Operating Hours</label>
+                    <input 
+                      type="text" 
+                      required
+                      className="w-full px-4 py-3 rounded-xl border-2 border-black focus:outline-none focus:ring-4 focus:ring-primary-900/20 font-bold"
+                      placeholder="e.g. Mon-Fri 8am-8pm"
+                      value={newPharmacy.operating_hours}
+                      onChange={e => setNewPharmacy({...newPharmacy, operating_hours: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-black uppercase tracking-wider text-gray-700">Address</label>
+                  <textarea 
+                    required
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-black focus:outline-none focus:ring-4 focus:ring-primary-900/20 font-bold resize-none"
+                    placeholder="Full physical address..."
+                    value={newPharmacy.address}
+                    onChange={e => setNewPharmacy({...newPharmacy, address: e.target.value})}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <label className={`flex items-center justify-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all font-bold ${newPharmacy.is_24_hours ? 'bg-primary-900 text-white border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' : 'bg-white border-gray-200 text-gray-500 hover:border-black'}`}>
+                    <input 
+                      type="checkbox" 
+                      className="hidden"
+                      checked={newPharmacy.is_24_hours}
+                      onChange={e => setNewPharmacy({...newPharmacy, is_24_hours: e.target.checked})}
+                    />
+                    <ClockIcon className="h-6 w-6" />
+                    <span>24/7 Open</span>
+                  </label>
+
+                  <label className={`flex items-center justify-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all font-bold ${newPharmacy.offers_delivery ? 'bg-blue-600 text-white border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' : 'bg-white border-gray-200 text-gray-500 hover:border-black'}`}>
+                    <input 
+                      type="checkbox" 
+                      className="hidden"
+                      checked={newPharmacy.offers_delivery}
+                      onChange={e => setNewPharmacy({...newPharmacy, offers_delivery: e.target.checked})}
+                    />
+                    <TruckIcon className="h-6 w-6" />
+                    <span>Delivery</span>
+                  </label>
+                  
+                  <label className={`flex items-center justify-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all font-bold ${newPharmacy.is_active ? 'bg-emerald-500 text-white border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' : 'bg-white border-gray-200 text-gray-500 hover:border-black'}`}>
+                    <input 
+                      type="checkbox" 
+                      className="hidden"
+                      checked={newPharmacy.is_active}
+                      onChange={e => setNewPharmacy({...newPharmacy, is_active: e.target.checked})}
+                    />
+                    <CheckBadgeIcon className="h-6 w-6" />
+                    <span>Active Now</span>
+                  </label>
+                </div>
+
+                <div className="pt-4 border-t-2 border-gray-100 flex gap-4">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsModalOpen(false)}
+                    className="flex-1 py-4 font-black uppercase tracking-wider border-2 border-black rounded-xl hover:bg-gray-100 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="flex-1 py-4 bg-yellow-400 text-black font-black uppercase tracking-wider border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Spinner size="sm" color="border-black" />
+                        <span>Creating...</span>
+                      </>
+                    ) : (
+                      <>
+                        <PlusIcon className="h-5 w-5 stroke-[3]" />
+                        Create Pharmacy
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -178,15 +356,26 @@ const AdminPharmaciesPage: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="flex items-center gap-3 px-6 py-4 bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]"
+                    className="flex items-center gap-6"
                 >
-                    <div className="p-2 bg-blue-500/20 rounded-lg">
-                        <BuildingStorefrontIcon className="h-8 w-8 text-blue-200" />
+                    <div className="flex items-center gap-3 px-6 py-4 bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <BuildingStorefrontIcon className="h-8 w-8 text-blue-200" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold text-blue-200 uppercase tracking-wider">Total Pharmacies</p>
+                            <p className="text-2xl font-black text-white">{filteredPharmacies.length}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="text-sm font-bold text-blue-200 uppercase tracking-wider">Total Pharmacies</p>
-                        <p className="text-2xl font-black text-white">{filteredPharmacies.length}</p>
-                    </div>
+                    
+                    {/* Add Pharmacy Button */}
+                    <button
+                      onClick={() => setIsModalOpen(true)}
+                      className="h-full px-6 py-4 bg-yellow-400 text-black font-black uppercase tracking-wider rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all flex items-center gap-2"
+                    >
+                      <PlusIcon className="h-6 w-6 stroke-[3]" />
+                      <span>Add Pharmacy</span>
+                    </button>
                 </motion.div>
             </div>
         </div>
@@ -205,9 +394,6 @@ const AdminPharmaciesPage: React.FC = () => {
             <div className="flex items-center gap-4 mb-8 pb-6 border-b-4 border-gray-100">
                 <div className="p-3 bg-purple-100 border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                     <FunnelIcon className="h-6 w-6 text-black" />
-                </div>
-                <div>
-                    <h2 className="text-2xl font-black text-black uppercase tracking-tight">Search & Filter</h2>
                     <p className="text-gray-600 font-medium">Find specific pharmacies or filter by status</p>
                 </div>
             </div>
@@ -227,7 +413,6 @@ const AdminPharmaciesPage: React.FC = () => {
                           className="w-full pl-12 pr-4 py-4 bg-gray-50 rounded-xl border-2 border-black focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-medium placeholder:text-gray-400"
                         />
                         <button
-                          onClick={filterPharmacies}
                           className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-black text-white font-bold rounded-lg hover:bg-gray-800 transition-all border-2 border-transparent"
                         >
                           Search
@@ -357,7 +542,7 @@ const AdminPharmaciesPage: React.FC = () => {
                     {/* Actions */}
                     <div className="flex items-center lg:self-center">
                         <button
-                          onClick={() => toggleStatus(pharmacy)}
+                          onClick={() => handleToggleStatus(pharmacy.id, pharmacy.is_active)}
                           className={`
                             group flex items-center gap-2 px-6 py-3 rounded-xl font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all
                             ${pharmacy.is_active ? 'bg-red-400 hover:bg-red-500 text-black' : 'bg-emerald-400 hover:bg-emerald-500 text-black'}

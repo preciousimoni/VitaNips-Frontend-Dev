@@ -9,6 +9,7 @@ import ScrollToTop from '../components/routing/ScrollToTop';
 import LandingPage from '../pages/LandingPage';
 import LoginPage from '../features/auth/pages/LoginPage';
 import RegisterPage from '../features/auth/pages/RegisterPage';
+import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
 import DashboardPage from '../pages/DashboardPage';
 import DoctorListPage from '../pages/DoctorListPage';
 import DoctorDetailPage from '../pages/DoctorDetailPage';
@@ -216,6 +217,7 @@ const AppRouter: React.FC = () => {
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/payment/callback" element={<PaymentCallbackPage />} />
         </Route>
 
