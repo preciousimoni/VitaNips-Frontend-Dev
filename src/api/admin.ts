@@ -227,6 +227,12 @@ export const getAdminAppointments = async (filters?: {
   return response.data;
 };
 
+// Get specific appointment details (admin only)
+export const getAdminAppointmentDetails = async (id: number): Promise<any> => {
+  const response = await axiosInstance.get(`/admin/appointments/${id}/`);
+  return response.data;
+};
+
 // Get recent admin activities
 export interface AdminActivity {
   id: string;

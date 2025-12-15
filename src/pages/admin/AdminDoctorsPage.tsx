@@ -133,36 +133,27 @@ const AdminDoctorsPage: React.FC = () => {
   const verifiedCount = doctors.filter(d => d.is_verified).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
+    <div className="min-h-screen bg-cream-50">
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="relative bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 pt-20 pb-24 sm:pt-24 sm:pb-32 overflow-hidden"
+        className="relative bg-primary-900 pt-20 pb-24 sm:pt-24 sm:pb-32 overflow-hidden border-b-8 border-black"
       >
-        {/* Animated Blobs */}
-        <motion.div
-          className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-          animate={{ x: [-100, 200], y: [-50, 100], rotate: [0, 360] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        ></motion.div>
-        <motion.div
-          className="absolute bottom-0 right-0 w-80 h-80 bg-white/10 rounded-full mix-blend-overlay blur-3xl"
-          animate={{ x: [100, -200], y: [50, -100], rotate: [360, 0] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        ></motion.div>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
 
-        {/* Floating Icon Cards */}
+        {/* Floating Icon Cards - Hardened */}
         <motion.div
-          className="absolute top-1/4 left-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg"
+          className="absolute top-1/4 left-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border-2 border-white/20 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]"
           animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
           transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
         >
           <ShieldCheckIcon className="h-8 w-8 text-white" />
         </motion.div>
         <motion.div
-          className="absolute bottom-1/4 right-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 shadow-lg"
+          className="absolute bottom-1/4 right-1/4 p-4 bg-white/10 rounded-2xl backdrop-blur-sm border-2 border-white/20 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]"
           animate={{ y: [0, 10, 0], rotate: [0, -5, 0] }}
           transition={{ repeat: Infinity, duration: 6, ease: "easeInOut", delay: 1 }}
         >
@@ -174,7 +165,7 @@ const AdminDoctorsPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center px-5 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-bold uppercase tracking-wider mb-6"
+            className="inline-flex items-center px-5 py-2 rounded-xl bg-black border-2 border-white/30 text-white text-sm font-black uppercase tracking-wider mb-6 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
           >
             <SparklesIcon className="h-4 w-4 mr-2" />
             DOCTOR VERIFICATION
@@ -184,15 +175,15 @@ const AdminDoctorsPage: React.FC = () => {
             <div>
               <Link
                 to="/admin/dashboard"
-                className="inline-flex items-center text-white/80 hover:text-white mb-4 transition-colors"
+                className="inline-flex items-center text-white/80 hover:text-white mb-4 transition-colors font-bold"
               >
-                <ArrowLeftIcon className="h-5 w-5 mr-2" />
+                <ArrowLeftIcon className="h-5 w-5 mr-2 stroke-[3]" />
                 Back to Dashboard
               </Link>
-              <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
+              <h1 className="text-4xl md:text-5xl font-black text-white mb-2 font-display tracking-tight">
                 Doctor Verification
               </h1>
-              <p className="text-lg text-white/90">Review and verify doctor applications</p>
+              <p className="text-xl text-white/90 font-bold max-w-2xl mt-4">Review and verify doctor applications</p>
             </div>
 
             <div className="flex items-center gap-4">
@@ -200,29 +191,22 @@ const AdminDoctorsPage: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 }}
-                className="inline-flex items-center px-6 py-3 rounded-2xl font-bold text-sm shadow-lg border-2 bg-white/20 backdrop-blur-sm border-white/30 text-white"
+                className="inline-flex items-center px-6 py-3 rounded-2xl font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black bg-yellow-400 text-black hover:bg-yellow-300 transition-colors cursor-default"
               >
-                <ClockIcon className="h-6 w-6 mr-2" />
+                <ClockIcon className="h-6 w-6 mr-2 stroke-[2.5]" />
                 {pendingCount} Pending
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 }}
-                className="inline-flex items-center px-6 py-3 rounded-2xl font-bold text-sm shadow-lg border-2 bg-white/20 backdrop-blur-sm border-white/30 text-white"
+                className="inline-flex items-center px-6 py-3 rounded-2xl font-black text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black bg-emerald-400 text-black hover:bg-emerald-300 transition-colors cursor-default"
               >
-                <CheckCircleIcon className="h-6 w-6 mr-2" />
+                <CheckCircleIcon className="h-6 w-6 mr-2 stroke-[2.5]" />
                 {verifiedCount} Verified
               </motion.div>
             </div>
           </div>
-        </div>
-
-        {/* Bottom Wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-            <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
-          </svg>
         </div>
       </motion.div>
 
@@ -233,40 +217,36 @@ const AdminDoctorsPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 overflow-hidden border border-gray-100 p-6 sm:p-8 mb-8"
+          className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black p-6 sm:p-8 mb-8"
         >
           <div className="flex items-center gap-3 mb-6">
-            <motion.div
-              whileHover={{ rotate: 360, scale: 1.1 }}
-              transition={{ duration: 0.6 }}
-              className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg"
-            >
-              <FunnelIcon className="h-6 w-6 text-white" />
-            </motion.div>
-            <h2 className="text-xl font-black text-gray-900">Search & Filter</h2>
+            <div className="p-3 bg-black rounded-xl text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <FunnelIcon className="h-6 w-6" />
+            </div>
+            <h2 className="text-2xl font-black text-black font-display uppercase tracking-tight">Search & Filter</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">
+              <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">
                 Search Doctors
               </label>
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 stroke-[3]" />
                 <input
                   type="text"
                   placeholder="Search by name, email, or specialty..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && fetchDoctors()}
-                  className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all shadow-sm"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-black focus:ring-0 focus:border-black focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold placeholder:font-medium placeholder:text-gray-400"
                 />
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={fetchDoctors}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:shadow-lg transition-all"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-black text-white font-bold rounded-lg hover:bg-gray-800 transition-all border-2 border-black"
                 >
                   Search
                 </motion.button>
@@ -275,18 +255,25 @@ const AdminDoctorsPage: React.FC = () => {
 
             {/* Status Filter */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">
+              <label className="block text-sm font-black text-black mb-2 uppercase tracking-wide">
                 Verification Status
               </label>
-              <select
-                value={verifiedFilter}
-                onChange={(e) => setVerifiedFilter(e.target.value as typeof verifiedFilter)}
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all shadow-sm font-medium"
-              >
-                <option value="all">All Doctors</option>
-                <option value="verified">Verified</option>
-                <option value="pending">Pending Verification</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={verifiedFilter}
+                  onChange={(e) => setVerifiedFilter(e.target.value as typeof verifiedFilter)}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-black focus:ring-0 focus:border-black focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all font-bold appearance-none bg-white"
+                >
+                  <option value="all">All Doctors</option>
+                  <option value="verified">Verified</option>
+                  <option value="pending">Pending Verification</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                      <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+                    </svg>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -296,7 +283,7 @@ const AdminDoctorsPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 overflow-hidden border border-gray-100 mb-8"
+          className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden border-4 border-black mb-8"
         >
           {loading ? (
             <div className="flex justify-center py-20">
@@ -309,72 +296,60 @@ const AdminDoctorsPage: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="inline-block"
               >
-                <div className="bg-gradient-to-br from-gray-100 to-gray-200 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="bg-gray-100 p-6 rounded-full border-4 border-black mb-6 mx-auto w-fit shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   <UserCircleIcon className="h-12 w-12 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-black text-gray-900 mb-2">No Doctors Found</h3>
-                <p className="text-gray-600">Try adjusting your search or filters</p>
+                <h3 className="text-xl font-black text-black mb-2 font-display">No Doctors Found</h3>
+                <p className="text-gray-600 font-bold">Try adjusting your search or filters</p>
               </motion.div>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y-2 divide-black">
               {doctors.map((doctor, index) => (
                 <motion.div
                   key={doctor.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 + index * 0.05 }}
-                  whileHover={{ y: -2, scale: 1.01 }}
-                  className={`p-6 hover:bg-gray-50 transition-all group ${
-                    !doctor.is_verified ? 'bg-gradient-to-r from-yellow-50/50 to-transparent border-l-4 border-yellow-400' : ''
-                  }`}
+                  whileHover={{ backgroundColor: '#fdfbf7' }}
+                  className="p-6 transition-all group hover:bg-cream-50"
                 >
                   <div className="flex items-start justify-between gap-6">
                     <div className="flex items-start gap-4 flex-1">
                       {/* Avatar */}
-                      <motion.div
-                        whileHover={{ rotate: 360, scale: 1.1 }}
-                        transition={{ duration: 0.6 }}
-                        className={`relative p-4 bg-gradient-to-br ${
-                          doctor.is_verified
-                            ? 'from-green-500 to-emerald-600'
-                            : 'from-yellow-500 to-orange-500'
-                        } rounded-2xl shadow-lg flex-shrink-0`}
-                      >
-                        <UserCircleIcon className="h-8 w-8 text-white" />
+                      <div className={`relative p-3 ${
+                        doctor.is_verified
+                          ? 'bg-emerald-500'
+                          : 'bg-yellow-400'
+                      } rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex-shrink-0`}>
+                        <UserCircleIcon className="h-8 w-8 text-black" />
                         {doctor.is_verified && (
-                          <motion.div
-                            className="absolute -bottom-1 -right-1 p-1 bg-green-500 rounded-full border-2 border-white"
-                            animate={{ scale: [1, 1.2, 1] }}
-                            transition={{ repeat: Infinity, duration: 2 }}
-                          >
-                            <CheckCircleIcon className="h-4 w-4 text-white" />
-                          </motion.div>
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-300 rounded-full border-2 border-black" />
                         )}
-                      </motion.div>
+                      </div>
 
                       {/* Doctor Info */}
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
-                          <h3 className="text-xl font-black text-gray-900">
+                          <h3 className="text-xl font-black text-black">
                             Dr. {doctor.first_name} {doctor.last_name}
                           </h3>
-                          <span className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${
+                          <span className={`px-3 py-1 rounded-lg text-xs font-black border-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)] uppercase tracking-wide ${
                             doctor.is_verified
-                              ? 'bg-green-50 text-green-800 border-green-200'
-                              : 'bg-yellow-50 text-yellow-800 border-yellow-200'
+                              ? 'bg-emerald-100 text-emerald-900 border-black'
+                              : 'bg-yellow-100 text-yellow-900 border-black'
                           }`}>
                             {doctor.is_verified ? 'Verified' : 'Pending Verification'}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                        <div className="flex items-center gap-4 text-sm text-gray-600 font-bold mb-3">
                           <div className="flex items-center gap-1.5">
-                            <EnvelopeIcon className="h-4 w-4 text-gray-400" />
+                            <EnvelopeIcon className="h-4 w-4 text-black" />
                             {doctor.user.email}
                           </div>
-                          <div className="flex items-center gap-1.5">
-                            <BriefcaseIcon className="h-4 w-4 text-gray-400" />
+                          <div className="flex items-center gap-1.5 bg-gray-100 px-2 py-0.5 rounded border border-black/10">
+                            <BriefcaseIcon className="h-4 w-4 text-black" />
                             {doctor.years_of_experience} {doctor.years_of_experience === 1 ? 'year' : 'years'} experience
                           </div>
                         </div>
@@ -385,7 +360,7 @@ const AdminDoctorsPage: React.FC = () => {
                             {doctor.specialties.map((spec) => (
                               <span
                                 key={spec.id}
-                                className="px-3 py-1 text-xs font-bold bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-800 border-2 border-blue-200 rounded-full"
+                                className="px-3 py-1 text-xs font-black bg-blue-100 text-blue-900 border-2 border-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)]"
                               >
                                 {spec.name}
                               </span>
@@ -395,8 +370,8 @@ const AdminDoctorsPage: React.FC = () => {
 
                         {/* Education */}
                         {doctor.education && (
-                          <div className="flex items-start gap-2 text-sm text-gray-600">
-                            <AcademicCapIcon className="h-4 w-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                          <div className="flex items-start gap-2 text-sm text-gray-600 font-bold">
+                            <AcademicCapIcon className="h-4 w-4 text-black flex-shrink-0 mt-0.5" />
                             <p className="line-clamp-2">{doctor.education}</p>
                           </div>
                         )}
@@ -411,18 +386,18 @@ const AdminDoctorsPage: React.FC = () => {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => openReviewModal(doctor)}
-                            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold rounded-xl hover:shadow-xl transition-all flex items-center gap-2"
+                            className="px-6 py-3 bg-blue-400 text-black font-black rounded-xl hover:bg-blue-300 transition-all flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                           >
-                            <DocumentTextIcon className="h-5 w-5" />
+                            <DocumentTextIcon className="h-5 w-5 stroke-[2.5]" />
                             Review Application
                           </motion.button>
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleVerification(doctor, true)}
-                            className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl transition-all flex items-center gap-2"
+                            className="px-6 py-3 bg-emerald-400 text-black font-black rounded-xl hover:bg-emerald-300 transition-all flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                           >
-                            <CheckCircleIcon className="h-5 w-5" />
+                            <CheckCircleIcon className="h-5 w-5 stroke-[2.5]" />
                             Quick Verify
                           </motion.button>
                         </>
@@ -431,9 +406,9 @@ const AdminDoctorsPage: React.FC = () => {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => handleVerification(doctor, false)}
-                          className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white font-bold rounded-xl hover:shadow-xl transition-all flex items-center gap-2"
+                          className="px-6 py-3 bg-red-400 text-black font-black rounded-xl hover:bg-red-300 transition-all flex items-center gap-2 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                         >
-                          <XCircleIcon className="h-5 w-5" />
+                          <XCircleIcon className="h-5 w-5 stroke-[2.5]" />
                           Unverify
                         </motion.button>
                       )}
@@ -452,51 +427,39 @@ const AdminDoctorsPage: React.FC = () => {
           transition={{ delay: 0.6 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
         >
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-3xl p-6 shadow-lg">
+          <div className="bg-emerald-100 border-4 border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-green-900 uppercase tracking-wider mb-1">Total Doctors</p>
-                <p className="text-3xl font-black text-green-700">{doctors.length}</p>
+                <p className="text-sm font-black text-emerald-900 uppercase tracking-wider mb-1">Total Doctors</p>
+                <p className="text-3xl font-black text-black">{doctors.length}</p>
               </div>
-              <motion.div
-                whileHover={{ rotate: 360, scale: 1.1 }}
-                transition={{ duration: 0.6 }}
-                className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg"
-              >
+              <div className="p-3 bg-emerald-500 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 <UserCircleIcon className="h-8 w-8 text-white" />
-              </motion.div>
+              </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-3xl p-6 shadow-lg">
+          <div className="bg-yellow-100 border-4 border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-yellow-900 uppercase tracking-wider mb-1">Pending</p>
-                <p className="text-3xl font-black text-yellow-700">{pendingCount}</p>
+                <p className="text-sm font-black text-yellow-900 uppercase tracking-wider mb-1">Pending</p>
+                <p className="text-3xl font-black text-black">{pendingCount}</p>
               </div>
-              <motion.div
-                whileHover={{ rotate: 360, scale: 1.1 }}
-                transition={{ duration: 0.6 }}
-                className="p-3 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl shadow-lg"
-              >
+              <div className="p-3 bg-yellow-500 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 <ClockIcon className="h-8 w-8 text-white" />
-              </motion.div>
+              </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-3xl p-6 shadow-lg">
+          <div className="bg-blue-100 border-4 border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-blue-900 uppercase tracking-wider mb-1">Verified</p>
-                <p className="text-3xl font-black text-blue-700">{verifiedCount}</p>
+                <p className="text-sm font-black text-blue-900 uppercase tracking-wider mb-1">Verified</p>
+                <p className="text-3xl font-black text-black">{verifiedCount}</p>
               </div>
-              <motion.div
-                whileHover={{ rotate: 360, scale: 1.1 }}
-                transition={{ duration: 0.6 }}
-                className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl shadow-lg"
-              >
+              <div className="p-3 bg-blue-500 rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 <CheckCircleIcon className="h-8 w-8 text-white" />
-              </motion.div>
+              </div>
             </div>
           </div>
         </motion.div>

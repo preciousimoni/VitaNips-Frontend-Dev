@@ -55,6 +55,7 @@ import AdminDoctorsPage from '../pages/admin/AdminDoctorsPage';
 import AdminPharmaciesPage from '../pages/admin/AdminPharmaciesPage';
 import AdminAnalyticsPage from '../pages/admin/AdminAnalyticsPage';
 import AdminAppointmentsPage from '../pages/admin/AdminAppointmentsPage';
+import AdminAppointmentDetailPage from '../pages/admin/AdminAppointmentDetailPage';
 import EmergencyPage from '../pages/EmergencyPage';
 import AlertSentPage from '../pages/AlertSentPage';
 import CreateOrderPage from '../pages/CreateOrderPage';
@@ -243,6 +244,7 @@ const AppRouter: React.FC = () => {
           <Route path="/admin/pharmacies" element={<AdminPharmaciesPage />} />
           <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
           <Route path="/admin/appointments" element={<AdminAppointmentsPage />} />
+          <Route path="/admin/appointments/:appointmentId" element={<AdminAppointmentDetailPage />} />
         </Route>
 
         <Route element={<ProtectedRoute />}>
