@@ -563,10 +563,10 @@ const DoctorDashboardPage: React.FC = () => {
                 )}
 
                 <motion.button
-                  whileHover={{ x: 5, shadow: "6px 6px 0px 0px rgba(0,0,0,1)" }}
+                  whileHover={{ x: 5 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/doctor/prescriptions')}
-                  className="w-full flex items-center justify-between p-4 bg-white hover:bg-blue-50 rounded-2xl transition-all group border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  className="w-full flex items-center justify-between p-4 bg-white hover:bg-blue-50 rounded-2xl transition-all group border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
                 >
                   <div className="flex items-center space-x-4">
                     <div className="p-2 bg-blue-200 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">

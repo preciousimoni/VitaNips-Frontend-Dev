@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -19,8 +19,7 @@ import {
   Tooltip, 
   ResponsiveContainer,
   BarChart,
-  Bar,
-  Legend
+  Bar
 } from 'recharts';
 
 // Mock data for the chart - in a real app, this would come from an analytics endpoint
