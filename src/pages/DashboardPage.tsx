@@ -65,49 +65,49 @@ const itemVariants = {
     }
 };
 
-// Reusable Empty State Component
+// Reusable Empty State Component - Poster Style
 const EmptyState: React.FC<{
     icon: React.ElementType;
     message: string;
     actionLabel: string;
     actionLink: string;
 }> = ({ icon: Icon, message, actionLabel, actionLink }) => (
-    <div className="text-center py-8 px-4 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-        <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center mx-auto mb-3 shadow-sm border border-gray-100">
-            <Icon className="h-6 w-6 text-gray-400" />
+    <div className="text-center py-12 px-6 bg-white rounded-[2.5rem] border-2 border-primary-900/5 h-full flex flex-col items-center justify-center">
+        <div className="w-16 h-16 rounded-2xl bg-primary-50 flex items-center justify-center mx-auto mb-4 border-2 border-primary-100">
+            <Icon className="h-8 w-8 text-primary-900" />
         </div>
-        <p className="text-gray-500 text-sm mb-4 font-medium">{message}</p>
+        <p className="text-primary-900/70 text-base mb-6 font-medium max-w-xs">{message}</p>
         <Link 
             to={actionLink} 
-            className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-primary-700 bg-primary-50 hover:bg-primary-100 transition-colors"
+            className="inline-flex items-center justify-center px-6 py-3 border-2 border-primary-900 text-sm font-bold rounded-xl text-primary-900 hover:bg-primary-900 hover:text-white transition-all uppercase tracking-wider"
         >
             {actionLabel}
         </Link>
     </div>
 );
 
-// Quick Action Button
+// Quick Action Button - Poster Style
 const QuickActionButton: React.FC<{
     icon: React.ElementType;
     label: string;
     href: string;
-    color: string;
+    colorClass: string; // Changed from color gradient to solid color class
     description: string;
-}> = ({ icon: Icon, label, href, color, description }) => (
+}> = ({ icon: Icon, label, href, colorClass, description }) => (
     <Link
         to={href}
-        className="group relative overflow-hidden bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-primary/20"
+        className="group relative overflow-hidden bg-white p-6 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 border-2 border-primary-900/5 hover:border-primary-900 block h-full"
     >
-        <div className={`absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br ${color} opacity-10 rounded-full group-hover:opacity-20 transition-opacity`}></div>
-        
-        <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 bg-gradient-to-br ${color} shadow-md group-hover:scale-110 transition-transform duration-300`}>
-            <Icon className="h-6 w-6 text-white" />
+        <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4 ${colorClass} border-2 border-black/5 group-hover:scale-110 transition-transform duration-300`}>
+            <Icon className="h-7 w-7" />
         </div>
         
-        <h3 className="font-bold text-gray-900 mb-1.5 text-lg group-hover:text-primary transition-colors font-display">{label}</h3>
-        <p className="text-sm text-gray-500 relative z-10 leading-relaxed">{description}</p>
+        <h3 className="font-bold text-primary-900 mb-2 text-xl font-display">{label}</h3>
+        <p className="text-sm text-primary-900/60 leading-relaxed mb-8">{description}</p>
         
-        <ArrowRightIcon className="absolute bottom-4 right-4 h-5 w-5 text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+        <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center group-hover:bg-primary-900 transition-colors">
+            <ArrowRightIcon className="h-5 w-5 text-primary-900 group-hover:text-white transition-colors" />
+        </div>
     </Link>
 );
 
@@ -381,28 +381,28 @@ const DashboardPage: React.FC = () => {
             path: '/health/vitals', 
             icon: HeartIcon, 
             description: t('healthSections.vitals.description', "Track your BP & heart rate."),
-            gradient: 'from-rose-500 to-red-600'
+            colorClass: 'bg-rose-100 text-rose-700'
         },
         { 
             name: t('healthSections.food.name', 'Nutrition'), 
             path: '/health/food', 
             icon: ShoppingBagIcon, 
             description: t('healthSections.food.description', "Keep a journal of your meals."),
-            gradient: 'from-emerald-500 to-green-600'
+            colorClass: 'bg-emerald-100 text-emerald-700'
         },
         { 
             name: t('healthSections.exercise.name', 'Exercise'), 
             path: '/health/exercise', 
             icon: FireIcon, 
             description: t('healthSections.exercise.description', "Monitor physical activity."),
-            gradient: 'from-blue-500 to-indigo-600'
+            colorClass: 'bg-blue-100 text-blue-700'
         },
         { 
             name: t('healthSections.sleep.name', 'Sleep'), 
             path: '/health/sleep', 
             icon: MoonIcon, 
             description: t('healthSections.sleep.description', "Track your sleep quality."),
-            gradient: 'from-violet-500 to-purple-600'
+            colorClass: 'bg-violet-100 text-violet-700'
         },
     ];
 
@@ -411,42 +411,42 @@ const DashboardPage: React.FC = () => {
             icon: PlusIcon,
             label: 'Book Appointment',
             href: '/doctors',
-            color: 'from-blue-500 to-cyan-500',
+            colorClass: 'bg-blue-100 text-blue-700',
             description: 'Find and schedule with a doctor'
         },
         {
             icon: ShoppingBagIcon,
             label: 'Pharmacy',
             href: '/pharmacies',
-            color: 'from-emerald-500 to-teal-500',
+            colorClass: 'bg-emerald-100 text-emerald-700',
             description: 'Order refills & find locations'
         },
         {
             icon: ShieldCheckIcon,
             label: 'Insurance',
             href: '/insurance',
-            color: 'from-teal-500 to-primary-500',
+            colorClass: 'bg-teal-100 text-teal-700',
             description: 'Manage plans & claims'
         },
         {
             icon: ShieldExclamationIcon,
             label: 'Emergency',
             href: '/emergency',
-            color: 'from-rose-500 to-red-600',
+            colorClass: 'bg-rose-100 text-rose-700',
             description: 'Contacts & SOS features'
         },
         {
             icon: BellAlertIcon,
             label: 'Reminders',
             href: '/medication-reminders',
-            color: 'from-amber-500 to-orange-500',
+            colorClass: 'bg-amber-100 text-amber-700',
             description: 'Manage your daily schedule'
         },
         {
             icon: SparklesIcon,
             label: 'Premium Features',
             href: '/premium-hub',
-            color: 'from-purple-500 to-indigo-600',
+            colorClass: 'bg-purple-100 text-purple-700',
             description: 'Access all premium features'
         },
     ];
@@ -470,22 +470,15 @@ const DashboardPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5 pb-12">
-            {/* Hero Header Section */}
+        <div className="min-h-screen bg-[#FDFBF7] pb-12">
+            {/* Hero Header Section - Poster Style */}
             <motion.div 
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative bg-gradient-to-br from-primary via-emerald-600 to-teal-600 overflow-hidden mb-8"
+                className="relative bg-primary-900 overflow-hidden mb-12 rounded-b-[3rem] mx-2 pt-8"
             >
-                {/* Animated Background Pattern */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob"></div>
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-2000"></div>
-                    <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-4000"></div>
-                </div>
-
-                <div className="relative max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-8 sm:py-10 md:py-14">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6">
+                <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16 pb-24">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                         <motion.div 
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -496,32 +489,27 @@ const DashboardPage: React.FC = () => {
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3 }}
-                                className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 flex-wrap"
+                                className="flex items-center gap-3 mb-6"
                             >
-                                <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-xs font-bold uppercase tracking-wider text-white">
-                                    <SparklesIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 inline mr-1.5 sm:mr-2" />
-                                    <span className="hidden sm:inline">Dashboard Overview</span>
-                                    <span className="sm:hidden">Dashboard</span>
+                                <span className="px-5 py-2 rounded-full bg-white text-primary-900 border border-primary-800 text-xs font-bold uppercase tracking-widest shadow-lg">
+                                    <SparklesIcon className="h-4 w-4 inline mr-2 text-accent" />
+                                    Your Health Hub
                                 </span>
-                                <span className="text-xs sm:text-sm text-white/80 font-medium">{formatDate(new Date().toISOString())}</span>
+                                <span className="text-sm text-white/60 font-medium font-mono">{formatDate(new Date().toISOString())}</span>
                             </motion.div>
-                            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-3 sm:mb-4 text-white tracking-tight font-display">
+                            
+                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display text-white mb-6 leading-tight">
                                 Good {getGreeting()},{' '}
-                                <span className="relative inline-block">
-                                    <span className="relative z-10">{user?.first_name || 'User'}</span>
-                                    <motion.span 
-                                        initial={{ scaleX: 0 }}
-                                        animate={{ scaleX: 1 }}
-                                        transition={{ delay: 0.5, duration: 0.6 }}
-                                        className="absolute bottom-2 left-0 right-0 h-3 bg-yellow-400/30 -z-0"
-                                    ></motion.span>
+                                <span className="text-accent relative">
+                                    {user?.first_name || 'User'}
                                 </span>
                             </h1>
-                            <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-2xl leading-relaxed">
-                                {t('welcomeMessage', "Your health dashboard is updated. You have")}{' '}
-                                <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded text-xs sm:text-sm">{upcomingAppointments.length} upcoming appointments</span>{' '}
+                            
+                            <p className="text-lg md:text-xl text-white/80 max-w-2xl font-light">
+                                {t('welcomeMessage', "Overview update:")}{' '}
+                                <span className="text-white font-medium border-b border-white/30">{upcomingAppointments.length} appointments</span>{' '}
                                 {t('and')}{' '}
-                                <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded text-xs sm:text-sm">{activeReminders.length} active reminders</span>.
+                                <span className="text-white font-medium border-b border-white/30">{activeReminders.length} reminders</span>.
                             </p>
                         </motion.div>
                         
@@ -530,57 +518,42 @@ const DashboardPage: React.FC = () => {
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.4 }}
-                            className="flex-shrink-0"
+                            className="flex-shrink-0 self-start md:self-center"
                         >
-                            <Link to="/notifications" className="relative group">
+                            <Link to="/notifications" className="relative group block">
                                 <motion.div 
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    className="p-3 sm:p-4 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl border-2 border-white/30 hover:bg-white/30 transition-all shadow-lg"
+                                    whileHover={{ rotate: 5 }}
+                                    className="p-5 bg-accent text-white rounded-2xl hover:bg-accent-hover transition-colors shadow-xl border-4 border-white/10"
                                 >
-                                    <BellAlertIcon className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+                                    <BellAlertIcon className="h-8 w-8" />
                                     {unreadCount > 0 && (
-                                        <motion.span 
-                                            initial={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-red-500 text-white text-xs font-bold ring-2 sm:ring-4 ring-primary animate-pulse"
-                                        >
+                                        <div className="absolute -top-2 -right-2 flex items-center justify-center h-8 w-8 rounded-full bg-white text-primary-900 text-sm font-black border-4 border-primary-900">
                                             {unreadCount > 9 ? '9+' : unreadCount}
-                                        </motion.span>
+                                        </div>
                                     )}
                                 </motion.div>
                             </Link>
                         </motion.div>
                     </div>
                 </div>
-
-                {/* Bottom Wave */}
-                <div className="absolute bottom-0 left-0 right-0">
-                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
-                    </svg>
-                </div>
             </motion.div>
 
             {/* Main Content */}
             <motion.div 
-                className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 space-y-6 sm:space-y-8"
+                className="max-w-7xl mx-auto px-4 lg:px-8 space-y-12 -mt-16 relative z-10"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
             >
-                {/* Quick Actions - Streamlined */}
+                {/* Quick Actions - Sticker Style */}
                 <motion.div variants={itemVariants}>
-                    <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                        <div className="p-2 sm:p-3 bg-gradient-to-br from-primary to-teal-600 rounded-xl sm:rounded-2xl shadow-lg">
-                            <SparklesIcon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                        </div>
+                    <div className="flex items-center gap-4 mb-8 pl-2">
+                        <div className="w-3 h-12 bg-accent rounded-full"></div>
                         <div>
-                            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 font-display">Quick Actions</h2>
-                            <p className="text-gray-600 text-xs sm:text-sm">Access key features instantly</p>
+                            <h2 className="text-3xl font-display font-bold text-primary-900">Quick Actions</h2>
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                         {quickActions.filter(action => 
                             // Remove reminders from quick actions since it's in main content
                             action.label !== 'Reminders'
@@ -602,66 +575,64 @@ const DashboardPage: React.FC = () => {
                     {/* Left Column - Appointments & Vitals */}
                     <motion.div variants={itemVariants} className="lg:col-span-2 space-y-4 sm:space-y-6 md:space-y-8">
                         {/* Upcoming Appointments */}
-                        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg shadow-gray-200/50 p-4 sm:p-6 md:p-8 border border-gray-100">
-                            <div className="flex items-center justify-between mb-4 sm:mb-6">
-                                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center font-display">
-                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mr-2 sm:mr-3 shadow-lg shadow-primary/10">
-                                        <CalendarDaysIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                                    </div>
+                        <div className="bg-white rounded-[2.5rem] shadow-sm p-8 border-2 border-primary-900/5">
+                            <div className="flex items-center justify-between mb-8">
+                                <h2 className="text-2xl font-display font-bold text-primary-900 flex items-center">
+                                    <CalendarDaysIcon className="h-8 w-8 text-primary-900 mr-3" />
                                     <span>Appointments</span>
                                 </h2>
                                 <Link 
                                     to="/appointments" 
-                                    className="text-xs sm:text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
+                                    className="px-4 py-2 bg-primary-50 text-primary-900 rounded-lg text-sm font-bold hover:bg-primary-900 hover:text-white transition-colors"
                                 >
-                                    <span className="hidden sm:inline">View All</span>
-                                    <span className="sm:hidden">All</span>
-                                    <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                    View All
                                 </Link>
                             </div>
                             
                             {appointmentsLoading ? (
                                 <div className="space-y-4">
-                                    <Skeleton className="h-28 w-full rounded-2xl" />
-                                    <Skeleton className="h-20 w-full rounded-2xl" />
+                                    <Skeleton className="h-32 w-full rounded-3xl" />
+                                    <Skeleton className="h-24 w-full rounded-3xl" />
                                 </div>
                             ) : appointmentsError ? (
                                 <ErrorMessage message={appointmentsError} onRetry={fetchDashboardData} />
                             ) : upcomingAppointments.length > 0 && nextAppointment ? (
-                                <div className="space-y-4">
-                                    <Link to={`/appointments/${nextAppointment.id}`}>
+                                <div className="space-y-6">
+                                    <Link to={`/appointments/${nextAppointment.id}`} className="block">
                                         <motion.div 
                                             whileHover={{ scale: 1.01 }}
-                                            className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border-2 border-blue-100 relative overflow-hidden cursor-pointer group"
+                                            className="bg-primary-900 text-white rounded-[2rem] p-8 relative overflow-hidden group"
                                         >
-                                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200 rounded-full -mr-10 -mt-10 opacity-30 blur-2xl"></div>
+                                            {/* Abstract Geometric Decoration */}
+                                            <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-16 -mt-16 pointer-events-none"></div>
+                                            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-10 -mb-10 pointer-events-none"></div>
                                             
                                             <div className="relative z-10">
-                                                <div className="flex justify-between items-start mb-4">
-                                                    <div className="flex-1">
-                                                        <span className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-2 inline-block">Up Next</span>
-                                                        <h3 className="text-xl font-bold text-gray-900 mb-1 font-display">Dr. {nextAppointment.doctor}</h3>
-                                                        <p className="text-blue-600/80 text-sm font-medium">{nextAppointment.specialty || 'General Practice'}</p>
+                                                <div className="flex justify-between items-start mb-6">
+                                                    <div>
+                                                        <span className="inline-block px-3 py-1 bg-accent text-white text-xs font-bold uppercase tracking-wider rounded-md mb-3">Up Next</span>
+                                                        <h3 className="text-3xl font-display font-bold text-white mb-1">Dr. {nextAppointment.doctor}</h3>
+                                                        <p className="text-white/70 text-lg">{nextAppointment.specialty || 'General Practice'}</p>
                                                     </div>
-                                                    <div className="bg-white p-2.5 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
+                                                    <div className="bg-white/10 p-3 rounded-xl border border-white/10">
                                                         {getAppointmentStatusIcon(nextAppointment.status)}
                                                     </div>
                                                 </div>
                                                 
-                                                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-4">
-                                                    <div className="flex items-center bg-white/60 px-3 py-1.5 rounded-lg">
-                                                        <CalendarDaysIcon className="h-4 w-4 mr-2 text-blue-500" />
-                                                        <span className="font-medium">{formatDate(nextAppointment.date)}</span>
+                                                <div className="flex flex-wrap items-center gap-4">
+                                                    <div className="flex items-center bg-white/10 px-4 py-2 rounded-xl border border-white/10">
+                                                        <CalendarDaysIcon className="h-5 w-5 mr-3 text-accent" />
+                                                        <span className="font-bold text-lg">{formatDate(nextAppointment.date)}</span>
                                                     </div>
-                                                    <div className="flex items-center bg-white/60 px-3 py-1.5 rounded-lg">
-                                                        <ClockIcon className="h-4 w-4 mr-2 text-blue-500" />
-                                                        <span className="font-medium">{formatTime(nextAppointment.start_time)}</span>
+                                                    <div className="flex items-center bg-white/10 px-4 py-2 rounded-xl border border-white/10">
+                                                        <ClockIcon className="h-5 w-5 mr-3 text-accent" />
+                                                        <span className="font-bold text-lg">{formatTime(nextAppointment.start_time)}</span>
                                                     </div>
                                                 </div>
 
                                                 {nextAppointment.appointment_type === 'virtual' && (
-                                                    <div className="inline-flex items-center px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-bold border border-purple-200">
-                                                        <SparklesIcon className="h-3 w-3 mr-1.5" />
+                                                    <div className="mt-4 inline-flex items-center px-3 py-1 bg-white/10 rounded-lg text-sm text-white/90">
+                                                        <SparklesIcon className="h-4 w-4 mr-2" />
                                                         Virtual Consultation
                                                     </div>
                                                 )}
@@ -670,22 +641,22 @@ const DashboardPage: React.FC = () => {
                                     </Link>
                                     
                                     {upcomingAppointments.length > 1 && (
-                                        <div className="space-y-2">
+                                        <div className="space-y-3">
                                             {upcomingAppointments.slice(1, 4).map(apt => (
                                                 <Link key={apt.id} to={`/appointments/${apt.id}`}>
                                                     <motion.div 
                                                         whileHover={{ x: 4 }}
-                                                        className="flex justify-between items-center group hover:bg-gray-50 p-3 rounded-xl transition-colors border border-gray-100"
+                                                        className="flex justify-between items-center group hover:bg-primary-50 p-4 rounded-2xl transition-colors border-l-4 border-transparent hover:border-primary-900"
                                                     >
-                                                        <div className="flex-1">
-                                                            <p className="font-bold text-gray-800 text-sm mb-1">Dr. {apt.doctor}</p>
-                                                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                                                        <div>
+                                                            <p className="font-bold text-primary-900 text-lg mb-1">Dr. {apt.doctor}</p>
+                                                            <div className="flex items-center gap-3 text-sm text-gray-500 font-medium">
                                                                 <span>{formatDate(apt.date)}</span>
                                                                 <span>•</span>
                                                                 <span>{formatTime(apt.start_time)}</span>
                                                             </div>
                                                         </div>
-                                                        <ArrowRightIcon className="h-4 w-4 text-gray-300 group-hover:text-primary transition-colors" />
+                                                        <ArrowRightIcon className="h-5 w-5 text-gray-300 group-hover:text-primary-900 transition-colors" />
                                                     </motion.div>
                                                 </Link>
                                             ))}
@@ -695,52 +666,47 @@ const DashboardPage: React.FC = () => {
                             ) : (
                                 <EmptyState
                                     icon={CalendarDaysIcon}
-                                    message="No upcoming appointments scheduled."
-                                    actionLabel="Book Appointment"
+                                    message="No upcoming appointments."
+                                    actionLabel="Book Now"
                                     actionLink="/doctors"
                                 />
                             )}
                         </div>
 
                         {/* Vital Signs */}
-                        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg shadow-gray-200/50 p-4 sm:p-6 md:p-8 border border-gray-100">
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
-                                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center font-display">
-                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center mr-2 sm:mr-3 shadow-lg shadow-primary/10">
-                                        <HeartIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                                    </div>
+                        <div className="bg-white rounded-[2.5rem] shadow-sm p-8 border-2 border-primary-900/5">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                                <h2 className="text-2xl font-bold text-primary-900 flex items-center font-display">
+                                    <HeartIcon className="h-8 w-8 text-primary-900 mr-3" />
                                     <span>Recent Vitals</span>
                                 </h2>
-                                <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="flex items-center gap-3">
                                     <button
                                         onClick={() => setShowQuickVitalModal(true)}
-                                        className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-primary/20 hover:shadow-lg active:scale-95 sm:hover:scale-105 transition-all duration-200 touch-manipulation"
+                                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-accent text-white text-sm font-bold shadow-md hover:bg-accent-hover active:scale-95 transition-all"
                                     >
-                                        <PlusIcon className="h-4 w-4 flex-shrink-0" />
-                                        <span className="hidden sm:inline">Quick Log</span>
-                                        <span className="sm:hidden">Log</span>
+                                        <PlusIcon className="h-4 w-4" />
+                                        Log
                                     </button>
                                     <Link 
                                         to="/health/vitals" 
-                                        className="text-xs sm:text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1 px-2 sm:px-0"
+                                        className="text-sm font-bold text-primary-900 bg-primary-50 px-4 py-2 rounded-xl hover:bg-primary-900 hover:text-white transition-colors"
                                     >
-                                        <span className="hidden sm:inline">View All</span>
-                                        <span className="sm:hidden">All</span>
-                                        <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                        History
                                     </Link>
                                 </div>
                             </div>
                             
                             {vitalsLoading ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                                    <Skeleton className="h-32 sm:h-28 rounded-2xl" />
-                                    <Skeleton className="h-32 sm:h-28 rounded-2xl" />
-                                    <Skeleton className="h-32 sm:h-28 rounded-2xl" />
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <Skeleton className="h-32 rounded-3xl" />
+                                    <Skeleton className="h-32 rounded-3xl" />
+                                    <Skeleton className="h-32 rounded-3xl" />
                                 </div>
                             ) : vitalsError ? (
                                 <ErrorMessage message={vitalsError} onRetry={fetchDashboardData} />
                             ) : recentVitals.length > 0 ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     {recentVitals.map((vital, index) => {
                                         const previousVital = index < recentVitals.length - 1 ? recentVitals[index + 1] : null;
                                         const bpStatus = getHealthStatus(vital.systolic_pressure, 'bp_systolic');
@@ -752,83 +718,44 @@ const DashboardPage: React.FC = () => {
                                             <motion.div 
                                                 key={vital.id}
                                                 whileHover={{ scale: 1.02, y: -2 }}
-                                                whileTap={{ scale: 0.98 }}
-                                                className={`flex flex-col p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all cursor-pointer touch-manipulation ${
+                                                className={`flex flex-col p-5 rounded-[2rem] transition-all cursor-pointer border-2 ${
                                                     index === 0 
-                                                        ? 'bg-gradient-to-br from-rose-50 to-red-50 border-2 border-rose-200 shadow-sm' 
-                                                        : 'bg-gray-50 border border-gray-200 hover:border-gray-300 active:bg-gray-100'
+                                                        ? 'bg-rose-50 border-rose-200' 
+                                                        : 'bg-gray-50 border-gray-100 hover:border-primary-100'
                                                 }`}
                                                 onClick={() => navigate('/health/vitals')}
                                             >
-                                                <div className="flex items-center justify-between mb-3">
+                                                <div className="flex items-center justify-between mb-4">
                                                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                                                         index === 0 ? 'bg-rose-100 text-rose-600' : 'bg-white text-gray-400'
                                                     }`}>
                                                         <HeartIcon className="h-5 w-5" />
                                                     </div>
-                                                    <div className="flex items-center gap-2">
-                                                        {index === 0 && (
-                                                            <span className="text-xs font-bold text-rose-600 bg-white px-2 py-1 rounded-md shadow-sm">Latest</span>
-                                                        )}
-                                                        {(bpStatus.status === 'critical' || hrStatus.status === 'critical') && index === 0 && (
-                                                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                                                        )}
-                                                    </div>
+                                                    {index === 0 && (
+                                                        <span className="text-[10px] font-bold text-rose-600 bg-white px-2 py-1 rounded-lg uppercase tracking-wider">Latest</span>
+                                                    )}
                                                 </div>
-                                                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">
+                                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-3">
                                                     {formatDate(vital.date_recorded.split('T')[0])}
                                                 </p>
-                                                <div className="space-y-2">
+                                                <div className="space-y-3">
                                                     {vital.systolic_pressure && vital.diastolic_pressure && (
-                                                        <div className="flex items-center justify-between">
+                                                        <div className="flex items-center justify-between bg-white/50 p-2 rounded-lg">
                                                             <div>
-                                                                <span className="text-lg font-bold text-gray-900">{vital.systolic_pressure}/{vital.diastolic_pressure}</span>
-                                                                <span className="text-xs font-normal text-gray-500 ml-1">mmHg</span>
+                                                                <span className="text-lg font-black text-primary-900">{vital.systolic_pressure}/{vital.diastolic_pressure}</span>
+                                                                <span className="text-[10px] text-gray-400 ml-1">mmHg</span>
                                                             </div>
-                                                            <div className="flex items-center gap-1">
-                                                                {bpTrend && (
-                                                                    bpTrend === 'up' ? (
-                                                                        <ArrowTrendingUpIcon className={`h-4 w-4 ${bpStatus.status === 'critical' ? 'text-red-600' : bpStatus.status === 'warning' ? 'text-amber-600' : 'text-primary'}`} />
-                                                                    ) : bpTrend === 'down' ? (
-                                                                        <ArrowTrendingDownIcon className={`h-4 w-4 ${bpStatus.status === 'normal' ? 'text-primary' : 'text-amber-600'}`} />
-                                                                    ) : null
-                                                                )}
-                                                                {bpStatus.status !== 'normal' && (
-                                                                    <span className={`text-xs font-bold ${bpStatus.color}`}>{bpStatus.label}</span>
-                                                                )}
-                                                            </div>
+                                                            {bpStatus.status !== 'normal' && (
+                                                                <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                                                            )}
                                                         </div>
                                                     )}
                                                     {vital.heart_rate && (
-                                                        <div className="flex items-center justify-between">
+                                                        <div className="flex items-center justify-between bg-white/50 p-2 rounded-lg">
                                                             <div>
-                                                                <span className="text-lg font-bold text-gray-900">{vital.heart_rate}</span>
-                                                                <span className="text-xs font-normal text-gray-500 ml-1">bpm</span>
+                                                                <span className="text-lg font-black text-primary-900">{vital.heart_rate}</span>
+                                                                <span className="text-[10px] text-gray-400 ml-1">bpm</span>
                                                             </div>
-                                                            <div className="flex items-center gap-1">
-                                                                {hrTrend && (
-                                                                    hrTrend === 'up' ? (
-                                                                        <ArrowTrendingUpIcon className={`h-4 w-4 ${hrStatus.status === 'warning' ? 'text-amber-600' : 'text-primary'}`} />
-                                                                    ) : hrTrend === 'down' ? (
-                                                                        <ArrowTrendingDownIcon className={`h-4 w-4 ${hrStatus.status === 'normal' ? 'text-primary' : 'text-amber-600'}`} />
-                                                                    ) : null
-                                                                )}
-                                                                {hrStatus.status !== 'normal' && (
-                                                                    <span className={`text-xs font-bold ${hrStatus.color}`}>{hrStatus.label}</span>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                    {vital.temperature && (
-                                                        <div className="flex items-center justify-between">
-                                                            <div>
-                                                                <span className="text-sm font-bold text-gray-900">{vital.temperature.toFixed(1)}°C</span>
-                                                            </div>
-                                                            {getHealthStatus(vital.temperature, 'temperature').status !== 'normal' && (
-                                                                <span className={`text-xs font-bold ${getHealthStatus(vital.temperature, 'temperature').color}`}>
-                                                                    {getHealthStatus(vital.temperature, 'temperature').label}
-                                                                </span>
-                                                            )}
                                                         </div>
                                                     )}
                                                 </div>
@@ -839,28 +766,25 @@ const DashboardPage: React.FC = () => {
                             ) : (
                                 <EmptyState
                                     icon={HeartIcon}
-                                    message="Start tracking your health today."
-                                    actionLabel="Log First Entry"
+                                    message="Start tracking your health."
+                                    actionLabel="Log Vitals"
                                     actionLink="/health/vitals"
                                 />
                             )}
                         </div>
 
-                        {/* Recent Orders Section - Moved to main content area */}
-                        <div className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 p-6 md:p-8 border border-gray-100">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-gray-900 flex items-center font-display">
-                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mr-3 shadow-lg shadow-primary/10">
-                                        <CubeIcon className="h-5 w-5 text-white" />
-                                    </div>
+                        {/* Recent Orders Section */}
+                        <div className="bg-white rounded-[2.5rem] shadow-sm p-8 border-2 border-primary-900/5">
+                            <div className="flex items-center justify-between mb-8">
+                                <h2 className="text-2xl font-bold text-primary-900 flex items-center font-display">
+                                    <CubeIcon className="h-8 w-8 text-primary-900 mr-3" />
                                     <span>Recent Orders</span>
                                 </h2>
                                 <Link 
                                     to="/orders" 
-                                    className="text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
+                                    className="px-4 py-2 bg-primary-50 text-primary-900 rounded-lg text-sm font-bold hover:bg-primary-900 hover:text-white transition-colors"
                                 >
                                     View All
-                                    <ArrowRightIcon className="h-4 w-4" />
                                 </Link>
                             </div>
 
@@ -875,7 +799,7 @@ const DashboardPage: React.FC = () => {
                             ) : recentOrders.length === 0 ? (
                                 <EmptyState
                                     icon={CubeIcon}
-                                    message="No orders yet. Forward a prescription to a pharmacy to create an order."
+                                    message="No orders yet."
                                     actionLabel="View Prescriptions"
                                     actionLink="/prescriptions"
                                 />
@@ -886,43 +810,43 @@ const DashboardPage: React.FC = () => {
                                             switch (status) {
                                                 case 'pending':
                                                     return { 
-                                                        color: 'bg-orange-100 text-orange-800 border-orange-200', 
+                                                        color: 'bg-orange-50 text-orange-900 border-orange-200', 
                                                         icon: ClockIcon,
                                                         label: 'Pending'
                                                     };
                                                 case 'processing':
                                                     return { 
-                                                        color: 'bg-amber-100 text-amber-800 border-amber-200', 
+                                                        color: 'bg-amber-50 text-amber-900 border-amber-200', 
                                                         icon: ClockIcon,
                                                         label: 'Processing'
                                                     };
                                                 case 'ready':
                                                     return { 
-                                                        color: 'bg-blue-100 text-blue-800 border-blue-200', 
+                                                        color: 'bg-blue-50 text-blue-900 border-blue-200', 
                                                         icon: CubeIcon,
                                                         label: 'Ready'
                                                     };
                                                 case 'delivering':
                                                     return { 
-                                                        color: 'bg-purple-100 text-purple-800 border-purple-200', 
+                                                        color: 'bg-purple-50 text-purple-900 border-purple-200', 
                                                         icon: TruckIcon,
                                                         label: 'Delivering'
                                                     };
                                                 case 'completed':
                                                     return { 
-                                                        color: 'bg-emerald-100 text-emerald-800 border-emerald-200', 
+                                                        color: 'bg-emerald-50 text-emerald-900 border-emerald-200', 
                                                         icon: CheckCircleIcon,
                                                         label: 'Completed'
                                                     };
                                                 case 'cancelled':
                                                     return { 
-                                                        color: 'bg-red-100 text-red-800 border-red-200', 
+                                                        color: 'bg-red-50 text-red-900 border-red-200', 
                                                         icon: ExclamationCircleIcon,
                                                         label: 'Cancelled'
                                                     };
                                                 default:
                                                     return { 
-                                                        color: 'bg-gray-100 text-gray-800 border-gray-200', 
+                                                        color: 'bg-gray-50 text-gray-900 border-gray-200', 
                                                         icon: ClockIcon,
                                                         label: status
                                                     };
@@ -936,42 +860,37 @@ const DashboardPage: React.FC = () => {
                                             <motion.div
                                                 key={order.id}
                                                 whileHover={{ x: 4 }}
-                                                className="group flex items-center justify-between p-4 rounded-xl bg-gray-50 border border-gray-100 hover:bg-gray-100 hover:shadow-sm transition-all cursor-pointer"
+                                                className="group flex items-center justify-between p-5 rounded-2xl bg-white border-2 border-primary-900/5 hover:border-primary-900 hover:shadow-sm transition-all cursor-pointer"
                                                 onClick={() => navigate('/orders')}
                                             >
-                                                <div className="flex items-center gap-3 flex-1 min-w-0">
-                                                    <div className={`p-2.5 rounded-lg ${statusInfo.color} border-2 flex-shrink-0`}>
-                                                        <StatusIcon className="h-4 w-4" />
+                                                <div className="flex items-center gap-4 flex-1 min-w-0">
+                                                    <div className={`p-3 rounded-xl ${statusInfo.color} border-2 flex-shrink-0`}>
+                                                        <StatusIcon className="h-5 w-5" />
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                                            <h3 className="font-bold text-gray-900 text-sm">
+                                                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                                                            <h3 className="font-bold text-primary-900 text-base">
                                                                 Order #{order.id}
                                                             </h3>
-                                                            <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${statusInfo.color} border`}>
+                                                            <span className={`px-2 py-0.5 rounded-lg text-xs font-bold ${statusInfo.color} border uppercase tracking-wider`}>
                                                                 {statusInfo.label}
                                                             </span>
                                                         </div>
-                                                        <div className="flex items-center gap-3 text-xs text-gray-600 flex-wrap">
+                                                        <div className="flex items-center gap-4 text-sm text-gray-500 font-medium flex-wrap">
                                                             {order.pharmacy_details && (
-                                                                <span className="font-medium truncate">
+                                                                <span className="truncate max-w-[150px]">
                                                                     {order.pharmacy_details.name}
                                                                 </span>
                                                             )}
-                                                            {order.order_date && (
-                                                                <span className="text-gray-500">
-                                                                    {formatDate(order.order_date, 'MMM dd, yyyy')}
-                                                                </span>
-                                                            )}
                                                             {order.total_amount && (
-                                                                <span className="font-semibold text-gray-900">
+                                                                <span className="text-primary-900 font-bold bg-primary-50 px-2 py-0.5 rounded">
                                                                     ₦{parseFloat(order.total_amount).toLocaleString()}
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <ArrowRightIcon className="h-4 w-4 text-gray-400 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
+                                                <ArrowRightIcon className="h-5 w-5 text-gray-300 group-hover:text-primary-900 transition-colors flex-shrink-0 ml-2" />
                                             </motion.div>
                                         );
                                     })}
@@ -983,20 +902,17 @@ const DashboardPage: React.FC = () => {
                     {/* Right Column - Prescriptions, Medications & Health Logs */}
                     <motion.div variants={itemVariants} className="space-y-6 md:space-y-8">
                         {/* Prescriptions */}
-                        <div className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 p-6 md:p-8 border border-gray-100">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-gray-900 flex items-center font-display">
-                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center mr-3 shadow-lg shadow-primary/10">
-                                        <DocumentTextIcon className="h-5 w-5 text-white" />
-                                    </div>
+                        <div className="bg-white rounded-[2.5rem] shadow-sm p-8 border-2 border-primary-900/5">
+                            <div className="flex items-center justify-between mb-8">
+                                <h2 className="text-xl font-bold text-primary-900 flex items-center font-display">
+                                    <DocumentTextIcon className="h-7 w-7 text-primary-900 mr-2" />
                                     <span>Prescriptions</span>
                                 </h2>
                                 <Link 
                                     to="/prescriptions" 
-                                    className="text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
+                                    className="text-sm font-bold text-primary-900 underline decoration-2 underline-offset-4 hover:text-accent transition-colors"
                                 >
-                                    View All
-                                    <ArrowRightIcon className="h-4 w-4" />
+                                    All Scripts
                                 </Link>
                             </div>
                             
@@ -1013,39 +929,41 @@ const DashboardPage: React.FC = () => {
                                         <Link key={prescription.id} to={`/prescriptions`}>
                                             <motion.div 
                                                 whileHover={{ scale: 1.01, x: 4 }}
-                                                className={`relative rounded-2xl p-5 border-2 transition-all cursor-pointer group ${
+                                                className={`relative rounded-[1.5rem] p-5 border-2 transition-all cursor-pointer group ${
                                                     index === 0 
-                                                        ? 'bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-50 border-indigo-100' 
-                                                        : 'bg-gray-50 border-gray-100 hover:border-indigo-200'
+                                                        ? 'bg-primary-900 text-white border-primary-900' 
+                                                        : 'bg-gray-50 border-gray-100 hover:border-primary-900'
                                                 }`}
                                             >
                                                 {index === 0 && (
                                                     <div className="absolute right-0 bottom-0 opacity-10">
-                                                        <DocumentTextIcon className="h-24 w-24 -mr-6 -mb-6 text-indigo-600" />
+                                                        <DocumentTextIcon className="h-24 w-24 -mr-6 -mb-6 text-white" />
                                                     </div>
                                                 )}
                                                 <div className="relative z-10">
                                                     <div className="flex items-start justify-between mb-2">
                                                         <div className="flex-1">
                                                             {index === 0 && (
-                                                                <p className="text-indigo-800 text-xs font-bold uppercase mb-2 tracking-wider">Most Recent</p>
+                                                                <p className="text-accent text-xs font-bold uppercase mb-2 tracking-wider">Latest</p>
                                                             )}
-                                                            <h3 className="text-lg font-bold text-gray-900 mb-1 font-display">
+                                                            <h3 className={`text-lg font-bold mb-1 font-display ${index === 0 ? 'text-white' : 'text-primary-900'}`}>
                                                                 {prescription.diagnosis || 'Prescription'}
                                                             </h3>
                                                             {prescription.items && prescription.items.length > 0 && (
-                                                                <p className="text-sm text-gray-600 mb-2">
+                                                                <p className={`text-sm mb-2 ${index === 0 ? 'text-white/70' : 'text-gray-500'}`}>
                                                                     {prescription.items.length} {prescription.items.length === 1 ? 'medication' : 'medications'}
                                                                 </p>
                                                             )}
                                                         </div>
                                                         {index === 0 && (
-                                                            <div className="bg-white p-2 rounded-xl shadow-sm">
-                                                                <DocumentTextIcon className="h-5 w-5 text-indigo-600" />
+                                                            <div className="bg-white/10 p-2 rounded-xl">
+                                                                <DocumentTextIcon className="h-5 w-5 text-white" />
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <div className="flex items-center text-indigo-700 text-xs font-medium bg-white/60 px-3 py-1.5 rounded-lg w-fit">
+                                                    <div className={`flex items-center text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg w-fit ${
+                                                        index === 0 ? 'bg-white/10 text-white' : 'bg-gray-200 text-gray-600'
+                                                    }`}>
                                                         <CalendarDaysIcon className="h-4 w-4 mr-2" />
                                                         {formatDate(prescription.date_prescribed)}
                                                     </div>
@@ -1065,20 +983,17 @@ const DashboardPage: React.FC = () => {
                         </div>
 
                         {/* Medication Reminders */}
-                        <div className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 p-6 md:p-8 border border-gray-100">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-gray-900 flex items-center font-display">
-                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mr-3 shadow-lg shadow-primary/10">
-                                        <BellAlertIcon className="h-5 w-5 text-white" />
-                                    </div>
+                        <div className="bg-white rounded-[2.5rem] shadow-sm p-8 border-2 border-primary-900/5">
+                            <div className="flex items-center justify-between mb-8">
+                                <h2 className="text-xl font-bold text-primary-900 flex items-center font-display">
+                                    <BellAlertIcon className="h-7 w-7 text-primary-900 mr-2" />
                                     <span>Medications</span>
                                 </h2>
                                 <Link 
                                     to="/medication-reminders" 
-                                    className="text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1"
+                                    className="text-sm font-bold text-primary-900 underline decoration-2 underline-offset-4 hover:text-accent transition-colors"
                                 >
-                                    View All
-                                    <ArrowRightIcon className="h-4 w-4" />
+                                    All Reminders
                                 </Link>
                             </div>
                             
@@ -1092,20 +1007,17 @@ const DashboardPage: React.FC = () => {
                             ) : activeReminders.length > 0 && nextReminder ? (
                                 <motion.div 
                                     whileHover={{ scale: 1.01 }}
-                                    className="relative bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 rounded-2xl p-6 border-2 border-amber-100 overflow-hidden"
+                                    className="relative bg-amber-50 rounded-[2rem] p-6 border-2 border-amber-200 overflow-hidden"
                                 >
-                                    <div className="absolute right-0 bottom-0 opacity-10">
-                                        <ShoppingBagIcon className="h-32 w-32 -mr-8 -mb-8 text-amber-600" />
-                                    </div>
                                     <div className="relative z-10">
-                                        <p className="text-amber-800 text-xs font-bold uppercase mb-2 tracking-wider">Next Dose</p>
-                                        <h3 className="text-xl font-bold text-gray-900 mb-2 font-display">{nextReminder.medication_display.name}</h3>
-                                        <div className="flex items-center text-amber-700 font-semibold mb-3 bg-white/60 px-3 py-1.5 rounded-lg w-fit">
-                                            <ClockIcon className="h-5 w-5 mr-2" />
+                                        <p className="text-amber-700 text-xs font-black uppercase mb-3 tracking-widest border-b-2 border-amber-200 inline-block pb-1">Next Dose</p>
+                                        <h3 className="text-2xl font-bold text-primary-900 mb-3 font-display">{nextReminder.medication_display.name}</h3>
+                                        <div className="flex items-center text-amber-900 font-bold mb-4 bg-white px-4 py-2 rounded-xl w-fit shadow-sm border border-amber-100">
+                                            <ClockIcon className="h-5 w-5 mr-2 text-amber-600" />
                                             {formatTime(nextReminder.time_of_day)}
                                         </div>
-                                        <div className="flex items-center gap-2 text-sm text-gray-600 pt-3 border-t border-amber-200/50">
-                                            <span className="font-medium">{nextReminder.dosage}</span>
+                                        <div className="flex items-center gap-3 text-sm text-amber-800/80 font-medium pt-3 border-t-2 border-amber-200/50">
+                                            <span className="bg-amber-100 px-2 py-0.5 rounded-md">{nextReminder.dosage}</span>
                                             <span className="text-amber-400">•</span>
                                             <span>{nextReminder.frequency}</span>
                                         </div>
@@ -1122,46 +1034,36 @@ const DashboardPage: React.FC = () => {
                         </div>
 
                         {/* Health Log Shortcuts */}
-                        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-lg shadow-gray-200/50 p-4 sm:p-6 md:p-8 border border-gray-100">
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
-                                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center font-display">
-                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mr-2 sm:mr-3 shadow-lg shadow-primary/10">
-                                        <PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                                    </div>
+                        <div className="bg-white rounded-[2.5rem] shadow-sm p-8 border-2 border-primary-900/5">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-8">
+                                <h2 className="text-xl font-bold text-primary-900 flex items-center font-display">
+                                    <PlusIcon className="h-6 w-6 text-primary-900 mr-2" />
                                     Log Health Data
                                 </h2>
-                                <Link 
-                                    to="/health" 
-                                    className="text-xs sm:text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1 self-start sm:self-auto"
-                                >
-                                    <span className="hidden sm:inline">View All</span>
-                                    <span className="sm:hidden">All</span>
-                                    <ArrowRightIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                </Link>
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                                 {healthSections.filter(section => section.path !== '/health/vitals').map((section) => (
                                     <Link
                                         key={section.path}
                                         to={section.path}
-                                        className="flex items-center p-3 sm:p-4 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-all group border border-transparent hover:border-gray-200 hover:shadow-sm touch-manipulation"
+                                        className="flex items-center p-4 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-all group border-2 border-transparent hover:border-gray-200 touch-manipulation"
                                     >
-                                        <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-gradient-to-br ${section.gradient} flex items-center justify-center shadow-md group-active:scale-95 sm:group-hover:scale-110 transition-transform flex-shrink-0`}>
-                                            <section.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                                        <div className={`w-12 h-12 rounded-xl ${section.colorClass} flex items-center justify-center border-2 border-black/5 flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                                            <section.icon className="h-6 w-6" />
                                         </div>
-                                        <div className="ml-3 sm:ml-4 flex-1 min-w-0">
-                                            <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors mb-0.5 font-display">{section.name}</h4>
-                                            <p className="text-xs text-gray-500 line-clamp-1">{section.description}</p>
+                                        <div className="ml-4 flex-1 min-w-0">
+                                            <h4 className="text-base font-bold text-primary-900 font-display">{section.name}</h4>
+                                            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{section.description}</p>
                                         </div>
-                                        <ArrowRightIcon className="h-4 w-4 text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
+                                        <ArrowRightIcon className="h-5 w-5 text-gray-300 group-hover:text-primary-900 transition-colors flex-shrink-0 ml-2" />
                                     </Link>
                                 ))}
                             </div>
                             {/* Quick Action Button */}
-                            <div className="mt-4 pt-4 border-t border-gray-100">
+                            <div className="mt-8 pt-6 border-t-2 border-gray-100">
                                 <Link
                                     to="/health/vitals"
-                                    className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white text-sm font-bold shadow-md shadow-primary/20 active:scale-95 sm:hover:shadow-lg sm:hover:scale-[1.02] transition-all duration-200 touch-manipulation"
+                                    className="flex items-center justify-center gap-2 w-full px-4 py-4 rounded-xl bg-primary-900 text-white text-sm font-bold shadow-lg hover:bg-primary-800 transition-all uppercase tracking-wider"
                                 >
                                     <HeartIcon className="h-5 w-5" />
                                     <span>Log Vital Signs</span>

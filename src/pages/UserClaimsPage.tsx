@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import {
   DocumentTextIcon,
   PlusIcon,
-  SparklesIcon,
+
   ArrowLeftIcon,
 } from '@heroicons/react/24/outline';
 import { getUserClaims, createInsuranceClaim } from '../api/insuranceClaims';
@@ -92,80 +92,56 @@ const UserClaimsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Gradient Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-teal-600 via-teal-500 to-primary-600">
-        {/* Animated Blobs */}
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 90, 0],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          className="absolute -top-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, -60, 0],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-          className="absolute -bottom-32 -right-32 w-[30rem] h-[30rem] bg-primary-500/20 rounded-full blur-3xl"
-        />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-cream-50 font-sans">
+      {/* Halo/Hero Section */}
+      <div className="relative bg-primary-900 rounded-b-[3rem] overflow-hidden mb-12 shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] mx-4 mt-4 md:mx-6">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+            className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8"
           >
             <div>
               <motion.button
-                whileHover={{ x: -5, scale: 1.02 }}
+                whileHover={{ x: -4 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate('/insurance')}
-                className="inline-flex items-center text-white/80 hover:text-white mb-4 transition-colors"
+                className="inline-flex items-center text-white/80 hover:text-amber-400 mb-6 transition-colors font-bold tracking-wide"
               >
                 <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                Back to Insurance
+                BACK TO INSURANCE
               </motion.button>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="flex items-center gap-3 mb-4"
-              >
-                <div className="p-3 bg-white/20 backdrop-blur-sm rounded-2xl">
-                  <DocumentTextIcon className="h-8 w-8 text-white" />
+              
+              <div className="flex items-center gap-4 mb-4">
+                <div className="bg-accent p-3 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[-2deg]">
+                    <DocumentTextIcon className="h-10 w-10 text-primary-900" />
                 </div>
-                <SparklesIcon className="h-6 w-6 text-white/80" />
-              </motion.div>
-              <h1 className="text-4xl md:text-5xl font-black text-white mb-2">
-                Insurance Claims
-              </h1>
-              <p className="text-lg text-white/90">
-                Submit and track your insurance claims
+                <h1 className="text-4xl md:text-6xl font-black text-amber-400 font-display uppercase tracking-tight">
+                  Insurance Claims
+                </h1>
+              </div>
+              
+              <p className="text-xl text-white font-medium max-w-xl leading-relaxed opacity-90 ml-2">
+                Submit and track your insurance claims with ease.
               </p>
             </div>
 
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ y: -4, boxShadow: "8px 8px 0px 0px rgba(0,0,0,1)" }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleAddClick}
-              className="px-6 py-3 bg-white text-teal-600 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg flex items-center gap-2"
+              className="px-8 py-4 bg-white text-primary-900 rounded-2xl font-black text-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2 transition-all"
             >
-              <PlusIcon className="h-5 w-5" />
-              Submit New Claim
+              <PlusIcon className="h-6 w-6 stroke-3" />
+              SUBMIT NEW CLAIM
             </motion.button>
           </motion.div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <Modal
           isOpen={showFormModal}
           onClose={handleFormCancel}
@@ -188,9 +164,9 @@ const UserClaimsPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="p-6 bg-red-50 border-2 border-red-200 rounded-2xl text-center my-4"
+            className="p-6 bg-red-500 text-white border-4 border-black rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center my-8"
           >
-            <p className="text-red-600 font-medium">{error}</p>
+            <p className="font-black text-xl uppercase tracking-wide">{error}</p>
           </motion.div>
         )}
 
@@ -198,29 +174,25 @@ const UserClaimsPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-16 bg-white rounded-3xl shadow-lg border-2 border-gray-100"
+            className="text-center py-20 bg-white rounded-[3rem] border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] px-6"
           >
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-              className="inline-block mb-4"
-            >
-              <DocumentTextIcon className="h-20 w-20 text-gray-300 mx-auto" />
-            </motion.div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">No Claims Submitted Yet</h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Submit your insurance claims here to track their status and get reimbursed for
-              medical expenses.
+            <div className="inline-block mb-6 relative">
+                <div className="absolute inset-0 bg-accent rounded-full blur-xl opacity-20 transform scale-150"></div>
+                <DocumentTextIcon className="h-24 w-24 text-primary-900 relative z-10" />
+            </div>
+            <h3 className="text-3xl font-black text-primary-900 mb-4 font-display uppercase">No Claims Submitted Yet</h3>
+            <p className="text-gray-600 mb-8 max-w-md mx-auto text-lg font-medium">
+              Submit your insurance claims here to track their status and get reimbursed for medical expenses.
             </p>
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ y: -4, boxShadow: "8px 8px 0px 0px rgba(0,0,0,1)" }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleAddClick}
               type="button"
-              className="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg flex items-center gap-2 mx-auto"
+              className="px-8 py-4 bg-primary-900 text-white rounded-2xl font-black text-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3 mx-auto transition-all"
             >
-              <PlusIcon className="h-5 w-5" />
-              Submit Your First Claim
+              <PlusIcon className="h-6 w-6" />
+              SUBMIT YOUR FIRST CLAIM
             </motion.button>
           </motion.div>
         )}
@@ -229,12 +201,14 @@ const UserClaimsPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="space-y-4"
+            className="space-y-6"
           >
             {totalCount > 0 && (
-              <p className="text-sm text-gray-600 mb-4">
-                Showing {claims.length} of {totalCount} claim{totalCount !== 1 ? 's' : ''}
-              </p>
+              <div className="bg-primary-900/5 inline-block px-4 py-2 rounded-xl border-2 border-primary-900/10 mb-4">
+                  <p className="text-primary-900 font-bold">
+                    Showing {claims.length} of {totalCount} claim{totalCount !== 1 ? 's' : ''}
+                  </p>
+              </div>
             )}
             {claims.map((claim, index) => (
               <motion.div
@@ -250,12 +224,12 @@ const UserClaimsPage: React.FC = () => {
         )}
 
         {nextPageUrl && !isLoadingMore && (
-          <div className="mt-8 text-center">
+          <div className="mt-12 text-center">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ y: -4, boxShadow: "6px 6px 0px 0px rgba(0,0,0,1)" }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => fetchClaims(nextPageUrl, false)}
-              className="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-all"
+              className="px-8 py-4 bg-white text-primary-900 rounded-2xl font-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all uppercase tracking-wide"
             >
               Load More Claims
             </motion.button>
@@ -263,12 +237,12 @@ const UserClaimsPage: React.FC = () => {
         )}
 
         {isLoadingMore && (
-          <p className="text-center text-gray-600 py-4 text-sm">Loading more...</p>
+          <p className="text-center text-gray-600 py-8 font-bold animate-pulse">Loading more claims...</p>
         )}
 
         {!isLoading && !nextPageUrl && totalCount > 0 && claims.length === totalCount && (
-          <p className="text-center text-gray-500 text-sm mt-6">
-            All {totalCount} claim{totalCount !== 1 ? 's' : ''} loaded.
+          <p className="text-center text-gray-400 font-bold uppercase tracking-widest text-xs mt-12">
+            — All claims loaded —
           </p>
         )}
       </div>

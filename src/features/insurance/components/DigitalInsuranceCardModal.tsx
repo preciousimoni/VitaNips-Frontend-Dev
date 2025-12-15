@@ -23,7 +23,7 @@ const DigitalInsuranceCardModal: React.FC<DigitalInsuranceCardModalProps> = ({ i
 
     const provider = insurance.plan.provider;
     const plan = insurance.plan;
-    const placeholderLogo = '/default-provider-logo.png'; // Path to your placeholder
+
     
     // Get user's full name
     const memberName = user?.first_name && user?.last_name
@@ -33,83 +33,86 @@ const DigitalInsuranceCardModal: React.FC<DigitalInsuranceCardModalProps> = ({ i
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Digital Insurance Card">
             <div className="p-2 sm:p-4">
-                <div className="bg-gradient-to-br from-primary to-primary-dark text-white rounded-xl shadow-2xl p-6 space-y-4 transform transition-all hover:scale-[1.02]">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <h2 className="text-2xl font-bold">{provider.name}</h2>
-                            <p className="text-sm opacity-90">{plan.name} ({plan.plan_type})</p>
+                <div className="bg-primary-900 text-white rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 space-y-6 border-4 border-black relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                        <ShieldCheckIcon className="h-32 w-32 rotate-12" />
+                    </div>
+                    
+                    <div className="relative z-10 flex justify-between items-start">
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="bg-accent p-2 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                    <ShieldCheckIcon className="h-8 w-8 text-primary-900" />
+                                </div>
+                                <h2 className="text-3xl font-black text-amber-400 font-display uppercase tracking-tight leading-none">{provider.name}</h2>
+                            </div>
+                            <p className="text-white/90 font-bold ml-1">{plan.name} ({plan.plan_type})</p>
                         </div>
-                        <img
-                            src={provider.logo || placeholderLogo}
-                            alt={`${provider.name} Logo`}
-                            className="h-10 w-auto object-contain bg-white p-1 rounded-md flex-shrink-0"
-                            onError={(e) => (e.currentTarget.src = placeholderLogo)}
-                        />
                     </div>
 
-                    <div className="border-t border-white/30 pt-4 space-y-3">
+                    <div className="relative z-10 border-t-2 border-white/20 pt-6 space-y-4">
                         <div>
-                            <p className="text-xs opacity-80 tracking-wider">MEMBER NAME</p>
-                            <p className="text-lg font-medium">
+                            <p className="text-xs text-accent font-black tracking-widest uppercase mb-1">MEMBER NAME</p>
+                            <p className="text-xl font-bold bg-white/10 px-3 py-2 rounded-lg border-2 border-white/10 inline-block min-w-[200px]">
                                 {memberName}
                             </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-6">
                             <div>
-                                <p className="text-xs opacity-80 tracking-wider">MEMBER ID</p>
-                                <p className="text-md font-medium">{insurance.member_id}</p>
+                                <p className="text-xs text-accent font-black tracking-widest uppercase mb-1">MEMBER ID</p>
+                                <p className="text-lg font-mono font-bold">{insurance.member_id}</p>
                             </div>
                             <div>
-                                <p className="text-xs opacity-80 tracking-wider">POLICY NUMBER</p>
-                                <p className="text-md font-medium">{insurance.policy_number}</p>
+                                <p className="text-xs text-accent font-black tracking-widest uppercase mb-1">POLICY NUMBER</p>
+                                <p className="text-lg font-mono font-bold">{insurance.policy_number}</p>
                             </div>
                             {insurance.group_number && (
                                 <div>
-                                    <p className="text-xs opacity-80 tracking-wider">GROUP NUMBER</p>
-                                    <p className="text-md font-medium">{insurance.group_number}</p>
+                                    <p className="text-xs text-accent font-black tracking-widest uppercase mb-1">GROUP NUMBER</p>
+                                    <p className="text-lg font-mono font-bold">{insurance.group_number}</p>
                                 </div>
                             )}
                             <div>
-                                <p className="text-xs opacity-80 tracking-wider">EFFECTIVE DATE</p>
-                                <p className="text-md font-medium">{formatDate(insurance.start_date)}</p>
+                                <p className="text-xs text-accent font-black tracking-widest uppercase mb-1">EFFECTIVE DATE</p>
+                                <p className="text-lg font-bold">{formatDate(insurance.start_date)}</p>
                             </div>
                             {insurance.end_date && (
                                 <div>
-                                    <p className="text-xs opacity-80 tracking-wider">EXPIRY DATE</p>
-                                    <p className="text-md font-medium">{formatDate(insurance.end_date)}</p>
+                                    <p className="text-xs text-accent font-black tracking-widest uppercase mb-1">EXPIRY DATE</p>
+                                    <p className="text-lg font-bold">{formatDate(insurance.end_date)}</p>
                                 </div>
                             )}
                         </div>
                     </div>
                     {insurance.is_primary && (
-                        <div className="flex items-center justify-end text-xs opacity-90 mt-2">
-                            <ShieldCheckIcon className="h-4 w-4 mr-1"/> Primary Plan
+                        <div className="absolute top-0 right-0 bg-accent text-primary-900 px-4 py-2 border-b-4 border-l-4 border-black rounded-bl-2xl font-black text-xs uppercase tracking-wider flex items-center gap-1 z-20">
+                            <ShieldCheckIcon className="h-4 w-4"/> Primary Plan
                         </div>
                     )}
                 </div>
 
                 {(insurance.insurance_card_front || insurance.insurance_card_back) && (
-                    <div className="mt-6">
-                        <h4 className="text-md font-semibold text-gray-700 mb-2">Scanned Card Images:</h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="mt-8">
+                        <h4 className="text-lg font-black text-primary-900 mb-4 font-display uppercase">Scanned Card Images</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             {insurance.insurance_card_front && (
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600 mb-1">Front</p>
-                                    <img src={insurance.insurance_card_front} alt="Insurance Card Front" className="rounded-lg shadow-md w-full object-contain max-h-60" />
+                                <div className="bg-white p-2 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                    <p className="text-xs font-bold text-gray-500 mb-2 uppercase text-center tracking-wide">Front</p>
+                                    <img src={insurance.insurance_card_front} alt="Insurance Card Front" className="rounded-xl w-full object-contain max-h-60 bg-gray-50 border border-gray-200" />
                                 </div>
                             )}
                             {insurance.insurance_card_back && (
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600 mb-1">Back</p>
-                                    <img src={insurance.insurance_card_back} alt="Insurance Card Back" className="rounded-lg shadow-md w-full object-contain max-h-60" />
+                                <div className="bg-white p-2 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                    <p className="text-xs font-bold text-gray-500 mb-2 uppercase text-center tracking-wide">Back</p>
+                                    <img src={insurance.insurance_card_back} alt="Insurance Card Back" className="rounded-xl w-full object-contain max-h-60 bg-gray-50 border border-gray-200" />
                                 </div>
                             )}
                         </div>
                     </div>
                 )}
 
-                 <div className="mt-6 text-right">
-                    <button onClick={onClose} className="btn-primary bg-gray-600 hover:bg-gray-700 px-4 py-2 text-sm">Close</button>
+                <div className="mt-8 text-right">
+                    <button onClick={onClose} className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-[2px] transition-all">Close</button>
                 </div>
             </div>
         </Modal>

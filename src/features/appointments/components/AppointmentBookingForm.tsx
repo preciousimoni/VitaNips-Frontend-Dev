@@ -239,7 +239,7 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
             toast.error(errorMessage, { 
                 duration: 6000,
                 style: {
-                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    background: '#ef4444',
                     color: '#fff',
                     padding: '16px 20px',
                     borderRadius: '12px',
@@ -409,19 +409,19 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
 
     return (
         <>
-        <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-6 p-4 md:p-6">
+        <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-8 font-sans">
             {/* Header */}
-            <div className="border-b border-gray-200 pb-4">
-                <h3 className="text-xl font-semibold text-gray-800 flex items-center">
-                    <CalendarDaysIcon className="h-6 w-6 mr-2 text-primary" />
+            <div className="border-b-2 border-primary-900/5 pb-6">
+                <h3 className="text-xl font-bold text-primary-900 flex items-center font-display">
+                    <CalendarDaysIcon className="h-6 w-6 mr-3 text-accent" />
                     {isFollowUp ? "Schedule Follow-up" : "Book New Appointment"}
                 </h3>
-                <p className="text-sm text-gray-600 mt-1 flex items-center">
-                    <UserIcon className="h-4 w-4 mr-1" />
-                    With: <span className='font-medium ml-1'>{doctorName}</span>
+                <p className="text-sm font-medium text-gray-500 mt-2 flex items-center bg-cream-50 w-fit px-3 py-1 rounded-lg">
+                    <UserIcon className="h-4 w-4 mr-2" />
+                    With: <span className='font-black text-primary-900 ml-1'>{doctorName}</span>
                 </p>
                 {getAvailableDays.length > 0 && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs font-bold text-accent uppercase tracking-wider mt-3">
                         Available: {getAvailableDays.join(', ')}
                     </p>
                 )}
@@ -480,7 +480,7 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-gradient-to-r from-red-50 via-orange-50 to-red-50 border-2 border-red-300 rounded-xl p-4 shadow-lg"
+                    className="bg-red-50 border-2 border-red-300 rounded-xl p-4 shadow-lg"
                 >
                     <div className="flex items-start gap-3">
                         <div className="flex-shrink-0">
@@ -504,7 +504,7 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
 
             {/* Date Selection */}
             <div>
-                <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="date" className="block text-sm font-black text-gray-500 uppercase tracking-widest mb-3">
                     Select Date *
                 </label>
                 <input 
@@ -512,57 +512,63 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                     id="date" 
                     {...register('date')}
                     min={today}
-                    className={`input-field ${formErrors.date ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    className={`w-full bg-cream-50 border-2 border-primary-900/10 rounded-xl p-4 text-primary-900 font-bold focus:border-primary-900 focus:ring-0 transition-colors ${formErrors.date ? 'border-red-300 focus:border-red-500' : ''}`}
                 />
                 {formErrors.date && (
-                    <p className="text-red-600 text-sm mt-1">{formErrors.date.message}</p>
+                    <p className="text-red-600 text-sm font-bold mt-2 flex items-center"><ExclamationTriangleIcon className="h-4 w-4 mr-1"/>{formErrors.date.message}</p>
                 )}
             </div>
 
             {/* Time Selection */}
             {selectedDate && (
                 <div>
-                    <label htmlFor="start_time" className="block text-sm font-medium text-gray-700 mb-2">
-                        Select Available Time Slot *
+                    <label htmlFor="start_time" className="block text-sm font-black text-gray-500 uppercase tracking-widest mb-3">
+                        Time Slot *
                     </label>
                     {availableSlots.length > 0 ? (
-                        <select 
-                            id="start_time" 
-                            {...register('start_time')}
-                            className={`input-field ${formErrors.start_time ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                        >
-                            <option value="">-- Select Time --</option>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             {availableSlots.map(slot => (
-                                <option key={slot} value={slot}>
+                                <button
+                                    key={slot}
+                                    type="button"
+                                    onClick={() => setValue('start_time', slot, { shouldValidate: true })}
+                                    className={`py-3 px-4 rounded-xl font-bold border-2 transition-all ${
+                                        selectedTime === slot
+                                            ? 'bg-primary-900 text-white border-primary-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] translate-x-[2px] translate-y-[2px] shadow-none'
+                                            : 'bg-white text-gray-700 border-primary-900/10 hover:border-primary-900 hover:bg-cream-50'
+                                    }`}
+                                >
                                     {formatTime(slot)}
-                                </option>
+                                </button>
                             ))}
-                        </select>
+                            {/* Hidden select for form validation logic consistency if needed, but managing via setValue above */}
+                            <select {...register('start_time')} className="hidden"><option value={selectedTime}>{selectedTime}</option></select>
+                        </div>
                     ) : (
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div className="bg-orange-50 border-2 border-orange-100 rounded-xl p-6">
                             <div className="flex items-center">
-                                <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400 mr-2" />
-                                <div className="text-sm text-yellow-700">
-                                    <p className="font-medium">No Available Slots</p>
-                                    <p className="mt-1">No available slots found for this date. Please select another date or contact the clinic.</p>
+                                <ExclamationTriangleIcon className="h-6 w-6 text-orange-400 mr-3" />
+                                <div className="text-sm text-orange-900">
+                                    <p className="font-black text-lg">Fully Booked</p>
+                                    <p className="mt-1 font-medium">No slots left for this date. Please try another day.</p>
                                 </div>
                             </div>
                         </div>
                     )}
                     {formErrors.start_time && (
-                        <p className="text-red-600 text-sm mt-1">{formErrors.start_time.message}</p>
+                        <p className="text-red-600 text-sm font-bold mt-2 flex items-center"><ExclamationTriangleIcon className="h-4 w-4 mr-1"/>{formErrors.start_time.message}</p>
                     )}
                 </div>
             )}
 
             {/* Appointment Type */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Appointment Type *</label>
-                <div className="grid grid-cols-2 gap-3">
-                    <label className={`relative flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
+                <label className="block text-sm font-black text-gray-500 uppercase tracking-widest mb-3">Appointment Type *</label>
+                <div className="grid grid-cols-2 gap-4">
+                    <label className={`relative flex flex-col items-center justify-center p-6 border-2 rounded-2xl cursor-pointer transition-all ${
                         appointmentType === 'in_person' 
-                            ? 'border-primary bg-primary-light' 
-                            : 'border-gray-300 hover:border-gray-400'
+                            ? 'border-primary-900 bg-primary-900 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] translate-x-[2px] translate-y-[2px] shadow-none' 
+                            : 'border-primary-900/10 bg-white hover:border-primary-900 hover:bg-cream-50'
                     }`}>
                         <input 
                             type="radio" 
@@ -572,22 +578,22 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                             onChange={() => setAppointmentType('in_person')}
                             className="sr-only"
                         />
-                        <UserGroupIcon className={`h-5 w-5 mr-2 ${appointmentType === 'in_person' ? 'text-primary' : 'text-gray-400'}`} />
-                        <div>
-                            <div className={`font-medium ${appointmentType === 'in_person' ? 'text-primary' : 'text-gray-700'}`}>
+                        <UserGroupIcon className={`h-8 w-8 mb-3 ${appointmentType === 'in_person' ? 'text-accent' : 'text-gray-400'}`} />
+                        <div className="text-center">
+                            <div className={`font-black text-lg ${appointmentType === 'in_person' ? 'text-white' : 'text-gray-900'}`}>
                                 In-Person
                             </div>
-                            <div className="text-xs text-gray-500">Visit the clinic</div>
+                            <div className={`text-xs font-bold mt-1 ${appointmentType === 'in_person' ? 'text-white/70' : 'text-gray-500'}`}>Visit the clinic</div>
                         </div>
                         {appointmentType === 'in_person' && (
-                            <CheckCircleIcon className="h-5 w-5 text-primary absolute top-2 right-2" />
+                            <CheckCircleIcon className="h-6 w-6 text-white absolute top-3 right-3" />
                         )}
                     </label>
                     
-                    <label className={`relative flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
+                    <label className={`relative flex flex-col items-center justify-center p-6 border-2 rounded-2xl cursor-pointer transition-all ${
                         appointmentType === 'virtual' 
-                            ? 'border-primary bg-primary-light' 
-                            : 'border-gray-300 hover:border-gray-400'
+                            ? 'border-primary-900 bg-primary-900 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] translate-x-[2px] translate-y-[2px] shadow-none' 
+                            : 'border-primary-900/10 bg-white hover:border-primary-900 hover:bg-cream-50'
                     }`}>
                         <input 
                             type="radio" 
@@ -597,15 +603,15 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                             onChange={() => setAppointmentType('virtual')}
                             className="sr-only"
                         />
-                        <VideoCameraIcon className={`h-5 w-5 mr-2 ${appointmentType === 'virtual' ? 'text-primary' : 'text-gray-400'}`} />
-                        <div>
-                            <div className={`font-medium ${appointmentType === 'virtual' ? 'text-primary' : 'text-gray-700'}`}>
+                        <VideoCameraIcon className={`h-8 w-8 mb-3 ${appointmentType === 'virtual' ? 'text-accent' : 'text-gray-400'}`} />
+                        <div className="text-center">
+                            <div className={`font-black text-lg ${appointmentType === 'virtual' ? 'text-white' : 'text-gray-900'}`}>
                                 Virtual
                             </div>
-                            <div className="text-xs text-gray-500">Video consultation</div>
+                            <div className={`text-xs font-bold mt-1 ${appointmentType === 'virtual' ? 'text-white/70' : 'text-gray-500'}`}>Video consultation</div>
                         </div>
                         {appointmentType === 'virtual' && (
-                            <CheckCircleIcon className="h-5 w-5 text-primary absolute top-2 right-2" />
+                            <CheckCircleIcon className="h-6 w-6 text-white absolute top-3 right-3" />
                         )}
                     </label>
                 </div>
@@ -613,33 +619,32 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
 
             {/* Cost Summary */}
             {doctorConsultationFee !== null && doctorConsultationFee !== undefined && doctorConsultationFee > 0 && (
-                <div className="bg-gradient-to-br from-primary/10 to-emerald-50 rounded-xl p-4 border-2 border-primary/20">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-semibold text-gray-700">Consultation Fee:</span>
-                        <span className="text-lg font-black text-primary">₦{parseFloat(doctorConsultationFee.toString()).toLocaleString()}</span>
+                <div className="bg-primary-900 rounded-2xl p-6 relative overflow-hidden text-white">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                    
+                    <div className="relative z-10 flex items-center justify-between mb-4 border-b border-white/10 pb-4">
+                        <span className="text-sm font-bold opacity-80 uppercase tracking-widest">Consultation Fee</span>
+                        <span className="text-3xl font-black font-display text-accent">₦{parseFloat(doctorConsultationFee.toString()).toLocaleString()}</span>
                     </div>
+                    
                     {watch('user_insurance_id') ? (
-                        <p className="text-xs text-gray-600 mt-2 flex items-center">
-                            <ShieldCheckIcon className="h-4 w-4 mr-1" />
-                            Insurance will be applied to reduce your cost
+                        <p className="relative z-10 text-sm font-medium bg-white/10 p-3 rounded-xl flex items-center border border-white/20">
+                            <ShieldCheckIcon className="h-5 w-5 mr-3 text-accent" />
+                            Insurance will be applied.
                         </p>
                     ) : (
-                        <div className="mt-3">
-                            <p className="text-xs text-orange-700 mb-3 flex items-center">
-                                <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
-                                Payment required before appointment confirmation
-                            </p>
+                        <div className="relative z-10 mt-3">
                             <button
                                 type="button"
                                 onClick={handleFormSubmit(onSubmit)}
                                 disabled={isSubmitting || !selectedDate || !selectedTime || !watch('reason') || (watch('reason')?.length || 0) < 10}
-                                className="w-full py-2.5 px-4 bg-gradient-to-r from-primary to-emerald-600 text-white font-bold rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full py-4 px-6 bg-white text-primary-900 font-black text-lg rounded-xl hover:bg-accent hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg"
                             >
-                                <CheckCircleIcon className="h-5 w-5" />
+                                <CheckCircleIcon className="h-6 w-6" />
                                 Proceed to Payment
                             </button>
-                            <p className="text-xs text-gray-500 mt-2 text-center">
-                                Complete the form above, then click to pay
+                            <p className="text-xs text-white/60 mt-3 text-center font-bold uppercase tracking-wider">
+                                Secure Payment with Flutterwave
                             </p>
                         </div>
                     )}
@@ -656,7 +661,7 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                     <select
                         id="user_insurance_id"
                         {...register('user_insurance_id')}
-                        className={`input-field ${formErrors.user_insurance_id ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                        className={`w-full bg-cream-50 border-2 border-primary-900/10 rounded-xl p-4 text-primary-900 font-bold focus:border-primary-900 focus:ring-0 transition-colors ${formErrors.user_insurance_id ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                         disabled={loadingInsurances}
                     >
                         <option value="">No Insurance</option>
@@ -686,15 +691,15 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                 <textarea 
                     id="reason" 
                     {...register('reason')}
-                    rows={isFollowUp ? 3 : 4} 
-                    className={`input-field ${formErrors.reason ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    rows={isFollowUp ? 3 : 5} 
+                    className={`w-full bg-cream-50 border-2 border-primary-900/10 rounded-xl p-4 text-lg font-medium text-primary-900 focus:border-primary-900 focus:ring-0 transition-colors placeholder:text-gray-400 ${formErrors.reason ? 'border-red-300 focus:border-red-500' : ''}`}
                     placeholder="Please describe your symptoms, concerns, or reason for the appointment..."
                 />
                 {formErrors.reason && (
-                    <p className="text-red-600 text-sm mt-1">{formErrors.reason.message}</p>
+                    <p className="text-red-600 text-sm font-bold mt-2 flex items-center"><ExclamationTriangleIcon className="h-4 w-4 mr-1"/>{formErrors.reason.message}</p>
                 )}
-                <p className="text-xs text-gray-500 mt-1">
-                    {watch('reason')?.length || 0}/500 characters (minimum 10 required)
+                <p className="text-xs font-bold text-gray-400 mt-2 text-right uppercase tracking-wider">
+                    {watch('reason')?.length || 0}/500 chars (min 10)
                 </p>
             </div>
 
@@ -707,24 +712,24 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                     id="notes" 
                     {...register('notes')}
                     rows={3} 
-                    className={`input-field ${formErrors.notes ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    className={`w-full bg-cream-50 border-2 border-primary-900/10 rounded-xl p-4 text-base font-medium text-primary-900 focus:border-primary-900 focus:ring-0 transition-colors placeholder:text-gray-400 ${formErrors.notes ? 'border-red-300 focus:border-red-500' : ''}`}
                     placeholder="Any other information for the doctor..."
                 />
                 {formErrors.notes && (
-                    <p className="text-red-600 text-sm mt-1">{formErrors.notes.message}</p>
+                    <p className="text-red-600 text-sm font-bold mt-2 flex items-center"><ExclamationTriangleIcon className="h-4 w-4 mr-1"/>{formErrors.notes.message}</p>
                 )}
-                <p className="text-xs text-gray-500 mt-1">
-                    {watch('notes')?.length || 0}/1000 characters
+                <p className="text-xs font-bold text-gray-400 mt-2 text-right uppercase tracking-wider">
+                    {watch('notes')?.length || 0}/1000 chars
                 </p>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+            <div className="flex justify-between items-center pt-8 border-t-2 border-primary-900/5">
                 <button 
                     type="button" 
                     onClick={onCancel} 
                     disabled={isSubmitting}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+                    className="px-6 py-3 border-2 border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-900 hover:border-gray-900 transition-colors disabled:opacity-50"
                 >
                     Cancel
                 </button>
@@ -736,12 +741,12 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                         availableSlots.length === 0 || 
                         (!!(!checkingSubscription && subscriptionStatus && !subscriptionStatus.has_premium && (subscriptionStatus.remaining_free_appointments || 0) <= 0))
                     }
-                    className="btn-primary inline-flex items-center px-6 py-2 text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="bg-primary-900 text-white font-black text-lg px-8 py-3 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-[2px] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                 >
                     {isSubmitting ? (
                         <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                            Booking...
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                            Processing...
                         </>
                     ) : (
                         'Confirm Booking'

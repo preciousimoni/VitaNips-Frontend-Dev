@@ -64,7 +64,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 
     return (
         <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4"
+            className="fixed inset-0 bg-primary-900/40 backdrop-blur-sm z-50 flex justify-center items-center p-4 transition-opacity duration-300"
             onClick={onClose}
             role="dialog"
             aria-modal="true"
@@ -72,22 +72,22 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         >
             <div
                 ref={modalRef}
-                className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative"
+                className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-primary-900 w-full max-w-lg max-h-[90vh] overflow-y-auto relative no-scrollbar"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white">
-                    <h2 id="modal-title" className="text-xl font-semibold text-gray-800">{title}</h2>
+                <div className="flex justify-between items-center p-6 border-b-2 border-primary-900/10 sticky top-0 bg-white z-10">
+                    <h2 id="modal-title" className="text-2xl font-black text-primary-900 font-display">{title}</h2>
                     <button
                         ref={closeButtonRef}
                         onClick={onClose}
-                        className="text-gray-500 hover:text-gray-800 p-1 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="text-primary-900 hover:text-white hover:bg-red-500 p-2 rounded-xl transition-colors border-2 border-transparent hover:border-red-600 focus:outline-none"
                         aria-label="Close modal"
                     >
-                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                        <XMarkIcon className="h-6 w-6 font-bold" aria-hidden="true" />
                     </button>
                 </div>
 
-                <div className="p-5">
+                <div className="p-6 md:p-8">
                     {children}
                 </div>
             </div>

@@ -40,31 +40,23 @@ const EmergencyPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50/30 pb-12">
+        <div className="min-h-screen bg-cream-50 font-sans pb-12">
             {/* Hero Header Section */}
             <motion.div 
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative bg-gradient-to-br from-red-600 via-orange-600 to-amber-600 overflow-hidden mb-8"
+                className="relative bg-red-600 rounded-b-[3rem] overflow-hidden mb-12 shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] mx-4 mt-4 md:mx-6 border-b-4 border-l-4 border-r-4 border-black"
             >
-                {/* Animated Background Pattern */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob"></div>
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-2000"></div>
-                    <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-4000"></div>
-                </div>
-
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+                <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-16">
                     <motion.div 
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="flex items-center gap-5"
+                        className="flex flex-col md:flex-row items-start md:items-center gap-6"
                     >
                         <div className="relative">
-                            <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl"></div>
-                            <div className="relative p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
-                                <ShieldExclamationIcon className="h-12 w-12 text-white animate-pulse" />
+                            <div className="relative p-4 bg-white rounded-2xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-[-3deg]">
+                                <ShieldExclamationIcon className="h-12 w-12 text-red-600" />
                             </div>
                         </div>
                         <div className="text-white">
@@ -72,24 +64,19 @@ const EmergencyPage = () => {
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3 }}
-                                className="inline-flex items-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-wider mb-3 border border-white/30"
+                                className="inline-flex items-center px-4 py-2 rounded-xl bg-black text-white text-xs font-black uppercase tracking-widest mb-3 border-2 border-white/20 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
                             >
                                 <BellAlertIcon className="h-4 w-4 mr-2 animate-pulse" />
                                 Emergency Response Center
                             </motion.div>
-                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">Emergency Center</h1>
-                            <p className="text-white/90 text-base md:text-lg">
-                                Quick access to emergency services and SOS alerts
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-2 font-display uppercase tracking-tight text-white drop-shadow-md">
+                                Emergency Center
+                            </h1>
+                            <p className="text-white font-bold text-lg md:text-xl opacity-90 max-w-xl">
+                                Quick access to emergency services and SOS alerts.
                             </p>
                         </div>
                     </motion.div>
-                </div>
-
-                {/* Bottom Wave */}
-                <div className="absolute bottom-0 left-0 right-0">
-                    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-                        <path d="M0 48h1440V0s-144 48-360 48S720 0 720 0 576 48 360 48 0 0 0 0v48z" fill="currentColor" className="text-gray-50"/>
-                    </svg>
                 </div>
             </motion.div>
 
@@ -99,29 +86,28 @@ const EmergencyPage = () => {
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="space-y-8"
+                    className="space-y-10"
                 >
                 {/* Emergency Contacts Banner */}
                 <motion.div variants={itemVariants}>
                     <Link 
                         to="/emergency-contacts"
-                        className="block bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 hover:border-purple-300 rounded-3xl p-8 transition-all hover:shadow-2xl shadow-lg group relative overflow-hidden"
+                        className="block bg-white border-4 border-black rounded-[2.5rem] p-8 transition-all hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group relative overflow-hidden"
                     >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200 to-indigo-200 rounded-full blur-3xl opacity-50 group-hover:opacity-70 transition-opacity"></div>
-                        <div className="relative flex items-center justify-between">
-                            <div className="flex items-center">
+                        <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="flex items-center gap-6">
                                 <motion.div 
                                     whileHover={{ scale: 1.1, rotate: 5 }}
-                                    className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-5 shadow-lg"
+                                    className="w-20 h-20 bg-purple-100 rounded-2xl flex items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                                 >
-                                    <UserGroupIcon className="h-8 w-8 text-white" />
+                                    <UserGroupIcon className="h-10 w-10 text-purple-900" />
                                 </motion.div>
                                 <div>
-                                    <h3 className="text-2xl font-bold text-purple-900 mb-2 group-hover:text-purple-700 transition-colors">
+                                    <h3 className="text-2xl md:text-3xl font-black text-primary-900 mb-2 font-display uppercase tracking-tight group-hover:text-purple-700 transition-colors">
                                         Manage Your Emergency Contacts
                                     </h3>
-                                    <p className="text-sm text-purple-700 font-medium">
-                                        Add, edit, or remove trusted contacts who will receive your SOS alerts
+                                    <p className="text-base text-gray-700 font-bold max-w-xl">
+                                        Add, edit, or remove trusted contacts who will receive your SOS alerts.
                                     </p>
                                 </div>
                             </div>
@@ -129,8 +115,8 @@ const EmergencyPage = () => {
                                 whileHover={{ x: 5 }}
                                 className="flex-shrink-0"
                             >
-                                <div className="p-3 bg-purple-200 rounded-xl group-hover:bg-purple-300 transition-colors">
-                                    <ArrowRightIcon className="h-6 w-6 text-purple-700" />
+                                <div className="p-4 bg-primary-900 rounded-xl border-2 border-black group-hover:bg-purple-600 transition-colors">
+                                    <ArrowRightIcon className="h-6 w-6 text-white" />
                                 </div>
                             </motion.div>
                         </div>
@@ -140,19 +126,18 @@ const EmergencyPage = () => {
                 {/* Critical Warning Banner */}
                 <motion.div 
                     variants={itemVariants}
-                    className="bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500 rounded-3xl p-8 shadow-xl relative overflow-hidden"
+                    className="bg-amber-100 border-4 border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden"
                 >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-200 rounded-full blur-3xl opacity-40"></div>
-                    <div className="relative flex items-start">
+                    <div className="relative flex flex-col sm:flex-row items-start gap-5">
                         <div className="flex-shrink-0">
-                            <div className="p-3 bg-amber-100 rounded-2xl">
-                                <ExclamationTriangleIcon className="h-8 w-8 text-amber-600" />
+                            <div className="p-3 bg-amber-400 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                <ExclamationTriangleIcon className="h-8 w-8 text-black" />
                             </div>
                         </div>
-                        <div className="ml-5">
-                            <h3 className="text-xl font-bold text-amber-900 mb-3">Life-Threatening Emergency?</h3>
-                            <p className="text-sm text-amber-800 leading-relaxed">
-                                If you are in immediate danger, <strong className="font-bold">call emergency services directly</strong> using the numbers below. 
+                        <div>
+                            <h3 className="text-xl font-black text-black mb-2 uppercase tracking-tight">Life-Threatening Emergency?</h3>
+                            <p className="text-base text-black font-bold leading-relaxed">
+                                If you are in immediate danger, <strong className="font-black text-red-600 underline decoration-2 underline-offset-2">call emergency services directly</strong> using the numbers below. 
                                 The SOS button will alert your emergency contacts but is not a substitute for professional emergency response.
                             </p>
                         </div>
@@ -162,15 +147,8 @@ const EmergencyPage = () => {
                 {/* SOS Section - Hero */}
                 <motion.div 
                     variants={itemVariants}
-                    className="bg-gradient-to-br from-red-600 via-red-700 to-orange-700 rounded-3xl shadow-2xl shadow-red-600/40 p-10 md:p-16 relative overflow-hidden border-2 border-red-400/20"
+                    className="bg-red-600 rounded-[3rem] shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] p-8 md:p-12 relative overflow-hidden border-4 border-black"
                 >
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48 blur-3xl animate-pulse"></div>
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-300/20 rounded-full -ml-32 -mb-32 blur-3xl"></div>
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse"></div>
-                    </div>
-                    
                     <div className="relative z-10 flex flex-col items-center text-center space-y-8">
                         <motion.div
                             initial={{ scale: 0, rotate: -180 }}
@@ -178,30 +156,29 @@ const EmergencyPage = () => {
                             transition={{ delay: 0.5, type: "spring", bounce: 0.5 }}
                             className="relative"
                         >
-                            <div className="absolute inset-0 bg-white/30 rounded-3xl blur-2xl"></div>
-                            <div className="relative w-24 h-24 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center border-2 border-white/30">
-                                <ShieldExclamationIcon className="h-12 w-12 text-white animate-pulse" />
+                            <div className="relative w-24 h-24 bg-white rounded-3xl flex items-center justify-center border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-3">
+                                <ShieldExclamationIcon className="h-12 w-12 text-red-600 animate-pulse" />
                             </div>
                         </motion.div>
                         <div>
-                            <h2 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">Emergency SOS</h2>
-                            <p className="text-red-50 text-lg md:text-xl max-w-2xl leading-relaxed font-medium">
-                                Press and hold the button below for <span className="font-bold text-white">3 seconds</span> to send an emergency alert with your location to all your emergency contacts
+                            <h2 className="text-4xl md:text-5xl font-black text-white mb-4 font-display uppercase tracking-tight drop-shadow-md">Emergency SOS</h2>
+                            <p className="text-white text-lg md:text-xl max-w-2xl leading-relaxed font-bold">
+                                Press and hold the button below for <span className="font-black text-amber-300 bg-black/20 px-2 rounded-lg">3 seconds</span> to send an emergency alert with your location to all your emergency contacts.
                             </p>
                         </div>
                         
-                        <div className="py-8">
+                        <div className="py-6">
                             <SOSButton />
                         </div>
 
-                        <div className="flex flex-col sm:flex-row items-center gap-4 text-red-50">
-                            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20">
+                        <div className="flex flex-col sm:flex-row items-center gap-4 text-white font-bold">
+                            <div className="flex items-center gap-2 bg-black/20 px-4 py-2 rounded-xl border-2 border-black/30">
                                 <MapPinIcon className="h-5 w-5" />
-                                <span className="text-sm font-medium">Location shared automatically</span>
+                                <span className="text-sm">Location shared automatically</span>
                             </div>
-                            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20">
+                            <div className="flex items-center gap-2 bg-black/20 px-4 py-2 rounded-xl border-2 border-black/30">
                                 <BellAlertIcon className="h-5 w-5" />
-                                <span className="text-sm font-medium">All contacts notified</span>
+                                <span className="text-sm">All contacts notified</span>
                             </div>
                         </div>
                     </div>
@@ -209,13 +186,13 @@ const EmergencyPage = () => {
 
                 {/* Quick Dial Emergency Numbers */}
                 <motion.div variants={itemVariants}>
-                    <div className="flex items-center gap-4 mb-6">
-                        <div className="p-3 bg-gradient-to-br from-red-100 to-orange-100 rounded-2xl">
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="p-3 bg-red-100 rounded-xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <PhoneIcon className="h-8 w-8 text-red-600" />
                         </div>
                         <div>
-                            <h2 className="text-3xl font-bold text-gray-900">Quick Dial Emergency Numbers</h2>
-                            <p className="text-gray-600 text-sm">Tap any card to call immediately</p>
+                            <h2 className="text-3xl font-black text-primary-900 font-display uppercase tracking-tight">Quick Dial Numbers</h2>
+                            <p className="text-gray-600 font-bold">Tap any card to call immediately</p>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -224,27 +201,26 @@ const EmergencyPage = () => {
                                 key={index}
                                 href={`tel:${contact.number}`}
                                 variants={itemVariants}
-                                whileHover={{ scale: 1.05, y: -8 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all border-2 border-gray-200 hover:border-red-300 group cursor-pointer relative overflow-hidden"
+                                whileHover={{ y: -6, boxShadow: "8px 8px 0px 0px rgba(0,0,0,1)" }}
+                                whileTap={{ scale: 0.98 }}
+                                className="bg-white rounded-[2rem] p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black cursor-pointer group relative overflow-hidden"
                             >
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-red-100 to-orange-100 rounded-full blur-2xl opacity-0 group-hover:opacity-50 transition-opacity"></div>
                                 <div className="relative text-center">
                                     <motion.div 
-                                        whileHover={{ scale: 1.2, rotate: 10 }}
-                                        className="text-6xl mb-4"
+                                        whileHover={{ scale: 1.1, rotate: 5 }}
+                                        className="text-6xl mb-4 transform transition-transform"
                                     >
                                         {contact.icon}
                                     </motion.div>
-                                    <h3 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-red-600 transition-colors">
+                                    <h3 className="font-black text-primary-900 mb-2 text-xl font-display uppercase tracking-tight">
                                         {contact.name}
                                     </h3>
-                                    <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl py-3 px-4 mb-3">
-                                        <p className="text-4xl font-black text-red-600">{contact.number}</p>
+                                    <div className="bg-red-50 rounded-xl py-3 px-4 mb-3 border-2 border-red-100 group-hover:bg-red-100 group-hover:border-red-200 transition-colors">
+                                        <p className="text-3xl font-black text-red-600">{contact.number}</p>
                                     </div>
-                                    <p className="text-xs text-gray-600 font-medium">{contact.description}</p>
+                                    <p className="text-xs text-gray-500 font-black uppercase tracking-wider">{contact.description}</p>
                                 </div>
-                                <div className="mt-5 flex items-center justify-center text-sm text-white font-bold bg-gradient-to-r from-red-600 to-orange-600 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
+                                <div className="mt-5 flex items-center justify-center text-sm text-white font-bold bg-red-600 py-3 rounded-xl opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                     <PhoneIcon className="h-4 w-4 mr-2" />
                                     Tap to call
                                 </div>
@@ -261,20 +237,19 @@ const EmergencyPage = () => {
                 {/* Safety Tips */}
                 <motion.div 
                     variants={itemVariants}
-                    className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-10 border-2 border-blue-200 shadow-xl relative overflow-hidden"
+                    className="bg-blue-50 rounded-[2.5rem] p-8 md:p-10 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden"
                 >
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full blur-3xl opacity-40"></div>
                     <div className="relative">
-                        <div className="flex items-start mb-8">
+                        <div className="flex flex-col md:flex-row items-start mb-8 gap-5">
                             <motion.div 
                                 whileHover={{ scale: 1.1, rotate: 5 }}
-                                className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-5 shadow-lg"
+                                className="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-shrink-0"
                             >
                                 <HeartIcon className="h-8 w-8 text-white" />
                             </motion.div>
                             <div>
-                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Emergency Preparedness Tips</h3>
-                                <p className="text-gray-600 font-medium">Stay safe with these essential guidelines</p>
+                                <h3 className="text-2xl md:text-3xl font-black text-primary-900 mb-2 font-display uppercase tracking-tight">Emergency Preparedness Tips</h3>
+                                <p className="text-gray-700 font-bold text-lg">Stay safe with these essential guidelines</p>
                             </div>
                         </div>
                         <div className="grid md:grid-cols-2 gap-5">
@@ -292,12 +267,12 @@ const EmergencyPage = () => {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.8 + index * 0.1 }}
                                     whileHover={{ x: 5 }}
-                                    className="flex items-start space-x-4 bg-white rounded-2xl p-5 shadow-md hover:shadow-lg transition-all border border-blue-100"
+                                    className="flex items-start space-x-4 bg-white rounded-2xl p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black"
                                 >
-                                    <span className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-xl flex items-center justify-center text-sm font-bold shadow-md">
+                                    <span className="flex-shrink-0 w-8 h-8 bg-black text-white rounded-lg flex items-center justify-center text-sm font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.5)]">
                                         {index + 1}
                                     </span>
-                                    <p className="text-sm text-gray-700 leading-relaxed font-medium pt-1">{tip}</p>
+                                    <p className="text-sm text-gray-800 leading-relaxed font-bold pt-1">{tip}</p>
                                 </motion.div>
                             ))}
                         </div>

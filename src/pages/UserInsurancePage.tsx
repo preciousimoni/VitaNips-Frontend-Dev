@@ -167,40 +167,30 @@ const UserInsurancePage: React.FC = () => {
   const primaryInsurance = insurances.find(ins => ins.is_primary);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Gradient Hero Section */}
+
+    <div className="min-h-screen bg-cream-50 font-sans">
       {/* Hero Section */}
-      <div className="relative bg-primary overflow-hidden">
-          <div className="absolute inset-0">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary-dark opacity-90" />
-              <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-1.2.1&auto=format&fit=crop&w=2850&q=80')] bg-cover bg-center mix-blend-overlay opacity-20" />
-          </div>
-          
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                  <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="text-white"
-                  >
-                      <h1 className="text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
-                          <ShieldCheckIcon className="h-8 w-8 md:h-10 md:w-10 text-emerald-300" />
-                          Insurance Plans
-                      </h1>
-                      <p className="text-white/90 text-base md:text-lg max-w-xl">
+      <div className="relative bg-primary-900 rounded-b-[3rem] overflow-hidden mb-12 shadow-[0px_10px_0px_0px_rgba(0,0,0,1)] mx-4 mt-4 md:mx-6">
+          <div className="relative max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-16">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                  <div className="text-white">
+                      <div className="flex items-center gap-4 mb-4">
+                          <div className="bg-accent p-3 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-3">
+                              <ShieldCheckIcon className="h-10 w-10 text-primary-900" />
+                          </div>
+                          <h1 className="text-4xl md:text-5xl font-black text-amber-400 font-display uppercase tracking-tight">
+                              Insurance Plans
+                          </h1>
+                      </div>
+                      <p className="text-white/90 text-lg font-bold max-w-xl opacity-90 pl-2">
                           Manage your health insurance coverage and view benefits
                       </p>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="flex flex-col sm:flex-row gap-3 w-full md:w-auto"
-                  >
+                  <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                       <button 
                         onClick={() => navigate('/insurance/claims')}
-                        className="px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg hover:bg-white/20 transition-colors font-medium text-sm flex items-center justify-center gap-2"
+                        className="px-6 py-3 bg-white/10 border-2 border-white/20 text-white rounded-xl hover:bg-white hover:text-primary-900 transition-all font-bold text-sm flex items-center justify-center gap-2"
                       >
                           <DocumentTextIcon className="h-5 w-5" />
                           View Claims
@@ -210,32 +200,27 @@ const UserInsurancePage: React.FC = () => {
                               setEditingInsurance(null);
                               setShowFormModal(true);
                           }}
-                          className="px-4 py-2 bg-white text-primary rounded-lg hover:bg-gray-50 transition-colors font-bold text-sm shadow-lg flex items-center justify-center gap-2"
+                          className="px-6 py-3 bg-accent text-primary-900 rounded-xl hover:bg-white hover:scale-105 transition-all font-black text-sm border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2"
                       >
                           <PlusIcon className="h-5 w-5" />
                           Add New Plan
                       </button>
-                  </motion.div>
+                  </div>
               </div>
 
               {/* Primary Insurance Badge */}
               {primaryInsurance && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="mt-6 p-4 bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-white/20 inline-block"
-                >
+                <div className="mt-8 p-4 bg-white/10 rounded-2xl border-2 border-white/20 inline-block">
                   <div className="flex items-center gap-3">
-                    <CheckCircleIcon className="h-6 w-6 text-white" />
+                    <CheckCircleIcon className="h-6 w-6 text-accent" />
                     <div>
-                      <p className="text-white/90 text-sm font-medium">Primary Insurance</p>
-                      <p className="text-white font-bold">
+                      <p className="text-white/80 text-xs font-bold uppercase tracking-wider">Primary Insurance</p>
+                      <p className="text-white font-black text-lg">
                         {primaryInsurance.plan.provider.name} - {primaryInsurance.plan.name}
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               )}
           </div>
       </div>
@@ -271,13 +256,9 @@ const UserInsurancePage: React.FC = () => {
             <Skeleton count={3} height="200px" />
           </div>
         ) : error ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="p-6 bg-red-50 border-2 border-red-200 rounded-2xl text-center"
-          >
-            <p className="text-red-600 font-medium">{error}</p>
-          </motion.div>
+          <div className="p-6 bg-red-50 border-4 border-red-200 rounded-[2rem] text-center shadow-[4px_4px_0px_0px_rgba(220,38,38,1)]">
+            <p className="text-red-900 font-black text-lg">{error}</p>
+          </div>
         ) : (
           <>
             {totalCount > 0 && (
@@ -312,32 +293,22 @@ const UserInsurancePage: React.FC = () => {
                 ))}
               </motion.div>
             ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-16 bg-white rounded-3xl shadow-lg border-2 border-gray-100"
-              >
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                  className="inline-block mb-4"
-                >
-                  <ShieldCheckIcon className="h-20 w-20 text-gray-300 mx-auto" />
-                </motion.div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">No Insurance Plans Yet</h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              <div className="text-center py-16 bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] border-4 border-black">
+                <div className="inline-block mb-6 p-6 bg-cream-50 rounded-full border-4 border-black">
+                  <ShieldCheckIcon className="h-24 w-24 text-primary-900 mx-auto" />
+                </div>
+                <h3 className="text-3xl font-black text-primary-900 mb-2 font-display">No Insurance Plans Yet</h3>
+                <p className="text-gray-600 mb-8 max-w-md mx-auto font-medium text-lg">
                   Add your health insurance plans to manage coverage, view digital cards, and track claims.
                 </p>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   onClick={handleAddClick}
-                  className="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg flex items-center gap-2 mx-auto"
+                  className="px-8 py-4 bg-primary-900 text-white rounded-xl font-black text-lg hover:bg-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] hover:shadow-none hover:translate-y-[2px] flex items-center gap-2 mx-auto"
                 >
-                  <PlusIcon className="h-5 w-5" />
+                  <PlusIcon className="h-6 w-6" />
                   Add Your First Plan
-                </motion.button>
-              </motion.div>
+                </button>
+              </div>
             )}
 
             {nextPageUrl && (
@@ -347,7 +318,7 @@ const UserInsurancePage: React.FC = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={loadMoreInsurances}
                   disabled={isLoadingMore}
-                  className="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-8 py-4 bg-white border-2 border-primary-900 text-primary-900 rounded-xl font-black hover:bg-primary-900 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                 >
                   {isLoadingMore ? 'Loading...' : 'Load More Plans'}
                 </motion.button>

@@ -173,9 +173,9 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-4 bg-red-50 border-2 border-red-200 rounded-xl"
+          className="p-4 bg-red-50 border-4 border-red-500 rounded-xl text-center shadow-[4px_4px_0px_0px_rgba(220,38,38,1)]"
         >
-          <p className="text-red-600 text-sm font-medium">{error}</p>
+          <p className="text-red-900 font-black text-sm">{error}</p>
         </motion.div>
       )}
 
@@ -192,7 +192,7 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
             value={formData.plan ?? ''}
             onChange={handleChange}
             disabled={loadingPlans}
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all disabled:bg-gray-100"
+            className="w-full px-4 py-4 border-2 border-primary-900/10 rounded-xl focus:ring-0 focus:border-black font-bold text-lg bg-cream-50 transition-all disabled:bg-gray-100"
           >
             <option value="" disabled>
               {loadingPlans ? 'Loading plans...' : '-- Select a Plan --'}
@@ -207,23 +207,26 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-3 p-4 bg-primary-50 rounded-xl border-2 border-primary-200"
             >
-              <div className="flex items-start gap-3">
-                <ShieldCheckIcon className="h-5 w-5 text-primary-600 mt-0.5" />
+              <div className="mt-4 p-4 bg-accent/20 rounded-xl border-2 border-black">
+              <div className="flex items-start gap-4">
+                <div className="bg-accent p-2 rounded-lg border-2 border-black">
+                  <ShieldCheckIcon className="h-6 w-6 text-primary-900" />
+                </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-900">{selectedPlan.name}</p>
-                  <p className="text-xs text-gray-600 mt-1">{selectedPlan.description}</p>
-                  <div className="flex gap-4 mt-2 text-xs">
-                    <span className="text-gray-600">
-                      Premium: <span className="font-bold text-primary">₦{parseFloat(selectedPlan.monthly_premium).toLocaleString()}/mo</span>
+                  <p className="text-lg font-black text-primary-900 leading-tight">{selectedPlan.name}</p>
+                  <p className="text-sm text-gray-700 font-medium mt-1">{selectedPlan.description}</p>
+                  <div className="flex gap-4 mt-3 text-xs uppercase tracking-wide">
+                    <span className="text-gray-700 font-bold">
+                      Premium: <span className="font-black text-primary-900">₦{parseFloat(selectedPlan.monthly_premium).toLocaleString()}/mo</span>
                     </span>
-                    <span className="text-gray-600">
-                      Deductible: <span className="font-bold">₦{parseFloat(selectedPlan.annual_deductible).toLocaleString()}</span>
+                    <span className="text-gray-700 font-bold">
+                      Deductible: <span className="font-black text-primary-900">₦{parseFloat(selectedPlan.annual_deductible).toLocaleString()}</span>
                     </span>
                   </div>
                 </div>
               </div>
+            </div>
             </motion.div>
           )}
         </div>
@@ -240,7 +243,7 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
             required
             value={formData.member_id ?? ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+            className="w-full px-4 py-4 border-2 border-primary-900/10 rounded-xl focus:ring-0 focus:border-black font-bold text-lg bg-cream-50 transition-all"
             placeholder="Enter your member ID"
           />
         </div>
@@ -257,7 +260,7 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
             required
             value={formData.policy_number ?? ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+            className="w-full px-4 py-4 border-2 border-primary-900/10 rounded-xl focus:ring-0 focus:border-black font-bold text-lg bg-cream-50 transition-all"
             placeholder="Enter your policy number"
           />
         </div>
@@ -269,16 +272,16 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
               type="button"
               onClick={handleVerify}
               disabled={isVerifying || !formData.plan || !formData.member_id || !formData.policy_number}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-semibold hover:from-primary-dark hover:to-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 border-primary-200"
+              className="w-full flex items-center justify-center gap-2 px-4 py-4 bg-white text-primary-900 rounded-xl font-black border-2 border-black hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-[2px]"
             >
               {isVerifying ? (
                 <>
-                  <Spinner size="sm" color="text-white" />
+                  <Spinner size="sm" color="text-primary-900" />
                   <span>Verifying...</span>
                 </>
               ) : (
                 <>
-                  <ShieldCheckIcon className="h-5 w-5" />
+                  <ShieldCheckIcon className="h-6 w-6" />
                   <span>Verify Member ID & Policy Number</span>
                 </>
               )}
@@ -331,7 +334,7 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
             id="group_number"
             value={formData.group_number ?? ''}
             onChange={handleChange}
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+            className="w-full px-4 py-4 border-2 border-primary-900/10 rounded-xl focus:ring-0 focus:border-black font-bold text-lg bg-cream-50 transition-all"
             placeholder="Enter group number if applicable"
           />
         </div>
@@ -349,7 +352,7 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
               required
               value={formData.start_date ?? ''}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+              className="w-full px-4 py-4 border-2 border-primary-900/10 rounded-xl focus:ring-0 focus:border-black font-bold text-lg bg-cream-50 transition-all"
             />
           </div>
           <div>
@@ -362,7 +365,7 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
               id="end_date"
               value={formData.end_date ?? ''}
               onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+              className="w-full px-4 py-4 border-2 border-primary-900/10 rounded-xl focus:ring-0 focus:border-black font-bold text-lg bg-cream-50 transition-all"
             />
           </div>
         </div>
@@ -375,7 +378,7 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
             id="is_primary"
             checked={formData.is_primary ?? false}
             onChange={handleChange}
-            className="h-5 w-5 text-primary border-gray-300 rounded focus:ring-primary"
+            className="h-6 w-6 text-primary-900 border-2 border-gray-400 rounded focus:ring-0 bg-cream-50"
           />
           <label htmlFor="is_primary" className="ml-3 block text-sm font-semibold text-gray-900">
             Set as Primary Insurance Plan
@@ -390,7 +393,7 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
           onClick={onCancel}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="px-6 py-3 border-2 border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all"
+          className="px-6 py-4 border-2 border-gray-300 rounded-xl text-sm font-bold text-gray-600 hover:text-black hover:border-black hover:bg-gray-50 transition-all"
         >
           Cancel
         </motion.button>
@@ -399,7 +402,7 @@ const UserInsuranceForm: React.FC<UserInsuranceFormProps> = ({
           disabled={isSubmitting || loadingPlans}
           whileHover={{ scale: isSubmitting || loadingPlans ? 1 : 1.05 }}
           whileTap={{ scale: isSubmitting || loadingPlans ? 1 : 0.95 }}
-          className="px-6 py-3 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="px-8 py-4 bg-primary-900 text-white rounded-xl text-sm font-black hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-[2px]"
         >
           {isSubmitting ? (
             <>

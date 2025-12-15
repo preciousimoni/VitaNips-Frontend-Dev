@@ -101,25 +101,24 @@ const ClaimListItem: React.FC<ClaimListItemProps> = ({ claim }) => {
 
   return (
     <motion.div
-      whileHover={{ y: -2, scale: 1.01 }}
-      className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-gray-100 overflow-hidden group"
+      whileHover={{ y: -4 }}
+      className="bg-white rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 border-4 border-black overflow-hidden group"
     >
-      <div className="p-6">
+      <div className="p-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-8">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-primary-100 rounded-xl">
-                <DocumentTextIcon className="h-6 w-6 text-primary-600" />
+            <div className="flex items-center gap-4 mb-2">
+              <div className="p-3 bg-accent rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <DocumentTextIcon className="h-6 w-6 text-primary-900" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-lg">
-                  Claim: {claim.claim_number || `ID ${claim.id}`}
+                <h3 className="font-black text-primary-900 text-xl font-display uppercase tracking-tight">
+                  {claim.claim_number || `CLAIM #${claim.id}`}
                 </h3>
                 {claim.user_insurance_display?.plan?.provider?.name && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    {claim.user_insurance_display.plan.provider.name} -{' '}
-                    {claim.user_insurance_display.plan.name}
+                  <p className="text-sm font-bold text-gray-600 mt-1 uppercase tracking-wide">
+                    {claim.user_insurance_display.plan.provider.name} • {claim.user_insurance_display.plan.name}
                   </p>
                 )}
               </div>
@@ -127,41 +126,40 @@ const ClaimListItem: React.FC<ClaimListItemProps> = ({ claim }) => {
           </div>
 
           {/* Status Badge */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm ${statusInfo.bgColor} ${statusInfo.color} border-2 border-current/20`}
+          <div
+            className={`inline-flex items-center gap-2 px-5 py-2 rounded-xl font-black text-xs uppercase tracking-wider ${statusInfo.bgColor} ${statusInfo.color} border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}
           >
             <statusInfo.icon className="h-5 w-5" />
             {statusInfo.text}
-          </motion.div>
+          </div>
         </div>
 
         {/* Details Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div className="bg-gray-50 rounded-xl p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-cream-50 rounded-2xl p-4 border-2 border-primary-900/10">
             <div className="flex items-center gap-2 mb-2">
-              <BuildingOfficeIcon className="h-5 w-5 text-gray-500" />
-              <span className="text-xs font-medium text-gray-500">Medical Provider</span>
+              <BuildingOfficeIcon className="h-5 w-5 text-accent" />
+              <span className="text-xs font-black text-gray-500 uppercase tracking-widest">Medical Provider</span>
             </div>
-            <p className="text-sm font-bold text-gray-900">{claim.provider_name}</p>
+            <p className="text-base font-bold text-primary-900">{claim.provider_name}</p>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-4">
+          <div className="bg-cream-50 rounded-2xl p-4 border-2 border-primary-900/10">
             <div className="flex items-center gap-2 mb-2">
-              <CalendarDaysIcon className="h-5 w-5 text-gray-500" />
-              <span className="text-xs font-medium text-gray-500">Service Date</span>
+              <CalendarDaysIcon className="h-5 w-5 text-accent" />
+              <span className="text-xs font-black text-gray-500 uppercase tracking-widest">Service Date</span>
             </div>
-            <p className="text-sm font-bold text-gray-900">
+            <p className="text-base font-bold text-primary-900">
               {formatDateDisplay(claim.service_date)}
             </p>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <BanknotesIcon className="h-5 w-5 text-gray-500" />
-              <span className="text-xs font-medium text-gray-500">Amount Claimed</span>
+          <div className="bg-cream-50 rounded-2xl p-4 border-2 border-primary-900/10 relative overflow-hidden">
+            <div className="flex items-center gap-2 mb-2 relative z-10">
+              <BanknotesIcon className="h-5 w-5 text-accent" />
+              <span className="text-xs font-black text-gray-500 uppercase tracking-widest">Amount Claimed</span>
             </div>
-            <p className="text-lg font-bold text-primary">
+            <p className="text-xl font-black text-primary-900 relative z-10">
               ₦{parseFloat(claim.claimed_amount).toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -170,12 +168,12 @@ const ClaimListItem: React.FC<ClaimListItemProps> = ({ claim }) => {
           </div>
 
           {claim.approved_amount && (
-            <div className="bg-green-50 rounded-xl p-4 border-2 border-green-200">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircleIcon className="h-5 w-5 text-green-600" />
-                <span className="text-xs font-medium text-green-700">Amount Approved</span>
+            <div className="bg-green-100 rounded-2xl p-4 border-2 border-green-600 relative overflow-hidden">
+              <div className="flex items-center gap-2 mb-2 relative z-10">
+                <CheckCircleIcon className="h-5 w-5 text-green-700" />
+                <span className="text-xs font-black text-green-800 uppercase tracking-widest">Amount Approved</span>
               </div>
-              <p className="text-lg font-bold text-green-700">
+              <p className="text-xl font-black text-green-800 relative z-10">
                 ₦{parseFloat(claim.approved_amount).toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
@@ -187,34 +185,34 @@ const ClaimListItem: React.FC<ClaimListItemProps> = ({ claim }) => {
 
         {/* Service Description */}
         {claim.service_description && (
-          <div className="mb-4 p-4 bg-blue-50 rounded-xl border-2 border-blue-200">
-            <p className="text-xs font-semibold text-blue-900 mb-1">Service Description</p>
-            <p className="text-sm text-gray-700">{claim.service_description}</p>
+          <div className="mb-6 p-5 bg-white rounded-2xl border-2 border-gray-200">
+            <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Description of Service</p>
+            <p className="text-sm font-medium text-gray-800 leading-relaxed">{claim.service_description}</p>
           </div>
         )}
 
         {/* Dates and Notes */}
-        <div className="flex flex-wrap gap-4 text-xs text-gray-600 pt-4 border-t border-gray-200">
-          <div className="flex items-center gap-1">
-            <CalendarDaysIcon className="h-4 w-4" />
+        <div className="flex flex-wrap gap-6 text-xs text-gray-500 pt-6 border-t-2 border-gray-100">
+          <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+            <CalendarDaysIcon className="h-4 w-4 text-gray-400" />
             <span>
-              Submitted: <span className="font-semibold">{formatDateDisplay(claim.date_submitted)}</span>
+              SUBMITTED: <span className="font-bold text-gray-700">{formatDateDisplay(claim.date_submitted)}</span>
             </span>
           </div>
           {claim.date_processed && (
-            <div className="flex items-center gap-1">
-              <CheckCircleIcon className="h-4 w-4" />
+            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+              <CheckCircleIcon className="h-4 w-4 text-gray-400" />
               <span>
-                Processed: <span className="font-semibold">{formatDateDisplay(claim.date_processed)}</span>
+                PROCESSED: <span className="font-bold text-gray-700">{formatDateDisplay(claim.date_processed)}</span>
               </span>
             </div>
           )}
         </div>
 
         {claim.notes && (
-          <div className="mt-4 p-3 bg-yellow-50 rounded-xl border border-yellow-200">
-            <p className="text-xs font-semibold text-yellow-900 mb-1">Notes</p>
-            <p className="text-xs text-gray-700">{claim.notes}</p>
+          <div className="mt-6 p-4 bg-yellow-50 rounded-xl border-2 border-yellow-200">
+            <p className="text-xs font-black text-yellow-800 uppercase tracking-widest mb-1">Notes from Admin</p>
+            <p className="text-sm font-bold text-yellow-900">{claim.notes}</p>
           </div>
         )}
       </div>
