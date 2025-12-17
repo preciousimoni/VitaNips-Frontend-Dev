@@ -87,6 +87,10 @@ export default defineConfig({
       '@contexts': path.resolve(__dirname, './src/contexts'),
     },
   },
+  optimizeDeps: {
+    include: ['leaflet', 'react-leaflet'],
+    exclude: [],
+  },
   build: {
     rollupOptions: {
       output: {
@@ -109,9 +113,10 @@ export default defineConfig({
             if (id.includes('twilio') || id.includes('video')) {
               return 'vendor-media';
             }
-            // Maps
-            if (id.includes('leaflet') || id.includes('map')) {
-              return 'vendor-maps';
+            // Maps - bundle with main vendor to avoid initialization issues
+            // Leaflet has initialization order dependencies
+            if (id.includes('leaflet') || id.includes('react-leaflet')) {
+              return 'vendor'; // Bundle with other vendor code
             }
             // Forms and validation
             if (id.includes('react-hook-form') || id.includes('zod') || id.includes('@hookform')) {

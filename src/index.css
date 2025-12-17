@@ -1,5 +1,5 @@
 /* src/index.css */
-@import 'leaflet/dist/leaflet.css';
+/* Leaflet CSS is imported in pages that use maps to avoid initialization issues */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
