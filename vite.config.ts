@@ -88,19 +88,32 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['leaflet', 'react-leaflet'],
+    include: [
+      'react',
+      'react-dom',
+      'react/jsx-runtime',
+      'react/jsx-dev-runtime',
+      'react-router-dom',
+      'leaflet',
+      'react-leaflet'
+    ],
     exclude: [],
   },
   build: {
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Vendor chunks - separate large libraries
+          // CRITICAL: Never split React - let Vite handle it automatically
+          // Splitting React causes "Cannot set properties of undefined" errors
+          if (id.includes('node_modules/react') || 
+              id.includes('node_modules/react-dom') ||
+              id.includes('node_modules/react/jsx')) {
+            // Return undefined to let Vite handle React automatically
+            return;
+          }
+          
+          // Other vendor chunks - separate large libraries
           if (id.includes('node_modules')) {
-            // React and React DOM
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'vendor-react';
-            }
             // Firebase
             if (id.includes('firebase')) {
               return 'vendor-firebase';
@@ -113,10 +126,9 @@ export default defineConfig({
             if (id.includes('twilio') || id.includes('video')) {
               return 'vendor-media';
             }
-            // Maps - bundle with main vendor to avoid initialization issues
-            // Leaflet has initialization order dependencies
+            // Maps
             if (id.includes('leaflet') || id.includes('react-leaflet')) {
-              return 'vendor'; // Bundle with other vendor code
+              return 'vendor-maps';
             }
             // Forms and validation
             if (id.includes('react-hook-form') || id.includes('zod') || id.includes('@hookform')) {
@@ -134,7 +146,7 @@ export default defineConfig({
             if (id.includes('date-fns')) {
               return 'vendor-dates';
             }
-            // All other node_modules
+            // All other node_modules go to vendor
             return 'vendor';
           }
           
@@ -161,5 +173,9 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true,
+    },
   },
 })
