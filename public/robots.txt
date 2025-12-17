@@ -1,0 +1,42 @@
+# robots.txt for VitaNips
+# https://vitanips.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow admin and API endpoints
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /profile/
+Disallow: /settings/
+
+# Allow important pages
+Allow: /
+Allow: /doctors
+Allow: /pharmacies
+Allow: /about
+Allow: /contact
+Allow: /register
+Allow: /login
+
+# Sitemap location
+Sitemap: https://vitanips.com/sitemap.xml
+Sitemap: https://www.vitanips.com/sitemap.xml
+
+# Crawl-delay (optional, helps with server load)
+Crawl-delay: 1
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+

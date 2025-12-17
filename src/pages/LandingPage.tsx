@@ -10,6 +10,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import { SEO } from '../components/common/SEO';
 
 // Local Bespoke Assets (Generated & Moved)
 import heroImg from '../assets/images/hero-woman.png';
@@ -18,9 +19,97 @@ import textureImg from '../assets/images/lagos-texture.png';
 
 const LandingPage: React.FC = () => {
     const { isAuthenticated } = useAuth();
+    
+    // SEO Structured Data for Landing Page
+    const landingPageStructuredData = [
+        {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: "VitaNips - Nigeria's #1 Healthcare Platform",
+            description: "VitaNips (vitanips.com) - Nigeria's leading digital healthcare platform. Book online doctor consultations, order prescriptions, connect with pharmacies, and manage your health records.",
+            url: 'https://vitanips.com/',
+            mainEntity: {
+                '@type': 'MedicalBusiness',
+                name: 'VitaNips',
+                description: "Nigeria's leading digital healthcare platform providing online doctor consultations, pharmacy services, and comprehensive health management.",
+                url: 'https://vitanips.com',
+                telephone: '+234-XXX-XXXX',
+                address: {
+                    '@type': 'PostalAddress',
+                    addressCountry: 'NG',
+                    addressRegion: 'Lagos',
+                },
+                areaServed: {
+                    '@type': 'Country',
+                    name: 'Nigeria',
+                },
+                medicalSpecialty: [
+                    'General Practice',
+                    'Telemedicine',
+                    'Pharmacy Services',
+                    'Emergency Medicine',
+                ],
+            },
+        },
+        {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            serviceType: 'Telemedicine',
+            provider: {
+                '@type': 'Organization',
+                name: 'VitaNips',
+                url: 'https://vitanips.com',
+            },
+            areaServed: {
+                '@type': 'Country',
+                name: 'Nigeria',
+            },
+            description: 'Online doctor consultations via video call. Connect with verified Nigerian doctors instantly.',
+        },
+        {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            serviceType: 'Pharmacy Services',
+            provider: {
+                '@type': 'Organization',
+                name: 'VitaNips',
+                url: 'https://vitanips.com',
+            },
+            areaServed: {
+                '@type': 'Country',
+                name: 'Nigeria',
+            },
+            description: 'Prescription delivery service. Order authentic medications from trusted pharmacies.',
+        },
+        {
+            '@context': 'https://schema.org',
+            '@type': 'Review',
+            itemReviewed: {
+                '@type': 'Organization',
+                name: 'VitaNips',
+            },
+            reviewBody: "I used to take a whole day off work just to refill my hypertension meds. VitaNips changed my life.",
+            author: {
+                '@type': 'Person',
+                name: 'Bisi Adebayo',
+            },
+            reviewRating: {
+                '@type': 'Rating',
+                ratingValue: '5',
+                bestRating: '5',
+            },
+        },
+    ];
 
     return (
         <div className="min-h-screen bg-[#FDFBF7] font-sans text-gray-900 selection:bg-accent selection:text-black overflow-x-hidden">
+            <SEO
+                title="VitaNips - Nigeria's #1 Healthcare Platform | Online Doctor Consultations, Pharmacy & Health Management"
+                description="VitaNips (vitanips.com) - Nigeria's leading digital healthcare platform. Book online doctor consultations, order prescriptions, connect with pharmacies, manage health records, and access emergency services. Skip the traffic, queues, and stress. Your health, sorted."
+                keywords="vitanips, vitanips.com, www.vitanips.com, online doctor consultation Nigeria, telemedicine Nigeria, online pharmacy Nigeria, health management platform, book doctor appointment online, virtual doctor consultation, health records Nigeria, prescription delivery Nigeria, emergency health services, healthcare app Nigeria, digital health Nigeria, medical consultation online"
+                url="https://vitanips.com/"
+                structuredData={landingPageStructuredData}
+            />
             <Header variant="landing" />
 
             <main>
