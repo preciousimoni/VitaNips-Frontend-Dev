@@ -31,13 +31,25 @@ export default defineConfig({
             src: '/logo.png',
             sizes: '192x192',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'any'
           },
           {
             src: '/logo.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'any'
+          },
+          {
+            src: '/logo.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable'
+          },
+          {
+            src: '/logo.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           }
         ],
         categories: ['health', 'medical', 'lifestyle'],
@@ -49,7 +61,10 @@ export default defineConfig({
             form_factor: 'wide',
             label: 'VitaNips Landing Page'
           }
-        ]
+        ],
+        // Improve installability
+        prefer_related_applications: false,
+        related_applications: []
       },
       devOptions: {
         enabled: true, // Enable in dev mode for testing PWA

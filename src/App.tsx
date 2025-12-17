@@ -19,6 +19,7 @@ const queryClient = new QueryClient({
 });
 
 import { SEO } from './components/common/SEO';
+import InstallPrompt from './components/pwa/InstallPrompt';
 
 // ... existing code ...
 
@@ -33,6 +34,7 @@ const AppContent: React.FC = () => {
          <SEO />
          <AppRouter />
           <Toaster position="top-center" reverseOrder={false} />
+          <InstallPrompt />
       </>
   );
 }
