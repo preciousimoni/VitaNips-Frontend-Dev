@@ -75,7 +75,7 @@ const Footer: React.FC = () => {
                     <span className="text-gray-500 text-sm hover:text-primary-900 transition-colors">+1 (555) 123-4567</span>
                 </li>
                 <li className="flex items-center gap-3">
-                    <span className="text-gray-500 text-sm hover:text-primary-900 transition-colors">hello@vitanips.com</span>
+                    <span className="text-gray-500 text-sm hover:text-primary-900 transition-colors">info@vitanips.com</span>
                 </li>
              </ul>
           </div>

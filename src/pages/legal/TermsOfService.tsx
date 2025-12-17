@@ -72,7 +72,7 @@ const TermsOfService: React.FC = () => {
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">7. Contact Information</h2>
               <p>
-                Questions about the Terms of Service should be sent to us at <a href="mailto:legal@vitanips.com" className="text-primary hover:underline">legal@vitanips.com</a>.
+                Questions about the Terms of Service should be sent to us at <a href="mailto:support@vitanips.com" className="text-primary hover:underline">support@vitanips.com</a>.
               </p>
             </section>
           </div>

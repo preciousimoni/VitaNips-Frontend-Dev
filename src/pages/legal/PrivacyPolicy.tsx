@@ -81,7 +81,7 @@ const PrivacyPolicy: React.FC = () => {
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">7. Contact Us</h2>
               <p>
-                If you have questions or comments about this policy, you may email us at <a href="mailto:privacy@vitanips.com" className="text-primary hover:underline">privacy@vitanips.com</a>.
+                If you have questions or comments about this policy, you may email us at <a href="mailto:support@vitanips.com" className="text-primary hover:underline">support@vitanips.com</a>.
               </p>
             </section>
           </div>

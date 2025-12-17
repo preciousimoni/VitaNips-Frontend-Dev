@@ -73,7 +73,7 @@ const HIPAACompliance: React.FC = () => {
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Officer</h2>
               <p>
-                If you have any questions about our HIPAA compliance or wish to exercise your rights, please contact our Privacy Officer at <a href="mailto:compliance@vitanips.com" className="text-primary hover:underline">compliance@vitanips.com</a>.
+                If you have any questions about our HIPAA compliance or wish to exercise your rights, please contact our Privacy Officer at <a href="mailto:support@vitanips.com" className="text-primary hover:underline">support@vitanips.com</a>.
               </p>
             </section>
           </div>

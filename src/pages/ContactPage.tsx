@@ -67,8 +67,8 @@ const ContactPage: React.FC = () => {
                                 <EnvelopeIcon className="w-12 h-12 text-primary-900 mb-6" />
                                 <h3 className="text-3xl font-display text-primary-900 mb-2">Email Us</h3>
                                 <p className="text-gray-500 mb-4">For partnerships & general inquiries.</p>
-                                <a href="mailto:hello@vitanips.com" className="text-xl font-bold text-primary-600 border-b-2 border-accent hover:text-primary-900">
-                                    hello@vitanips.com
+                                <a href="mailto:info@vitanips.com" className="text-xl font-bold text-primary-600 border-b-2 border-accent hover:text-primary-900">
+                                    info@vitanips.com
                                 </a>
                             </div>
 
