@@ -19,7 +19,7 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const [searchParams] = useSearchParams();
   const isDoctorRegistration = searchParams.get('doctor') === 'true';
 
@@ -58,38 +58,41 @@ const LoginPage: React.FC = () => {
       const response = await axiosInstance.post<AuthTokens>('/token/', values);
       const { access, refresh } = response.data;
 
-      // Login will fetch user profile
-      await login(access, refresh);
-
-      // Wait a bit for AuthContext to update user state
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Fetch user profile to determine role (use the one from AuthContext if available, otherwise fetch)
-      let user;
+      // Save tokens first
+      localStorage.setItem('accessToken', access);
+      localStorage.setItem('refreshToken', refresh);
+      
+      // Fetch user profile directly (before calling login to avoid race conditions)
+      let userProfile;
       try {
         const userResponse = await axiosInstance.get('/users/profile/', {
           headers: { Authorization: `Bearer ${access}` },
         });
-        user = userResponse.data;
-      } catch (err) {
-        console.error('Failed to fetch user profile:', err);
-        // If fetch fails, try to get from AuthContext
-        // But we'll proceed with redirect anyway
-        navigate('/dashboard');
-        return;
-      }
-      
-      // Check if user registered as doctor but hasn't submitted application yet
-      // This handles users who registered as doctors but haven't completed their application
-      if (!user.is_doctor && (user.registered_as_doctor || isDoctorRegistration)) {
-        navigate('/doctor/application', { replace: true });
-        return;
+        userProfile = userResponse.data;
+      } catch (profileError) {
+        console.error('Failed to fetch user profile:', profileError);
+        // Still proceed with login, AuthContext will retry
+        userProfile = null;
       }
 
-      // Redirect to appropriate dashboard based on user role
-      // Check if there's a return URL in the location state
-      const from = location.state?.from?.pathname || getDashboardRoute(user);
-      navigate(from, { replace: true });
+      // Now call login (which will also fetch profile, but we already have it)
+      await login(access, refresh);
+
+      // Use the profile we fetched for routing decisions
+      if (userProfile) {
+        // Check if user registered as doctor but hasn't submitted application yet
+        if (!userProfile.is_doctor && (userProfile.registered_as_doctor || isDoctorRegistration)) {
+          navigate('/doctor/application', { replace: true });
+          return;
+        }
+
+        // Redirect to appropriate dashboard based on user role
+        const from = location.state?.from?.pathname || getDashboardRoute(userProfile);
+        navigate(from, { replace: true });
+      } else {
+        // Fallback: redirect to dashboard if profile fetch failed
+        navigate('/dashboard', { replace: true });
+      }
     } catch (err: unknown) {
       console.error('Login failed:', err);
       setError(apiErrorToMessage(err, 'Login failed. Please check your connection and try again.'));

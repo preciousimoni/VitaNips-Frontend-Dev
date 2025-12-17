@@ -119,7 +119,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             (response) => response,
             async (error) => {
                 const originalRequest = error.config;
-                if (error.response?.status === 401 && !originalRequest._isRetryAttempt && logout) {
+                
+                // Don't trigger logout for login/token endpoints or during initial auth
+                const isAuthEndpoint = originalRequest?.url?.includes('/token/') || 
+                                      originalRequest?.url?.includes('/auth/') ||
+                                      originalRequest?.url?.includes('/register/');
+                
+                // Don't trigger logout if we're already on the login page
+                const isLoginPage = window.location.pathname === '/login';
+                
+                if (error.response?.status === 401 && 
+                    !originalRequest._isRetryAttempt && 
+                    !isAuthEndpoint &&
+                    !isLoginPage &&
+                    logout) {
                     originalRequest._isRetryAttempt = true;
                     console.warn('Global 401 detected by interceptor. Logging out.');
                     logout();
