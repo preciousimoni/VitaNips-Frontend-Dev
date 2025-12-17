@@ -103,30 +103,24 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // CRITICAL: Never split React or React-related packages
+          // CRITICAL: Never split React - it must ALWAYS stay in the main bundle
           // Splitting React causes "Cannot set properties of undefined" errors
-          // Check for React in multiple ways to be absolutely sure
-          if (id.includes('node_modules/react/') || 
-              id.includes('node_modules/react-dom/') ||
-              id.includes('node_modules/react/jsx-runtime') ||
-              id.includes('node_modules/react/jsx-dev-runtime') ||
-              id.includes('node_modules/react/index') ||
-              id.includes('node_modules/react-dom/index') ||
-              id.includes('node_modules/react-dom/client') ||
-              id.includes('node_modules/react-dom/server') ||
-              id.includes('scheduler') || // React's scheduler
-              (id.includes('react') && id.includes('node_modules') && !id.includes('react-leaflet') && !id.includes('react-router'))) {
-            // Explicitly return undefined - React must stay in main bundle
+          // This check must come FIRST before any other chunking logic
+          if (id.includes('node_modules/react') || 
+              id.includes('node_modules/react-dom') ||
+              id.includes('node_modules/react/jsx') ||
+              id.includes('node_modules/scheduler') ||
+              id.includes('node_modules/object-assign')) {
+            // Return undefined - React must NEVER be chunked
             return undefined;
           }
           
-          // React Router can be separate (it's safe)
-          if (id.includes('react-router')) {
-            return 'vendor-router';
-          }
-          
-          // Other vendor chunks - separate large libraries
+          // Only chunk non-React node_modules
           if (id.includes('node_modules')) {
+            // React Router can be separate (it's safe, doesn't include React core)
+            if (id.includes('react-router')) {
+              return 'vendor-router';
+            }
             // Firebase
             if (id.includes('firebase')) {
               return 'vendor-firebase';
@@ -159,29 +153,16 @@ export default defineConfig({
             if (id.includes('date-fns')) {
               return 'vendor-dates';
             }
-            // All other node_modules go to vendor (but NOT React)
+            // All other node_modules (but NOT React)
             return 'vendor';
           }
           
-          // Feature-based chunks
-          if (id.includes('/pages/admin/')) {
-            return 'admin';
-          }
-          if (id.includes('/pages/doctor/')) {
-            return 'doctor';
-          }
-          if (id.includes('/pages/pharmacy/')) {
-            return 'pharmacy';
-          }
-          if (id.includes('/pages/legal/')) {
-            return 'legal';
-          }
-          if (id.includes('/pages/articles/')) {
-            return 'articles';
-          }
-          if (id.includes('/features/')) {
-            return 'features';
-          }
+          // DISABLED: Feature-based chunking causes React to be split incorrectly
+          // Pages will be lazy-loaded but React stays in main bundle
+          // This prevents "Cannot set properties of undefined" errors
+          
+          // Return undefined for everything else (React and all source files stay in main bundle)
+          return undefined;
         },
       },
     },
