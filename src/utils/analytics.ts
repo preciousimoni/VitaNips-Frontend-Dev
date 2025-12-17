@@ -9,7 +9,7 @@ declare global {
   interface Window {
     gtag: (
       command: 'config' | 'event' | 'set' | 'js',
-      targetId: string | Date,
+      targetId: string | Date | Record<string, any>,
       config?: Record<string, any>
     ) => void;
     dataLayer: any[];
@@ -150,11 +150,9 @@ export const trackUserAction = {
 export const setUserProperties = (userId: string, properties?: Record<string, any>): void => {
   if (!GA_MEASUREMENT_ID || !window.gtag) return;
 
-  window.gtag('set', 'user_id', userId);
+  window.gtag('set', { user_id: userId });
   if (properties) {
-    Object.entries(properties).forEach(([key, value]) => {
-      window.gtag('set', key, value);
-    });
+    window.gtag('set', properties);
   }
 };
 
@@ -164,6 +162,6 @@ export const setUserProperties = (userId: string, properties?: Record<string, an
 export const clearUserProperties = (): void => {
   if (!GA_MEASUREMENT_ID || !window.gtag) return;
 
-  window.gtag('set', 'user_id', null);
+  window.gtag('set', { user_id: null });
 };
 

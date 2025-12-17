@@ -69,7 +69,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             if (response.data) {
                 initializePushNotifications();
                 // Track user login in Google Analytics
-                const { trackUserAction, setUserProperties } = await import('../utils/analytics');
+                const { setUserProperties } = await import('../utils/analytics');
                 setUserProperties(response.data.id.toString(), {
                     user_type: response.data.is_doctor ? 'doctor' : response.data.is_pharmacy ? 'pharmacy' : 'user',
                 });
