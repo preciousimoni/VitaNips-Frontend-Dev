@@ -13,6 +13,9 @@ export default defineConfig({
       filename: 'sw.ts',
       registerType: 'autoUpdate',
       includeAssets: ['logo.png', 'favicon.ico'],
+      injectManifest: {
+        maximumFileSizeToCacheInBytes: 5000000, // 5 MB limit
+      },
       manifest: {
         name: 'VitaNips',
         short_name: 'VitaNips',
@@ -49,8 +52,10 @@ export default defineConfig({
         ]
       },
       devOptions: {
-        enabled: false // Disable in dev mode for faster development
-      }
+        enabled: true, // Enable in dev mode for testing PWA
+        type: 'module' // Use module type for service worker
+      },
+      injectRegister: 'auto' // Automatically register service worker
     })
   ],
   resolve: {
