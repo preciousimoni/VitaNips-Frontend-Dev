@@ -19,7 +19,7 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   const [searchParams] = useSearchParams();
   const isDoctorRegistration = searchParams.get('doctor') === 'true';
 
