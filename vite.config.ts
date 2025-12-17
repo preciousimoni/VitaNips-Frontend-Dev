@@ -1,10 +1,58 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
+      registerType: 'autoUpdate',
+      includeAssets: ['logo.png', 'favicon.ico'],
+      manifest: {
+        name: 'VitaNips',
+        short_name: 'VitaNips',
+        description: 'VitaNips - Your Vitality, Our Priority. Comprehensive health management platform for appointments, prescriptions, and wellness tracking.',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        orientation: 'portrait',
+        scope: '/',
+        start_url: '/',
+        icons: [
+          {
+            src: '/logo.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/logo.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ],
+        categories: ['health', 'medical', 'lifestyle'],
+        screenshots: [
+          {
+            src: '/screenshots/landing-hero.png',
+            sizes: '1280x720',
+            type: 'image/png',
+            form_factor: 'wide',
+            label: 'VitaNips Landing Page'
+          }
+        ]
+      },
+      devOptions: {
+        enabled: false // Disable in dev mode for faster development
+      }
+    })
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
