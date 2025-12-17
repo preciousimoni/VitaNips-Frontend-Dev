@@ -103,13 +103,26 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // CRITICAL: Never split React - let Vite handle it automatically
+          // CRITICAL: Never split React or React-related packages
           // Splitting React causes "Cannot set properties of undefined" errors
-          if (id.includes('node_modules/react') || 
-              id.includes('node_modules/react-dom') ||
-              id.includes('node_modules/react/jsx')) {
-            // Return undefined to let Vite handle React automatically
-            return;
+          // Check for React in multiple ways to be absolutely sure
+          if (id.includes('node_modules/react/') || 
+              id.includes('node_modules/react-dom/') ||
+              id.includes('node_modules/react/jsx-runtime') ||
+              id.includes('node_modules/react/jsx-dev-runtime') ||
+              id.includes('node_modules/react/index') ||
+              id.includes('node_modules/react-dom/index') ||
+              id.includes('node_modules/react-dom/client') ||
+              id.includes('node_modules/react-dom/server') ||
+              id.includes('scheduler') || // React's scheduler
+              (id.includes('react') && id.includes('node_modules') && !id.includes('react-leaflet') && !id.includes('react-router'))) {
+            // Explicitly return undefined - React must stay in main bundle
+            return undefined;
+          }
+          
+          // React Router can be separate (it's safe)
+          if (id.includes('react-router')) {
+            return 'vendor-router';
           }
           
           // Other vendor chunks - separate large libraries
@@ -146,7 +159,7 @@ export default defineConfig({
             if (id.includes('date-fns')) {
               return 'vendor-dates';
             }
-            // All other node_modules go to vendor
+            // All other node_modules go to vendor (but NOT React)
             return 'vendor';
           }
           
