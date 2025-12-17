@@ -1,88 +1,92 @@
 // src/router/index.tsx
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getDashboardRoute } from '../utils/routing';
 import MainLayout from '../components/layout/MainLayout';
 import SmartDashboardRedirect from '../components/routing/SmartDashboardRedirect';
 import ScrollToTop from '../components/routing/ScrollToTop';
-import LandingPage from '../pages/LandingPage';
-import LoginPage from '../features/auth/pages/LoginPage';
-import RegisterPage from '../features/auth/pages/RegisterPage';
-import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
-import DashboardPage from '../pages/DashboardPage';
-import DoctorListPage from '../pages/DoctorListPage';
-import DoctorDetailPage from '../pages/DoctorDetailPage';
-import ProfilePage from '../features/users/pages/ProfilePage';
-import NotificationSettingsPage from '../pages/NotificationSettingsPage';
-import NotificationsPage from '../pages/NotificationsPage';
-import PharmacyListPage from '../pages/PharmacyListPage';
-import VaccinationsPage from '../pages/VaccinationsPage';
-import UserInsurancePage from '../pages/UserInsurancePage';
-import UserClaimsPage from '../pages/UserClaimsPage';
-import EmergencyContactsPage from '../pages/EmergencyContactsPage';
-import AppointmentsPage from '../pages/AppointmentsPage';
-import AppointmentDetailPage from '../pages/AppointmentDetailPage';
-import PrescriptionsPage from '../pages/PrescriptionsPage';
-import UserOrdersPage from '../pages/UserOrdersPage';
-import UserOrderDetailPage from '../pages/UserOrderDetailPage';
-import MedicalDocumentsPage from '../pages/MedicalDocumentsPage';
-import MapLocatorPage from '../pages/MapLocatorPage';
-import PharmacyDashboardPage from '../pages/pharmacy/PharmacyDashboardPage';
-import PharmacyOrderListPage from '../pages/pharmacy/PharmacyOrderListPage';
-import PharmacyOrderDetailPage from '../pages/pharmacy/PharmacyOrderDetailPage';
-import PharmacyInventoryPage from '../pages/pharmacy/PharmacyInventoryPage';
-import PharmacyAnalyticsPage from '../pages/pharmacy/PharmacyAnalyticsPage';
-import MedicationRemindersPage from '../pages/MedicationRemindersPage';
-import VideoCallPage from '../pages/VideoCallPage';
-import VitalsLogPage from '../pages/VitalsLogPage';
-import FoodLogPage from '../pages/FoodLogPage';
-import ExerciseLogPage from '../pages/ExerciseLogPage';
-import SleepLogPage from '../pages/SleepLogPage';
-import HealthLibraryPage from '../pages/HealthLibraryPage';
-import HealthyEatingTipsPage from '../pages/articles/HealthyEatingTipsPage';
-// import UnderstandingDiabetesPage from '../pages/articles/UnderstandingDiabetesPage';
-import MentalWellnessResourcesPage from '../pages/MentalWellnessResourcesPage';
-import DoctorDashboardPage from '../pages/doctor/DoctorDashboardPage';
-import DoctorPrescriptionWorkspacePage from '../pages/doctor/DoctorPrescriptionWorkspacePage';
-import ManageAvailabilityPage from '../pages/doctor/ManageAvailabilityPage';
-import DoctorApplicationPage from '../pages/doctor/DoctorApplicationPage';
-import DoctorBankDetailsPage from '../pages/doctor/DoctorBankDetailsPage';
-import PharmacyBankDetailsPage from '../pages/pharmacy/PharmacyBankDetailsPage';
-import PharmacySubscriptionPage from '../pages/pharmacy/PharmacySubscriptionPage';
-import AdminDashboard from '../pages/admin/AdminDashboard';
-import AdminUsersPage from '../pages/admin/AdminUsersPage';
-import AdminDoctorsPage from '../pages/admin/AdminDoctorsPage';
-import AdminPharmaciesPage from '../pages/admin/AdminPharmaciesPage';
-import AdminAnalyticsPage from '../pages/admin/AdminAnalyticsPage';
-import AdminAppointmentsPage from '../pages/admin/AdminAppointmentsPage';
-import AdminAppointmentDetailPage from '../pages/admin/AdminAppointmentDetailPage';
-import EmergencyPage from '../pages/EmergencyPage';
-import AlertSentPage from '../pages/AlertSentPage';
-import CreateOrderPage from '../pages/CreateOrderPage';
-import HealthDashboardPage from '../pages/HealthDashboardPage';
-import HealthAnalyticsPage from '../pages/HealthAnalyticsPage';
-import AboutPage from '../pages/AboutPage';
-import HelpCenterPage from '../pages/HelpCenterPage';
-import ContactPage from '../pages/ContactPage';
-import SubscriptionPage from '../pages/SubscriptionPage';
-import PremiumFeaturesPage from '../pages/PremiumFeaturesPage';
-import PremiumFeaturesHubPage from '../pages/PremiumFeaturesHubPage';
-import FamilyDashboardPage from '../pages/FamilyDashboardPage';
-import SharedRemindersPage from '../pages/SharedRemindersPage';
-import HealthGoalsPage from '../pages/HealthGoalsPage';
-import WaterLogPage from '../pages/WaterLogPage';
-import CareerPage from '../pages/CareerPage';
-import PaymentCallbackPage from '../pages/PaymentCallbackPage';
-import PrivacyPolicy from '../pages/legal/PrivacyPolicy';
-import TermsOfService from '../pages/legal/TermsOfService';
-import CookiePolicy from '../pages/legal/CookiePolicy';
-import HIPAACompliance from '../pages/legal/HIPAACompliance';
 import toast from 'react-hot-toast';
+
+// Lazy load all pages for code-splitting
+const LandingPage = lazy(() => import('../pages/LandingPage'));
+const LoginPage = lazy(() => import('../features/auth/pages/LoginPage'));
+const RegisterPage = lazy(() => import('../features/auth/pages/RegisterPage'));
+const ForgotPasswordPage = lazy(() => import('../features/auth/pages/ForgotPasswordPage'));
+const DashboardPage = lazy(() => import('../pages/DashboardPage'));
+const DoctorListPage = lazy(() => import('../pages/DoctorListPage'));
+const DoctorDetailPage = lazy(() => import('../pages/DoctorDetailPage'));
+const ProfilePage = lazy(() => import('../features/users/pages/ProfilePage'));
+const NotificationSettingsPage = lazy(() => import('../pages/NotificationSettingsPage'));
+const NotificationsPage = lazy(() => import('../pages/NotificationsPage'));
+const PharmacyListPage = lazy(() => import('../pages/PharmacyListPage'));
+const VaccinationsPage = lazy(() => import('../pages/VaccinationsPage'));
+const UserInsurancePage = lazy(() => import('../pages/UserInsurancePage'));
+const UserClaimsPage = lazy(() => import('../pages/UserClaimsPage'));
+const EmergencyContactsPage = lazy(() => import('../pages/EmergencyContactsPage'));
+const AppointmentsPage = lazy(() => import('../pages/AppointmentsPage'));
+const AppointmentDetailPage = lazy(() => import('../pages/AppointmentDetailPage'));
+const PrescriptionsPage = lazy(() => import('../pages/PrescriptionsPage'));
+const UserOrdersPage = lazy(() => import('../pages/UserOrdersPage'));
+const UserOrderDetailPage = lazy(() => import('../pages/UserOrderDetailPage'));
+const MedicalDocumentsPage = lazy(() => import('../pages/MedicalDocumentsPage'));
+const MapLocatorPage = lazy(() => import('../pages/MapLocatorPage'));
+const PharmacyDashboardPage = lazy(() => import('../pages/pharmacy/PharmacyDashboardPage'));
+const PharmacyOrderListPage = lazy(() => import('../pages/pharmacy/PharmacyOrderListPage'));
+const PharmacyOrderDetailPage = lazy(() => import('../pages/pharmacy/PharmacyOrderDetailPage'));
+const PharmacyInventoryPage = lazy(() => import('../pages/pharmacy/PharmacyInventoryPage'));
+const PharmacyAnalyticsPage = lazy(() => import('../pages/pharmacy/PharmacyAnalyticsPage'));
+const MedicationRemindersPage = lazy(() => import('../pages/MedicationRemindersPage'));
+const VideoCallPage = lazy(() => import('../pages/VideoCallPage'));
+const VitalsLogPage = lazy(() => import('../pages/VitalsLogPage'));
+const FoodLogPage = lazy(() => import('../pages/FoodLogPage'));
+const ExerciseLogPage = lazy(() => import('../pages/ExerciseLogPage'));
+const SleepLogPage = lazy(() => import('../pages/SleepLogPage'));
+const HealthLibraryPage = lazy(() => import('../pages/HealthLibraryPage'));
+const HealthyEatingTipsPage = lazy(() => import('../pages/articles/HealthyEatingTipsPage'));
+const MentalWellnessResourcesPage = lazy(() => import('../pages/MentalWellnessResourcesPage'));
+const DoctorDashboardPage = lazy(() => import('../pages/doctor/DoctorDashboardPage'));
+const DoctorPrescriptionWorkspacePage = lazy(() => import('../pages/doctor/DoctorPrescriptionWorkspacePage'));
+const ManageAvailabilityPage = lazy(() => import('../pages/doctor/ManageAvailabilityPage'));
+const DoctorApplicationPage = lazy(() => import('../pages/doctor/DoctorApplicationPage'));
+const DoctorBankDetailsPage = lazy(() => import('../pages/doctor/DoctorBankDetailsPage'));
+const PharmacyBankDetailsPage = lazy(() => import('../pages/pharmacy/PharmacyBankDetailsPage'));
+const PharmacySubscriptionPage = lazy(() => import('../pages/pharmacy/PharmacySubscriptionPage'));
+const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
+const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'));
+const AdminDoctorsPage = lazy(() => import('../pages/admin/AdminDoctorsPage'));
+const AdminPharmaciesPage = lazy(() => import('../pages/admin/AdminPharmaciesPage'));
+const AdminAnalyticsPage = lazy(() => import('../pages/admin/AdminAnalyticsPage'));
+const AdminAppointmentsPage = lazy(() => import('../pages/admin/AdminAppointmentsPage'));
+const AdminAppointmentDetailPage = lazy(() => import('../pages/admin/AdminAppointmentDetailPage'));
+const EmergencyPage = lazy(() => import('../pages/EmergencyPage'));
+const AlertSentPage = lazy(() => import('../pages/AlertSentPage'));
+const CreateOrderPage = lazy(() => import('../pages/CreateOrderPage'));
+const HealthDashboardPage = lazy(() => import('../pages/HealthDashboardPage'));
+const HealthAnalyticsPage = lazy(() => import('../pages/HealthAnalyticsPage'));
+const AboutPage = lazy(() => import('../pages/AboutPage'));
+const HelpCenterPage = lazy(() => import('../pages/HelpCenterPage'));
+const ContactPage = lazy(() => import('../pages/ContactPage'));
+const SubscriptionPage = lazy(() => import('../pages/SubscriptionPage'));
+const PremiumFeaturesPage = lazy(() => import('../pages/PremiumFeaturesPage'));
+const PremiumFeaturesHubPage = lazy(() => import('../pages/PremiumFeaturesHubPage'));
+const FamilyDashboardPage = lazy(() => import('../pages/FamilyDashboardPage'));
+const SharedRemindersPage = lazy(() => import('../pages/SharedRemindersPage'));
+const HealthGoalsPage = lazy(() => import('../pages/HealthGoalsPage'));
+const WaterLogPage = lazy(() => import('../pages/WaterLogPage'));
+const CareerPage = lazy(() => import('../pages/CareerPage'));
+const PaymentCallbackPage = lazy(() => import('../pages/PaymentCallbackPage'));
+const PrivacyPolicy = lazy(() => import('../pages/legal/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('../pages/legal/TermsOfService'));
+const CookiePolicy = lazy(() => import('../pages/legal/CookiePolicy'));
+const HIPAACompliance = lazy(() => import('../pages/legal/HIPAACompliance'));
 
 const LoadingScreen: React.FC = () => (
   <div className="flex justify-center items-center h-screen">
-    <p className="text-xl text-gray-600">Loading...</p>
+    <div className="flex flex-col items-center gap-4">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <p className="text-xl text-gray-600">Loading...</p>
+    </div>
   </div>
 );
 
@@ -200,7 +204,8 @@ const AppRouter: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
-      <Routes>
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
         {/* Landing page with authentication check */}
         <Route path="/" element={<LandingPageRoute />} />
         <Route path="/about" element={<AboutPage />} />
@@ -305,7 +310,8 @@ const AppRouter: React.FC = () => {
           <Route path="/mental-wellness" element={<MentalWellnessResourcesPage />} />
         </Route>
 
-      </Routes>
+        </Routes>
+      </Suspense>
     </Router>
   );
 };

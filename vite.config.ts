@@ -72,4 +72,74 @@ export default defineConfig({
       '@contexts': path.resolve(__dirname, './src/contexts'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // Vendor chunks - separate large libraries
+          if (id.includes('node_modules')) {
+            // React and React DOM
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'vendor-react';
+            }
+            // Firebase
+            if (id.includes('firebase')) {
+              return 'vendor-firebase';
+            }
+            // Charts and visualization
+            if (id.includes('recharts') || id.includes('chart')) {
+              return 'vendor-charts';
+            }
+            // Video/Media
+            if (id.includes('twilio') || id.includes('video')) {
+              return 'vendor-media';
+            }
+            // Maps
+            if (id.includes('leaflet') || id.includes('map')) {
+              return 'vendor-maps';
+            }
+            // Forms and validation
+            if (id.includes('react-hook-form') || id.includes('zod') || id.includes('@hookform')) {
+              return 'vendor-forms';
+            }
+            // UI libraries
+            if (id.includes('@headlessui') || id.includes('@heroicons') || id.includes('framer-motion')) {
+              return 'vendor-ui';
+            }
+            // Query and state management
+            if (id.includes('@tanstack/react-query')) {
+              return 'vendor-query';
+            }
+            // Date utilities
+            if (id.includes('date-fns')) {
+              return 'vendor-dates';
+            }
+            // All other node_modules
+            return 'vendor';
+          }
+          
+          // Feature-based chunks
+          if (id.includes('/pages/admin/')) {
+            return 'admin';
+          }
+          if (id.includes('/pages/doctor/')) {
+            return 'doctor';
+          }
+          if (id.includes('/pages/pharmacy/')) {
+            return 'pharmacy';
+          }
+          if (id.includes('/pages/legal/')) {
+            return 'legal';
+          }
+          if (id.includes('/pages/articles/')) {
+            return 'articles';
+          }
+          if (id.includes('/features/')) {
+            return 'features';
+          }
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
+  },
 })
