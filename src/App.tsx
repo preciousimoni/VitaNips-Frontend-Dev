@@ -6,6 +6,7 @@ import AppRouter from './router';
 import { Toaster } from 'react-hot-toast';
 // import { useAuth } from './contexts/AuthContext';
 import { initBrandingFromLogo } from './utils/branding';
+import { initGA } from './utils/analytics';
 
 // Create a QueryClient instance outside component to ensure it's stable
 const queryClient = new QueryClient({
@@ -26,6 +27,8 @@ import InstallPrompt from './components/pwa/InstallPrompt';
 const AppContent: React.FC = () => {
   // const { isAuthenticated } = useAuth();
   useEffect(() => {
+    // Initialize Google Analytics
+    initGA();
     // Initialize dynamic branding based on logo dominant color
     initBrandingFromLogo();
   }, []);

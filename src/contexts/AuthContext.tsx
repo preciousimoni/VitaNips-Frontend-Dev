@@ -26,6 +26,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [loading, setLoading] = useState<boolean>(true);
 
     const logout = useCallback(() => {
+        // Track logout in Google Analytics
+        import('../utils/analytics').then(({ trackUserAction, clearUserProperties }) => {
+            trackUserAction.logout();
+            clearUserProperties();
+        });
+        
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         setAccessToken(null);
@@ -62,6 +68,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
             if (response.data) {
                 initializePushNotifications();
+                // Track user login in Google Analytics
+                const { trackUserAction, setUserProperties } = await import('../utils/analytics');
+                setUserProperties(response.data.id.toString(), {
+                    user_type: response.data.is_doctor ? 'doctor' : response.data.is_pharmacy ? 'pharmacy' : 'user',
+                });
             }
 
         } catch (error) {
