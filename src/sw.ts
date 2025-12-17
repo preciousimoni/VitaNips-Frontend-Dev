@@ -80,14 +80,15 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
 // Firebase configuration
-// IMPORTANT: Replace these with your actual Firebase config values
+// These will be replaced at build time by Vite's define
+// @ts-ignore
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: __FIREBASE_API_KEY__,
+  authDomain: __FIREBASE_AUTH_DOMAIN__,
+  projectId: __FIREBASE_PROJECT_ID__,
+  storageBucket: __FIREBASE_STORAGE_BUCKET__,
+  messagingSenderId: __FIREBASE_MESSAGING_SENDER_ID__,
+  appId: __FIREBASE_APP_ID__
 };
 
 // Initialize Firebase

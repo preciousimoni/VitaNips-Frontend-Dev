@@ -1,10 +1,24 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  // Load env file based on `mode` in the current working directory.
+  const env = loadEnv(mode, process.cwd(), '');
+  
+  // Get Firebase config from environment variables
+  const firebaseConfig = {
+    apiKey: env.VITE_FIREBASE_API_KEY || '',
+    authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || '',
+    projectId: env.VITE_FIREBASE_PROJECT_ID || '',
+    storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: env.VITE_FIREBASE_APP_ID || '',
+  };
+
+  return {
   plugins: [
     react(),
     VitePWA({
@@ -73,6 +87,15 @@ export default defineConfig({
       injectRegister: 'auto' // Automatically register service worker
     })
   ],
+  define: {
+    // Inject Firebase config into service worker at build time
+    '__FIREBASE_API_KEY__': JSON.stringify(firebaseConfig.apiKey),
+    '__FIREBASE_AUTH_DOMAIN__': JSON.stringify(firebaseConfig.authDomain),
+    '__FIREBASE_PROJECT_ID__': JSON.stringify(firebaseConfig.projectId),
+    '__FIREBASE_STORAGE_BUCKET__': JSON.stringify(firebaseConfig.storageBucket),
+    '__FIREBASE_MESSAGING_SENDER_ID__': JSON.stringify(firebaseConfig.messagingSenderId),
+    '__FIREBASE_APP_ID__': JSON.stringify(firebaseConfig.appId),
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -172,4 +195,5 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
   },
-})
+  };
+});

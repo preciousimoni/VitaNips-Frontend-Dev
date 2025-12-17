@@ -1,5 +1,4 @@
 import { Helmet } from 'react-helmet-async';
-import { useLocation } from 'react-router-dom';
 
 interface SEOProps {
   title?: string;
@@ -24,9 +23,8 @@ export const SEO = ({
   noindex = false,
   nofollow = false,
 }: SEOProps) => {
-  const location = useLocation();
-  
   // Use current URL if not provided (handle SSR)
+  // Use window.location instead of useLocation to avoid Router context requirement
   const getBaseUrl = () => {
     if (typeof window !== 'undefined') {
       return window.location.origin;
@@ -34,8 +32,16 @@ export const SEO = ({
     return 'https://vitanips.com';
   };
   
+  const getPathname = () => {
+    if (typeof window !== 'undefined') {
+      return window.location.pathname;
+    }
+    return '/';
+  };
+  
   const baseUrl = getBaseUrl();
-  const currentUrl = url || `${baseUrl}${location.pathname}`;
+  const pathname = getPathname();
+  const currentUrl = url || `${baseUrl}${pathname}`;
   
   // Ensure image is an absolute URL
   const absoluteImage = image.startsWith('http') 
@@ -123,8 +129,8 @@ export const SEO = ({
       <link rel='canonical' href={currentUrl} />
       
       {/* Alternate URLs for brand searches */}
-      <link rel='alternate' href={`https://vitanips.com${location.pathname}`} hrefLang='en' />
-      <link rel='alternate' href={`https://www.vitanips.com${location.pathname}`} hrefLang='en' />
+      <link rel='alternate' href={`https://vitanips.com${pathname}`} hrefLang='en' />
+      <link rel='alternate' href={`https://www.vitanips.com${pathname}`} hrefLang='en' />
       
       {/* Structured Data (JSON-LD) */}
       {structuredDataArray.map((data, index) => (
