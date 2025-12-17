@@ -123,8 +123,8 @@ export const SEO = ({
       <link rel='canonical' href={currentUrl} />
       
       {/* Alternate URLs for brand searches */}
-      <link rel='alternate' href={`https://vitanips.com${location.pathname}`} hreflang='en' />
-      <link rel='alternate' href={`https://www.vitanips.com${location.pathname}`} hreflang='en' />
+      <link rel='alternate' href={`https://vitanips.com${location.pathname}`} hrefLang='en' />
+      <link rel='alternate' href={`https://www.vitanips.com${location.pathname}`} hrefLang='en' />
       
       {/* Structured Data (JSON-LD) */}
       {structuredDataArray.map((data, index) => (
