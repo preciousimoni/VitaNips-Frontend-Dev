@@ -1,6 +1,6 @@
 // src/components/pwa/InstallPrompt.tsx
 import { useEffect, useState } from 'react';
-import { XMarkIcon, ArrowDownTrayIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ArrowDownTrayIcon, DevicePhoneMobileIcon, BoltIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -103,65 +103,91 @@ const InstallPrompt: React.FC = () => {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        initial={{ opacity: 0, y: 30, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 20, scale: 0.95 }}
-        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:max-w-md z-50"
+        exit={{ opacity: 0, y: 30, scale: 0.9 }}
+        transition={{ type: "spring", damping: 20, stiffness: 300 }}
+        className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:max-w-lg z-50"
       >
-        <div className="bg-white rounded-[2rem] shadow-2xl shadow-primary-900/10 border-2 border-gray-100 overflow-hidden backdrop-blur-sm">
-          {/* Decorative accent bar */}
-          <div className="h-1 bg-gradient-to-r from-accent via-primary to-accent" />
+        <div className="relative bg-gradient-to-br from-[#FDFBF7] via-white to-primary-50/30 rounded-[2.5rem] shadow-2xl shadow-primary-900/20 border-2 border-primary-100/50 overflow-hidden backdrop-blur-sm">
+          {/* Decorative gradient accent bar */}
+          <div className="h-1.5 bg-gradient-to-r from-accent via-primary-500 to-accent" />
           
-          <div className="p-6">
-            <div className="flex items-start gap-4">
-              {/* Icon with brand styling */}
+          {/* Background pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent rounded-full blur-2xl" />
+          </div>
+          
+          <div className="relative p-6 md:p-8">
+            <div className="flex items-start gap-5">
+              {/* App Icon with brand styling */}
               <div className="flex-shrink-0">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-50 to-accent/20 rounded-2xl flex items-center justify-center border-2 border-primary-100">
-                  <ArrowDownTrayIcon className="w-8 h-8 text-primary-700" />
+                <div className="relative">
+                  <div className="w-20 h-20 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 rounded-3xl flex items-center justify-center border-4 border-white shadow-xl shadow-primary-900/30">
+                    <img src="/logo.png" alt="VitaNips" className="w-12 h-12 object-contain" />
+                  </div>
+                  {/* Download indicator */}
+                  <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-accent rounded-full flex items-center justify-center border-2 border-white shadow-lg">
+                    <ArrowDownTrayIcon className="w-4 h-4 text-primary-900 font-bold" />
+                  </div>
                 </div>
               </div>
               
               {/* Content */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div>
-                    <h3 className="text-lg font-display font-bold text-primary-900 mb-1 tracking-tight">
-                      Install VitaNips
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex-1">
+                    <div className="inline-flex items-center gap-2 mb-2">
+                      <span className="text-xs font-bold text-primary-700 tracking-widest uppercase border-b-2 border-accent pb-0.5">
+                        Download App
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-display font-bold text-primary-900 mb-2 tracking-tight leading-tight">
+                      Get the VitaNips App
                     </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      Add to your home screen for quick access. Skip the browser, get the app experience.
+                    <p className="text-sm text-gray-700 leading-relaxed mb-4">
+                      Download our app for a faster, smoother experience. Access doctors, prescriptions, and health records on the go—no browser needed.
                     </p>
                   </div>
                   <button
                     onClick={handleDismiss}
-                    className="flex-shrink-0 p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
+                    className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100/80 rounded-full transition-all"
                     aria-label="Dismiss"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
                 </div>
                 
-                {/* Benefits */}
-                <div className="mt-4 flex items-center gap-4 text-xs text-gray-500 mb-4">
-                  <div className="flex items-center gap-1.5">
-                    <SparklesIcon className="w-4 h-4 text-accent" />
-                    <span>Faster access</span>
+                {/* Benefits with brand colors */}
+                <div className="mb-5 space-y-2">
+                  <div className="flex items-center gap-3 text-sm">
+                    <div className="w-8 h-8 bg-accent/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <BoltIcon className="w-5 h-5 text-accent" />
+                    </div>
+                    <span className="text-gray-700 font-medium">Lightning fast—no loading delays</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <SparklesIcon className="w-4 h-4 text-accent" />
-                    <span>Offline ready</span>
+                  <div className="flex items-center gap-3 text-sm">
+                    <div className="w-8 h-8 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <DevicePhoneMobileIcon className="w-5 h-5 text-primary-700" />
+                    </div>
+                    <span className="text-gray-700 font-medium">Works offline—access anytime, anywhere</span>
                   </div>
                 </div>
                 
-                {/* Install button */}
+                {/* Install button with brand styling */}
                 <button
                   onClick={handleInstallClick}
-                  className="w-full bg-primary-900 hover:bg-primary-800 text-white px-6 py-3.5 rounded-full text-base font-bold transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary-900/20 hover:shadow-2xl hover:shadow-primary-900/30 hover:-translate-y-0.5 active:translate-y-0"
+                  className="w-full bg-primary-900 hover:bg-primary-800 text-white px-8 py-4 rounded-full text-lg font-bold transition-all flex items-center justify-center gap-3 shadow-xl shadow-primary-900/30 hover:shadow-2xl hover:shadow-primary-900/40 hover:-translate-y-1 active:translate-y-0 group"
                 >
-                  <ArrowDownTrayIcon className="w-5 h-5" />
-                  <span>Install App</span>
+                  <ArrowDownTrayIcon className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                  <span>Download App Now</span>
                 </button>
+                
+                {/* Trust indicator */}
+                <p className="text-xs text-gray-500 text-center mt-4">
+                  Free • No sign-up required • Secure
+                </p>
               </div>
             </div>
           </div>
