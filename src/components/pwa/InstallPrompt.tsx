@@ -13,6 +13,21 @@ const InstallPrompt: React.FC = () => {
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
 
+  // Check if prompt should be shown based on dismissed state
+  const shouldShowPrompt = (): boolean => {
+    const dismissedTime = localStorage.getItem('pwa-prompt-dismissed');
+    if (!dismissedTime) {
+      return true; // Never dismissed, can show
+    }
+    
+    const dismissed = new Date(dismissedTime).getTime();
+    const now = new Date().getTime();
+    const hoursSinceDismissed = (now - dismissed) / (1000 * 60 * 60);
+    
+    // Show again after 24 hours (reduced from 7 days for better UX)
+    return hoursSinceDismissed >= 24;
+  };
+
   useEffect(() => {
     // Check if app is currently installed (standalone mode)
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
@@ -27,10 +42,10 @@ const InstallPrompt: React.FC = () => {
       // This handles the case where user uninstalled the app
       const wasInstalled = localStorage.getItem('pwa-installed');
       if (wasInstalled === 'true') {
-        // App was uninstalled, clear the flag
+        // App was uninstalled, aggressively clear all related state
         localStorage.removeItem('pwa-installed');
-        // Also clear dismissed state so prompt can show again
         localStorage.removeItem('pwa-prompt-dismissed');
+        localStorage.removeItem('pwa-deferred-prompt-available');
       }
       setIsInstalled(false);
     }
@@ -38,29 +53,19 @@ const InstallPrompt: React.FC = () => {
     // Listen for the beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
+      const promptEvent = e as BeforeInstallPromptEvent;
+      setDeferredPrompt(promptEvent);
       
-      // Check if install prompt was dismissed recently
-      const dismissedTime = localStorage.getItem('pwa-prompt-dismissed');
-      if (dismissedTime) {
-        const dismissed = new Date(dismissedTime).getTime();
-        const now = new Date().getTime();
-        const daysSinceDismissed = (now - dismissed) / (1000 * 60 * 60 * 24);
-        
-        // Show again after 7 days (or immediately if app was uninstalled)
-        if (daysSinceDismissed < 7) {
-          // Still within cooldown period, don't show yet
-          return;
-        } else {
-          // Cooldown expired, clear dismissed state
-          localStorage.removeItem('pwa-prompt-dismissed');
-        }
+      // Store reference in case component unmounts/remounts
+      localStorage.setItem('pwa-deferred-prompt-available', 'true');
+      
+      // Check if we should show the prompt
+      if (shouldShowPrompt()) {
+        // Show prompt after a short delay to allow page to load
+        setTimeout(() => {
+          setShowPrompt(true);
+        }, 3000);
       }
-      
-      // Show prompt after a short delay to allow page to load
-      setTimeout(() => {
-        setShowPrompt(true);
-      }, 3000);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -68,22 +73,42 @@ const InstallPrompt: React.FC = () => {
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
-  }, []);
+  }, []); // Run only once on mount
+
+  // Separate effect to check if we should show prompt when deferredPrompt becomes available
+  useEffect(() => {
+    if (deferredPrompt && shouldShowPrompt() && !isInstalled && !showPrompt) {
+      setTimeout(() => {
+        setShowPrompt(true);
+      }, 3000);
+    }
+  }, [deferredPrompt, isInstalled, showPrompt]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
       return;
     }
 
-    // Show the install prompt
-    deferredPrompt.prompt();
+    try {
+      // Show the install prompt
+      await deferredPrompt.prompt();
 
-    // Wait for the user to respond
-    const { outcome } = await deferredPrompt.userChoice;
+      // Wait for the user to respond
+      const { outcome } = await deferredPrompt.userChoice;
 
-    if (outcome === 'accepted') {
-      localStorage.setItem('pwa-installed', 'true');
-      setIsInstalled(true);
+      if (outcome === 'accepted') {
+        localStorage.setItem('pwa-installed', 'true');
+        localStorage.removeItem('pwa-prompt-dismissed');
+        localStorage.removeItem('pwa-deferred-prompt-available');
+        setIsInstalled(true);
+      } else {
+        // User dismissed, set dismissed time
+        localStorage.setItem('pwa-prompt-dismissed', new Date().toISOString());
+      }
+    } catch (error) {
+      console.error('Error showing install prompt:', error);
+      // If prompt fails, still mark as dismissed to avoid repeated attempts
+      localStorage.setItem('pwa-prompt-dismissed', new Date().toISOString());
     }
 
     setDeferredPrompt(null);
@@ -92,7 +117,11 @@ const InstallPrompt: React.FC = () => {
 
   const handleDismiss = () => {
     setShowPrompt(false);
+    // Set dismissed time - will show again after 24 hours
     localStorage.setItem('pwa-prompt-dismissed', new Date().toISOString());
+    // Clear the availability flag so it can be set again when event fires
+    localStorage.removeItem('pwa-deferred-prompt-available');
+    // Don't clear deferredPrompt - keep it for potential future use within this session
   };
 
   // Don't show if already installed or no prompt available
