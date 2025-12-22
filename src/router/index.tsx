@@ -13,6 +13,7 @@ const LandingPage = lazy(() => import('../pages/LandingPage'));
 const LoginPage = lazy(() => import('../features/auth/pages/LoginPage'));
 const RegisterPage = lazy(() => import('../features/auth/pages/RegisterPage'));
 const ForgotPasswordPage = lazy(() => import('../features/auth/pages/ForgotPasswordPage'));
+const PasswordResetConfirmPage = lazy(() => import('../features/auth/pages/PasswordResetConfirmPage'));
 const DashboardPage = lazy(() => import('../pages/DashboardPage'));
 const DoctorListPage = lazy(() => import('../pages/DoctorListPage'));
 const DoctorDetailPage = lazy(() => import('../pages/DoctorDetailPage'));
@@ -30,6 +31,7 @@ const PrescriptionsPage = lazy(() => import('../pages/PrescriptionsPage'));
 const UserOrdersPage = lazy(() => import('../pages/UserOrdersPage'));
 const UserOrderDetailPage = lazy(() => import('../pages/UserOrderDetailPage'));
 const MedicalDocumentsPage = lazy(() => import('../pages/MedicalDocumentsPage'));
+const TestRequestsPage = lazy(() => import('../pages/TestRequestsPage'));
 const MapLocatorPage = lazy(() => import('../pages/MapLocatorPage'));
 const PharmacyDashboardPage = lazy(() => import('../pages/pharmacy/PharmacyDashboardPage'));
 const PharmacyOrderListPage = lazy(() => import('../pages/pharmacy/PharmacyOrderListPage'));
@@ -50,6 +52,7 @@ const DoctorPrescriptionWorkspacePage = lazy(() => import('../pages/doctor/Docto
 const ManageAvailabilityPage = lazy(() => import('../pages/doctor/ManageAvailabilityPage'));
 const DoctorApplicationPage = lazy(() => import('../pages/doctor/DoctorApplicationPage'));
 const DoctorBankDetailsPage = lazy(() => import('../pages/doctor/DoctorBankDetailsPage'));
+const DoctorTestRequestsPage = lazy(() => import('../pages/doctor/TestRequestsPage'));
 const PharmacyBankDetailsPage = lazy(() => import('../pages/pharmacy/PharmacyBankDetailsPage'));
 const PharmacySubscriptionPage = lazy(() => import('../pages/pharmacy/PharmacySubscriptionPage'));
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
@@ -223,6 +226,7 @@ const AppRouter: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/password-reset/confirm" element={<PasswordResetConfirmPage />} />
           <Route path="/payment/callback" element={<PaymentCallbackPage />} />
         </Route>
 
@@ -239,6 +243,7 @@ const AppRouter: React.FC = () => {
         <Route element={<DoctorRoute />}>
           <Route path="/doctor/dashboard" element={<DoctorDashboardPage />} />
           <Route path="/doctor/prescriptions" element={<DoctorPrescriptionWorkspacePage />} />
+          <Route path="/doctor/test-requests" element={<DoctorTestRequestsPage />} />
           <Route path="/doctor/availability" element={<ManageAvailabilityPage />} />
           <Route path="/doctor/application" element={<DoctorApplicationPage />} />
           <Route path="/doctor/bank-details" element={<DoctorBankDetailsPage />} />
@@ -275,6 +280,7 @@ const AppRouter: React.FC = () => {
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
           <Route path="/medical-documents" element={<MedicalDocumentsPage />} />
+          <Route path="/test-requests" element={<TestRequestsPage />} />
           
           {/* Subscriptions & Premium Features */}
           <Route path="/subscription" element={<SubscriptionPage />} />

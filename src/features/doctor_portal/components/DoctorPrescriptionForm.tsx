@@ -75,11 +75,17 @@ const DoctorPrescriptionForm: React.FC<DoctorPrescriptionFormProps> = ({
         }
 
         setIsFormSubmitting(true);
+        // Ensure instructions field is included (can be empty string if not provided)
+        const payloadItems = validItems.map(item => ({
+            ...item,
+            instructions: item.instructions?.trim() || '', // Ensure instructions is always a string
+        }));
+        
         const payload: DoctorPrescriptionPayload = {
             appointment_id: appointmentId,
             diagnosis: diagnosis.trim(),
             notes: notes.trim() || undefined,
-            items: validItems as DoctorPrescriptionItemPayload[], // Cast after validation
+            items: payloadItems as DoctorPrescriptionItemPayload[],
         };
         
         try {

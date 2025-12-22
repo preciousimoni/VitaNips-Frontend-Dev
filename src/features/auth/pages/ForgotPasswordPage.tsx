@@ -8,6 +8,7 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import FormInput from '../../../components/forms/FormInput';
 import Spinner from '../../../components/ui/Spinner';
 import { toast } from 'react-hot-toast';
+import { passwordReset } from '../../../api/auth';
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Please enter a valid email address.'),
@@ -27,19 +28,16 @@ const ForgotPasswordPage: React.FC = () => {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = async () => {
+  const onSubmit = async (values: ForgotPasswordFormData) => {
     setIsLoading(true);
     try {
-      // Assuming endpoint exists or mocking it for UI demonstration
-      // await axiosInstance.post('/auth/password-reset/', values);
-      
-      // Mock success for now as user asked for UI mostly
-      await new Promise(resolve => setTimeout(resolve, 1000)); 
-      
+      await passwordReset(values.email);
       setIsSubmitted(true);
-    } catch (error) {
+      toast.success('Password reset email sent! Please check your inbox.');
+    } catch (error: any) {
       console.error('Failed to send reset email:', error);
-      toast.error('Failed to send reset email. Please try again.');
+      const errorMessage = error?.response?.data?.detail || error?.response?.data?.email?.[0] || 'Failed to send reset email. Please try again.';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

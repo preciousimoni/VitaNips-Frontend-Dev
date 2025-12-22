@@ -18,7 +18,8 @@ import {
     XMarkIcon,
     SparklesIcon,
     ClockIcon,
-    ChartBarIcon
+    ChartBarIcon,
+    BeakerIcon
 } from '@heroicons/react/24/outline';
 import NotificationCenter from '../notifications/NotificationCenter';
 import SubscriptionStatusBadge from '../common/SubscriptionStatusBadge';
@@ -94,6 +95,7 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
   const patientPrimaryNavItems = [
     { name: 'Appointments', href: '/appointments', icon: CalendarDaysIcon, shortName: 'Appts' },
     { name: 'Prescriptions', href: '/prescriptions', icon: DocumentTextIcon, shortName: 'Rx' },
+    { name: 'Test Requests', href: '/test-requests', icon: BeakerIcon, shortName: 'Tests' },
     { name: 'Doctors', href: '/doctors', icon: UserIcon, shortName: 'Doctors' },
   ];
 

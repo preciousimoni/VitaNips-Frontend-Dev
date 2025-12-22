@@ -5,7 +5,8 @@ import {
     ArrowLeftIcon, CalendarIcon, ClockIcon, VideoCameraIcon, BuildingOfficeIcon,
     CheckCircleIcon, XCircleIcon, InformationCircleIcon, TrashIcon, UserIcon,
     ArrowPathIcon, MapPinIcon, SparklesIcon,
-    ClipboardDocumentCheckIcon, ShieldCheckIcon, BanknotesIcon
+    ClipboardDocumentCheckIcon, ShieldCheckIcon, BanknotesIcon,
+    DocumentArrowDownIcon, EyeIcon
 } from '@heroicons/react/24/outline';
 import { getAppointmentDetails, cancelAppointment, updateAppointment } from '../api/appointments';
 import { Appointment } from '../types/appointments';
@@ -14,6 +15,8 @@ import toast from 'react-hot-toast';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import Modal from '../components/common/Modal';
 import DoctorPrescriptionForm from '../features/doctor_portal/components/DoctorPrescriptionForm';
+import TestRequestForm from '../features/doctor_portal/components/TestRequestForm';
+import { BeakerIcon } from '@heroicons/react/24/outline';
 import { formatDate, formatTime } from '../utils/date';
 import Spinner from '../components/ui/Spinner';
 // import ErrorMessage from '../components/ui/ErrorMessage';
@@ -45,6 +48,7 @@ const AppointmentDetailPage: React.FC = () => {
     const [isMarkingCompleted, setIsMarkingCompleted] = useState<boolean>(false);
     const [showPrescriptionModal, setShowPrescriptionModal] = useState<boolean>(false);
     const [isSubmittingPrescription, setIsSubmittingPrescription] = useState<boolean>(false);
+    const [showTestRequestModal, setShowTestRequestModal] = useState<boolean>(false);
     
     const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
 
@@ -490,32 +494,107 @@ const AppointmentDetailPage: React.FC = () => {
                             </motion.div>
                         )}
 
+                        {/* Test Request & Results Section - For Follow-up Appointments */}
+                        {appointment.is_followup && appointment.linked_test_request && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.6 }}
+                                className="bg-orange-50 rounded-[2rem] p-8 border-4 border-black relative overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mb-6"
+                            >
+                                <div className="flex items-start gap-6 relative z-10">
+                                    <div className="p-4 bg-orange-500 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-shrink-0">
+                                        <BeakerIcon className="h-8 w-8 text-white" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-2xl font-black text-black mb-2 font-display uppercase">Test Request: {appointment.linked_test_request.test_name}</h3>
+                                        {appointment.linked_test_request.test_description && (
+                                            <p className="text-black font-bold mb-4 text-lg">{appointment.linked_test_request.test_description}</p>
+                                        )}
+                                        
+                                        {/* Test Results Section */}
+                                        {appointment.test_results && appointment.test_results.length > 0 ? (
+                                            <div className="mb-4">
+                                                <h4 className="text-lg font-black text-black mb-3">Test Results ({appointment.test_results.length})</h4>
+                                                <div className="space-y-3">
+                                                    {appointment.test_results.map((result) => (
+                                                        <div key={result.id} className="bg-white rounded-xl border-2 border-black p-4 flex items-center justify-between">
+                                                            <div className="flex-1">
+                                                                <p className="font-black text-black">{result.description || result.filename}</p>
+                                                                {result.document_type && (
+                                                                    <p className="text-sm font-bold text-gray-600">Type: {result.document_type}</p>
+                                                                )}
+                                                                <p className="text-xs font-bold text-gray-500 mt-1">
+                                                                    Uploaded: {new Date(result.uploaded_at).toLocaleString()}
+                                                                </p>
+                                                            </div>
+                                                            <a
+                                                                href={result.file_url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="ml-4 px-4 py-2 bg-primary-900 text-white font-black rounded-lg border-2 border-black hover:bg-primary-800 transition-colors flex items-center gap-2"
+                                                            >
+                                                                <DocumentArrowDownIcon className="h-4 w-4" />
+                                                                View
+                                                            </a>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="bg-yellow-50 border-2 border-yellow-400 rounded-xl p-4 mb-4">
+                                                <p className="text-black font-bold">⏳ Waiting for patient to upload test results</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
                         {/* Prescription Prompt Banner - For Completed Appointments */}
                         {appointment.status === 'completed' && isDoctor && (
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.7 }}
-                                className="bg-purple-100 rounded-[2rem] p-8 border-4 border-black relative overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                                className={`rounded-[2rem] p-8 border-4 border-black relative overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] ${
+                                    appointment.is_followup && appointment.linked_test_request && (!appointment.test_results || appointment.test_results.length === 0)
+                                        ? 'bg-yellow-100' 
+                                        : 'bg-purple-100'
+                                }`}
                             >
                                 <div className="flex items-start gap-6 relative z-10">
-                                    <div className="p-4 bg-purple-500 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-shrink-0">
+                                    <div className={`p-4 rounded-2xl border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-shrink-0 ${
+                                        appointment.is_followup && appointment.linked_test_request && (!appointment.test_results || appointment.test_results.length === 0)
+                                            ? 'bg-yellow-500' 
+                                            : 'bg-purple-500'
+                                    }`}>
                                         <ClipboardDocumentCheckIcon className="h-8 w-8 text-white" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="text-2xl font-black text-black mb-2 font-display uppercase">Ready to Write Prescription</h3>
+                                        <h3 className="text-2xl font-black text-black mb-2 font-display uppercase">
+                                            {appointment.is_followup && appointment.linked_test_request && (!appointment.test_results || appointment.test_results.length === 0)
+                                                ? 'Waiting for Test Results'
+                                                : 'Ready to Write Prescription'
+                                            }
+                                        </h3>
                                         <p className="text-black font-bold leading-relaxed mb-6 text-lg">
-                                            This appointment has been completed. You can now write a prescription for the patient.
+                                            {appointment.is_followup && appointment.linked_test_request && (!appointment.test_results || appointment.test_results.length === 0)
+                                                ? 'Please wait for the patient to upload test results before writing a prescription.'
+                                                : 'This appointment has been completed. You can now write a prescription for the patient.'
+                                            }
                                         </p>
-                                        <motion.button
-                                            onClick={() => setShowPrescriptionModal(true)}
-                                            whileHover={{ scale: 1.02, y: -2 }}
-                                            whileTap={{ scale: 0.95 }}
-                                            className="px-8 py-4 bg-black text-white font-black rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.5)] transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] flex items-center gap-2 uppercase tracking-wide border-2 border-white"
-                                        >
-                                            <ClipboardDocumentCheckIcon className="h-5 w-5" />
-                                            Write Prescription Now
-                                        </motion.button>
+                                        {!(appointment.is_followup && appointment.linked_test_request && (!appointment.test_results || appointment.test_results.length === 0)) && (
+                                            <motion.button
+                                                onClick={() => setShowPrescriptionModal(true)}
+                                                whileHover={{ scale: 1.02, y: -2 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                className="px-8 py-4 bg-black text-white font-black rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.5)] transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] flex items-center gap-2 uppercase tracking-wide border-2 border-white"
+                                            >
+                                                <ClipboardDocumentCheckIcon className="h-5 w-5" />
+                                                Write Prescription Now
+                                            </motion.button>
+                                        )}
                                     </div>
                                 </div>
                             </motion.div>
@@ -570,14 +649,44 @@ const AppointmentDetailPage: React.FC = () => {
                         )}
 
                         {appointment.status === 'completed' && isDoctor && (
+                            <>
+                                {/* Only show prescription button if not a test follow-up OR if test results are uploaded */}
+                                {!(appointment.is_followup && appointment.linked_test_request && (!appointment.test_results || appointment.test_results.length === 0)) && (
+                                    <motion.button
+                                        whileHover={{ scale: 1.02, y: -2 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => setShowPrescriptionModal(true)}
+                                        className="px-8 py-4 bg-purple-500 text-white font-black rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black flex items-center uppercase tracking-wide"
+                                    >
+                                        <ClipboardDocumentCheckIcon className="h-5 w-5 mr-2" />
+                                        Write Prescription
+                                    </motion.button>
+                                )}
+                                {/* Only show test request button for non-follow-up appointments */}
+                                {!appointment.is_followup && (
+                                    <motion.button
+                                        whileHover={{ scale: 1.02, y: -2 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => setShowTestRequestModal(true)}
+                                        className="px-8 py-4 bg-orange-500 text-white font-black rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black flex items-center uppercase tracking-wide"
+                                    >
+                                        <BeakerIcon className="h-5 w-5 mr-2" />
+                                        Request Test
+                                    </motion.button>
+                                )}
+                            </>
+                        )}
+
+                        {/* Patient: View Test Requests Button */}
+                        {!isDoctor && (
                             <motion.button
                                 whileHover={{ scale: 1.02, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
-                                onClick={() => setShowPrescriptionModal(true)}
-                                className="px-8 py-4 bg-purple-500 text-white font-black rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black flex items-center uppercase tracking-wide"
+                                onClick={() => navigate('/test-requests')}
+                                className="px-8 py-4 bg-orange-500 text-white font-black rounded-xl hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-4 border-black flex items-center uppercase tracking-wide"
                             >
-                                <ClipboardDocumentCheckIcon className="h-5 w-5 mr-2" />
-                                Write Prescription
+                                <BeakerIcon className="h-5 w-5 mr-2" />
+                                View Test Requests
                             </motion.button>
                         )}
 
@@ -650,6 +759,26 @@ const AppointmentDetailPage: React.FC = () => {
                         onSubmit={handlePrescriptionSubmit}
                         onCancel={() => setShowPrescriptionModal(false)}
                         isSubmitting={isSubmittingPrescription}
+                    />
+                </Modal>
+            )}
+
+            {/* Test Request Modal */}
+            {appointment && appointment.status === 'completed' && isDoctor && (
+                <Modal
+                    isOpen={showTestRequestModal}
+                    onClose={() => setShowTestRequestModal(false)}
+                    title=""
+                >
+                    <TestRequestForm
+                        appointmentId={appointment.id}
+                        patientName={appointment.patient_name || `Patient ID ${appointment.user}`}
+                        onSuccess={() => {
+                            setShowTestRequestModal(false);
+                            fetchAppointment();
+                            toast.success('Test request created! Patient will be notified.');
+                        }}
+                        onCancel={() => setShowTestRequestModal(false)}
                     />
                 </Modal>
             )}

@@ -108,14 +108,19 @@ export interface PostReviewPayload {
 
 // Doctor Portal - Manage own availability
 export const getMyAvailability = async (): Promise<DoctorAvailability[]> => {
-  const response = await axiosInstance.get<PaginatedResponse<DoctorAvailability> | DoctorAvailability[]>('/doctors/portal/availability/');
-  // Handle both paginated and non-paginated responses
-  if (Array.isArray(response.data)) {
-    return response.data;
-  } else if (response.data && typeof response.data === 'object' && 'results' in response.data) {
-    return (response.data as PaginatedResponse<DoctorAvailability>).results;
+  try {
+    const response = await axiosInstance.get<PaginatedResponse<DoctorAvailability> | DoctorAvailability[]>('/doctors/portal/availability/');
+    // Handle both paginated and non-paginated responses
+    if (Array.isArray(response.data)) {
+      return response.data;
+    } else if (response.data && typeof response.data === 'object' && 'results' in response.data) {
+      return (response.data as PaginatedResponse<DoctorAvailability>).results;
+    }
+    return [];
+  } catch (error) {
+    console.error('Failed to fetch availability:', error);
+    throw error;
   }
-  return [];
 };
 
 export const createAvailabilitySlot = async (data: {
@@ -124,8 +129,19 @@ export const createAvailabilitySlot = async (data: {
   end_time: string;
   is_available: boolean;
 }): Promise<DoctorAvailability> => {
-  const response = await axiosInstance.post<DoctorAvailability>('/doctors/portal/availability/', data);
-  return response.data;
+  try {
+    // Ensure time format is HH:MM:SS
+    const formattedData = {
+      ...data,
+      start_time: data.start_time.length === 5 ? `${data.start_time}:00` : data.start_time,
+      end_time: data.end_time.length === 5 ? `${data.end_time}:00` : data.end_time,
+    };
+    const response = await axiosInstance.post<DoctorAvailability>('/doctors/portal/availability/', formattedData);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to create availability slot:', error);
+    throw error;
+  }
 };
 
 export const updateAvailabilitySlot = async (
@@ -137,12 +153,28 @@ export const updateAvailabilitySlot = async (
     is_available: boolean;
   }
 ): Promise<DoctorAvailability> => {
-  const response = await axiosInstance.put<DoctorAvailability>(`/doctors/portal/availability/${id}/`, data);
-  return response.data;
+  try {
+    // Ensure time format is HH:MM:SS
+    const formattedData = {
+      ...data,
+      start_time: data.start_time.length === 5 ? `${data.start_time}:00` : data.start_time,
+      end_time: data.end_time.length === 5 ? `${data.end_time}:00` : data.end_time,
+    };
+    const response = await axiosInstance.put<DoctorAvailability>(`/doctors/portal/availability/${id}/`, formattedData);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to update availability slot:', error);
+    throw error;
+  }
 };
 
 export const deleteAvailabilitySlot = async (id: number): Promise<void> => {
-  await axiosInstance.delete(`/doctors/portal/availability/${id}/`);
+  try {
+    await axiosInstance.delete(`/doctors/portal/availability/${id}/`);
+  } catch (error) {
+    console.error(`Failed to delete availability slot ${id}:`, error);
+    throw error;
+  }
 };
 
 // Doctor Application

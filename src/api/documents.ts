@@ -7,6 +7,7 @@ export interface MedicalDocument {
     user: number;
     uploaded_by: number;
     appointment?: number | null;
+    test_request?: number | null;
     file: string;
     file_url: string;
     filename: string;
@@ -20,6 +21,7 @@ export interface DocumentUploadPayload {
     description?: string;
     document_type?: string;
     appointment?: number;
+    test_request_id?: number;
 }
 
 export const getMedicalDocuments = async (
@@ -65,6 +67,9 @@ export const uploadMedicalDocument = async (payload: DocumentUploadPayload): Pro
         }
         if (payload.appointment) {
             formData.append('appointment', payload.appointment.toString());
+        }
+        if (payload.test_request_id) {
+            formData.append('test_request_id', payload.test_request_id.toString());
         }
 
         const response = await axiosInstance.post<MedicalDocument>(

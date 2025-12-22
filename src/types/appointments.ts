@@ -23,6 +23,27 @@ export interface Appointment {
     insurance_covered_amount?: string | null;
     patient_copay?: string | null;
     insurance_claim_generated?: boolean;
+    is_followup?: boolean;
+    original_appointment?: number | null;
+    original_appointment_id?: number | null;
+    followup_discount_percentage?: string;
+    linked_test_request?: {
+        id: number;
+        test_name: string;
+        test_description?: string;
+        instructions?: string;
+        status: string;
+        has_test_results: boolean;
+        test_results_count: number;
+    } | null;
+    test_results?: Array<{
+        id: number;
+        file_url: string;
+        filename: string;
+        description?: string;
+        document_type?: string;
+        uploaded_at: string;
+    }> | null;
     created_at: string;
     updated_at: string;
 }
@@ -37,6 +58,8 @@ export interface AppointmentPayload {
     notes?: string | null;
     user_insurance_id?: number | null;
     payment_reference?: string;
+    original_appointment_id?: number | null; // For follow-up appointments
+    test_request_id?: number | null; // For linking test request to follow-up appointment
 }
 
 export interface TwilioTokenResponse {

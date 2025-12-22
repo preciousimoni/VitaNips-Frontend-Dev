@@ -253,7 +253,17 @@ const DoctorDetailPage: React.FC = () => {
   const handleBookingSuccess = (newAppointment: Appointment) => {
     setShowBookingModal(false);
     toast.success(`Appointment booked successfully!`);
-    navigate(`/appointments/${newAppointment.id}`);
+    // If this was a follow-up for a test request, redirect to test requests page with refresh flag
+    if (followUpState?.testRequestId) {
+      navigate('/test-requests', { 
+        state: { 
+          refresh: true,
+          testRequestId: followUpState.testRequestId 
+        } 
+      });
+    } else {
+      navigate(`/appointments/${newAppointment.id}`);
+    }
   };
 
   if (isLoading && !doctor) return <div className="flex justify-center items-center min-h-screen bg-cream-50"><Spinner size="lg" /></div>;
@@ -536,7 +546,9 @@ const DoctorDetailPage: React.FC = () => {
           onBookingSuccess={handleBookingSuccess}
           onCancel={() => setShowBookingModal(false)}
           isFollowUp={followUpState?.isFollowUp}
+          originalAppointmentId={followUpState?.originalAppointmentId}
           prefillReason={followUpState?.prefillReason}
+          testRequestId={followUpState?.testRequestId}
         />
       </Modal>
     </div>

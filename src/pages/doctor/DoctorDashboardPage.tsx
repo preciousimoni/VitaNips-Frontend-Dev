@@ -12,7 +12,8 @@ import {
   SparklesIcon,
   ChartBarIcon,
   BellAlertIcon,
-  BanknotesIcon
+  BanknotesIcon,
+  BeakerIcon
 } from '@heroicons/react/24/outline';
 import { 
   AreaChart, 
@@ -588,6 +589,21 @@ const DoctorDashboardPage: React.FC = () => {
                       <ClockIcon className="h-6 w-6 text-black" />
                     </div>
                     <span className="font-black text-black group-hover:text-purple-900 text-lg">Availability</span>
+                  </div>
+                  <ArrowRightIcon className="h-5 w-5 text-black" />
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/doctor/test-requests')}
+                  className="w-full flex items-center justify-between p-4 bg-white hover:bg-orange-50 rounded-2xl transition-all group border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="p-2 bg-orange-200 rounded-lg border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <BeakerIcon className="h-6 w-6 text-black" />
+                    </div>
+                    <span className="font-black text-black group-hover:text-orange-900 text-lg">Test Requests</span>
                   </div>
                   <ArrowRightIcon className="h-5 w-5 text-black" />
                 </motion.button>

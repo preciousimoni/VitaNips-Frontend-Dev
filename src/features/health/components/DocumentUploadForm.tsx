@@ -4,8 +4,10 @@ import { CloudArrowUpIcon, DocumentIcon, XMarkIcon } from '@heroicons/react/24/o
 import toast from 'react-hot-toast';
 
 interface DocumentUploadFormProps {
-    onUploadSuccess: () => void;
+    onUploadSuccess: (file: File, description: string, documentType: string) => void;
     onCancel: () => void;
+    appointmentId?: number;
+    testRequestId?: number;
 }
 
 const DOCUMENT_TYPES = [
@@ -28,7 +30,12 @@ const ALLOWED_FILE_TYPES = [
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ];
 
-const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({ onUploadSuccess, onCancel }) => {
+const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({ 
+    onUploadSuccess, 
+    onCancel, 
+    appointmentId, 
+    testRequestId 
+}) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [description, setDescription] = useState('');
     const [documentType, setDocumentType] = useState('');
@@ -103,8 +110,19 @@ const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({ onUploadSuccess
                 setUploadProgress(prev => Math.min(prev + 10, 90));
             }, 200);
 
+            console.log('Uploading document with:', {
+                hasFile: !!selectedFile,
+                fileName: selectedFile?.name,
+                appointmentId,
+                testRequestId,
+                description: description.trim() || undefined,
+                documentType: documentType || undefined,
+            });
+            
             await uploadMedicalDocument({
                 file: selectedFile,
+                appointment: appointmentId || undefined,
+                test_request_id: testRequestId || undefined,
                 description: description.trim() || undefined,
                 document_type: documentType || undefined,
             });
@@ -113,10 +131,39 @@ const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({ onUploadSuccess
             setUploadProgress(100);
 
             toast.success('Document uploaded successfully!');
-            onUploadSuccess();
-        } catch (error) {
+            onUploadSuccess(selectedFile, description.trim() || '', documentType || '');
+        } catch (error: any) {
             console.error('Upload error:', error);
-            toast.error(error instanceof Error ? error.message : 'Failed to upload document');
+            // Extract detailed error message from backend
+            let errorMessage = 'Failed to upload document';
+            if (error?.response?.data) {
+                const errorData = error.response.data;
+                if (errorData.test_request_id) {
+                    errorMessage = Array.isArray(errorData.test_request_id) 
+                        ? errorData.test_request_id[0] 
+                        : errorData.test_request_id;
+                } else if (errorData.detail) {
+                    errorMessage = typeof errorData.detail === 'string' 
+                        ? errorData.detail 
+                        : JSON.stringify(errorData.detail);
+                } else if (errorData.non_field_errors) {
+                    errorMessage = Array.isArray(errorData.non_field_errors)
+                        ? errorData.non_field_errors[0]
+                        : errorData.non_field_errors;
+                } else {
+                    // Try to get first error message from any field
+                    const firstError = Object.values(errorData)[0];
+                    if (Array.isArray(firstError) && firstError.length > 0) {
+                        errorMessage = firstError[0];
+                    } else if (typeof firstError === 'string') {
+                        errorMessage = firstError;
+                    }
+                }
+            } else if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+            toast.error(errorMessage, { duration: 5000 });
+            throw error; // Re-throw so parent can handle if needed
         } finally {
             setIsUploading(false);
             setUploadProgress(0);

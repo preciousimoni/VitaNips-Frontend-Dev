@@ -64,6 +64,21 @@ export const passwordReset = async (email: string): Promise<void> => {
     }
 };
 
+export interface PasswordResetConfirmData {
+    uid: string;
+    token: string;
+    new_password: string;
+}
+
+export const passwordResetConfirm = async (data: PasswordResetConfirmData): Promise<void> => {
+    try {
+        await axiosInstance.post('/auth/password/reset/confirm/', data);
+    } catch (error) {
+        console.error('Password reset confirmation failed:', error);
+        throw error;
+    }
+};
+
 // Re-export user profile functions for convenience or if AuthContext needs them directly
 export { getUserProfile, updateUserProfile, uploadProfilePicture } from './user';
 

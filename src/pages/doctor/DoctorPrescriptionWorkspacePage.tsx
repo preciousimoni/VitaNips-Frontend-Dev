@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
     PlusIcon, 
@@ -141,6 +141,7 @@ const PrescriptionHistoryCard: React.FC<{ pres: UserPrescription }> = ({ pres })
 
 const DoctorPrescriptionWorkspacePage: React.FC = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     
     const [eligibleAppointments, setEligibleAppointments] = useState<EligibleAppointmentForPrescription[]>([]);
     const [writtenPrescriptions, setWrittenPrescriptions] = useState<UserPrescription[]>([]);
@@ -186,6 +187,21 @@ const DoctorPrescriptionWorkspacePage: React.FC = () => {
         fetchEligibleAppointments();
         fetchWrittenPrescriptions();
     }, [fetchEligibleAppointments, fetchWrittenPrescriptions]);
+
+    // Check if appointment ID is in URL params (e.g., from test results page)
+    useEffect(() => {
+        const appointmentId = searchParams.get('appointment');
+        if (appointmentId && eligibleAppointments.length > 0) {
+            const appointment = eligibleAppointments.find(apt => apt.id === parseInt(appointmentId, 10));
+            if (appointment) {
+                setSelectedAppointmentForPrescription(appointment);
+                setShowPrescriptionModal(true);
+                setActiveTab('new');
+                // Clear the URL parameter
+                navigate('/doctor/prescriptions', { replace: true });
+            }
+        }
+    }, [searchParams, eligibleAppointments, navigate]);
 
     const handleOpenPrescriptionModal = (appt: EligibleAppointmentForPrescription) => {
         setSelectedAppointmentForPrescription(appt);

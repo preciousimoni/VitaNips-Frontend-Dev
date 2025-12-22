@@ -34,7 +34,9 @@ interface AppointmentBookingFormProps {
     onBookingSuccess: (newAppointment: Appointment) => void;
     onCancel: () => void;
     isFollowUp?: boolean;
+    originalAppointmentId?: number;
     prefillReason?: string;
+    testRequestId?: number; // For linking test request to follow-up appointment
 }
 
 const generateTimeSlots = (start: string, end: string, intervalMinutes = 30): string[] => {
@@ -60,8 +62,15 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
     onBookingSuccess,
     onCancel,
     isFollowUp,
-    prefillReason
+    originalAppointmentId,
+    prefillReason,
+    testRequestId
 }) => {
+    // Calculate discounted fee for follow-up appointments (50% off)
+    const followUpDiscount = 0.5; // 50% discount
+    const originalFee = doctorConsultationFee || 0;
+    const discountedFee = isFollowUp ? originalFee * followUpDiscount : originalFee;
+    const discountAmount = isFollowUp ? originalFee - discountedFee : 0;
     const [appointmentType, setAppointmentType] = useState<'in_person' | 'virtual'>('in_person');
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -187,17 +196,19 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
             return;
         }
 
-        const payload: AppointmentPayload = {
-            doctor: doctorId,
-            date: data.date,
-            start_time: data.start_time,
-            end_time: endTime,
-            appointment_type: appointmentType,
-            reason: data.reason.trim(),
-            notes: data.notes?.trim() || undefined,
-            user_insurance_id: data.user_insurance_id ? (typeof data.user_insurance_id === 'string' ? parseInt(data.user_insurance_id, 10) : data.user_insurance_id) : null,
-            payment_reference: paymentReference || undefined,
-        };
+                const payload: AppointmentPayload = {
+                    doctor: doctorId,
+                    date: data.date,
+                    start_time: data.start_time,
+                    end_time: endTime,
+                    appointment_type: appointmentType,
+                    reason: data.reason.trim(),
+                    notes: data.notes?.trim() || undefined,
+                    user_insurance_id: data.user_insurance_id ? (typeof data.user_insurance_id === 'string' ? parseInt(data.user_insurance_id, 10) : data.user_insurance_id) : null,
+                    payment_reference: paymentReference || undefined,
+                    original_appointment_id: originalAppointmentId || undefined,
+                    test_request_id: testRequestId || undefined,
+                };
 
         try {
             const newAppointment = await createAppointment(payload);
@@ -266,9 +277,9 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
             : null;
 
         // Check if payment is required (no insurance AND consultation fee exists)
-        const hasConsultationFee = doctorConsultationFee !== null && 
-                                   doctorConsultationFee !== undefined && 
-                                   Number(doctorConsultationFee) > 0;
+        // Use discounted fee for follow-ups
+        const feeToUse = isFollowUp ? discountedFee : (doctorConsultationFee || 0);
+        const hasConsultationFee = feeToUse > 0;
         const requiresPayment = !selectedInsurance && hasConsultationFee;
 
         if (requiresPayment) {
@@ -295,6 +306,8 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                     notes: data.notes?.trim() || undefined,
                     user_insurance_id: insuranceId,
                     // No payment_reference yet - will be added after payment
+                    original_appointment_id: originalAppointmentId || undefined,
+                    test_request_id: testRequestId || undefined,
                 };
 
                 // Create appointment with pending payment status
@@ -622,9 +635,26 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                 <div className="bg-primary-900 rounded-2xl p-6 relative overflow-hidden text-white">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                     
+                    {isFollowUp && (
+                        <div className="relative z-10 mb-4 p-3 bg-green-500/20 border-2 border-green-400 rounded-xl">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-black uppercase tracking-widest text-green-300">Follow-up Discount</span>
+                                <span className="text-lg font-black text-green-300">50% OFF</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold opacity-80 line-through">Original: ₦{parseFloat(originalFee.toString()).toLocaleString()}</span>
+                                <span className="text-xs font-bold text-green-300">Save: ₦{parseFloat(discountAmount.toString()).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    )}
+                    
                     <div className="relative z-10 flex items-center justify-between mb-4 border-b border-white/10 pb-4">
-                        <span className="text-sm font-bold opacity-80 uppercase tracking-widest">Consultation Fee</span>
-                        <span className="text-3xl font-black font-display text-accent">₦{parseFloat(doctorConsultationFee.toString()).toLocaleString()}</span>
+                        <span className="text-sm font-bold opacity-80 uppercase tracking-widest">
+                            {isFollowUp ? 'Follow-up Fee' : 'Consultation Fee'}
+                        </span>
+                        <span className="text-3xl font-black font-display text-accent">
+                            ₦{parseFloat((isFollowUp ? discountedFee : doctorConsultationFee).toString()).toLocaleString()}
+                        </span>
                     </div>
                     
                     {watch('user_insurance_id') ? (
@@ -764,11 +794,11 @@ const AppointmentBookingForm: React.FC<AppointmentBookingFormProps> = ({
                     setPendingAppointmentData(null);
                     setPendingAppointmentId(null);
                 }}
-                amount={parseFloat(doctorConsultationFee.toString())}
+                amount={parseFloat((isFollowUp ? discountedFee : doctorConsultationFee).toString())}
                 paymentType="appointment"
                 paymentForId={pendingAppointmentId}
-                title="Consultation Payment"
-                description={`Payment for consultation with ${doctorName} on ${new Date(pendingAppointmentData.date).toLocaleDateString()} at ${pendingAppointmentData.start_time}`}
+                title={isFollowUp ? "Follow-up Consultation Payment" : "Consultation Payment"}
+                description={`Payment for ${isFollowUp ? 'follow-up ' : ''}consultation with ${doctorName} on ${new Date(pendingAppointmentData.date).toLocaleDateString()} at ${pendingAppointmentData.start_time}`}
                 onPaymentSuccess={handlePaymentSuccess}
             />
         )}

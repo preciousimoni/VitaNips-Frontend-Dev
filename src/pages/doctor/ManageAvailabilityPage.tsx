@@ -67,17 +67,21 @@ const ManageAvailabilityPage: React.FC = () => {
       const availabilityArray = Array.isArray(data) ? data : [];
       
       // Ensure we always set an array with proper structure
+      // Convert time from "HH:MM:SS" to "HH:MM" format for display
       setAvailability(availabilityArray.map((slot: DoctorAvailability) => ({
         id: slot.id,
         day_of_week: slot.day_of_week,
-        start_time: slot.start_time,
-        end_time: slot.end_time,
+        start_time: slot.start_time ? slot.start_time.substring(0, 5) : '09:00',
+        end_time: slot.end_time ? slot.end_time.substring(0, 5) : '17:00',
         is_available: slot.is_available ?? true
       })));
     } catch (err: unknown) {
       console.error('Failed to fetch availability:', err);
-      setError('Failed to load availability. Please try again.');
-      toast.error('Failed to load availability');
+      const errorMessage = (err as any)?.response?.data?.detail || 
+                          (err as any)?.message || 
+                          'Failed to load availability. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
       setAvailability([]); // Set empty array on error
     } finally {
       setLoading(false);
@@ -114,6 +118,11 @@ const ManageAvailabilityPage: React.FC = () => {
   };
 
   const updateSlot = (index: number, field: keyof AvailabilitySlot, value: string | number | boolean) => {
+    if (index < 0 || index >= availability.length) {
+      console.error('Invalid slot index:', index);
+      return;
+    }
+    
     const updated = [...availability];
     updated[index] = { ...updated[index], [field]: value };
     
@@ -138,11 +147,17 @@ const ManageAvailabilityPage: React.FC = () => {
       const existingSlots = availability.filter(slot => slot.id);
       for (const slot of existingSlots) {
         if (slot.id) {
-          await deleteAvailabilitySlot(slot.id);
+          try {
+            await deleteAvailabilitySlot(slot.id);
+          } catch (deleteErr) {
+            console.warn('Failed to delete slot:', deleteErr);
+            // Continue even if delete fails
+          }
         }
       }
 
       // Create new slots
+      // API will handle time format conversion
       const newSlots = availability.filter(slot => slot.is_available);
       const promises = newSlots.map(slot =>
         createAvailabilitySlot({
@@ -158,9 +173,23 @@ const ManageAvailabilityPage: React.FC = () => {
       fetchAvailability();
     } catch (err: unknown) {
       console.error('Failed to save availability:', err);
-      const errorMessage = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail || 'Failed to save availability. Please try again.';
+      const errorData = (err as any)?.response?.data;
+      let errorMessage = 'Failed to save availability. Please try again.';
+      
+      if (errorData) {
+        if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.start_time) {
+          errorMessage = Array.isArray(errorData.start_time) ? errorData.start_time[0] : errorData.start_time;
+        } else if (errorData.end_time) {
+          errorMessage = Array.isArray(errorData.end_time) ? errorData.end_time[0] : errorData.end_time;
+        } else if (errorData.non_field_errors) {
+          errorMessage = Array.isArray(errorData.non_field_errors) ? errorData.non_field_errors[0] : errorData.non_field_errors;
+        }
+      }
+      
       setError(errorMessage);
-      toast.error('Failed to save availability');
+      toast.error(errorMessage);
     } finally {
       setSaving(false);
     }
@@ -295,14 +324,18 @@ const ManageAvailabilityPage: React.FC = () => {
                   ) : (
                     <div className="space-y-4">
                       {daySlots.map((slot, slotIndex) => {
+                        // Find the global index more reliably
                         const globalIndex = availability.findIndex(s => 
-                          s.day_of_week === slot.day_of_week && 
-                          s.start_time === slot.start_time &&
-                          s.end_time === slot.end_time
+                          (s.id && slot.id && s.id === slot.id) || (
+                            !s.id && !slot.id &&
+                            s.day_of_week === slot.day_of_week && 
+                            s.start_time === slot.start_time &&
+                            s.end_time === slot.end_time
+                          )
                         );
                         return (
                           <motion.div
-                            key={slotIndex}
+                            key={slot.id || `new-${day.value}-${slotIndex}`}
                             layout
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
