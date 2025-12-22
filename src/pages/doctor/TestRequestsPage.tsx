@@ -8,7 +8,6 @@ import {
     ClockIcon,
     CheckCircleIcon,
     XCircleIcon,
-    ArrowRightIcon,
     InformationCircleIcon,
     DocumentArrowDownIcon,
     ArrowLeftIcon,
@@ -30,7 +29,6 @@ const TestRequestsPage: React.FC = () => {
     const [selectedTestRequest, setSelectedTestRequest] = useState<TestRequest | null>(null);
     const [testResults, setTestResults] = useState<MedicalDocument[]>([]);
     const [loadingResults, setLoadingResults] = useState(false);
-    const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
 
     const fetchTestRequests = useCallback(async () => {
         setIsLoading(true);

@@ -6,7 +6,7 @@ import {
     CheckCircleIcon, XCircleIcon, InformationCircleIcon, TrashIcon, UserIcon,
     ArrowPathIcon, MapPinIcon, SparklesIcon,
     ClipboardDocumentCheckIcon, ShieldCheckIcon, BanknotesIcon,
-    DocumentArrowDownIcon, EyeIcon
+    DocumentArrowDownIcon
 } from '@heroicons/react/24/outline';
 import { getAppointmentDetails, cancelAppointment, updateAppointment } from '../api/appointments';
 import { Appointment } from '../types/appointments';

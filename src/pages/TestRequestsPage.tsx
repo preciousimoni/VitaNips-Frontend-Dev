@@ -12,14 +12,12 @@ import {
     InformationCircleIcon,
     DocumentArrowUpIcon,
     ArrowLeftIcon,
-    SparklesIcon,
     ArrowPathIcon
 } from '@heroicons/react/24/outline';
 import { getPatientTestRequests, getTestRequestById, TestRequest } from '../api/testRequests';
 import { formatDate } from '../utils/date';
 import Spinner from '../components/ui/Spinner';
 import toast from 'react-hot-toast';
-import { uploadMedicalDocument } from '../api/documents';
 import Modal from '../components/common/Modal';
 import DocumentUploadForm from '../features/health/components/DocumentUploadForm';
 

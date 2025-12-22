@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { ArrowLeftIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import FormInput from '../../../components/forms/FormInput';
 import Spinner from '../../../components/ui/Spinner';
 import { toast } from 'react-hot-toast';
 import { passwordResetConfirmSchema, PasswordResetConfirmFormData } from '../../../schemas/authSchema';

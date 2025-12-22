@@ -117,6 +117,7 @@ interface FollowUpLocationState {
   isFollowUp?: boolean;
   originalAppointmentId?: number;
   prefillReason?: string;
+  testRequestId?: number;
   openBookingModalDirectly?: boolean;
 }
 

@@ -1,6 +1,7 @@
 // src/api/testRequests.ts
 import axiosInstance from './axiosInstance';
 import { PaginatedResponse } from '../types/common';
+import { MedicalDocument } from './documents';
 
 export interface TestRequest {
     id: number;
