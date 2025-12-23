@@ -7,6 +7,7 @@ import {
     BuildingStorefrontIcon,
     UserGroupIcon
 } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
@@ -33,11 +34,13 @@ const LandingPage: React.FC = () => {
                 name: 'VitaNips',
                 description: "Nigeria's leading digital healthcare platform providing online doctor consultations, pharmacy services, and comprehensive health management.",
                 url: 'https://vitanips.com',
-                telephone: '+234-XXX-XXXX',
+                telephone: '+234 707 363 4343',
                 address: {
                     '@type': 'PostalAddress',
-                    addressCountry: 'NG',
+                    streetAddress: '10 Admiralty Way, Lekki Phase 1',
+                    addressLocality: 'Lekki',
                     addressRegion: 'Lagos',
+                    addressCountry: 'NG',
                 },
                 areaServed: {
                     '@type': 'Country',
@@ -152,11 +155,28 @@ const LandingPage: React.FC = () => {
                             </div>
 
                             {/* Trust Strip */}
-                            <div className="mt-16 border-t border-gray-200 pt-8 flex items-center gap-8 opacity-60 grayscale hover:grayscale-0 transition-all">
-                                <span className="font-display font-bold text-xl">Lagos</span>
-                                <span className="font-display font-bold text-xl">Abuja</span>
-                                <span className="font-display font-bold text-xl">Port Harcourt</span>
-                                <span className="font-display font-bold text-xl">Kano</span>
+                            {/* Trust Strip - Moving Marquee */}
+                            <div className="mt-16 border-t border-gray-200 pt-8 overflow-hidden relative">
+                                <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-[#FDFBF7] to-transparent z-10"></div>
+                                <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#FDFBF7] to-transparent z-10"></div>
+                                <motion.div 
+                                    className="flex items-center gap-12 whitespace-nowrap opacity-60 grayscale hover:grayscale-0 transition-all w-max"
+                                    animate={{ x: "-50%" }}
+                                    transition={{ 
+                                        repeat: Infinity, 
+                                        ease: "linear", 
+                                        duration: 30 
+                                    }}
+                                >
+                                    {[
+                                        'Lagos', 'Abuja', 'Port Harcourt', 'Kano', 'Ibadan',
+                                        'Lagos', 'Abuja', 'Port Harcourt', 'Kano', 'Ibadan'
+                                    ].map((city, idx) => (
+                                        <span key={`${city}-${idx}`} className="font-display font-bold text-xl inline-block">
+                                            {city}
+                                        </span>
+                                    ))}
+                                </motion.div>
                             </div>
                         </div>
 

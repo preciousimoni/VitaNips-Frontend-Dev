@@ -69,10 +69,10 @@ const Footer: React.FC = () => {
              <h3 className="text-lg font-display font-medium text-primary-900 mb-6">Contact</h3>
              <ul className="space-y-4">
                 <li className="flex items-start gap-3">
-                    <span className="text-gray-500 text-sm">123 Health Avenue,<br/>Wellness District, NY 10012</span>
+                    <span className="text-gray-500 text-sm">10 Admiralty Way,<br/>Lekki Phase 1, Lagos</span>
                 </li>
                  <li className="flex items-center gap-3">
-                    <span className="text-gray-500 text-sm hover:text-primary-900 transition-colors">+1 (555) 123-4567</span>
+                    <span className="text-gray-500 text-sm hover:text-primary-900 transition-colors">+234 707 363 4343</span>
                 </li>
                 <li className="flex items-center gap-3">
                     <span className="text-gray-500 text-sm hover:text-primary-900 transition-colors">info@vitanips.com</span>

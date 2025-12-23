@@ -117,8 +117,8 @@ export const SEO = ({
 
       {/* Twitter Card */}
       <meta name='twitter:card' content='summary_large_image' />
-      <meta name='twitter:site' content='@VitaNips' />
-      <meta name='twitter:creator' content='@VitaNips' />
+      <meta name='twitter:site' content='@VitaNipsHealth' />
+      <meta name='twitter:creator' content='@VitaNipsHealth' />
       <meta name='twitter:url' content={currentUrl} />
       <meta name='twitter:title' content={title} />
       <meta name='twitter:description' content={description} />
