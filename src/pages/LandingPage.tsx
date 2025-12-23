@@ -49,6 +49,11 @@ const LandingPage: React.FC = () => {
                     'Pharmacy Services',
                     'Emergency Medicine',
                 ],
+                sameAs: [
+                    'https://x.com/VitaNipsHealth',
+                    'https://instagram.com/VitaNipsHealth',
+                    'https://www.linkedin.com/company/vitanips/'
+                ],
             },
         },
         {
